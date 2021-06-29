@@ -71,14 +71,25 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('purchase-order/add-product-row', 'PurchaseOrderController@addProductRow');
     Route::get('purchase-order/get-po-number', 'PurchaseOrderController@getPoNumber');
     Route::get('purchase-order/draft-purchase-order', 'PurchaseOrderController@getDraftPurchaseOrder');
+    Route::get('purchase-order/quick-add-draft', 'PurchaseOrderController@quickAddDraft');
     Route::resource('purchase-order', PurchaseOrderController::class);
 
+    Route::get('add-stock/add-product-row', 'AddStockController@addProductRow');
     Route::get('add-stock/get-purchase-order-details/{id}', 'AddStockController@getPurchaseOrderDetails');
     Route::resource('add-stock', AddStockController::class);
 
+    Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
+    Route::resource('transaction-payment', TransactionPaymentController::class);
 
+    Route::resource('store-pos', StorePosController::class);
 
+    Route::get('pos/get-products', 'SellPosController@getProducts');
+    Route::get('pos/add-product-row', 'SellPosController@addProductRow');
+    Route::get('pos/get-product-items-by-filter/{id}/{type}', 'SellPosController@getProductItemsByFilter');
+    Route::resource('pos', SellPosController::class);
+    Route::resource('cash-rgister', CashRegisterController::class);
 
+    Route::resource('coupon', CouponController::class);
 
 
 

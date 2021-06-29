@@ -19,10 +19,11 @@
 
 <body onload="myFunction()">
     <div id="loader"></div>
-    @include('layouts.partials.sidebar')
+    @if(request()->segment(1) != 'pos')
     @include('layouts.partials.header')
-
-    <div class="page">
+    @endif
+    <div class="@if(request()->segment(1) != 'pos') page @else pos-page @endif">
+        @include('layouts.partials.sidebar')
         <div style="display:none" id="content" class="animate-bottom">
             @foreach ($errors->all() as $message)
             <div class="alert alert-danger alert-dismissible text-center">
@@ -86,9 +87,11 @@
             },
         });
     });
+    @if(request()->segment(1) != 'pos')
     if ($(window).outerWidth() > 1199) {
         $('nav.side-navbar').removeClass('shrink');
     }
+    @endif
     function myFunction() {
         setTimeout(showPage, 150);
     }

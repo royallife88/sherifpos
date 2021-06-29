@@ -24,3 +24,6 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+<script>
+    $('.selectpicker').selectpicker('render');
+</script>

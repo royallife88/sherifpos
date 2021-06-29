@@ -60,7 +60,7 @@
                         {{ucfirst($purchase_order->created_by_user->name)}}
                     </td>
                     <td>
-                        {{$purchase_order->supplier->name}}
+                        @if(!empty($purchase_order->supplier)){{$purchase_order->supplier->name}}@endif
                     </td>
                     <td>
                         {{@num_format($purchase_order->final_total)}}

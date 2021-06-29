@@ -218,7 +218,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        // try {
+        try {
             $product_data = [
                 'name' => $request->name,
                 'product_class_id' => $request->product_class_id,
@@ -230,6 +230,7 @@ class ProductController extends Controller
                 'multiple_colors' => $request->multiple_colors,
                 'multiple_sizes' => $request->multiple_sizes,
                 'multiple_grades' => $request->multiple_grades,
+                'is_service' => !empty($request->is_service) ? 1: 0,
                 'product_details' => $request->product_details,
                 'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
@@ -275,13 +276,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }
@@ -373,6 +374,7 @@ class ProductController extends Controller
                 'multiple_colors' => $request->multiple_colors,
                 'multiple_sizes' => $request->multiple_sizes,
                 'multiple_grades' => $request->multiple_grades,
+                'is_service' => !empty($request->is_service) ? 1: 0,
                 'product_details' => $request->product_details,
                 'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
@@ -406,7 +408,7 @@ class ProductController extends Controller
 
 
             if ($request->images) {
-                foreach ($request->images as $image) {
+                foreach ($request->file('images', []) as $key => $image) {
                     $product->addMedia($image)->toMediaCollection('product');
                 }
             }

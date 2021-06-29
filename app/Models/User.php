@@ -49,6 +49,7 @@ class User extends Authenticatable
             'supplier_module' => 'Supplier Module',
             'purchase_order' => 'Purchase Order',
             'stock' => 'Stock',
+            'coupons_and_gift_cards' => 'Coupons and Gift Cards',
             'settings' => 'Settings',
         ];
     }
@@ -84,9 +85,15 @@ class User extends Authenticatable
             ],
             'stock' => [
                 'add_stock' => 'Add Stock',
+                'pay' => 'Pay',
+            ],
+            'coupons_and_gift_cards' => [
+                'coupon' => 'Coupon',
+                'gift_card' => 'Gift Card',
             ],
             'settings' => [
-                'store' => 'Store'
+                'store' => 'Store',
+                'store_pos' => 'Pos for the stores'
             ],
 
         ];

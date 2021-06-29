@@ -18,17 +18,17 @@
                         <div class="row">
                             <div class="col-md-4">
                                 {!! Form::label('supplier_name', __('lang.supplier_name'), []) !!}:
-                                <b>{{$supplier->name}}</b>
+                                <b>@if(!empty($supplier)) {{$supplier->name}} @endif</b>
                             </div>
                             <div class="col-md-4">
-                                {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$supplier->email}}</b>
+                                {!! Form::label('email', __('lang.email'), []) !!}: <b>@if(!empty($supplier))  {{$supplier->email}} @endif</b>
                             </div>
                             <div class="col-md-4">
                                 {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                                <b>{{$supplier->mobile_number}}</b>
+                                <b>@if(!empty($supplier)) {{$supplier->mobile_number}} @endif</b>
                             </div>
                             <div class="col-md-4">
-                                {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address}}</b>
+                                {!! Form::label('address', __('lang.address'), []) !!}: <b>@if(!empty($supplier)) {{$supplier->address}} @endif</b>
                             </div>
                         </div>
                         <br>

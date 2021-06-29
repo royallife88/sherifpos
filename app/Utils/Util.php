@@ -395,4 +395,13 @@ class Util
             'pending' => 'Pending',
         ];
     }
+
+    public function getPaymentTypeArray(){
+        return [
+            'cash' => 'Cash',
+            'bank_transfer' => 'Bank Transfer',
+            'cheque' => 'Cheque',
+            'money_transfer' => 'Money Transfer',
+        ];
+    }
 }

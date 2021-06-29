@@ -15,4 +15,8 @@ class Store extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    public function store_pos(){
+        return $this->hasMany(StorePos::class);
+    }
 }

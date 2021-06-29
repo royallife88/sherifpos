@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddStockLine;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
@@ -18,7 +19,7 @@ use Illuminate\Support\Facades\Redirect;
 
 class AddStockController extends Controller
 {
-      /**
+    /**
      * All Utils instance.
      *
      */
@@ -82,13 +83,16 @@ class AddStockController extends Controller
         $suppliers = Supplier::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');
 
-        $po_nos = Transaction::where('status', '!=', 'received')->pluck('po_no', 'id');
+        $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
-        $$payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
 
         return view('add_stock.create')->with(compact(
             'suppliers',
             'status_array',
+            'payment_status_array',
+            'payment_type_array',
             'stores',
             'po_nos'
         ));
@@ -106,42 +110,70 @@ class AddStockController extends Controller
         try {
             $data = $request->except('_token');
 
+            if (!empty($data['po_no'])) {
+                $ref_transaction_po = Transaction::find($data['po_no']);
+            }
+
             $transaction_data = [
                 'store_id' => $data['store_id'],
                 'supplier_id' => $data['supplier_id'],
                 'type' => 'add_stock',
-                'status' => 'pending',
-                'order_date' => Carbon::now(),
-                'transaction_date' => Carbon::now(),
-                'payment_status' => 'due',
-                'po_no' => $data['po_no'],
+                'status' => $data['status'],
+                'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
+                'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
+                'payment_status' => $data['payment_status'],
+                'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
+                'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
-                'details' => $data['details'],
+                'notes' => !empty($data['notes']) ? $data['notes'] : null,
+                'details' => !empty($data['details']) ? $data['details'] : null,
+                'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
+                'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
+                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
                 'created_by' => Auth::user()->id
             ];
-
-            if ($data['submit'] == 'sent_admin') {
-                $transaction_data['status'] = 'sent_admin';
-            }
-            if ($data['submit'] == 'sent_supplier') {
-                $transaction_data['status'] = 'sent_supplier';
-            }
 
             DB::beginTransaction();
             $transaction = Transaction::create($transaction_data);
 
-            $this->productUtil->createOrUpdatePurchaseOrderLines($request->add_stock_lines, $transaction);
+            $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
+
+            if ($request->files) {
+                foreach ($request->file('files', []) as $key => $file) {
+
+                    $transaction->addMedia($file)->toMediaCollection('add_stock');
+                }
+            }
+            if ($request->payment_status != 'pending') {
+                $payment_data = [
+                    'transaction_id' => $transaction->id,
+                    'amount' => $this->commonUtil->num_uf($request->amount),
+                    'method' => $request->method,
+                    'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
+                    'ref_number' => $request->ref_number,
+                    'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                    'bank_name' => $request->bank_name,
+                ];
+                $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+                if ($request->upload_documents) {
+                    foreach ($request->file('upload_documents', []) as $key => $doc) {
+                        $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                    }
+                }
+            }
+
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+            // upload_documents
 
             DB::commit();
 
             if ($data['submit'] == 'print') {
                 $print = 'print';
-                $url = action('PurchaseOrderController@show', $transaction->id) . '?print=' . $print;
+                $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
 
                 return Redirect::to($url);
-            }
-            if ($data['submit'] == 'sent_supplier') {
-                $this->notificationUtil->sendPurchaseOrderToSupplier($transaction->id);
             }
 
             $output = [
@@ -170,10 +202,11 @@ class AddStockController extends Controller
         $add_stock = Transaction::find($id);
 
         $supplier = Supplier::find($add_stock->supplier_id);
-
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         return view('add_stock.show')->with(compact(
             'add_stock',
-            'supplier'
+            'supplier',
+            'payment_type_array'
         ));
     }
 
@@ -186,16 +219,22 @@ class AddStockController extends Controller
     public function edit($id)
     {
         $add_stock = Transaction::find($id);
-
         $suppliers = Supplier::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');
+
+        $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
+        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
 
         return view('add_stock.edit')->with(compact(
             'add_stock',
-            'status_array',
             'suppliers',
-            'stores'
+            'status_array',
+            'payment_status_array',
+            'payment_type_array',
+            'stores',
+            'po_nos'
         ));
     }
 
@@ -208,46 +247,80 @@ class AddStockController extends Controller
      */
     public function update(Request $request, $id)
     {
+
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->except('_token');
+
+            if (!empty($data['po_no'])) {
+                $ref_transaction_po = Transaction::find($data['po_no']);
+            }
 
             $transaction_data = [
                 'store_id' => $data['store_id'],
                 'supplier_id' => $data['supplier_id'],
                 'type' => 'add_stock',
                 'status' => $data['status'],
-                'order_date' => Carbon::now(),
-                'transaction_date' => Carbon::now(),
-                'payment_status' => 'due',
-                'po_no' => $data['po_no'],
+                'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
+                'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
+                'payment_status' => $data['payment_status'],
+                'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
-                'details' => $data['details'],
+                'notes' => !empty($data['notes']) ? $data['notes'] : null,
+                'details' => !empty($data['details']) ? $data['details'] : null,
+                'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
+                'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
+                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
                 'created_by' => Auth::user()->id
             ];
 
-            if ($data['submit'] == 'sent_admin') {
-                $transaction_data['status'] = 'sent_admin';
-            }
-            if ($data['submit'] == 'sent_supplier') {
-                $transaction_data['status'] = 'sent_supplier';
+            if(!empty($data['po_no'])){
+                $transaction_date['purchase_order_id'] = $data['po_no'];
             }
 
             DB::beginTransaction();
-            $transaction = Transaction::find($id);
+            $transaction = Transaction::where('id', $id)->first();
             $transaction->update($transaction_data);
 
-            $this->productUtil->createOrUpdatePurchaseOrderLines($request->add_stock_lines, $transaction);
+            $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
+
+            if ($request->files) {
+                foreach ($request->file('files', []) as $file) {
+                    $transaction->addMedia($file)->toMediaCollection('add_stock');
+                }
+            }
+
+            if ($request->payment_status != 'pending') {
+                $payment_data = [
+                    'transaction_payment_id' => !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
+                    'transaction_id' => $transaction->id,
+                    'amount' => $this->commonUtil->num_uf($request->amount),
+                    'method' => $request->method,
+                    'paid_on' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['paid_on']) : null,
+                    'ref_number' => $request->ref_number,
+                    'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                    'bank_name' => $request->bank_name,
+                ];
+
+
+                $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+                if ($request->upload_documents) {
+                    foreach ($request->file('upload_documents', []) as $doc) {
+                        $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                    }
+                }
+            }
+
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
 
             DB::commit();
 
             if ($data['submit'] == 'print') {
                 $print = 'print';
-                $url = action('PurchaseOrderController@show', $transaction->id) . '?print=' . $print;
+                $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
 
                 return Redirect::to($url);
-            }
-            if ($data['submit'] == 'sent_supplier') {
-                $this->notificationUtil->sendPurchaseOrderToSupplier($transaction->id);
             }
 
             $output = [
@@ -273,9 +346,33 @@ class AddStockController extends Controller
      */
     public function destroy($id)
     {
+        // TODO: check this functionality
         try {
-            $add_stock = Transaction::find($id)->delete();
-            PurchaseOrderLine::where('transaction_id', $id)->delete();
+            $add_stock = Transaction::find($id);
+
+            $add_stock_lines = $add_stock->add_stock_lines;
+
+            DB::beginTransaction();
+
+            if ($add_stock->status != 'reaceived') {
+                $add_stock_lines->delete();
+            } else {
+                $delete_add_stock_line_ids = [];
+                foreach ($add_stock_lines as $line) {
+                    $delete_add_stock_line_ids[] = $line->id;
+                    $this->productUtil->decreaseProductQuantity($line->product_id, $line->variation_id, $line->store_id, $line->quantity);
+                }
+
+                if (!empty($delete_add_stock_line_ids)) {
+                    AddStockLine::where('transaction_id', $id)->whereIn('id', $delete_add_stock_line_ids)->delete();
+                }
+            }
+
+            $add_stock->delete();
+
+
+            DB::commit();
+
 
             $output = [
                 'success' => true,
@@ -291,94 +388,6 @@ class AddStockController extends Controller
 
         return $output;
     }
-
-    public function getProducts()
-    {
-        if (request()->ajax()) {
-
-            $term = request()->term;
-
-            if (empty($term)) {
-                return json_encode([]);
-            }
-
-            $q = Product::leftJoin(
-                'variations',
-                'products.id',
-                '=',
-                'variations.product_id'
-            )->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
-                ->where(function ($query) use ($term) {
-                    $query->where('products.name', 'like', '%' . $term . '%');
-                    $query->orWhere('sku', 'like', '%' . $term . '%');
-                    $query->orWhere('sub_sku', 'like', '%' . $term . '%');
-                })
-                ->whereNull('variations.deleted_at')
-                ->select(
-                    'products.id as product_id',
-                    'products.name',
-                    'products.type',
-                    // 'products.sku as sku',
-                    'variations.id as variation_id',
-                    'variations.name as variation',
-                    'variations.sub_sku as sub_sku'
-                );
-
-            if (!empty(request()->store_id)) {
-                $q->where('product_stores.store_id', request()->store_id);
-            }
-            $products = $q->groupBy('variation_id')->get();
-
-            $products_array = [];
-            foreach ($products as $product) {
-                $products_array[$product->product_id]['name'] = $product->name;
-                $products_array[$product->product_id]['sku'] = $product->sub_sku;
-                $products_array[$product->product_id]['type'] = $product->type;
-                $products_array[$product->product_id]['variations'][]
-                    = [
-                        'variation_id' => $product->variation_id,
-                        'variation_name' => $product->variation,
-                        'sub_sku' => $product->sub_sku
-                    ];
-            }
-
-            $result = [];
-            $i = 1;
-            $no_of_records = $products->count();
-            if (!empty($products_array)) {
-                foreach ($products_array as $key => $value) {
-                    if ($no_of_records > 1 && $value['type'] != 'single') {
-                        $result[] = [
-                            'id' => $i,
-                            'text' => $value['name'] . ' - ' . $value['sku'],
-                            'variation_id' => 0,
-                            'product_id' => $key
-                        ];
-                    }
-                    $name = $value['name'];
-                    foreach ($value['variations'] as $variation) {
-                        $text = $name;
-                        if ($value['type'] == 'variable') {
-                            if ($variation['variation_name'] != 'DUMMY') {
-                                $text = $text . ' (' . $variation['variation_name'] . ')';
-                            }
-                        }
-                        $i++;
-                        $result[] = [
-                            'id' => $i,
-                            'text' => $text . ' - ' . $variation['sub_sku'],
-                            'product_id' => $key,
-                            'variation_id' => $variation['variation_id'],
-                        ];
-                    }
-                    $i++;
-                }
-            }
-
-            return json_encode($result);
-        }
-    }
-
 
     /**
      * Returns the html for product row
@@ -401,11 +410,12 @@ class AddStockController extends Controller
         }
     }
 
-    public function getPurchaseOrderDetails($id){
+    public function getPurchaseOrderDetails($id)
+    {
         $purchase_order = Transaction::find($id);
 
-        return view('add_stock.partials.product_row')->with(compact(
-             'purchase_order'
+        return view('add_stock.partials.purchase_order_details')->with(compact(
+            'purchase_order'
         ));
     }
 }

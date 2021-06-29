@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class GradeController extends Controller
 {
-   /**
+    /**
      * All Utils instance.
      *
      */

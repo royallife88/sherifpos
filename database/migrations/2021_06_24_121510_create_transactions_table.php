@@ -26,9 +26,13 @@ class CreateTransactionsTable extends Migration
             $table->enum('payment_status', ['paid', 'pending', 'partial'])->nullable();
             $table->string('invoice_no')->nullable();
             $table->string('po_no')->nullable();
+            $table->unsignedBigInteger('purchase_order_id')->nullable();
             $table->string('ref_no')->nullable();
             $table->decimal('final_total', 15, 4)->default(0.0000);
             $table->text('details')->nullable();
+            $table->text('notes')->nullable();
+            $table->string('due_date')->nullable();
+            $table->integer('notify_me')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -11,6 +12,23 @@ use Illuminate\Support\Facades\Log;
 
 class CustomerController extends Controller
 {
+    /**
+     * All Utils instance.
+     *
+     */
+    protected $commonUtil;
+
+    /**
+     * Constructor
+     *
+     * @param ProductUtils $product
+     * @return void
+     */
+    public function __construct(Util $commonUtil)
+    {
+        $this->commonUtil = $commonUtil;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -60,7 +78,7 @@ class CustomerController extends Controller
     {
         $this->validate(
             $request,
-            ['name' => ['required', 'max:255']],
+            ['mobile_number' => ['required', 'max:255']],
             ['customer_type_id' => ['required', 'max:255']]
         );
 
@@ -138,7 +156,7 @@ class CustomerController extends Controller
     {
         $this->validate(
             $request,
-            ['name' => ['required', 'max:255']],
+            ['mobile_number' => ['required', 'max:255']],
             ['customer_type_id' => ['required', 'max:255']]
         );
 
@@ -150,7 +168,7 @@ class CustomerController extends Controller
             $customer->update($data);
 
             if ($request->has('image')) {
-                if($customer->getFirstMedia('customer_photo')){
+                if ($customer->getFirstMedia('customer_photo')) {
                     $customer->getFirstMedia('customer_photo')->delete();
                 }
                 $customer->addMedia($request->image)->toMediaCollection('customer_photo');
@@ -196,5 +214,19 @@ class CustomerController extends Controller
         }
 
         return $output;
+    }
+
+    public function getDropdown()
+    {
+        $customer = Customer::get();
+        $html = '';
+        if (!empty($append_text)) {
+            $html = '<option value="">Please Select</option>';
+        }
+        foreach ($customer as $value) {
+            $html .= '<option value="' . $value->id . '">' . $value->name  . ' ' . $value->mobile_number . '</option>';
+        }
+
+        return $html;
     }
 }

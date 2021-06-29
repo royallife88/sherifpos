@@ -27,6 +27,7 @@
     type="text/css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.bootstrap.min.css"
     type="text/css">
+<link rel="stylesheet" href="{{asset('vendor/toastr/toastr.min.css')}}" id="theme-stylesheet" type="text/css">
 <link rel="stylesheet" href="{{asset('css/style.default.css')}}" id="theme-stylesheet" type="text/css">
 <link rel="stylesheet" href="{{asset('css/dropzone.css')}}">
 <link rel="stylesheet" href="{{asset('css/bootstrap-treeview.css')}}">
@@ -44,13 +45,16 @@
     .bs-searchbox .form-control {
         width: 100% !important;
     }
-    .error{
+
+    .error {
         color: red !important;
     }
-    .text-red{
+
+    .text-red {
         color: maroon !important;
     }
-    .hide{
+
+    .hide {
         display: none !important;
     }
 </style>

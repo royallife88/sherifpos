@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
@@ -64,28 +65,29 @@ class ProductUtil extends Util
     {
         $number = '';
         $store_string = '';
-        if(!empty($store_id)){
+        if (!empty($store_id)) {
             $store_string = $this->getStoreNameFirstLetters($store_id);
         }
-        if($type == 'purchase_order'){
+        if ($type == 'purchase_order') {
             $po_count = Transaction::where('type', 'purchase_order')->count() + 1;
 
-            $number = 'PO'. $store_string . $po_count;
+            $number = 'PO' . $store_string . $po_count;
         }
 
 
         return $number;
     }
 
-    public function getStoreNameFirstLetters($store_id){
+    public function getStoreNameFirstLetters($store_id)
+    {
         $string = '';
         $store = Store::find($store_id);
 
-        if(!empty($store)){
+        if (!empty($store)) {
             $name = explode(" ", $store->name);
 
             foreach ($name as $w) {
-              $string .= $w[0];
+                $string .= $w[0];
             }
         }
 
@@ -248,7 +250,7 @@ class ProductUtil extends Util
                             $tree .= '{';
                             $product = Product::find($product->id);
                             $action = action('ProductController@edit', $product->id);
-                            $tree .= 'text: "' . $product->name .'",';
+                            $tree .= 'text: "' . $product->name . '",';
                             // $tree .= 'href:  "'.$action.'",';
                             $tree .= 'color: "green",';
                             $tree .= 'nodes: [';
@@ -279,7 +281,7 @@ class ProductUtil extends Util
         return $config;
     }
 
-     /**
+    /**
      * Gives list of products based on products id and variation id
      *
      * @param int $business_id
@@ -305,6 +307,7 @@ class ProductUtil extends Util
             'v.id as variation_id',
             'v.name as variation_name',
             'v.default_purchase_price',
+            'v.default_sell_price',
             'v.sub_sku'
         )
             ->get();
@@ -312,7 +315,47 @@ class ProductUtil extends Util
         return $products;
     }
 
-      /**
+    /**
+     * Gives list of products based on products id and variation id
+     *
+     * @param int $business_id
+     * @param int $product_id
+     * @param int $variation_id = null
+     *
+     * @return Obj
+     */
+    public function getDetailsFromProductByStore($product_id, $variation_id = null, $store_id = null)
+    {
+        $product = Product::leftjoin('variations as v', 'products.id', '=', 'v.product_id')
+            ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
+            ->whereNull('v.deleted_at');
+
+        if (!is_null($variation_id) && $variation_id !== '0') {
+            $product->where('v.id', $variation_id);
+        }
+        if (!is_null($store_id) && $store_id !== '0') {
+            $product->where('product_stores.store_id', $store_id);
+        }
+
+        $product->where('products.id', $product_id);
+
+        $products = $product->select(
+            'products.id as product_id',
+            'products.name as product_name',
+            'products.alert_quantity',
+            'product_stores.qty_available',
+            'v.id as variation_id',
+            'v.name as variation_name',
+            'v.default_purchase_price',
+            'v.default_sell_price',
+            'v.sub_sku'
+        )->groupBy('v.id')
+            ->get();
+
+        return $products;
+    }
+
+    /**
      * Get all details for a product from its variation id
      *
      * @param int $variation_id
@@ -357,7 +400,7 @@ class ProductUtil extends Util
         return $product;
     }
 
-      /**
+    /**
      * createOrUpdatePurchaseOrderLines
      *
      * @param [mix] $purchase_order_lines
@@ -386,7 +429,7 @@ class ProductUtil extends Util
                     'transaction_id' => $transaction->id,
                     'product_id' => $line['product_id'],
                     'variation_id' => $line['variation_id'],
-                    'quantity' =>$this->num_uf($line['quantity']),
+                    'quantity' => $this->num_uf($line['quantity']),
                     'purchase_price' => $this->num_uf($line['purchase_price']),
                     'sub_total' => $this->num_uf($line['sub_total']),
                 ];
@@ -397,81 +440,143 @@ class ProductUtil extends Util
             }
         }
 
-        if(!empty($keep_lines_ids)){
+        if (!empty($keep_lines_ids)) {
             PurchaseOrderLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->delete();
         }
 
         return true;
     }
 
+    /**
+     * createOrUpdatePurchaseOrderLines
+     *
+     * @param [mix] $add_stock_lines
+     * @param [mix] $transaction
+     * @return void
+     */
+    public function createOrUpdateAddStockLines($add_stock_lines, $transaction)
+    {
 
-    // public function updateProductStock($status_before, $transaction, $product_id, $variation_id, $new_quantity, $old_quantity, $currency_details, $store_id = null)
-    // {
-    //     $new_quantity_f = $this->num_f($new_quantity);
-    //     $old_qty = $this->num_f($old_quantity);
-    //     //Update quantity for existing products
+        $keep_lines_ids = [];
 
-    //     if ($status_before == 'received' && $transaction->status == 'received') {
-    //         //if status received update existing quantity
-    //         $this->updateProductQuantity($transaction->location_id, $product_id, $variation_id, $new_quantity_f, $old_qty, $currency_details);
-    //         $this->updateProductQuantityStore($transaction->location_id, $product_id, $variation_id, $new_quantity_f, $store_id, $old_qty, $currency_details);
-    //     } elseif ($status_before == 'received' && $transaction->status != 'received') {
-    //         //decrease quantity only if status changed from received to not received
-    //         $this->decreaseProductQuantity(
-    //             $product_id,
-    //             $variation_id,
-    //             $transaction->location_id,
-    //             $old_quantity
-    //         );
-    //         $this->decreaseProductQuantityStore(
-    //             $product_id,
-    //             $variation_id,
-    //             $transaction->location_id,
-    //             $old_quantity,
-    //             $store_id
-    //         );
-    //     } elseif ($status_before != 'received' && $transaction->status == 'received') {
-    //         $this->updateProductQuantity($transaction->location_id, $product_id, $variation_id, $new_quantity_f, 0, $currency_details);
-    //     }
-    // }
+        foreach ($add_stock_lines as $line) {
+            if (!empty($line['add_stock_line_id'])) {
+                $add_stock_line = AddStockLine::find($line['add_stock_line_id']);
 
-    // public function decreaseProductQuantity($product_id, $variation_id, $location_id, $new_quantity, $old_quantity = 0, $adjustment_type = null) //$adjustment_type for stock adjustment
-    // {
-    //     $qty_difference = $new_quantity - $old_quantity;
+                $add_stock_line->product_id = $line['product_id'];
+                $add_stock_line->variation_id = $line['variation_id'];
+                $add_stock_line->quantity = $this->num_uf($line['quantity']);
+                $add_stock_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $add_stock_line->sub_total = $this->num_uf($line['sub_total']);
 
-    //     $product = Product::find($product_id);
+                $add_stock_line->save();
+                if ($transaction->status != 'pending') {
+                    $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $add_stock_line->quantity);
+                }
+                $keep_lines_ids[] = $line['add_stock_line_id'];
+            } else {
+                $add_stock_line_data = [
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $line['product_id'],
+                    'variation_id' => $line['variation_id'],
+                    'quantity' => $this->num_uf($line['quantity']),
+                    'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'sub_total' => $this->num_uf($line['sub_total']),
+                ];
+                //on received change product to active if already not active
+                Product::where('id', $line['product_id'])->update(['active' => 1]);
+                if ($transaction->status != 'pending') {
+                    $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
+                }
+                $add_stock_line = AddStockLine::create($add_stock_line_data);
 
-    //     //Check if stock is enabled or not.
-    //     if ($product->enable_stock == 1) {
-    //         //Decrement Quantity in variations location table
-    //         $details = VariationLocationDetails::where('variation_id', $variation_id)
-    //             ->where('product_id', $product_id)
-    //             ->where('location_id', $location_id)
-    //             ->first();
+                $keep_lines_ids[] = $add_stock_line->id;
+            }
+        }
 
-    //         //If location details not exists create new one
-    //         if (empty($details)) {
-    //             $variation = Variation::find($variation_id);
-    //             $details = VariationLocationDetails::create([
-    //                 'product_id' => $product_id,
-    //                 'location_id' => $location_id,
-    //                 'variation_id' => $variation_id,
-    //                 'product_variation_id' => $variation->product_variation_id,
-    //                 'qty_available' => 0
-    //             ]);
-    //         }
-    //         if (!empty($adjustment_type)) {
-    //             if ($adjustment_type == 'increase') {
-    //                 $details->increment('qty_available', $qty_difference);
-    //             }
-    //             if ($adjustment_type == 'decrease') {
-    //                 $details->decrement('qty_available', $qty_difference);
-    //             }
-    //         } else {
-    //             $details->decrement('qty_available', $qty_difference);
-    //         }
-    //     }
+        if (!empty($keep_lines_ids)) {
+            AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->delete();
+        }
 
-    //     return true;
-    // }
+        return true;
+    }
+
+    /**
+     * Checks if products has manage stock enabled then Updates quantity for product and its
+     * variations
+     *
+     * @param $product_id
+     * @param $variation_id
+     * @param $store_id
+     * @param $new_quantity
+     * @param $old_quantity = 0
+     *
+     * @return boolean
+     */
+    public function updateProductQuantityStore($product_id, $variation_id, $store_id, $new_quantity, $old_quantity = 0)
+    {
+        $qty_difference = $new_quantity - $old_quantity;
+
+        if ($qty_difference != 0) {
+            $product_store = ProductStore::where('variation_id', $variation_id)
+                ->where('product_id', $product_id)
+                ->where('store_id', $store_id)
+                ->first();
+
+            if (empty($product_store)) {
+                $product_store = new ProductStore();
+                $product_store->variation_id = $variation_id;
+                $product_store->product_id = $product_id;
+                $product_store->store_id = $store_id;
+                $product_store->qty_available = 0;
+            }
+
+            $product_store->qty_available += $qty_difference;
+            $product_store->save();
+        }
+
+        return true;
+    }
+
+
+    /**
+     * Checks if products has manage stock enabled then Decrease quantity for product and its variations
+     *
+     * @param $product_id
+     * @param $variation_id
+     * @param $location_id
+     * @param $new_quantity
+     * @param $old_quantity = 0
+     *
+     * @return boolean
+     */
+    public function decreaseProductQuantity($product_id, $variation_id, $location_id, $new_quantity, $old_quantity = 0)
+    {
+        $qty_difference = $new_quantity - $old_quantity;
+
+        $product = Product::find($product_id);
+
+        //Check if stock is enabled or not.
+        if ($product->is_service != 1) {
+            //Decrement Quantity in variations location table
+            $details = ProductStore::where('variation_id', $variation_id)
+                ->where('product_id', $product_id)
+                ->where('location_id', $location_id)
+                ->first();
+
+            //If location details not exists create new one
+            if (empty($details)) {
+                $details = ProductStore::create([
+                    'product_id' => $product_id,
+                    'location_id' => $location_id,
+                    'variation_id' => $variation_id,
+                    'qty_available' => 0
+                ]);
+            }
+
+            $details->decrement('qty_available', $qty_difference);
+        }
+
+        return true;
+    }
 }

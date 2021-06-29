@@ -83,6 +83,8 @@ class CategoryController extends Controller
                 $category_id = $request->parent_id;
                 $sub_category_id = $category->id;
             }
+
+
             DB::commit();
             $output = [
                 'success' => true,

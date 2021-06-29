@@ -10,8 +10,8 @@
                     <div class="card-header d-flex align-items-center">
                         <h4>@lang('lang.add_stock')</h4>
                     </div>
-                    {!! Form::open(['url' => action('PurchaseOrderController@store'), 'method' => 'post', 'id' =>
-                    'add_stock_form']) !!}
+                    {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' =>
+                    'add_stock_form', 'enctype' => 'multipart/form-data' ]) !!}
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -34,9 +34,8 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('po_no', __('lang.po_no'), []) !!} <i
-                                    class="dripicons-question" data-toggle="tooltip"
-                                    title="@lang('lang.po_no_add_stock_info')"></i>
+                                    {!! Form::label('po_no', __('lang.po_no'), []) !!} <i class="dripicons-question"
+                                        data-toggle="tooltip" title="@lang('lang.po_no_add_stock_info')"></i>
                                     {!! Form::select('po_no', $po_nos,
                                     null, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
@@ -47,7 +46,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('status', __('lang.status'). ':*', []) !!}
-                                    {!! Form::select('status', $status_array,
+                                    {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'],
                                     'received', ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
@@ -66,8 +65,9 @@
                                     <input type="text" name="search_product" id="search_product"
                                         placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                         class="form-control ui-autocomplete-input" autocomplete="off">
-                                        <button type="button" class="btn btn-success btn-lg btn-modal" data-href="{{action('ProductController@create')}}?quick_add=1" data-container=".view_modal"><i
-                                            class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-success btn-lg btn-modal"
+                                        data-href="{{action('ProductController@create')}}?quick_add=1"
+                                        data-container=".view_modal"><i class="fa fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -109,46 +109,113 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('invoice_no', __('lang.invoice_no'), []) !!} <br>
-                                    {!! Form::text('invoice_no', null, ['class' => 'form-control', 'placeholder' => __('lang.invoice_no')]) !!}
+                                    {!! Form::text('invoice_no', null, ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.invoice_no')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('transaction_date', __('lang.date'), []) !!} <br>
-                                    {!! Form::text('transaction_date', null, ['class' => 'form-control datepicker', 'readonly', 'placeholder' => __('lang.date')]) !!}
+                                    {!! Form::label('transaction_date', __('lang.date'). ':*', []) !!} <br>
+                                    {!! Form::text('transaction_date', null, ['class' => 'form-control datepicker', 'required',
+                                    'readonly', 'placeholder' => __('lang.date')]) !!}
                                 </div>
                             </div>
 
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('payment_statuspayment_status', __('lang.payment_statuspayment_status'). ':*', []) !!}
-                                    {!! Form::select('payment_statuspayment_status', $payment_status_array,
+                                    {!! Form::label('payment_status', __('lang.payment_status'). ':*', [])
+                                    !!}
+                                    {!! Form::select('payment_status', $payment_status_array,
+                                    null, ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true", 'required',
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 payment_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('amount', __('lang.amount'). ':*', []) !!} <br>
+                                    {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder'
+                                    => __('lang.amount')]) !!}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 payment_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('method', __('lang.payment_type'). ':*', []) !!}
+                                    {!! Form::select('method', $payment_type_array,
                                     'received', ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
                             </div>
+
+                            <div class="col-md-3 payment_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
+                                    {!! Form::text('paid_on', null, ['class' => 'form-control datepicker', 'readonly',
+                                    'placeholder' => __('lang.payment_date')]) !!}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 payment_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('upload_documents', __('lang.upload_documents'). ':', []) !!} <br>
+                                    {!! Form::file('upload_documents[]', null, ['class' => '']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3 not_cash_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('ref_number', __('lang.ref_number'). ':', []) !!} <br>
+                                    {!! Form::text('ref_number', null, ['class' => 'form-control not_cash',
+                                    'placeholder' => __('lang.ref_number')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3 not_cash_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':', []) !!} <br>
+                                    {!! Form::text('bank_deposit_date', null, ['class' => 'form-control not_cash datepicker', 'readonly',
+                                    'placeholder' => __('lang.bank_deposit_date')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3 not_cash_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('bank_name', __('lang.bank_name'). ':', []) !!} <br>
+                                    {!! Form::text('bank_name', null, ['class' => 'form-control not_cash',
+                                    'placeholder' => __('lang.bank_name')]) !!}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 due_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('due_date', __('lang.due_date'). ':', []) !!} <br>
+                                    {!! Form::text('due_date', null, ['class' => 'form-control datepicker', 'readonly',
+                                    'placeholder' => __('lang.due_date')]) !!}
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 due_fields hide">
+                                <div class="form-group">
+                                    {!! Form::label('notify_me', __('lang.notify_me'). ':', []) !!} <br>
+                                    {!! Form::text('notify_me', null, ['class' => 'form-control',
+                                    'placeholder' => __('lang.notify_me')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {!! Form::label('notes', __('lang.notes'). ':', []) !!} <br>
+                                    {!! Form::textarea('notes', null, ['class' => 'form-control', 'rows' => 3]) !!}
+                                </div>
+                            </div>
+
                         </div>
 
 
                     </div>
 
                     <div class="col-sm-12">
-                        <button type="submit" name="submit" id="print" style="margin: 10px" value="print"
-                            class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.print' )</button>
-                        @can('add_stock.send_to_supplier.create')
-                        <button type="button" id="send_to_supplier" style="margin: 10px" disabled
-                            class="btn btn-warning pull-right btn-flat submit" data-toggle="modal"
-                            data-target="#supplier_modal">@lang(
-                            'lang.send_to_supplier' )</button>
-                        @endcan
-                        @can('add_stock.send_to_admin.create')
-                        <button type="submit" name="submit" id="send_to_admin" style="margin: 10px"
-                            value="sent_admin" class="btn btn-primary pull-right btn-flat submit">@lang(
-                            'lang.send_to_admin' )</button>
-                        @endcan
-                        <div class="modal fade supplier_modal" id="supplier_modal" role="dialog" aria-hidden="true">
-                        </div>
+                        <button type="submit" name="submit" id="print" style="margin: 10px" value="save"
+                            class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.save' )</button>
 
                     </div>
                     {!! Form::close() !!}
@@ -162,9 +229,8 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/purchase.js')}}"></script>
+<script src="{{asset('js/add_stock.js')}}"></script>
 <script type="text/javascript">
-
     $('#po_no').change(function () {
         let po_no = $(this).val();
 
@@ -225,5 +291,44 @@
             },
         });
     });
+
+    //payment related script
+
+    $('#payment_status').change(function(){
+        var payment_status = $(this).val();
+
+        if(payment_status === 'paid' || payment_status === 'partial'){
+            $('.not_cash_fields').addClass('hide');
+            $('#method').change();
+            $('.payment_fields').removeClass('hide');
+        }else{
+            $('.payment_fields').addClass('hide');
+        }
+        if(payment_status === 'pending' || payment_status === 'partial'){
+            $('.due_fields').removeClass('hide');
+        }else{
+            $('.due_fields').addClass('hide');
+        }
+        if(payment_status === 'pending'){
+            $('.not_cash_fields').addClass('hide');
+            $('.not_cash').attr('required', false);
+        }
+        if(payment_status === 'paid'){
+            $('.due_fields').addClass('hide');
+        }
+
+        $
+    })
+    $('#method').change(function(){
+        var method = $(this).val();
+
+        if(method === 'cash'){
+            $('.not_cash_fields').addClass('hide');
+            $('.not_cash').attr('required', false);
+        }else{
+            $('.not_cash_fields').removeClass('hide');
+            $('.not_cash').attr('required', true);
+        }
+    })
 </script>
 @endsection

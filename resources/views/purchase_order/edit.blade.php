@@ -103,9 +103,9 @@
                                                 name="purchase_order_lines[{{$loop->index}}][purchase_price]" required value="@if(isset($product->purchase_price)){{@num_format($product->purchase_price)}}@else{{0}}@endif">
                                             </td>
                                             <td>
-                                                <span class="sub_total_span"></span>
+                                                <span class="sub_total_span">{{@num_format($product->sub_total)}}</span>
                                                 <input type="hidden" class="form-control sub_total"
-                                                name="purchase_order_lines[{{$loop->index}}][sub_total]" value="">
+                                                name="purchase_order_lines[{{$loop->index}}][sub_total]" value="{{$product->sub_total}}">
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>

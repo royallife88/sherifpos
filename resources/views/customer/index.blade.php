@@ -78,7 +78,7 @@
 </div>
 @endsection
 
-@section('javascrpt')
+@section('javascript')
     <script>
 
     </script>

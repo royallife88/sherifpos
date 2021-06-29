@@ -7,6 +7,7 @@ use App\Models\PurchaseOrderLine;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use App\Models\Variation;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -62,7 +63,7 @@ class PurchaseOrderController extends Controller
         if (!empty(request()->end_date)) {
             $query->where('transaction_date', '<=', request()->end_date);
         }
-
+        // TODO: condition for superadmin --sent_admin and for other user as draft
         $purchase_orders = $query->get();
 
         $suppliers = Supplier::pluck('name', 'id');
@@ -415,7 +416,7 @@ class PurchaseOrderController extends Controller
         return $po_no;
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -444,5 +445,59 @@ class PurchaseOrderController extends Controller
             'suppliers',
             'status_array'
         ));
+    }
+    /**
+     *  quick add purchase order as draft invoked from pos page if product stock is low
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function quickAddDraft(Request $request)
+    {
+        $variation = Variation::find($request->variation_id);
+
+        try {
+            $transaction_data = [
+                'store_id' => $request->store_id,
+                'supplier_id' => null,
+                'type' => 'purchase_order',
+                'status' => 'draft',
+                'order_date' => Carbon::now(),
+                'transaction_date' => Carbon::now(),
+                'payment_status' => 'due',
+                'po_no' =>  $this->productUtil->getNumberByTye('purchase_order'),
+                'final_total' => $this->productUtil->num_uf($variation->default_purchase_price),
+                'details' => 'Created from POS page',
+                'created_by' => Auth::user()->id
+            ];
+
+            DB::beginTransaction();
+            $transaction = Transaction::create($transaction_data);
+
+            $purchase_order_line_data = [
+                'transaction_id' => $transaction->id,
+                'product_id' => $request->product_id,
+                'variation_id' => $request->variation_id,
+                'quantity' => 1,
+                'purchase_price' => $this->productUtil->num_uf($variation->default_purchase_price),
+                'sub_total' => $this->productUtil->num_uf($variation->default_purchase_price * 1),
+            ];
+
+            $purchase_order_line = PurchaseOrderLine::create($purchase_order_line_data);
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

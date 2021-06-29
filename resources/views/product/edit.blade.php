@@ -173,6 +173,14 @@
                                     </span>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="i-checks"  style="margin-top: 40px">
+                                    <input id="is_service" name="is_service" type="checkbox" @if(!empty($product->is_service)) checked @endif value="1"
+                                        class="form-control-custom">
+                                    <label for="is_service"><strong>@lang('lang.is_service')</strong></label>
+                                </div>
+                            </div>
+
                             <div class="col-md-12 " style="margin-top: 10px;">
                                 <div class="dropzone" id="my-dropzone">
                                 </div>

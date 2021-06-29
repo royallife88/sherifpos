@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -44,5 +45,9 @@ class Customer extends Model implements HasMedia
         }
 
         return $array;
+    }
+
+    public static function getCustomerArrayWithMobile(){
+        return Customer::select('id', DB::raw('CONCAT(name, " ", mobile_number ) as customer_name'))->pluck('customer_name', 'id');
     }
 }

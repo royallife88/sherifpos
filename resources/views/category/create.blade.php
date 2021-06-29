@@ -19,8 +19,8 @@
             </div>
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
-                {!! Form::label('image', __( 'lang.image' ) . ':') !!}
-                {!! Form::file('image', ['class' => 'form-control' ]) !!}
+                {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
+                {!! Form::file('image', ['class' => '' ]) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('parent_id', __( 'lang.parent_category' ) . ':') !!}

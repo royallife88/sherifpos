@@ -9,7 +9,7 @@
 
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
+            {!! Form::label('name', __( 'lang.name' ) ) !!}
             {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __(
             'lang.name' ), 'required' ]);
             !!}
@@ -23,7 +23,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('mobile_number', __( 'lang.mobile_number' ) . ':') !!}
+            {!! Form::label('mobile_number', __( 'lang.mobile_number' ) . ':*') !!}
             {!! Form::text('mobile_number', null, ['class' => 'form-control', 'placeholder' =>
             __(
             'lang.mobile_number' ), 'required' ]);

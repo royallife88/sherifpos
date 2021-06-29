@@ -23,6 +23,11 @@ class Transaction extends Model  implements HasMedia
         return $this->hasMany(PurchaseOrderLine::class);
     }
 
+    public function add_stock_lines()
+    {
+        return $this->hasMany(AddStockLine::class);
+    }
+
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
@@ -31,5 +36,9 @@ class Transaction extends Model  implements HasMedia
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    public function transaction_payments(){
+        return $this->hasMany(TransactionPayment::class);
     }
 }

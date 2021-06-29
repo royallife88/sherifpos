@@ -25,6 +25,7 @@ class CreateProductsTable extends Migration
             $table->string('multiple_colors')->nullable();
             $table->string('multiple_sizes')->nullable();
             $table->string('multiple_grades')->nullable();
+            $table->boolean('is_service')->default(0);
             $table->text('product_details')->nullable();
             $table->string('batch_number')->nullable();
             $table->string('barcode_type');

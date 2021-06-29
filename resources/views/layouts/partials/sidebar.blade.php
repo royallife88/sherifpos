@@ -1,5 +1,5 @@
 <!-- Side Navbar -->
-<nav class="side-navbar no-print">
+<nav class="side-navbar no-print @if(request()->segment(1) == 'pos') shrink @endif">
     <div class="side-navbar-wrapper">
       <!-- Sidebar Navigation Menus-->
       <div class="main-menu">
@@ -54,6 +54,32 @@
           </li>
           @endif
 
+          @if(auth()->user()->can('sale.pos.create_and_edit') || auth()->user()->can('sale.pos.view') )
+          <li><a href="#sale" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-cart"></i><span>{{__('lang.sale')}}</span><span></a>
+            <ul id="sale" class="collapse list-unstyled @if(in_array(request()->segment(1), ['pos'])) show @endif">
+                @can('sale.pos.create_and_edit')
+                <li class="@if(request()->segment(1) == 'pos' && request()->segment(2) == 'create') active @endif"><a href="{{action('SellPosController@create')}}">{{__('lang.pos')}}</a></li>
+                @endcan
+                {{-- @can('stock.stock.view')
+                <li class="@if(request()->segment(1) == 'add-stock' && empty(request()->segment(2))) active @endif"><a href="{{action('AddStockController@index')}}">{{__('lang.view_all_added_stocks')}}</a></li>
+                @endcan --}}
+            </ul>
+          </li>
+          @endif
+
+          @if(auth()->user()->can('coupons_and_gift_cards.coupon.create_and_edit') || auth()->user()->can('coupons_and_gift_cards.coupon.view') || auth()->user()->can('coupons_and_gift_cards.gift_card.view') || auth()->user()->can('coupons_and_gift_cards.gift_card.create_and_edit') )
+          <li><a href="#coupons_and_gift_cards" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-cart"></i><span>{{__('lang.coupons_and_gift_cards')}}</span><span></a>
+            <ul id="coupons_and_gift_cards" class="collapse list-unstyled @if(in_array(request()->segment(1), ['coupon', 'gift-card'])) show @endif">
+                @can('coupons_and_gift_cards.coupon.view')
+                <li class="@if(request()->segment(1) == 'coupon' && request()->segment(2) == 'create') active @endif"><a href="{{action('CouponController@index')}}">{{__('lang.coupon')}}</a></li>
+                @endcan
+                {{-- @can('stock.stock.view')
+                <li class="@if(request()->segment(1) == 'add-stock' && empty(request()->segment(2))) active @endif"><a href="{{action('AddStockController@index')}}">{{__('lang.view_all_added_stocks')}}</a></li>
+                @endcan --}}
+            </ul>
+          </li>
+          @endif
+
           @if(auth()->user()->can('customer_module.customer.create_and_edit') || auth()->user()->can('customer_module.customer.view') || auth()->user()->can('customer_module.customer_type.create_and_edit') || auth()->user()->can('customer_module.customer_type.view') )
           <li><a href="#customer" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-user-group"></i><span>{{__('lang.customers')}}</span><span></a>
             <ul  id="customer" class="collapse list-unstyled @if(in_array(request()->segment(1), ['customer', 'customer-type'])) show @endif">
@@ -93,9 +119,13 @@
 
 
           <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
-            <ul id="setting" class="collapse list-unstyled @if(in_array(request()->segment(1), ['store'])) show @endif">
-
-                <li class="@if(request()->segment(1) == 'store' && empty(request()->segment(2))) active @endif"><a href="{{action('StoreController@index')}}">{{__('lang.store')}}</a></li>
+            <ul id="setting" class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos'])) show @endif">
+                @can('settings.store.view')
+                <li class="@if(request()->segment(1) == 'store' && empty(request()->segment(2))) active @endif"><a href="{{action('StoreController@index')}}">{{__('lang.stores')}}</a></li>
+                @endcan
+                @can('settings.store_pos.view')
+                <li class="@if(request()->segment(1) == 'store-pos' && empty(request()->segment(2))) active @endif"><a href="{{action('StorePosController@index')}}">{{__('lang.pos_for_the_stores')}}</a></li>
+                @endcan
 
 
             </ul>

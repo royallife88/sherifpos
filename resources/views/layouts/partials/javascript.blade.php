@@ -43,6 +43,7 @@
 <script type="text/javascript" src="{{asset('vendor/datatable/sum().js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/datatable/dataTables.checkboxes.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/accounting.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('vendor/toastr/toastr.min.js')}}"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/fixedheader/3.1.6/js/dataTables.fixedHeader.min.js">
 </script>
 <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js">

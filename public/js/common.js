@@ -110,7 +110,6 @@ function __number_f(
     return __currency_trans_from_en(input, show_symbol, use_page_currency, precision);
 }
 function __read_number(input_element, use_page_currency = false) {
-    console.log(input_element.val());
     return __number_uf(input_element.val(), use_page_currency);
 }
 function __write_number(
