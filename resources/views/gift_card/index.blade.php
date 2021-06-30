@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', __('lang.coupon'))
+@section('title', __('lang.gift_card'))
 
 @section('content')
 <div class="container-fluid">
-    @can('coupons_and_gift_cards.coupon.create_and_edit')
-    <a style="color: white" data-href="{{action('CouponController@create')}}" data-container=".view_modal"
+    @can('coupons_and_gift_cards.gift_card.create_and_edit')
+    <a style="color: white" data-href="{{action('GiftCardController@create')}}" data-container=".view_modal"
         class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
-        @lang('lang.generate_coupon')</a>
+        @lang('lang.generate_gift_card')</a>
     @endcan
 
 </div>
@@ -16,10 +16,9 @@
         <div class="row">
             <div class="col-md-3">
                 <div class="form-group">
-                    {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
-                    {!! Form::select('type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], request()->type,
-                    ['class' =>
-                    'form-control', 'data-live-search' => 'true', 'placeholder' => __('lang.all')]) !!}
+                    {!! Form::label('customer_id', __('lang.customer'), []) !!}
+                    {!! Form::select('customer_id', $customers, request()->customer_id, ['class' =>
+                    'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                 </div>
             </div>
             <div class="col-md-3">
@@ -45,7 +44,7 @@
             <div class="col-md-3">
                 <br>
                 <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                <a href="{{action('CouponController@index')}}"
+                <a href="{{action('GiftCardController@index')}}"
                     class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
             </div>
 
@@ -54,37 +53,32 @@
 </div>
 
 <div class="table-responsive">
-    <table id="coupon_table" class="table dataTable">
+    <table id="gift_card_table" class="table dataTable">
         <thead>
             <tr>
-                <th>@lang('lang.coupon_code')</th>
-                <th>@lang('lang.type')</th>
+                <th>@lang('lang.card_number')</th>
+                <th>@lang('lang.amount')</th>
+                <th>@lang('lang.customer_name')</th>
                 <th>@lang('lang.date_and_time')</th>
                 <th>@lang('lang.created_by')</th>
-                <th>@lang('lang.affected_by_products')</th>
+                <th>@lang('lang.balance')</th>
                 <th>@lang('lang.status')</th>
 
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($coupons as $coupon)
+            @foreach($gift_cards as $gift_card)
             <tr>
-                <td>{{$coupon->coupon_code}}</td>
-                <td>{{ucfirst($coupon->type)}}</td>
-                <td>{{\Carbon\Carbon::parse($coupon->created_at)->format('m/d/Y H:i:s')}}</td>
-                <td>{{ucfirst($coupon->created_by_user->name)}}</td>
-                <td>
-                    @if(!$coupon->all_products)
-                    @foreach ($coupon->products as $item)
-                    {{$item->name}},
-                    @endforeach
-                    @else
-                    @lang('lang.all_products')
-                    @endif
-                </td>
-                {{-- TODO: 5.2.5.8.8- If the coupon is used the details of the transaction must appear upon click on the word “Used” --}}
-                <td>@if($coupon->used) @lang('lang.used') @else @lang('lang.not_used') @endif</td>
+                <td>{{$gift_card->card_number}}</td>
+                <td>{{@num_format($gift_card->amount)}}</td>
+                <td>@if(!empty($gift_card->customer)) {{$gift_card->customer->name}} @endif</td>
+                <td>{{\Carbon\Carbon::parse($gift_card->created_at)->format('m/d/Y H:i:s')}}</td>
+                <td>{{ucfirst($gift_card->created_by_user->name)}}</td>
+                <td>{{@num_format($gift_card->balance)}}</td>
+
+                {{-- TODO: 5.2.5.8.8- If the gift_card is used the details of the transaction must appear upon click on the word “Used” --}}
+                <td>@if($gift_card->used) @lang('lang.used') @else @lang('lang.not_used') @endif</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -93,27 +87,27 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            @can('coupons_and_gift_cards.coupon.create_and_edit')
+                            @can('coupons_and_gift_cards.gift_card.create_and_edit')
                             <li>
 
-                                <a data-href="{{action('CouponController@edit', $coupon->id)}}"
+                                <a data-href="{{action('GiftCardController@edit', $gift_card->id)}}"
                                     data-container=".view_modal" class="btn btn-modal"><i
                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            @can('coupons_and_gift_cards.coupon.delete')
+                            @can('coupons_and_gift_cards.gift_card.delete')
                             <li>
-                                <a data-href="{{action('CouponController@destroy', $coupon->id)}}"
+                                <a data-href="{{action('GiftCardController@destroy', $gift_card->id)}}"
                                     data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                     class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                     @lang('lang.delete')</a>
                             </li>
                             @endcan
                             <li>
-                                <a data-href="{{action('CouponController@toggleActive', $coupon->id)}}"
+                                <a data-href="{{action('GiftCardController@toggleActive', $gift_card->id)}}"
                                     class="btn text-red toggle-active"><i class="fa fa-refresh"></i>
-                                    @if($coupon->active) @lang('lang.suspend') @else @lang('lang.reactivate') @endif</a>
+                                    @if($gift_card->active) @lang('lang.suspend') @else @lang('lang.reactivate') @endif</a>
                             </li>
 
                         </ul>
@@ -129,7 +123,7 @@
 
 @section('javascript')
 <script>
-    $(document).on('click', 'a.toggle-active', function(e) {
+ $(document).on('click', 'a.toggle-active', function(e) {
 		e.preventDefault();
 
         $.ajax({

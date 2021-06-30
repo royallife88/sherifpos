@@ -7,7 +7,7 @@
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required',
             'required']) !!}
             <span class="input-group-btn">
-                @can('product_module.product_class.create')
+                @can('product_module.product_class.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('ProductClassController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -24,7 +24,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
             <span class="input-group-btn">
-                @can('product_module.category.create')
+                @can('product_module.category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('CategoryController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -41,7 +41,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
             <span class="input-group-btn">
-                @can('product_module.sub_category.create')
+                @can('product_module.sub_category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('CategoryController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -58,7 +58,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
             <span class="input-group-btn">
-                @can('product_module.brand.create')
+                @can('product_module.brand.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('BrandController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -89,7 +89,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_units']) !!}
             <span class="input-group-btn">
-                @can('product_module.unit.create')
+                @can('product_module.unit.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('UnitController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -105,7 +105,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_colors']) !!}
             <span class="input-group-btn">
-                @can('product_module.color.create')
+                @can('product_module.color.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('ColorController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -121,7 +121,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_sizes']) !!}
             <span class="input-group-btn">
-                @can('product_module.size.create')
+                @can('product_module.size.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('SizeController@create')}}?quick_add=1"
                     data-container=".view_modal"><i
@@ -137,7 +137,7 @@
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_grades']) !!}
             <span class="input-group-btn">
-                @can('product_module.grade.create')
+                @can('product_module.grade.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('GradeController@create')}}?quick_add=1"
                     data-container=".view_modal"><i

@@ -3,7 +3,7 @@
         <td>
             {{$product->product_name}}
 
-            @if($product->variation_name != "DUMMY")
+            @if($product->variation_name != "Default")
                 <b>{{$product->variation_name}}</b>
             @endif
             <input type="hidden" name="products[{{$loop->index + $index}}][product_id]" value="{{$product->product_id}}">

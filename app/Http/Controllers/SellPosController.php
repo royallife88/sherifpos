@@ -4,18 +4,25 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Customer;
+use App\Models\GiftCard;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\Tax;
+use App\Models\Transaction;
+use App\Models\TransactionSellLine;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SellPosController extends Controller
 {
@@ -72,13 +79,20 @@ class SellPosController extends Controller
         $brands = Brand::all();
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
+        $taxes = Tax::get();
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
 
         return view('sale_pos.pos')->with(compact(
             'categories',
+            'walk_in_customer',
             'sub_categories',
             'brands',
             'store_pos',
             'customers',
+            'taxes',
+            'payment_types',
         ));
     }
 
@@ -90,7 +104,99 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        // try{
+
+        $transaction_data = [
+            'store_id' => $request->store_id,
+            'customer_id' => $request->customer_id,
+            'store_pos_id' => $request->store_pos_id,
+            'type' => 'sell',
+            'final_total' => $this->commonUtil->num_uf($request->final_total),
+            'grand_total' => $this->commonUtil->num_uf($request->grand_total),
+            'gift_card_id' => $request->gift_card_id,
+            'coupon_id' => $request->coupon_id,
+            'transaction_date' => Carbon::now(),
+            'invoice_no' => $this->productUtil->getNumberByType('sell'),
+            'status' => $request->status,
+            'sale_note' => $request->sale_note,
+            'staff_note' => $request->staff_note,
+            'discount_value' => $request->discount_value,
+            'discount_amount' => $request->discount_amount,
+            'discount_type' => $request->discount_type,
+            'tax_id' => $request->tax_id,
+            'total_tax' => $request->total_tax,
+            'sale_note' => $request->sale_note,
+            'staff_note' => $request->staff_note,
+        ];
+
+        DB::beginTransaction();
+
+        $transaction = Transaction::create($transaction_data);
+
+        $this->transactionUtil->createOrUpdateTransactionSellLine($transaction, $request->transaction_sell_line);
+
+        foreach ($request->transaction_sell_line as $sell_line) {
+            if (empty($sell_line['transaction_sell_line_id'])) {
+                $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+            }
+        }
+
+        $payment_data = [
+            'transaction_id' => $transaction->id,
+            'amount' => $this->commonUtil->num_uf($request->amount),
+            'method' => $request->method,
+            'paid_on' => $transaction->transaction_date,
+            'ref_number' => $request->ref_number,
+            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+            'card_number' => $request->card_number,
+            'card_security' => $request->card_security,
+            'card_month' => $request->card_month,
+            'cheque_number' => $request->cheque_number,
+            'gift_card_number' => $request->gift_card_number,
+            'amount_to_be_used' => $request->amount_to_be_used,
+            'payment_note' => $request->payment_note,
+        ];
+        $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+        $this->cashRegisterUtil->addSellPayments($transaction, $payment_data);
+
+        if (!empty($transaction->coupon_id)) {
+            Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+        }
+
+        if (!empty($transaction->gift_card__id)) {
+            $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
+            GiftCard::where('id', $transaction->gift_card__id)->update(['balance' => $remaining_balance, 'customer_id' => $request->customer_id]);
+        }
+
+
+        DB::commit();
+
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        $html_content = view('sale_pos.partials.invoice')->with(compact(
+            'transaction',
+            'payment_types'
+        ))->render();
+
+
+
+        $output = [
+            'success' => true,
+            'html_content' => $html_content,
+            'msg' => __('lang.success')
+        ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //      ];
+        //  }
+
+        return $output;
     }
 
     /**
@@ -282,7 +388,7 @@ class SellPosController extends Controller
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
                         if ($value['type'] == 'variable') {
-                            if ($variation['variation_name'] != 'DUMMY') {
+                            if ($variation['variation_name'] != 'Default') {
                                 $text = $text . ' (' . $variation['variation_name'] . ')';
                             }
                         }
@@ -325,4 +431,11 @@ class SellPosController extends Controller
         }
     }
 
+    public function getRecentTransactions()
+    {
+        $transactions = Transaction::where('type', 'sell')->orderBy('transaction_date', 'desc')->get();
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        return view('sale_pos.partials.recent_transactions')->with(compact('transactions', 'payment_types'));
+    }
 }

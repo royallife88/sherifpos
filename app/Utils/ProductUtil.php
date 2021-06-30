@@ -61,7 +61,7 @@ class ProductUtil extends Util
      *
      * @return void
      */
-    public function getNumberByTye($type, $store_id = null)
+    public function getNumberByType($type, $store_id = null)
     {
         $number = '';
         $store_string = '';
@@ -72,6 +72,11 @@ class ProductUtil extends Util
             $po_count = Transaction::where('type', 'purchase_order')->count() + 1;
 
             $number = 'PO' . $store_string . $po_count;
+        }
+        if ($type == 'sell') {
+            $inv_count = Transaction::where('type', 'sell')->count() + 1;
+
+            $number = 'INV' . $store_string . $inv_count;
         }
 
 
@@ -373,7 +378,7 @@ class ProductUtil extends Util
 
 
         if (!empty($store_id) && $check_qty) {
-            //Check for enable stock, if enabled check for location id.
+            //Check for enable stock, if enabled check for store id.
             $query->where(function ($query) use ($store_id) {
                 $query->where('ps.store_id', $store_id);
             });
@@ -544,13 +549,13 @@ class ProductUtil extends Util
      *
      * @param $product_id
      * @param $variation_id
-     * @param $location_id
+     * @param $store_id
      * @param $new_quantity
      * @param $old_quantity = 0
      *
      * @return boolean
      */
-    public function decreaseProductQuantity($product_id, $variation_id, $location_id, $new_quantity, $old_quantity = 0)
+    public function decreaseProductQuantity($product_id, $variation_id, $store_id, $new_quantity, $old_quantity = 0)
     {
         $qty_difference = $new_quantity - $old_quantity;
 
@@ -558,17 +563,17 @@ class ProductUtil extends Util
 
         //Check if stock is enabled or not.
         if ($product->is_service != 1) {
-            //Decrement Quantity in variations location table
+            //Decrement Quantity in variations store table
             $details = ProductStore::where('variation_id', $variation_id)
                 ->where('product_id', $product_id)
-                ->where('location_id', $location_id)
+                ->where('store_id', $store_id)
                 ->first();
 
-            //If location details not exists create new one
+            //If store details not exists create new one
             if (empty($details)) {
                 $details = ProductStore::create([
                     'product_id' => $product_id,
-                    'location_id' => $location_id,
+                    'store_id' => $store_id,
                     'variation_id' => $variation_id,
                     'qty_available' => 0
                 ]);

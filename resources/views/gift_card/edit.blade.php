@@ -1,21 +1,21 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('CouponController@update', $coupon->id), 'method' => 'put', 'id' => 'coupon_add_form' ]) !!}
+        {!! Form::open(['url' => action('GiftCardController@update', $gift_card->id), 'method' => 'put', 'id' => 'gift_card_add_form' ]) !!}
 
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.generate_coupon' )</h4>
+            <h4 class="modal-title">@lang( 'lang.generate_gift_card' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
 
         <div class="modal-body">
             <div class="form-group">
-                {!! Form::label('coupon_code', __( 'lang.coupon_code' ) . ':*') !!}
+                {!! Form::label('card_number', __( 'lang.card_number' ) . ':*') !!}
                 <div class="input-group">
-                    {!! Form::text('coupon_code',  $coupon->coupon_code, ['class' => 'form-control', 'placeholder' => __(
-                    'lang.coupon_code' ), 'required' ]);
+                    {!! Form::text('card_number',  $gift_card->card_number, ['class' => 'form-control', 'placeholder' => __(
+                    'lang.card_number' ), 'required' ]);
                     !!}
                     <div class="input-group-append">
                         <button type="button"
@@ -23,41 +23,33 @@
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
-                {!! Form::select('type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], $coupon->type, ['class' =>
-                'form-control', 'data-live-search' => 'true']) !!}
-            </div>
+
             <div class="form-group">
                 {!! Form::label('amount', __( 'lang.amount' ) . ':*') !!}
-                {!! Form::text('amount', $coupon->amount, ['class' => 'form-control', 'placeholder' => __( 'lang.amount' ),
+                {!! Form::text('amount', @num_format($gift_card->amount), ['class' => 'form-control', 'placeholder' => __( 'lang.amount' ),
                 'required' ]);
                 !!}
             </div>
+
             <div class="form-group">
-                <label class="checkbox-inline">
-                    <input type="checkbox" class="amount_to_be_purchase_checkbox"  @if($coupon->amount_to_be_purchase_checkbox) checked @endif name="amount_to_be_purchase_checkbox"
-                        value="1">
-                    @lang('lang.amount_to_be_purchase')
-                </label>
-                {!! Form::text('amount_to_be_purchase', $coupon->amount_to_be_purchase, ['class' => 'form-control amount_to_be_purchase' ,
-                'placeholder' => __( 'lang.amount_to_be_purchase' ) ]);
+                {!! Form::label('balance', __( 'lang.balance' ) . ':*') !!}
+                {!! Form::text('balance', @num_format($gift_card->balance), ['class' => 'form-control', 'placeholder' => __( 'lang.balance' ),
+                'required' ]);
                 !!}
             </div>
+
             <div class="form-group">
-                <label class="checkbox-inline">
-                    <input type="checkbox" class="all_products" name="all_products" @if($coupon->all_products) checked @endif value="1" checked>
-                    @lang('lang.all_products')
-                </label>
-                {!! Form::select('product_ids[]', $products, $coupon->product_ids, ['class' => 'form-control selectpicker', 'multiple',
-                'data-live-search' => 'true', 'required']) !!}
+                {!! Form::label('customer_id', __('lang.customer'), []) !!}
+                {!! Form::select('customer_id', $customers, $gift_card->customer_id, ['class' => 'form-control selectpicker',
+                'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
             </div>
             <div class="form-group">
                 {!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':*') !!}
-                {!! Form::text('expiry_date', !empty($coupon->expiry_date) ? @format_date($coupon->expiry_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __(
-                'lang.expiry_date' )])
+                {!! Form::text('expiry_date', !empty($gift_card->expiry_date) ? @format_date($gift_card->expiry_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __(
+                    'lang.expiry_date' )]);
                 !!}
             </div>
+
         </div>
 
         <div class="modal-footer">

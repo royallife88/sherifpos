@@ -404,4 +404,15 @@ class Util
             'money_transfer' => 'Money Transfer',
         ];
     }
+    public function getPaymentTypeArrayForPos(){
+        return [
+            'cash' => 'Cash',
+            'card' => 'Credit Card',
+            'cheque' => 'Cheque',
+            'gift_card' => 'Gift Card',
+            'bank_transfer' => 'Bank Transfer',
+            'deposit' => 'Deposit',
+            'paypal' => 'Paypal',
+        ];
+    }
 }

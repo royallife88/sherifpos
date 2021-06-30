@@ -546,7 +546,7 @@ class ProductController extends Controller
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
                         if ($value['type'] == 'variable') {
-                            if ($variation['variation_name'] != 'DUMMY') {
+                            if ($variation['variation_name'] != 'Default') {
                                 $text = $text . ' (' . $variation['variation_name'] . ')';
                             }
                         }

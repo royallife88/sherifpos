@@ -86,10 +86,19 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
     Route::get('pos/get-product-items-by-filter/{id}/{type}', 'SellPosController@getProductItemsByFilter');
+    Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::resource('pos', SellPosController::class);
     Route::resource('cash-rgister', CashRegisterController::class);
 
+    Route::get('coupon/get-details/{coupon_code}', 'CouponController@getDetails');
+    Route::get('coupon/toggle-active/{id}', 'CouponController@toggleActive');
+    Route::get('coupon/generate-code', 'CouponController@generateCode');
     Route::resource('coupon', CouponController::class);
+
+    Route::get('gift-card/toggle-active/{id}', 'GiftCardController@toggleActive');
+    Route::get('gift-card/generate-code', 'GiftCardController@generateCode');
+    Route::get('gift-card/get-details/{gift_card_number}', 'GiftCardController@getDetails');
+    Route::resource('gift-card', GiftCardController::class);
 
 
 

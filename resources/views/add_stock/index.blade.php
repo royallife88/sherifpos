@@ -108,7 +108,7 @@
                                         class="btn text-red delete_item"><i class="dripicons-trash"></i> @lang('lang.delete')</a>
                                 </li>
                                 @endcan
-                                @can('add_stock.pay.create')
+                                @can('add_stock.pay.create_and_edit')
                                 @if($add_stock->payment_status != 'paid')
                                 <li>
                                     <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}" data-container=".view_modal"

@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container-fluid">
-    @can('settings.store.create')
+    @can('settings.store.create_and_edit')
     <a style="color: white" data-href="{{action('StorePosController@create')}}" data-container=".view_modal"
         class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
         @lang('lang.add_pos_for_store')</a>

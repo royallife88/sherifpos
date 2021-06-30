@@ -86,7 +86,7 @@ class PurchaseOrderController extends Controller
         $suppliers = Supplier::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');
 
-        $po_no = $this->productUtil->getNumberByTye('purchase_order');
+        $po_no = $this->productUtil->getNumberByType('purchase_order');
 
         return view('purchase_order.create')->with(compact(
             'suppliers',
@@ -116,6 +116,7 @@ class PurchaseOrderController extends Controller
                 'transaction_date' => Carbon::now(),
                 'payment_status' => 'due',
                 'po_no' => $data['po_no'],
+                'grand_total' => $this->productUtil->num_uf($data['final_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
                 'details' => $data['details'],
                 'created_by' => Auth::user()->id
@@ -221,6 +222,7 @@ class PurchaseOrderController extends Controller
                 'transaction_date' => Carbon::now(),
                 'payment_status' => 'due',
                 'po_no' => $data['po_no'],
+                'grand_total' => $this->productUtil->num_uf($data['grand_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
                 'details' => $data['details'],
                 'created_by' => Auth::user()->id
@@ -360,7 +362,7 @@ class PurchaseOrderController extends Controller
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
                         if ($value['type'] == 'variable') {
-                            if ($variation['variation_name'] != 'DUMMY') {
+                            if ($variation['variation_name'] != 'Default') {
                                 $text = $text . ' (' . $variation['variation_name'] . ')';
                             }
                         }
@@ -411,7 +413,7 @@ class PurchaseOrderController extends Controller
     public function getPoNumber(Request $request)
     {
 
-        $po_no = $this->productUtil->getNumberByTye('purchase_order', request()->store_id);
+        $po_no = $this->productUtil->getNumberByType('purchase_order', request()->store_id);
 
         return $po_no;
     }
@@ -464,7 +466,7 @@ class PurchaseOrderController extends Controller
                 'order_date' => Carbon::now(),
                 'transaction_date' => Carbon::now(),
                 'payment_status' => 'due',
-                'po_no' =>  $this->productUtil->getNumberByTye('purchase_order'),
+                'po_no' =>  $this->productUtil->getNumberByType('purchase_order'),
                 'final_total' => $this->productUtil->num_uf($variation->default_purchase_price),
                 'details' => 'Created from POS page',
                 'created_by' => Auth::user()->id

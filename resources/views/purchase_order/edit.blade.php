@@ -84,7 +84,7 @@
                                             <td>
                                                 {{$product->product->name}}
 
-                                                @if($product->variation->name != "DUMMY")
+                                                @if($product->variation->name != "Default")
                                                     <b>{{$product->variation->name}}</b>
                                                 @endif
                                                 <input type="hidden" name="purchase_order_lines[{{$loop->index}}][purchase_order_line_id]" value="{{$product->id}}">
@@ -141,13 +141,13 @@
                     <div class="col-sm-12">
                         <button type="submit" name="submit" id="print" style="margin: 10px" value="print"
                             class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.print' )</button>
-                        @can('purchase_order.send_to_supplier.create')
+                        @can('purchase_order.send_to_supplier.create_and_edit')
                         <button type="button" id="send_to_supplier" style="margin: 10px" disabled
                             class="btn btn-warning pull-right btn-flat submit" data-toggle="modal"
                             data-target="#supplier_modal">@lang(
                             'lang.send_to_supplier' )</button>
                         @endcan
-                        @can('purchase_order.send_to_admin.create')
+                        @can('purchase_order.send_to_admin.create_and_edit')
                         <button type="submit" name="submit" id="send_to_admin" style="margin: 10px"
                             value="sent_admin" class="btn btn-primary pull-right btn-flat submit">@lang(
                             'lang.send_to_admin' )</button>

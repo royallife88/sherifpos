@@ -247,7 +247,7 @@ nav.navbar .nav-menu {
 
 nav.navbar .dropdown-menu {
     border: none;
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     width: auto;
     right: auto;
     left: auto;
@@ -1483,8 +1483,8 @@ STYLE SWITCHER FOR DEMO
     color: #495057;
 }
 
-/* ========================================= 
-   THEMING OF BOOTSTRAP COMPONENTS           
+/* =========================================
+   THEMING OF BOOTSTRAP COMPONENTS
    ========================================= */
 /*
  * 1. NAVBAR
@@ -2188,7 +2188,7 @@ STYLE SWITCHER FOR DEMO
 }
 
 /*
- * 3. TYPE  
+ * 3. TYPE
  */
 body {
     font-family: "Nunito", sans-serif;
@@ -2682,7 +2682,7 @@ a>code {
     border-right: 1px solid #e9e8ef;
 }
 
-@media all and (max-width: 600px){
+@media all and (max-width: 600px) {
     .nav-link span {
         display: none
     }
@@ -2727,7 +2727,7 @@ a>code {
     border-radius: 5px;
     border: none;
     background-color: #FFFFFF;
-    box-shadow: 0 0 35px 0 rgba(154,161,171,.15);
+    box-shadow: 0 0 35px 0 rgba(154, 161, 171, .15);
 }
 
 .card>.list-group:first-child .list-group-item:first-child {
@@ -2833,25 +2833,24 @@ a>code {
  * *******************************************/
 .carousel-control-prev-icon,
 .carousel-control-next-icon {
-  height: 40px;
-  width: 40px;
-  background-image: none;
-  background-color: #6449e7;
-  text-align: center;
-  line-height: 40px;
+    height: 40px;
+    width: 40px;
+    background-image: none;
+    background-color: #6449e7;
+    text-align: center;
+    line-height: 40px;
 }
 
-.carousel-control-next-icon:after
-{
-  content: '\f105';
-  font-family: 'FontAwesome';
-  font-size: 20px;
-  color: #fff;
+.carousel-control-next-icon:after {
+    content: '\f105';
+    font-family: 'FontAwesome';
+    font-size: 20px;
+    color: #fff;
 }
 
 .carousel-control-prev-icon:after {
-  content: '\f104';
-  font-family: 'FontAwesome';
-  font-size: 20px;
-  color: #fff;
+    content: '\f104';
+    font-family: 'FontAwesome';
+    font-size: 20px;
+    color: #fff;
 }

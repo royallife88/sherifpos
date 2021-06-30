@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Coupon;
 use App\Models\Customer;
-use App\Models\Product;
+use App\Models\GiftCard;
 use App\Models\User;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -13,9 +12,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CouponController extends Controller
+class GiftCardController extends Controller
 {
-
     /**
      * All Utils instance.
      *
@@ -40,10 +38,10 @@ class CouponController extends Controller
      */
     public function index()
     {
-        $query = Coupon::where('id', '>', 0);
+        $query = GiftCard::where('id', '>', 0);
 
-        if (!empty(request()->type)) {
-            $query->where('type', request()->type);
+        if (!empty(request()->customer_id)) {
+            $query->where('customer_id', request()->customer_id);
         }
         if (!empty(request()->created_by)) {
             $query->where('created_by', request()->created_by);
@@ -55,15 +53,15 @@ class CouponController extends Controller
             $query->where('created_at', '<=', request()->end_date);
         }
 
-        $coupons = $query->get();
+        $gift_cards = $query->get();
 
         $customers = Customer::pluck('name', 'id');
         $users = User::pluck('name', 'id');
 
-        return view('coupon.index')->with(compact(
-            'coupons',
-            'users',
+        return view('gift_card.index')->with(compact(
+            'gift_cards',
             'customers',
+            'users',
         ));
     }
 
@@ -76,16 +74,16 @@ class CouponController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $products = Product::pluck('name', 'id');
+        $customers = Customer::pluck('name', 'id');
 
-        return view('coupon.create')->with(compact(
+        return view('gift_card.create')->with(compact(
             'quick_add',
-            'products'
+            'customers'
         ));
     }
 
     /**
-     * coupon a newly created resource in storage.
+     * gift_card a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -95,31 +93,27 @@ class CouponController extends Controller
 
         $this->validate(
             $request,
-            ['coupon_code' => ['required', 'max:255']],
-            ['type' => ['required', 'max:255']],
+            ['card_number' => ['required', 'max:255']],
             ['amount' => ['required', 'max:255']],
-            ['product_ids' => ['required']],
         );
 
         try {
             $data = $request->except('_token', 'quick_add');
-            $data['amount_to_be_purchase_checkbox'] = !empty($data['amount_to_be_purchase_checkbox']) ? 1 : 0;
             $data['amount'] = $this->commonUtil->num_uf($data['amount']);
-            $data['all_products'] = !empty($data['all_products']) ? 1 : 0;
+            $data['balance'] = $this->commonUtil->num_uf($data['amount']);
             $data['active'] = 1;
             $data['expiry_date'] = !empty($data['expiry_date']) ? $this->commonUtil->uf_date($data['expiry_date']) : null;
             $data['created_by'] = Auth::user()->id;
-            $data['used'] = 0;
             DB::beginTransaction();
 
-            $coupon = Coupon::create($data);
+            $gift_card = GiftCard::create($data);
 
-            $coupon_id = $coupon->id;
+            $gift_card_id = $gift_card->id;
 
             DB::commit();
             $output = [
                 'success' => true,
-                'coupon_id' => $coupon_id,
+                'gift_card_id' => $gift_card_id,
                 'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
@@ -157,13 +151,13 @@ class CouponController extends Controller
      */
     public function edit($id)
     {
-        $coupon = Coupon::find($id);
+        $gift_card = GiftCard::find($id);
 
-        $products = Product::pluck('name', 'id');
+        $customers = Customer::pluck('name', 'id');
 
-        return view('coupon.edit')->with(compact(
-            'coupon',
-            'products'
+        return view('gift_card.edit')->with(compact(
+            'gift_card',
+            'customers'
         ));
     }
 
@@ -179,24 +173,19 @@ class CouponController extends Controller
 
         $this->validate(
             $request,
-            ['coupon_code' => ['required', 'max:255']],
-            ['type' => ['required', 'max:255']],
+            ['card_number' => ['required', 'max:255']],
             ['amount' => ['required', 'max:255']],
-            ['product_ids' => ['required']],
         );
 
         try {
             $data = $request->except('_token', '_method');
-            $data['amount_to_be_purchase_checkbox'] = !empty($data['amount_to_be_purchase_checkbox']) ? 1 : 0;
             $data['amount'] = $this->commonUtil->num_uf($data['amount']);
-            $data['all_products'] = !empty($data['all_products']) ? 1 : 0;
+            $data['balance'] = $this->commonUtil->num_uf($data['balance']);
             $data['active'] = 1;
             $data['expiry_date'] = !empty($data['expiry_date']) ? $this->commonUtil->uf_date($data['expiry_date']) : null;
-            $data['created_by'] = Auth::user()->id;
-            $data['used'] = 0;
             DB::beginTransaction();
 
-            $coupon = Coupon::where('id', $id)->update($data);
+            $gift_card = GiftCard::where('id', $id)->update($data);
 
             DB::commit();
             $output = [
@@ -228,7 +217,7 @@ class CouponController extends Controller
     public function destroy($id)
     {
         try {
-            Coupon::find($id)->delete();
+            GiftCard::find($id)->delete();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
@@ -246,10 +235,10 @@ class CouponController extends Controller
 
     public function getDropdown()
     {
-        $coupon = Coupon::pluck('name', 'id');
-        $coupon_dp = $this->commonUtil->createDropdownHtml($coupon, 'Please Select');
+        $gift_card = GiftCard::pluck('name', 'id');
+        $gift_card_dp = $this->commonUtil->createDropdownHtml($gift_card, 'Please Select');
 
-        return $coupon_dp;
+        return $gift_card_dp;
     }
 
     public function generateCode()
@@ -261,10 +250,10 @@ class CouponController extends Controller
     public function toggleActive($id)
     {
         try {
-            $coupon = Coupon::where('id', $id)->first();
-            $coupon->active = !$coupon->active;
+            $gift_card = GiftCard::where('id', $id)->first();
+            $gift_card->active = !$gift_card->active;
 
-            $coupon->save();
+            $gift_card->save();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
@@ -280,33 +269,34 @@ class CouponController extends Controller
         return $output;
     }
 
-    public function getDetails($coupon_code){
-        $coupon_details = Coupon::where('coupon_code', $coupon_code)->where('used', 0)->first();
+    public function getDetails($gift_card_number)
+    {
+        $gift_card_details = GiftCard::where('card_number', $gift_card_number)->where('balance', '>', 0)->first();
 
-        if (empty($coupon_details)) {
+        if (empty($gift_card_details)) {
             return [
                 'success' => false,
-                'msg' => __('lang.invalid_coupon_code')
+                'msg' => __('lang.invalid_card_number')
             ];
         }
-        if ($coupon_details->active == 0) {
+        if ($gift_card_details->active == 0) {
             return [
                 'success' => false,
-                'msg' => __('lang.coupon_suspended')
+                'msg' => __('lang.gift_card_suspended')
             ];
         }
-        if (!empty($coupon_details->expiry_date)) {
-            if (Carbon::now()->gt(Carbon::parse($coupon_details->expiry_date))) {
+        if (!empty($gift_card_details->expiry_date)) {
+            if (Carbon::now()->gt(Carbon::parse($gift_card_details->expiry_date))) {
                 return [
                     'success' => false,
-                    'msg' => __('lang.coupon_expired')
+                    'msg' => __('lang.gift_card_expired')
                 ];
             }
         }
 
         return [
             'success' => true,
-            'data' => $coupon_details->toArray()
+            'data' => $gift_card_details->toArray()
         ];
     }
 }

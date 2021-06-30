@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Coupon extends Model
+class GiftCard extends Model
 {
-    use HasFactory, \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
+    use HasFactory;
 
     /**
      * The attributes that aren't mass assignable.
@@ -16,21 +16,12 @@ class Coupon extends Model
      */
     protected $guarded = ['id'];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'product_ids' => 'array'
-    ];
-
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
 
-    public function products(){
-        return $this->belongsToJson(Product::class, 'product_ids');
+    public function customer(){
+        return $this->belongsTo(Customer::class);
     }
 }

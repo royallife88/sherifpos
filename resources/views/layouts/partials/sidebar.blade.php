@@ -6,7 +6,7 @@
         <ul id="side-main-menu" class="side-menu list-unstyled">
           <li><a href="{{url('/home')}}"> <i class="dripicons-meter"></i><span>{{ __('file.dashboard') }}</span></a></li>
 
-          @if(auth()->user()->can('product_module.product.create') || auth()->user()->can('product_module.product.view') || auth()->user()->can('product_classification_tree.create')|| auth()->user()->can('product_module.barcode.create'))
+          @if(auth()->user()->can('product_module.product.create_and_edit') || auth()->user()->can('product_module.product.view') || auth()->user()->can('product_classification_tree.create_and_edit')|| auth()->user()->can('product_module.barcode.create_and_edit'))
           <li><a href="#product" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-list"></i><span>{{__('lang.product')}}</span><span></a>
             <ul id="product" class="collapse list-unstyled @if(in_array(request()->segment(1), ['product', 'product-classification-tree', 'barcode'])) show @endif">
                 @can('product_module.product.create_and_edit')
@@ -68,10 +68,13 @@
           @endif
 
           @if(auth()->user()->can('coupons_and_gift_cards.coupon.create_and_edit') || auth()->user()->can('coupons_and_gift_cards.coupon.view') || auth()->user()->can('coupons_and_gift_cards.gift_card.view') || auth()->user()->can('coupons_and_gift_cards.gift_card.create_and_edit') )
-          <li><a href="#coupons_and_gift_cards" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-cart"></i><span>{{__('lang.coupons_and_gift_cards')}}</span><span></a>
+          <li><a href="#coupons_and_gift_cards" aria-expanded="false" data-toggle="collapse"> <i class="dripicons-card"></i><span>{{__('lang.coupons_and_gift_cards')}}</span><span></a>
             <ul id="coupons_and_gift_cards" class="collapse list-unstyled @if(in_array(request()->segment(1), ['coupon', 'gift-card'])) show @endif">
                 @can('coupons_and_gift_cards.coupon.view')
                 <li class="@if(request()->segment(1) == 'coupon' && request()->segment(2) == 'create') active @endif"><a href="{{action('CouponController@index')}}">{{__('lang.coupon')}}</a></li>
+                @endcan
+                @can('coupons_and_gift_cards.gift_card.view')
+                <li class="@if(request()->segment(1) == 'gift-card' && request()->segment(2) == 'create') active @endif"><a href="{{action('GiftCardController@index')}}">{{__('lang.gift_card')}}</a></li>
                 @endcan
                 {{-- @can('stock.stock.view')
                 <li class="@if(request()->segment(1) == 'add-stock' && empty(request()->segment(2))) active @endif"><a href="{{action('AddStockController@index')}}">{{__('lang.view_all_added_stocks')}}</a></li>

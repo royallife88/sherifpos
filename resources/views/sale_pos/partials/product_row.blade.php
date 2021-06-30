@@ -1,15 +1,18 @@
 @forelse ($products as $product)
-<tr>
+<tr class="product_row">
     <td style="width: 30%">
         {{$product->product_name}}
 
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
         @endif
-        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][product_id]"
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][product_id]" class="product_id"
             value="{{$product->product_id}}">
-        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]"
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
             value="{{$product->variation_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount]" class="coupon_discount_value" value="0"> <!-- value is percentage or fixed value from coupon data -->
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_type]" class="coupon_discount_type" value=""> <!-- value is percentage or fixed value from coupon data -->
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_amount]" class="coupon_discount_amount" value="0"><!-- after calculation actual discounted amount for row product row -->
     </td>
     <td style="width: 20%">
         <div class="input-group"><span class="input-group-btn">

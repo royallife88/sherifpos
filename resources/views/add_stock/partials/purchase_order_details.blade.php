@@ -3,7 +3,7 @@
     <td>
         {{$product->product->name}}
 
-        @if($product->variation->name != "DUMMY")
+        @if($product->variation->name != "Default")
         <b>{{$product->variation->name}}</b>
         @endif
         <input type="hidden" name="add_stock_lines[{{$loop->index}}][purchase_order_line_id]"

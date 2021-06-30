@@ -50,7 +50,7 @@
                                             <td>
                                                 {{$line->product->name}}
 
-                                                @if($line->variation->name != "DUMMY")
+                                                @if($line->variation->name != "Default")
                                                 <b>{{$line->variation->name}}</b>
                                                 @endif
 

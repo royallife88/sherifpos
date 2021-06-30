@@ -2,14 +2,13 @@ $(document).on("submit", "form", function () {
     $(this).validate();
 });
 
-__currency_decimal_separator = $('input#__decimal').val();
-__currency_precision = $('input#__currency_precision').val();
-__currency_symbol  = $('input#__currency_symbol ').val();
-__currency_thousand_separator  = $('input#__currency_thousand_separator').val();
-__currency_symbol_placement  = $('input#__currency_symbol_placement').val();
-__precision  = $('input#__precision').val();
-__quantity_precision  = $('input#__quantity_precision').val();
-
+__currency_decimal_separator = $("input#__decimal").val();
+__currency_precision = $("input#__currency_precision").val();
+__currency_symbol = $("input#__currency_symbol ").val();
+__currency_thousand_separator = $("input#__currency_thousand_separator").val();
+__currency_symbol_placement = $("input#__currency_symbol_placement").val();
+__precision = $("input#__precision").val();
+__quantity_precision = $("input#__quantity_precision").val();
 
 function __currency_trans_from_en(
     input,
@@ -27,32 +26,39 @@ function __currency_trans_from_en(
         var thousand = __currency_thousand_separator;
         var decimal = __currency_decimal_separator;
     }
-    symbol = '';
-    var format = '%s%v';
+    symbol = "";
+    var format = "%s%v";
     if (show_symbol) {
         symbol = s;
-        format = '%s %v';
-        if (__currency_symbol_placement == 'after') {
-            format = '%v %s';
+        format = "%s %v";
+        if (__currency_symbol_placement == "after") {
+            format = "%v %s";
         }
     }
     if (is_quantity) {
         precision = __quantity_precision;
     }
-    return accounting.formatMoney(input, symbol, precision, thousand, decimal, format);
+    return accounting.formatMoney(
+        input,
+        symbol,
+        precision,
+        thousand,
+        decimal,
+        format
+    );
 }
 function __currency_convert_recursively(element, use_page_currency = false) {
-    element.find('.display_currency').each(function () {
+    element.find(".display_currency").each(function () {
         var value = $(this).text();
-        var show_symbol = $(this).data('currency_symbol');
+        var show_symbol = $(this).data("currency_symbol");
         if (show_symbol == undefined || show_symbol != true) {
             show_symbol = false;
         }
-        var highlight = $(this).data('highlight');
+        var highlight = $(this).data("highlight");
         if (highlight == true) {
             __highlight(value, $(this));
         }
-        var is_quantity = $(this).data('is_quantity');
+        var is_quantity = $(this).data("is_quantity");
         if (is_quantity == undefined || is_quantity != true) {
             is_quantity = false;
         }
@@ -107,7 +113,12 @@ function __number_f(
     use_page_currency = false,
     precision = __currency_precision
 ) {
-    return __currency_trans_from_en(input, show_symbol, use_page_currency, precision);
+    return __currency_trans_from_en(
+        input,
+        show_symbol,
+        use_page_currency,
+        precision
+    );
 }
 function __read_number(input_element, use_page_currency = false) {
     return __number_uf(input_element.val(), use_page_currency);
@@ -118,7 +129,7 @@ function __write_number(
     use_page_currency = false,
     precision = __currency_precision
 ) {
-    if (input_element.hasClass('input_quantity')) {
+    if (input_element.hasClass("input_quantity")) {
         precision = __quantity_precision;
     }
     input_element.val(__number_f(value, false, use_page_currency, precision));
@@ -129,10 +140,37 @@ function __write_number_without_decimal_format(
     use_page_currency = false,
     precision = __currency_precision
 ) {
-    if (input_element.hasClass('input_quantity')) {
+    if (input_element.hasClass("input_quantity")) {
         precision = __quantity_precision;
     }
     input_element.val(value);
 }
 
-$('.datepicker').datepicker();
+function __print_receipt(section_id = null) {
+    if (section_id) {
+        var imgs = document
+            .getElementById(section_id)
+            .getElementsByTagName("img");
+    } else {
+        var imgs = document.images;
+    }
+    img_len = imgs.length;
+    if (img_len) {
+        img_counter = 0;
+        [].forEach.call(imgs, function (img) {
+            img.addEventListener("load", incrementImageCounter, false);
+        });
+    } else {
+        setTimeout(function () {
+            window.print();
+        }, 1000);
+    }
+}
+function incrementImageCounter() {
+    img_counter++;
+    if (img_counter === img_len) {
+        window.print();
+    }
+}
+
+$(".datepicker").datepicker();
