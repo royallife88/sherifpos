@@ -131,6 +131,11 @@ class SellPosController extends Controller
                 'total_tax' => $request->total_tax,
                 'sale_note' => $request->sale_note,
                 'staff_note' => $request->staff_note,
+                'deliveryman_id' => $request->deliveryman_id,
+                'delivery_cost' => $request->delivery_cost,
+                'delivery_address' => $request->delivery_address,
+                'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
+                'created_by' => Auth::user()->id,
             ];
 
             DB::beginTransaction();

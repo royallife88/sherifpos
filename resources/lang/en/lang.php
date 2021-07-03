@@ -494,6 +494,48 @@ return [
     'payment_end_date' => 'Payment End Date',
     'due' => 'Due',
     'deliveryman' => 'Deliveryman',
+    'delivery_cost_paid_by_customer' => 'Delivery Cost Paid by Customer',
+    'delivery_cost' => 'Delivery Cost',
+    'delivery_address' => 'Delivery Address',
+
+    'add_expense_category' => 'Add Expense Category',
+    'expense_category_added' => 'Expense Category Added',
+    'expense_category_updated' => 'Expense Category Updated',
+    'expense_category_deleted' => 'Expense Category Deleted',
+    'view_expense_categories' => 'View All Expense Categories',
+    'add_expense_category' => 'Add Expense Category',
+    'expense_category' => 'Expense Category',
+    'expense_categories' => 'Expense Categories',
+
+    'expense_beneficiary_added' => 'Expense Beneficiary Added',
+    'expense_beneficiary_updated' => 'Expense Beneficiary Updated',
+    'expense_beneficiary_deleted' => 'Expense Beneficiary Deleted',
+    'view_expense_beneficiaries' => 'View All Expense Beneficiaries',
+    'add_expense_beneficiary' => 'Add Expense Beneficiary',
+    'expense_beneficiary' => 'Expense Beneficiary',
+    'expense_beneficiaries' => 'Expense Beneficiaries',
+    'beneficiary_name' => 'Beneficiary Name',
+    'beneficiary' => 'Beneficiary',
+    'beneficiaries' => 'Beneficiaries',
+    'money_paid' => 'Money Paid',
+
+    'expense_added' => 'Expense Added',
+    'expense_updated' => 'Expense Updated',
+    'expense_deleted' => 'Expense Deleted',
+    'add_new_expense' => 'Add New Expense',
+    'view_all_expenses' => 'View All Expenses',
+    'paid_by_whom' => 'Paid by Whom',
+    'files' => 'Files',
+    'expense' => 'Expense',
+    'expenses' => 'Expenses',
+    'all_expenses' => 'All Expenses',
+    'edit_expense' => 'Edit Expense',
+    'next_payment_date' => 'Next Payment Date',
+    'notify_before_days' => 'Notify Before Days',
+
+
+    'sales_list' => 'Sales List',
+
 
 
 

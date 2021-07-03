@@ -51,6 +51,14 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(Store::class);
     }
+    public function expense_category()
+    {
+        return $this->belongsTo(ExpenseCategory::class);
+    }
+    public function expense_beneficiary()
+    {
+        return $this->belongsTo(ExpenseBeneficiary::class);
+    }
 
     public function transaction_payments()
     {

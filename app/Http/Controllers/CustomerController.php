@@ -229,4 +229,26 @@ class CustomerController extends Controller
 
         return $html;
     }
+
+    public function getDetailsByTransactionType($customer_id, $type)
+    {
+        $query = Customer::join('transactions as t', 'customers.id', 't.customer_id')
+            ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+            ->where('customers.id', $customer_id);
+        if ($type == 'sell') {
+            $query->select(
+                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
+                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
+                'customers.name',
+                'customers.address',
+                'customers.id as customer_id',
+                'customer_types.name as customer_type'
+            );
+        }
+
+        $customer_details = $query->first();
+        $customer_details->due = $customer_details->total_invoice - $customer_details->total_paid;
+
+        return $customer_details;
+    }
 }

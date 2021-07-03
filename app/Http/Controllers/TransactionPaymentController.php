@@ -79,6 +79,7 @@ class TransactionPaymentController extends Controller
             $data = $request->except('_token');
 
             $payment_data = [
+                'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
                 'transaction_id' =>  $request->transaction_id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
                 'method' => $request->method,

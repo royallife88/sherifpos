@@ -49,6 +49,7 @@ class User extends Authenticatable
             'supplier_module' => 'Supplier Module',
             'hr_management' => 'HR Management',
             'purchase_order' => 'Purchase Order',
+            'expense' => 'Expense',
             'stock' => 'Stock',
             'coupons_and_gift_cards' => 'Coupons and Gift Cards',
             'settings' => 'Settings',
@@ -93,6 +94,11 @@ class User extends Authenticatable
                 'purchase_order' => 'Purchase Order',
                 'send_to_admin' => 'Send to Admin',
                 'send_to_supplier' => 'Send to Supplier'
+            ],
+            'expenses' => [
+                'expense_categories' => 'Expense Categories',
+                'expense_beneficiaries' => 'Expense Beneficiaries',
+                'expenses' => 'Expenses',
             ],
             'stock' => [
                 'add_stock' => 'Add Stock',

@@ -40,12 +40,20 @@ class CreateTransactionsTable extends Migration
             $table->string('ref_no')->nullable();
             $table->decimal('grand_total', 15, 4)->nullable();
             $table->decimal('final_total', 15, 4)->default(0.0000);
+            $table->text('deliveryman_id')->nullable()->comment('employee id foriegn key from employees table');
+            $table->decimal('delivery_cost', 15,4)->nullable();
+            $table->boolean('delivery_cost_paid_by_customer')->default(1);
+            $table->text('delivery_address')->nullable();
+            $table->unsignedBigInteger('expense_category_id')->nullable();
+            $table->unsignedBigInteger('expense_beneficiary_id')->nullable();
+            $table->string('next_payment_date')->nullable();
             $table->text('details')->nullable();
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
             $table->text('notes')->nullable();
             $table->string('due_date')->nullable();
             $table->integer('notify_me')->nullable();
+            $table->string('notify_before_days')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
 

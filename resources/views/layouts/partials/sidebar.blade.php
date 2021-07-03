@@ -98,18 +98,62 @@
                             class="dripicons-cart"></i><span>{{__('lang.sale')}}</span><span></a>
                     <ul id="sale"
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['pos'])) show @endif">
+                        @can('sale.pos.view')
+                        <li
+                            class="@if(request()->segment(1) == 'pos' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SellPosController@index')}}">{{__('lang.sales_list')}}</a></li>
+                        @endcan
                         @can('sale.pos.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'pos' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('SellPosController@create')}}">{{__('lang.pos')}}</a></li>
                         @endcan
-                        {{-- @can('stock.stock.view')
-                <li class="@if(request()->segment(1) == 'add-stock' && empty(request()->segment(2))) active @endif"><a href="{{action('AddStockController@index')}}">{{__('lang.view_all_added_stocks')}}</a>
+                            {{-- @can('stock.stock.view')
+                    <li class="@if(request()->segment(1) == 'add-stock' && empty(request()->segment(2))) active @endif"><a href="{{action('AddStockController@index')}}">{{__('lang.view_all_added_stocks')}}</a>
+                    </li>
+                    @endcan --}}
+                </ul>
                 </li>
-                @endcan --}}
-            </ul>
-            </li>
-            @endif
+                @endif
+                @if(auth()->user()->can('expense.expenses.create_and_edit') || auth()->user()->can('expense.expenses.view')|| auth()->user()->can('expense.expense_categories.view')|| auth()->user()->can('expense.expense_categories.view')|| auth()->user()->can('expense.expense_beneficiaries.view')|| auth()->user()->can('expense.expense_beneficiaries.view') )
+                <li><a href="#expense" aria-expanded="false" data-toggle="collapse"> <i
+                            class="dripicons-minus"></i><span>{{__('lang.expense')}}</span><span></a>
+                    <ul id="expense"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['expense-cateogry', 'expense-beneficiary', 'expense'])) show @endif">
+                        @can('expense.expense_categories.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'expense-cateogry' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('ExpenseCategoryController@create')}}">{{__('lang.add_expense_category')}}</a></li>
+                        @endcan
+                        @can('expense.expense_categories.view')
+                        <li
+                            class="@if(request()->segment(1) == 'expense-cateogry' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ExpenseCategoryController@index')}}">{{__('lang.view_expense_categories')}}</a></li>
+                        @endcan
+                        @can('expense.expense_beneficiaries.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'expense-beneficiary' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('ExpenseBeneficiaryController@create')}}">{{__('lang.add_expense_beneficiary')}}</a></li>
+                        @endcan
+                        @can('expense.expense_beneficiaries.view')
+                        <li
+                            class="@if(request()->segment(1) == 'expense-beneficiary' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ExpenseBeneficiaryController@index')}}">{{__('lang.view_expense_beneficiaries')}}</a></li>
+                        @endcan
+                        @can('expense.expense_beneficiaries.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'expense' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('ExpenseController@create')}}">{{__('lang.add_new_expense')}}</a></li>
+                        @endcan
+                        @can('expense.expense_beneficiaries.view')
+                        <li
+                            class="@if(request()->segment(1) == 'expense' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ExpenseController@index')}}">{{__('lang.view_all_expenses')}}</a></li>
+                        @endcan
+
+                </ul>
+                </li>
+                @endif
 
             @if(auth()->user()->can('coupons_and_gift_cards.coupon.create_and_edit') ||
             auth()->user()->can('coupons_and_gift_cards.coupon.view') ||
@@ -192,7 +236,6 @@
             <!-- START HR Management -->
             @if(auth()->user()->can('user_management.add_new_employee.view')
             || auth()->user()->can('user_management.employee.view')
-            || auth()->user()->can('hr_management.official_leaves.view')
             || auth()->user()->can('hr_management.leave_types.view')
             || auth()->user()->can('hr_management.leaves.view')
             || auth()->user()->can('hr_management.forfeit_leaves.view')

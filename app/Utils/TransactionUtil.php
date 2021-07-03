@@ -31,12 +31,12 @@ class TransactionUtil extends Util
      */
     public function createOrUpdateTransactionPayment($transaction, $payment_data)
     {
-        if (!empty(!empty($payment_data['transaction_payment_id']))) {
+        if (!empty($payment_data['transaction_payment_id'])) {
             $transaction_payment = TransactionPayment::find($payment_data['transaction_payment_id']);
             $transaction_payment->amount = $payment_data['amount'];
             $transaction_payment->method = $payment_data['method'];
             $transaction_payment->paid_on = $payment_data['paid_on'];
-            $transaction_payment->ref_number = $payment_data['ref_number'];
+            $transaction_payment->ref_number = !empty($payment_data['ref_number']) ? $payment_data['ref_number'] : null;
             $transaction_payment->bank_deposit_date = !empty($payment_data['bank_deposit_date']) ? $payment_data['bank_deposit_date'] : null;
             $transaction_payment->bank_name = !empty($payment_data['bank_name']) ?  $payment_data['bank_name'] : null;
             $transaction_payment->card_number = !empty($payment_data['card_number']) ?  $payment_data['card_number'] : null;
@@ -49,9 +49,18 @@ class TransactionUtil extends Util
             $transaction_payment->save();
         } else {
             $transaction_payment = null;
-            if(!empty($payment_data['amount'])){
-                $transaction_payment = TransactionPayment::create($payment_data);
-            }
+            // if(!empty($payment_data['amount'])){
+
+            //     if($transaction->type == 'sell'){
+            //         if($payment_data['method'] != 'deposit'){
+            //             if($payment_data['amount'] > $transaction->final_total)
+            //             $payment_data['amount'] = $transaction->final_total;
+            //         }else{
+
+            //         }
+            //     }
+            // }
+            $transaction_payment = TransactionPayment::create($payment_data);
         }
 
         return $transaction_payment;

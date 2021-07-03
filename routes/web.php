@@ -53,6 +53,7 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::resource('barcode', BarcodeController::class);
 
     Route::get('customer/get-dropdown', 'CustomerController@getDropdown');
+    Route::get('customer/get-details-by-transaction-type/{customer_id}/{type}', 'CustomerController@getDetailsByTransactionType');
     Route::resource('customer', CustomerController::class);
     Route::get('customer-type/get-dropdown', 'CustomerTypeController@getDropdown');
     Route::get('customer-type/get-product-discount-row', 'CustomerTypeController@getProductDiscountRow');
@@ -121,6 +122,10 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
         Route::resource('forfeit-leaves', ForfeitLeaveController::class);
     });
 
+    Route::get('expense-categories/get-beneficiary-dropdown/{expense_category_id}', 'ExpenseCategoryController@getBeneficiaryDropdown');
+    Route::resource('expense-cateogry', ExpenseCategoryController::class);
+    Route::resource('expense-beneficiary', ExpenseBeneficiaryController::class);
+    Route::resource('expense', ExpenseController::class);
 
 
 

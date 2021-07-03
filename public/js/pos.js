@@ -579,7 +579,7 @@ function reset_pos_form() {
         "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span"
     ).text(0);
     $(
-        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id"
+        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change"
     ).val("");
     $("#status").val("final");
     $("button#submit-btn").attr("disabled", false);
@@ -662,3 +662,18 @@ function get_draft_transactions() {
         },
     });
 }
+
+$(document).on('change', '#customer_id', function(){
+    let customer_id = $(this).val()
+    $.ajax({
+        method: 'get',
+        url: '/customer/get-details-by-transaction-type/'+customer_id+'/sell',
+        data: {  },
+        success: function(result) {
+            $('.customer_name').text(result.name);
+            $('.customer_address').text(result.address);
+            $('.delivery_address').text(result.address);
+            $('.customer_due').text(__currency_trans_from_en(result.due, false));
+        },
+    });
+})
