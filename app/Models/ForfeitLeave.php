@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Store extends Model
+class ForfeitLeave extends Model implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
     /**
      * The attributes that aren't mass assignable.
@@ -15,13 +17,4 @@ class Store extends Model
      * @var array
      */
     protected $guarded = ['id'];
-
-    public function store_pos(){
-        return $this->hasMany(StorePos::class);
-    }
-
-    public static function getDropdown()
-    {
-        return Store::pluck('name', 'id')->toArray();
-    }
 }

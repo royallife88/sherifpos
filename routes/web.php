@@ -27,6 +27,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 
 Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function () {
 
+    Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
     Route::resource('product', ProductController::class);
@@ -86,6 +87,7 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
     Route::get('pos/get-product-items-by-filter/{id}/{type}', 'SellPosController@getProductItemsByFilter');
+    Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::resource('pos', SellPosController::class);
     Route::resource('cash-rgister', CashRegisterController::class);
@@ -100,6 +102,24 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('gift-card/get-details/{gift_card_number}', 'GiftCardController@getDetails');
     Route::resource('gift-card', GiftCardController::class);
 
+    Route::group(['prefix' => 'hrm'], function () {
+        Route::resource('job', JobController::class);
+        Route::get('get-same-job-employee-details/{id}', 'EmployeeController@getSameJobEmployeeDetails');
+        Route::get('get-balance-leave-details/{id}', 'EmployeeController@getBalanceLeaveDetails');
+        Route::get('get-employee-details-by-id/{id}', 'EmployeeController@getDetails');
+        Route::resource('employee', EmployeeController::class);
+        Route::resource('leave-type', LeaveTypeController::class);
+
+        Route::get('leave/get-leave-details/{employee_id}', 'LeaveController@getLeaveDetails');
+        Route::resource('leave', LeaveController::class);
+        Route::get('attendance/get-attendance-row/{row_index}', 'AttendanceController@getAttendanceRow');
+        Route::resource('attendance', AttendanceController::class);
+        Route::get('wages-and-compensations/change-status-to-paid/{id}', 'WagesAndCompensationController@changeStatusToPaid');
+        Route::get('wages-and-compensations/calculate-salary-and-commission/{employee_id}/{payment_type}', 'WagesAndCompensationController@calculateSalaryAndCommission');
+        Route::resource('wages-and-compensations', WagesAndCompensationController::class);
+        Route::get('forfeit-leaves/get-leave-type-balance-for-employee/{employee_id}/{leave_type_id}', 'ForfeitLeaveController@getLeaveTypeBalanceForEmployee');
+        Route::resource('forfeit-leaves', ForfeitLeaveController::class);
+    });
 
 
 
@@ -127,14 +147,13 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
 
 
 
+    Route::get('/clear-cache', function () {
+        \Artisan::call('cache:clear');
+        \Artisan::call('config:cache');
+        \Artisan::call('config:clear');
+        \Artisan::call('view:clear');
+        \Artisan::call('route:clear');
 
-Route::get('/clear-cache', function () {
-    \Artisan::call('cache:clear');
-    \Artisan::call('config:cache');
-    \Artisan::call('config:clear');
-    \Artisan::call('view:clear');
-    \Artisan::call('route:clear');
-});
-
-
+        echo 'cache cleared!';
+    });
 });

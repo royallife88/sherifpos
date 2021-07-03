@@ -46,7 +46,7 @@ class AppServiceProvider extends ServiceProvider
                 if (session('business.time_format') == 24) {
                     $time_format = 'H:i';
                 }
-                return "\Carbon::createFromTimestamp(strtotime($date))->format('$time_format')";
+                return "\Carbon\Carbon::createFromTimestamp(strtotime($date))->format('$time_format')";
             } else {
                 return null;
             }

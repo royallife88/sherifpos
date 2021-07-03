@@ -2,6 +2,10 @@ $(document).on("submit", "form", function () {
     $(this).validate();
 });
 
+$('.time_picker').timepicker({
+    'step': 15,
+});
+
 __currency_decimal_separator = $("input#__decimal").val();
 __currency_precision = $("input#__currency_precision").val();
 __currency_symbol = $("input#__currency_symbol ").val();

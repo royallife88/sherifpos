@@ -19,7 +19,8 @@
                         {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
                         true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
-                        <input type="hidden" name="default_customer_id" id="default_customer_id" value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
+                        <input type="hidden" name="default_customer_id" id="default_customer_id"
+                            value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
 
                         <div class="row">
                             <div class="col-md-12">
@@ -28,7 +29,8 @@
                                         {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('customer_id', $customers,
-                                            !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                                            !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' =>
+                                            'selectpicker form-control', 'data-live-search'=>"true",
                                             'style' =>'width: 80%' , 'id' => 'customer_id']) !!}
                                             <span class="input-group-btn">
                                                 @can('customer_module.customer.create_and_edit')
@@ -148,12 +150,18 @@
                         <div class="column-5">
                             <button data-method="paypal" style="background-color: #213170" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                id="paypal-btn"><i class="fa fa-paypal"></i> @lang('lang.other_online_payments')</button>
+                                id="paypal-btn"><i class="fa fa-paypal"></i>
+                                @lang('lang.other_online_payments')</button>
                         </div>
                         <div class="column-5">
                             <button data-method="draft" style="background-color: #e28d02" type="button"
                                 class="btn btn-custom" id="draft-btn"><i class="dripicons-flag"></i>
                                 @lang('lang.draft')</button>
+                        </div>
+                        <div class="column-5">
+                            <button data-method="draft" style="background-color: #0952a5" type="button"
+                                class="btn btn-custom" id="view-draft-btn"  data-href="{{action('SellPosController@getDraftTransactions')}}"><i class="dripicons-flag"></i>
+                                @lang('lang.view_draft')</button>
                         </div>
                         <div class="column-5">
                             <button data-method="cheque" style="background-color: #fd7272" type="button"
@@ -179,8 +187,8 @@
                         </div>
                         <div class="column-5">
                             <button data-method="cash" style="background-color: #ffc107;" type="button"
-                                class="btn btn-custom btn-modal" data-href="{{action('SellPosController@getRecentTransactions')}}" data-container="#recentTransaction"><i
-                                    class="dripicons-clock"></i>
+                                class="btn btn-custom" id="recent-transaction-btn"
+                                data-href="{{action('SellPosController@getRecentTransactions')}}"><i class="dripicons-clock"></i>
                                 @lang('lang.recent_transactions')</button>
                         </div>
                     </div>
@@ -333,145 +341,90 @@
                             </div>
                     </nav>
                 </header>
-                <div class="filter-window">
-                    <div class="category mt-3">
-                        <div class="row ml-2 mr-2 px-2">
-                            <div class="col-7">@lang('lang.choose_category')</div>
-                            <div class="col-5 text-right">
-                                <span class="btn btn-default btn-sm">
-                                    <i class="dripicons-cross"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row ml-2 mt-3">
-                            @foreach($categories as $category)
-                            <div class="col-md-3 filter-by category-img text-center" data-id="{{$category->id}}"
-                                data-type="category">
-                                <img
-                                    src="@if(!empty($category->getFirstMediaUrl('category'))){{$category->getFirstMediaUrl('category')}}@else{{asset('images/default.jpg')}}@endif" />
-                                <p class="text-center">{{$category->name}}</p>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="sub_category mt-3">
-                        <div class="row ml-2 mr-2 px-2">
-                            <div class="col-7">@lang('lang.choose_sub_category')</div>
-                            <div class="col-5 text-right">
-                                <span class="btn btn-default btn-sm">
-                                    <i class="dripicons-cross"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row ml-2 mt-3">
-                            @foreach($sub_categories as $category)
-                            <div class="col-md-3 filter-by category-img text-center" data-id="{{$category->id}}"
-                                data-type="sub_category">
-                                <img
-                                    src="@if(!empty($category->getFirstMediaUrl('category'))){{$category->getFirstMediaUrl('category')}}@else{{asset('images/default.jpg')}}@endif" />
-                                <p class="text-center">{{$category->name}}</p>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                    <div class="brand mt-3">
-                        <div class="row ml-2 mr-2 px-2">
-                            <div class="col-7">@lang('lang.choose_brand')</div>
-                            <div class="col-5 text-right">
-                                <span class="btn btn-default btn-sm">
-                                    <i class="dripicons-cross"></i>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="row ml-2 mt-3">
-                            @foreach($brands as $brand)
-
-                            <div class="col-md-3 filter-by brand-img text-center" data-id="{{$brand->id}}"
-                                data-type="brand">
-                                <img
-                                    src="@if(!empty($brand->getFirstMediaUrl('brand'))){{$brand->getFirstMediaUrl('brand')}}@else{{asset('images/default.jpg')}}@endif" />
-                                <p class="text-center">{{$brand->name}}</p>
-                            </div>
-
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <button class="btn btn-block btn-primary" id="category-filter">{{__('lang.category')}}</button>
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-block btn-primary"
-                            id="sub-category-filter">{{__('lang.sub_category')}}</button>
-                    </div>
-                    <div class="col-md-4">
-                        <button class="btn btn-block btn-danger" id="brand-filter">{{__('lang.brand')}}</button>
-                    </div>
-                    <br>
-                    <br>
-                    <div class="col-md-6">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="selling_filter" value="best_selling">
-                            @lang('lang.best_selling')
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="selling_filter" value="slow_moving_items">
-                            @lang('lang.slow_moving_items')
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="selling_filter" value="product_in_last_transactions">
-                            @lang('lang.product_in_last_transactions')
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="price_filter" value="highest_price">
-                            @lang('lang.highest_price')
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="price_filter" value="lowest_price"> @lang('lang.lowest_price')
-                        </label>
-                    </div>
-                    <div class="col-md-2">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="sorting_filter" value="a_to_z"> @lang('lang.a_to_z')
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="sorting_filter" value="z_to_a"> @lang('lang.z_to_a')
-                        </label>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="expiry_filter" value="nearest_expiry">
-                            @lang('lang.nearest_expiry')
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="expiry_filter" value="longest_expiry">
-                            @lang('lang.longest_expiry')
-                        </label>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="checkbox-inline">
-                            <input type="checkbox" class="sale_promo_filter" value="items_in_sale_promotion">
-                            @lang('lang.items_in_sale_promotion')
-                        </label>
-                    </div>
-
-
-                    <div class="col-md-12 mt-1 table-container">
-                        <table id="filter-product-table" class="table no-shadow product-list">
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                @include('sale_pos.partials.right_side')
             </div>
 
             <!-- recent transaction modal -->
             <div id="recentTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true" class="modal fade text-left">
+
+                <div class="modal-dialog" role="document" style="width: 65%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">@lang( 'lang.recent_transactions' )</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                                            {!! Form::date('start_date', null, ['class' => 'form-control', 'id' =>
+                                            'rt_start_date']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                                            {!! Form::date('end_date', null, ['class' => 'form-control', 'id' =>
+                                            'rt_end_date']) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="recent_transaction_div col-md-12">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close'
+                                )</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div>
+            <!-- draft transaction modal -->
+            <div id="draftTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                aria-hidden="true" class="modal fade text-left">
+
+                <div class="modal-dialog" role="document" style="width: 65%">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">@lang( 'lang.draft_transactions' )</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
+                                            {!! Form::date('draft_start_date', null, ['class' => 'form-control', 'id' =>
+                                            'draft_start_date']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
+                                            {!! Form::date('draft_end_date', null, ['class' => 'form-control', 'id' =>
+                                            'draft_end_date']) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="draft_transaction_div col-md-12">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close'
+                                )</button>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
             </div>
 
         </div>

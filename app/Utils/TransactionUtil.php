@@ -48,7 +48,10 @@ class TransactionUtil extends Util
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
             $transaction_payment->save();
         } else {
-            $transaction_payment = TransactionPayment::create($payment_data);
+            $transaction_payment = null;
+            if(!empty($payment_data['amount'])){
+                $transaction_payment = TransactionPayment::create($payment_data);
+            }
         }
 
         return $transaction_payment;

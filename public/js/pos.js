@@ -350,6 +350,14 @@ $(document).on("change", "#final_total", function (e) {
 });
 $(document).on("click", "#draft-btn", function (e) {
     $("#status").val("draft");
+
+    //Check if product is present or not.
+    if ($("table#product_table tbody").find(".product_row").length <= 0) {
+        toastr.warning("No Product Added");
+        return false;
+    }
+
+    pos_form_obj.submit();
 });
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];
@@ -520,11 +528,12 @@ pos_form_validator = pos_form_obj.validate({
                     $("#add-payment").modal("hide");
                     toastr.success(result.msg);
 
-                    if ($("#print_the_transaction").prop("checked")) {
+                    console.log($('#status').val());
+                    if ($("#print_the_transaction").prop("checked") && $('#status').val() !== 'draft') {
                         pos_print(result.html_content);
                     }
                     reset_pos_form();
-                    // get_recent_transactions('final', $('div#tab_final'));
+                    get_recent_transactions();
                 } else {
                     toastr.error(result.msg);
                 }
@@ -547,8 +556,6 @@ $("button#submit-btn").click(function () {
     $(this).attr("disabled", true);
 
     pos_form_obj.submit();
-
-    reset_pos_form();
 });
 
 function pos_print(receipt) {
@@ -602,20 +609,56 @@ $(document).on("click", "td.filter_product_add", function () {
     get_label_product_row(product_id, variation_id);
 });
 
-//Get recent transactions
-// function get_recent_transactions(status, element_obj) {
-//     if (element_obj.length == 0) {
-//         return false;
-//     }
+$(document).on("click", "#view-draft-btn", function () {
+    $("#draftTransaction").modal("show");
+    get_draft_transactions();
+});
+$(document).on("change", "#draft_start_date, #draft_end_date", function () {
+    get_draft_transactions();
+});
+$(document).on("click", "#recent-transaction-btn", function () {
+    $("#recentTransaction").modal("show");
+    get_recent_transactions();
+});
 
-//     $.ajax({
-//         method: 'GET',
-//         url: '/sells/pos/get-recent-transactions',
-//         data: { status: status },
-//         dataType: 'html',
-//         success: function (result) {
-//             element_obj.html(result);
-//             __currency_convert_recursively(element_obj);
-//         },
-//     });
-// }
+$(document).on("change", "#rt_start_date, #rt_end_date", function () {
+    get_recent_transactions();
+});
+
+//Get recent transactions
+function get_recent_transactions() {
+    let href = $("#recent-transaction-btn").data("href");
+
+    $.ajax({
+        method: "get",
+        url:
+            href +
+            "?start_date=" +
+            $("#rt_start_date").val() +
+            "&end_date=" +
+            $("#rt_end_date").val(),
+        data: {},
+        success: function (result) {
+            $(".recent_transaction_div").empty().append(result);
+        },
+    });
+}
+
+//Get recent transactions
+function get_draft_transactions() {
+    let href = $("#view-draft-btn").data("href");
+
+    $.ajax({
+        method: "get",
+        url:
+            href +
+            "?start_date=" +
+            $("#draft_start_date").val() +
+            "&end_date=" +
+            $("#draft_end_date").val(),
+        data: {},
+        success: function (result) {
+            $(".draft_transaction_div").empty().append(result);
+        },
+    });
+}

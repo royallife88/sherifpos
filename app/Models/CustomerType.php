@@ -30,4 +30,9 @@ class CustomerType extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+
+    public static function getDropdown()
+    {
+        return CustomerType::pluck('name', 'id')->toArray();
+    }
 }

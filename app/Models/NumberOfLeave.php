@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class NumberOfLeave extends Model
 {
     use HasFactory;
 
@@ -15,13 +15,4 @@ class Store extends Model
      * @var array
      */
     protected $guarded = ['id'];
-
-    public function store_pos(){
-        return $this->hasMany(StorePos::class);
-    }
-
-    public static function getDropdown()
-    {
-        return Store::pluck('name', 'id')->toArray();
-    }
 }

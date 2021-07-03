@@ -47,6 +47,7 @@ class User extends Authenticatable
             'product_module' => 'Product Module',
             'customer_module' => 'Customer Module',
             'supplier_module' => 'Supplier Module',
+            'hr_management' => 'HR Management',
             'purchase_order' => 'Purchase Order',
             'stock' => 'Stock',
             'coupons_and_gift_cards' => 'Coupons and Gift Cards',
@@ -67,7 +68,7 @@ class User extends Authenticatable
                 'size' => 'Size',
                 'grade' => 'Grade',
                 'tax' => 'Tax',
-                'product_classification_tree', 'Product Classification Tree',
+                'product_classification_tree' => 'Product Classification Tree',
                 'barcode', 'Barcode',
             ],
             'customer_module' => [
@@ -76,6 +77,16 @@ class User extends Authenticatable
             ],
             'supplier_module' => [
                 'supplier' => 'Supplier',
+            ],
+            'hr_management' => [
+                'employee' => 'Employee',
+                'jobs' => 'Jobs',
+                'leave_types' => 'Leave Type',
+                'leaves' => 'Leaves',
+                'attendance' => 'Attendance',
+                'wages_and_compensation' => 'Wages and Compensation',
+                'official_leaves' => 'Offical Leaves',
+                'forfeit_leaves' => 'Forfeit Leaves',
             ],
             'purchase_order' => [
                 'draft_purchase_order' => 'Draft Purchase Order',

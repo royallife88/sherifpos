@@ -26,7 +26,7 @@
                 <div class="form-group">
                     {!! Form::label('method', __('lang.payment_type'). ':*', []) !!}
                     {!! Form::select('method', $payment_type_array,
-                    'received', ['class' => 'selectpicker form-control',
+                    null, ['class' => 'selectpicker form-control',
                     'data-live-search'=>"true", 'required',
                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                 </div>
@@ -83,7 +83,7 @@
 </div><!-- /.modal-dialog -->
 
 <script>
-    $('#method').selectpicker('render');
+    $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker();
     $('#method').change(function(){
         var method = $(this).val();
