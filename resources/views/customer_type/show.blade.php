@@ -51,10 +51,6 @@
 
                 </div>
             </div>
-            <div class="col-md-12">
-                {!! Form::label('value_of_1000_points', __( 'lang.value_of_1000_points' )) !!}: {{$customer_type->value_of_1000_points}}
-
-            </div>
             <br>
         </div>
 

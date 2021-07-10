@@ -37,11 +37,11 @@
                     @endforeach
                     {{implode(',' , $this_stores)}}
                 </td>
-                <td>{{$customer_type->number_of_customer}}</td>
+                <td>@if(!empty($customer_type->customers)){{$customer_type->customers->count()}}@endif</td>
                 <td>{{$customer_type->discount}}</td>
                 <td>{{$customer_type->points}}</td>
                 <td>{{$customer_type->created_at}}</td>
-                <td>{{$customer_type->created_by_user->name}}</td>
+                <td>{{ucfirst($customer_type->created_by_user->name)}}</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"

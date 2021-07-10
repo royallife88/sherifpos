@@ -178,3 +178,14 @@ function incrementImageCounter() {
 }
 
 $(".datepicker").datepicker();
+$('#method').change(function(){
+    var method = $(this).val();
+
+    if(method === 'cash'){
+        $('.not_cash_fields').addClass('hide');
+        $('.not_cash').attr('required', false);
+    }else{
+        $('.not_cash_fields').removeClass('hide');
+        $('.not_cash').attr('required', true);
+    }
+})

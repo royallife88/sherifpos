@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerType;
-use App\Models\CustomerTypePoint;
 use App\Models\CustomerTypeStore;
+use App\Models\Product;
 use App\Models\Store;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -58,8 +58,7 @@ class CustomerTypeController extends Controller
 
         $customer_types = CustomerType::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');
-        // $products = Product::pluck('name', 'id');
-        $products = [];
+        $products = Product::pluck('name', 'id');
 
         return view('customer_type.create')->with(compact(
             'quick_add',
@@ -81,11 +80,10 @@ class CustomerTypeController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['value_of_1000_points' => ['required', 'max:255']],
         );
 
         try {
-            $data = $request->only('name', 'value_of_1000_points');
+            $data = $request->only('name');
             $data['created_by'] = Auth::user()->id;
             DB::beginTransaction();
 
@@ -101,16 +99,8 @@ class CustomerTypeController extends Controller
                     ]);
                 }
             }
+            //TODO:: caclulate the reward points and discount
 
-            foreach ($request->product_point as $product_point) {
-                if (!empty($product_point['product_id']) && $product_point['discount']) {
-                    CustomerTypePoint::create([
-                        'customer_type_id' => $customer_type_id,
-                        'product_id' => $product_point['product_id'],
-                        'point' => $product_point['point']
-                    ]);
-                }
-            }
 
             DB::commit();
             $output = [
@@ -144,9 +134,8 @@ class CustomerTypeController extends Controller
     {
         $customer_type = CustomerType::find($id);
         $stores = Store::pluck('name', 'id');
-        // $products = Product::pluck('name', 'id');
-        $products = [];
-// print_r($stores); die();
+        $products = Product::pluck('name', 'id');
+
         return view('customer_type.show')->with(compact(
             'customer_type',
             'stores',
@@ -164,8 +153,7 @@ class CustomerTypeController extends Controller
     {
         $customer_type = CustomerType::find($id);
         $stores = Store::pluck('name', 'id');
-        // $products = Product::pluck('name', 'id');
-        $products = [];
+        $products = Product::pluck('name', 'id');
 
         return view('customer_type.edit')->with(compact(
             'customer_type',
@@ -186,11 +174,10 @@ class CustomerTypeController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['value_of_1000_points' => ['required', 'max:255']],
         );
 
         try {
-            $data = $request->only('name', 'value_of_1000_points');
+            $data = $request->only('name');
             DB::beginTransaction();
 
             $customer_type = CustomerType::where('id', $id)->update($data);
@@ -205,18 +192,6 @@ class CustomerTypeController extends Controller
                     ], [
                         'customer_type_id' => $customer_type_id,
                         'store_id' => $store,
-                    ]);
-                }
-            }
-
-            foreach ($request->product_point as $product_point) {
-                if (!empty($product_point['product_id']) && $product_point['discount']) {
-                    CustomerTypePoint::updateOrCreate([
-                        'customer_type_id' => $customer_type_id,
-                        'product_id' => $product_point['product_id'],
-                    ], [
-
-                        'point' => $product_point['point']
                     ]);
                 }
             }
@@ -273,8 +248,7 @@ class CustomerTypeController extends Controller
     public function getProductDiscountRow()
     {
         $row_id = request()->row_id;
-        // $products = Product::pluck('name', 'id');
-        $products = [];
+        $products = Product::pluck('name', 'id');
 
         return view('customer_type.partial.product_discount_row')->with(compact(
             'products',
@@ -284,8 +258,7 @@ class CustomerTypeController extends Controller
     public function getProductPointRow()
     {
         $row_id = request()->row_id;
-        // $products = Product::pluck('name', 'id');
-        $products = [];
+        $products = Product::pluck('name', 'id');
 
         return view('customer_type.partial.product_point_row')->with(compact(
             'products',

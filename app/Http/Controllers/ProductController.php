@@ -51,7 +51,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::where('id', '>', 0)->active();
+        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         if (!empty(request()->product_class_id)) {
             $products->where('product_class_id', request()->product_class_id);
@@ -102,8 +103,12 @@ class ProductController extends Controller
         }
 
 
-
-        $products = $products->get();
+        $products = $products->select(
+            'products.*',
+            DB::raw('SUM(product_stores.qty_available) as current_stock'),
+        )
+            ->groupBy('products.id')
+            ->get();
         $product_classes = ProductClass::pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
@@ -161,7 +166,7 @@ class ProductController extends Controller
 
         $quick_add = request()->quick_add;
 
-        if($quick_add){
+        if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
                 'quick_add',
                 'product_classes',
@@ -230,7 +235,7 @@ class ProductController extends Controller
                 'multiple_colors' => $request->multiple_colors,
                 'multiple_sizes' => $request->multiple_sizes,
                 'multiple_grades' => $request->multiple_grades,
-                'is_service' => !empty($request->is_service) ? 1: 0,
+                'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
                 'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
@@ -374,7 +379,7 @@ class ProductController extends Controller
                 'multiple_colors' => $request->multiple_colors,
                 'multiple_sizes' => $request->multiple_sizes,
                 'multiple_grades' => $request->multiple_grades,
-                'is_service' => !empty($request->is_service) ? 1: 0,
+                'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
                 'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
@@ -508,8 +513,7 @@ class ProductController extends Controller
                     'variations.id as variation_id',
                     'variations.name as variation',
                     'variations.sub_sku as sub_sku'
-                )
-               ;
+                );
 
             if (!empty(request()->store_id)) {
                 $q->ForLocation(request()->store_id);
@@ -565,5 +569,4 @@ class ProductController extends Controller
             return json_encode($result);
         }
     }
-
 }

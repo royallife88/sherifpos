@@ -196,7 +196,7 @@
                 <td>{{implode(', ', $product->colors->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->sizes->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->grades->pluck('name')->toArray())}}</td>
-                <td>{{@num_format($product->quantity)}}</td>
+                <td>{{@num_format($product->current_stock)}}</td>
                 <td>{{$product->customer_type}}</td>
                 <td>@if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif</td>
                 <td>@if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif

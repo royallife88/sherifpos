@@ -5,12 +5,17 @@ namespace App\Utils;
 use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
+use App\Models\PurchaseReturnLine;
+use App\Models\RedemptionOfPoint;
+use App\Models\RemoveStockLine;
 use App\Models\Store;
 use App\Models\Transaction;
+use App\Models\TransferLine;
 use App\Models\Variation;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -65,18 +70,56 @@ class ProductUtil extends Util
     {
         $number = '';
         $store_string = '';
+        $day = Carbon::now()->day;
+        $month = Carbon::now()->month;
+        $year = Carbon::now()->year;
         if (!empty($store_id)) {
             $store_string = $this->getStoreNameFirstLetters($store_id);
         }
         if ($type == 'purchase_order') {
-            $po_count = Transaction::where('type', 'purchase_order')->count() + 1;
+            $po_count = Transaction::where('type', $type)->count() + 1;
 
             $number = 'PO' . $store_string . $po_count;
         }
         if ($type == 'sell') {
-            $inv_count = Transaction::where('type', 'sell')->count() + 1;
+            $inv_count = Transaction::where('type', $type)->count() + 1;
 
-            $number = 'INV' . $store_string . $inv_count;
+            $number = 'Inv' . $year . $month . $inv_count;
+        }
+        if ($type == 'sell_return') {
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+
+            $number = 'Rets' . $year . $month . $count;
+        }
+        if ($type == 'purchase_return') {
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+
+            $number = 'RetP' . $year . $month . $count;
+        }
+        if ($type == 'remove_stock') {
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+
+            $number = 'Rev' . $year . $month . $count;
+        }
+        if ($type == 'transfer') {
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+
+            $number = 'tras' . $year . $month . $count;
+        }
+        if ($type == 'quotation') {
+            $count = Transaction::where('type', 'sell')->where('is_quotation', 1)->whereMonth('transaction_date', $month)->count() + 1;
+
+            $number = 'Qu' . $year . $month . $count;
+        }
+        if ($type == 'earning_of_point') {
+            $count = EarningOfPoint::count() + 1;
+
+            $number = 'LPE' . $year . $month . $day .  $count;
+        }
+        if ($type == 'redemption_of_point') {
+            $count = RedemptionOfPoint::count() + 1;
+
+            $number = 'LPR' . $year . $month . $day .  $count;
         }
 
 
@@ -453,34 +496,36 @@ class ProductUtil extends Util
     }
 
     /**
-     * createOrUpdatePurchaseOrderLines
+     * createOrUpdateRemoveStockLines
      *
-     * @param [mix] $add_stock_lines
+     * @param [mix] $remove_stock_lines
      * @param [mix] $transaction
      * @return void
      */
-    public function createOrUpdateAddStockLines($add_stock_lines, $transaction)
+    public function createOrUpdateRemoveStockLines($remove_stock_lines, $transaction)
     {
 
         $keep_lines_ids = [];
 
-        foreach ($add_stock_lines as $line) {
-            if (!empty($line['add_stock_line_id'])) {
-                $add_stock_line = AddStockLine::find($line['add_stock_line_id']);
+        foreach ($remove_stock_lines as $line) {
+            if (!empty($line['remove_stock_line_id'])) {
+                $remove_stock_line = RemoveStockLine::find($line['remove_stock_line_id']);
 
-                $add_stock_line->product_id = $line['product_id'];
-                $add_stock_line->variation_id = $line['variation_id'];
-                $add_stock_line->quantity = $this->num_uf($line['quantity']);
-                $add_stock_line->purchase_price = $this->num_uf($line['purchase_price']);
-                $add_stock_line->sub_total = $this->num_uf($line['sub_total']);
+                $remove_stock_line->product_id = $line['product_id'];
+                $remove_stock_line->variation_id = $line['variation_id'];
+                $remove_stock_line->quantity = $this->num_uf($line['quantity']);
+                $remove_stock_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $remove_stock_line->sub_total = $this->num_uf($line['sub_total']);
 
-                $add_stock_line->save();
+                $remove_stock_line->save();
                 if ($transaction->status != 'pending') {
-                    $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $add_stock_line->quantity);
+                    if ($line['quantity'] > 0) {
+                        $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $remove_stock_line->quantity);
+                    }
                 }
-                $keep_lines_ids[] = $line['add_stock_line_id'];
+                $keep_lines_ids[] = $line['remove_stock_line_id'];
             } else {
-                $add_stock_line_data = [
+                $remove_stock_line_data = [
                     'transaction_id' => $transaction->id,
                     'product_id' => $line['product_id'],
                     'variation_id' => $line['variation_id'],
@@ -488,19 +533,139 @@ class ProductUtil extends Util
                     'purchase_price' => $this->num_uf($line['purchase_price']),
                     'sub_total' => $this->num_uf($line['sub_total']),
                 ];
-                //on received change product to active if already not active
-                Product::where('id', $line['product_id'])->update(['active' => 1]);
-                if ($transaction->status != 'pending') {
-                    $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
-                }
-                $add_stock_line = AddStockLine::create($add_stock_line_data);
 
-                $keep_lines_ids[] = $add_stock_line->id;
+                if ($transaction->status != 'pending') {
+                    if ($line['quantity'] > 0) {
+                        $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
+                    }
+                }
+                $remove_stock_line = RemoveStockLine::create($remove_stock_line_data);
+
+                $keep_lines_ids[] = $remove_stock_line->id;
             }
         }
 
         if (!empty($keep_lines_ids)) {
-            AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->delete();
+            $deleted_lines = RemoveStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            foreach ($deleted_lines as $deleted_line) {
+                if ($deleted_line->quantity > 0) {
+                    $this->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity, 0);
+                }
+                $deleted_line->delete();
+            }
+        }
+
+        return true;
+    }
+    /**
+     * createOrUpdateAddStockLines
+     *
+     * @param [mix] $transfer_lines
+     * @param [mix] $transaction
+     * @return void
+     */
+    public function createOrUpdateTransferLines($transfer_lines, $transaction)
+    {
+
+        $keep_lines_ids = [];
+
+        foreach ($transfer_lines as $line) {
+            if (!empty($line['transfer_line_id'])) {
+                $transfer_line = TransferLine::find($line['transfer_line_id']);
+
+                $transfer_line->product_id = $line['product_id'];
+                $transfer_line->variation_id = $line['variation_id'];
+                $old_qty = $transfer_line->quantity;
+                $transfer_line->quantity = $this->num_uf($line['quantity']);
+                $transfer_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $transfer_line->sub_total = $this->num_uf($line['sub_total']);
+                $transfer_line->save();
+                $keep_lines_ids[] = $line['transfer_line_id'];
+                $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->sender_store_id, $line['quantity'], $old_qty);
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], $old_qty);
+            } else {
+                $transfer_line_data = [
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $line['product_id'],
+                    'variation_id' => $line['variation_id'],
+                    'quantity' => $this->num_uf($line['quantity']),
+                    'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'sub_total' => $this->num_uf($line['sub_total']),
+                ];
+
+                $transfer_line = TransferLine::create($transfer_line_data);
+
+                $keep_lines_ids[] = $transfer_line->id;
+                $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->sender_store_id, $line['quantity'], 0);
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], 0);
+            }
+        }
+
+        if (!empty($keep_lines_ids)) {
+            $deleted_lines = TransferLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            foreach ($deleted_lines as $deleted_line) {
+                $this->decreaseProductQuantity($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->receiver_store_id, $deleted_line['quantity'], 0);
+                $this->updateProductQuantityStore($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->sender_store_id,  $deleted_line['quantity'], 0);
+                $deleted_line->delete();
+            }
+        }
+
+
+        return true;
+    }
+
+    /**
+     * createOrUpdatePurchaseReturnLine
+     *
+     * @param [mix] $purchase_return_lines
+     * @param [mix] $transaction
+     * @return void
+     */
+    public function createOrUpdatePurchaseReturnLine($purchase_return_lines, $transaction)
+    {
+
+        $keep_lines_ids = [];
+
+        foreach ($purchase_return_lines as $line) {
+            if (!empty($line['add_stock_line_id'])) {
+                $purchase_return_line = PurchaseReturnLine::find($line['purchase_return_line_id']);
+
+                $purchase_return_line->product_id = $line['product_id'];
+                $purchase_return_line->variation_id = $line['variation_id'];
+                $purchase_return_line->quantity = $this->num_uf($line['quantity']);
+                $purchase_return_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $purchase_return_line->sub_total = $this->num_uf($line['sub_total']);
+
+                $purchase_return_line->save();
+                if ($transaction->status != 'pending') {
+                    $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $purchase_return_line->quantity);
+                }
+                $keep_lines_ids[] = $line['purchase_return_line_id'];
+            } else {
+                $purchase_return_line_data = [
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $line['product_id'],
+                    'variation_id' => $line['variation_id'],
+                    'quantity' => $this->num_uf($line['quantity']),
+                    'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'sub_total' => $this->num_uf($line['sub_total']),
+                ];
+
+                if ($transaction->status != 'pending') {
+                    $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
+                }
+                $purchase_return_line = PurchaseReturnLine::create($purchase_return_line_data);
+
+                $keep_lines_ids[] = $purchase_return_line->id;
+            }
+        }
+
+        if (!empty($keep_lines_ids)) {
+            $deleted_lines = PurchaseReturnLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            foreach ($deleted_lines as $deleted_line) {
+                $this->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity, 0);
+                $deleted_line->delete();
+            }
         }
 
         return true;
@@ -558,7 +723,6 @@ class ProductUtil extends Util
     public function decreaseProductQuantity($product_id, $variation_id, $store_id, $new_quantity, $old_quantity = 0)
     {
         $qty_difference = $new_quantity - $old_quantity;
-
         $product = Product::find($product_id);
 
         //Check if stock is enabled or not.
@@ -583,5 +747,25 @@ class ProductUtil extends Util
         }
 
         return true;
+    }
+
+    /**
+     * update the block quantity for quotations
+     *
+     * @param int $product_id
+     * @param int $variation_id
+     * @param int $store_id
+     * @param int $new_quantity
+     * @param string $old_quantity
+     * @return void
+     */
+    public function updateBlockQuantity($product_id, $variation_id, $store_id, $qty, $type = 'add')
+    {
+        if ($type == 'add') {
+            ProductStore::where('product_id', $product_id)->where('variation_id', $variation_id)->where('store_id', $store_id)->increment('block_qty', $qty);
+        }
+        if ($type == 'subtract') {
+            ProductStore::where('product_id', $product_id)->where('variation_id', $variation_id)->where('store_id', $store_id)->decrement('block_qty', $qty);
+        }
     }
 }

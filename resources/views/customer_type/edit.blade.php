@@ -32,39 +32,6 @@
                                     form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
                                 </div>
                             </div>
-
-                            <div class="col-md-8">
-                                <table class="table" id="product_point_table">
-                                    <thead>
-                                        <tr>
-                                            <th>
-                                                @lang('lang.nubmer_of_points') <i class="dripicons-question"
-                                                    data-toggle="tooltip"
-                                                    title="@lang('lang.nubmer_of_points_info')"></i>
-                                            </th>
-                                            <th>
-                                                @lang('lang.product')
-                                            </th>
-                                            <th></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($customer_type->customer_type_points->count() > 0)
-                                        @foreach ($customer_type->customer_type_points as $data)
-                                            @include('customer_type.partial.product_point_row', ['row_id' => $loop->index, 'data' => $data])
-                                        @endforeach
-                                        @else
-                                            @include('customer_type.partial.product_point_row', ['row_id' => 0])
-                                        @endif
-                                    </tbody>
-                                </table>
-                                <br>
-                                <input type="hidden" name="row_id_point" id="row_id_point" value="{{$customer_type->customer_type_points->count()}}">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            {!! Form::label('value_of_1000_points', __( 'lang.value_of_1000_points' ) . ':*') !!}
-                            {!! Form::text('value_of_1000_points', $customer_type->value_of_1000_points, ['class' => 'form-control', 'required']) !!}
                         </div>
                         <br>
                         <div class="row">

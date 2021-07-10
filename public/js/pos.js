@@ -105,12 +105,21 @@ $(document).ready(function () {
                         swal("Product not found");
                     }
                 },
+                focus: function (event, ui) {
+                    if (ui.item.qty_available <= 0) {
+                        return false;
+                    }
+                },
                 select: function (event, ui) {
-                    $(this).val(null);
-                    get_label_product_row(
-                        ui.item.product_id,
-                        ui.item.variation_id
-                    );
+                    if (ui.item.qty_available > 0) {
+                        $(this).val(null);
+                        get_label_product_row(
+                            ui.item.product_id,
+                            ui.item.variation_id
+                        );
+                    } else {
+                        alert("Out of Stock");
+                    }
                 },
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
@@ -177,6 +186,9 @@ function calculate_sub_totals() {
         let sub_total = sell_price * quantity;
 
         grand_total += sub_total;
+        $(".grand_total_span").text(
+            __currency_trans_from_en(grand_total, false)
+        );
 
         let coupon_discount = calculat_coupon_discount(tr);
         sub_total -= coupon_discount;
@@ -200,6 +212,31 @@ function calculate_sub_totals() {
 
     let discount_amount = get_discount_amount(total);
     total -= discount_amount;
+
+    let points_redeemed_value = 0;
+    if (parseInt($("#is_redeem_points").val())) {
+        let customer_total_redeemable = __read_number(
+            $("#customer_total_redeemable")
+        );
+        if (total >= customer_total_redeemable) {
+            total -= customer_total_redeemable;
+            points_redeemed_value = customer_total_redeemable;
+        } else if (total < customer_total_redeemable) {
+            total = 0;
+            points_redeemed_value = total;
+        }
+        if (points_redeemed_value > 0) {
+            let customer_points = __read_number($(".customer_points"));
+            let customer_points_value = __read_number(
+                $("#customer_points_value")
+            );
+
+            let one_point_value = customer_points / customer_points_value;
+            let total_rp_redeemed = points_redeemed_value * one_point_value;
+            $("#rp_redeemed").val(total_rp_redeemed);
+            $("#rp_redeemed_value").val(points_redeemed_value);
+        }
+    }
 
     __write_number($("#final_total"), total);
     $("#final_total").change();
@@ -239,7 +276,7 @@ function get_tax_amount(total) {
     }
 
     $("#tax").text(__currency_trans_from_en(tax_amount, false));
-    __write_number($("#tax_amount"), tax_amount);
+    __write_number($("#total_tax"), tax_amount);
 
     return tax_amount;
 }
@@ -261,6 +298,14 @@ function get_discount_amount(total) {
     __write_number($("#discount_amount"), discount_amount);
     return discount_amount;
 }
+
+$(document).on(
+    "change",
+    "#discount_value, #discount_type, #tax_id",
+    function () {
+        calculate_sub_totals();
+    }
+);
 
 $(document).on("change", ".quantity, .sell_price", function () {
     calculate_sub_totals();
@@ -338,7 +383,6 @@ $(document).on("click", ".quick_add_purchase_order", function () {
             } else {
                 swal("Error", result.msg, "error");
             }
-            console.log(result);
         },
     });
 });
@@ -493,7 +537,6 @@ $(document).on("click", ".coupon-check", function () {
 
 function apply_coupon_to_products() {
     if (coupon_products.length) {
-        console.log(coupon_products, "coupon_products");
         $("#product_table > tbody  > tr").each((ele, tr) => {
             let product_id = $(tr).find(".product_id").val();
             if (amount_to_be_purchase_checkbox) {
@@ -525,13 +568,25 @@ pos_form_validator = pos_form_obj.validate({
             dataType: "json",
             success: function (result) {
                 if (result.success == 1) {
+                    if ($("#is_quotation").val()) {
+                        if ($("#submit_type").val() === "print") {
+                            pos_print(result.html_content);
+                        } else {
+                            swal("success", result.msg, "Success");
+                            location.reload();
+                        }
+                        return false;
+                    }
                     $("#add-payment").modal("hide");
                     toastr.success(result.msg);
 
-                    console.log($('#status').val());
-                    if ($("#print_the_transaction").prop("checked") && $('#status').val() !== 'draft') {
+                    if (
+                        $("#print_the_transaction").prop("checked") &&
+                        $("#status").val() !== "draft"
+                    ) {
                         pos_print(result.html_content);
                     }
+
                     reset_pos_form();
                     get_recent_transactions();
                 } else {
@@ -576,14 +631,19 @@ function reset_pos_form() {
         pos_form_obj[0].reset();
     }
     $(
-        "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span"
+        "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span "
     ).text(0);
     $(
-        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change"
+        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points "
     ).val("");
     $("#status").val("final");
     $("button#submit-btn").attr("disabled", false);
+    $("button#redeem_btn").attr("disabled", false); //TODO:: not working on reset
     set_default_customer();
+    $("#tax_id").val("");
+    $("#tax_id").selectpicker("refresh");
+    $("#deliveryman_id").val("");
+    $("#deliveryman_id").selectpicker("refresh");
     $("tr.product_row").remove();
 }
 
@@ -604,7 +664,7 @@ function confirmCancel() {
 
 $(document).on("click", "td.filter_product_add", function () {
     let product_id = $(this).data("product_id");
-    console.log(product_id);
+
     let variation_id = $(this).data("variation_id");
     get_label_product_row(product_id, variation_id);
 });
@@ -621,9 +681,13 @@ $(document).on("click", "#recent-transaction-btn", function () {
     get_recent_transactions();
 });
 
-$(document).on("change", "#rt_start_date, #rt_end_date", function () {
-    get_recent_transactions();
-});
+$(document).on(
+    "change",
+    "#rt_start_date, #rt_end_date, #rt_customer_id",
+    function () {
+        get_recent_transactions();
+    }
+);
 
 //Get recent transactions
 function get_recent_transactions() {
@@ -636,7 +700,9 @@ function get_recent_transactions() {
             "?start_date=" +
             $("#rt_start_date").val() +
             "&end_date=" +
-            $("#rt_end_date").val(),
+            $("#rt_end_date").val() +
+            "&customer_id=" +
+            $("#rt_customer_id").val(),
         data: {},
         success: function (result) {
             $(".recent_transaction_div").empty().append(result);
@@ -663,17 +729,83 @@ function get_draft_transactions() {
     });
 }
 
-$(document).on('change', '#customer_id', function(){
-    let customer_id = $(this).val()
+$(document).on("change", "#customer_id", function () {
+    let customer_id = $(this).val();
     $.ajax({
-        method: 'get',
-        url: '/customer/get-details-by-transaction-type/'+customer_id+'/sell',
-        data: {  },
-        success: function(result) {
-            $('.customer_name').text(result.name);
-            $('.customer_address').text(result.address);
-            $('.delivery_address').text(result.address);
-            $('.customer_due').text(__currency_trans_from_en(result.due, false));
+        method: "get",
+        url:
+            "/customer/get-details-by-transaction-type/" +
+            customer_id +
+            "/sell",
+        data: {},
+        success: function (result) {
+            $(".customer_name").text(result.name);
+            $(".customer_address").text(result.address);
+            $(".delivery_address").text(result.address);
+
+            $(".customer_due_span").text(
+                __currency_trans_from_en(result.due, false)
+            );
+            $(".customer_due").text(
+                __currency_trans_from_en(result.due, false)
+            );
         },
     });
-})
+    getCustomerPointDetails();
+});
+
+function getCustomerPointDetails() {
+    let customer_id = $("#customer_id").val();
+    var product_array = [];
+    $("#product_table > tbody  > tr").each((i, tr) => {
+        let product_id = __read_number($(tr).find(".product_id"));
+        let sub_total = __read_number($(tr).find(".sub_total"));
+        product_array[i] = { product_id: product_id, sub_total: sub_total };
+    });
+
+    $.ajax({
+        method: "get",
+        url: "/pos/get-customer-details/" + customer_id,
+        data: { store_id: $("#store_id").val(), product_array: product_array },
+        dataType: "json",
+        success: function (result) {
+            $(".customer_mobile_span").text(result.customer.mobile_number);
+            $(".customer_name_span").text(result.customer.name);
+            $(".customer_points_span").text(
+                __currency_trans_from_en(result.customer.total_rp, false)
+            );
+            $(".customer_points").val(result.customer.total_rp);
+            $(".customer_points_value_span").text(
+                __currency_trans_from_en(result.rp_value, false)
+            );
+            $(".customer_points_value").val(result.rp_value);
+            $(".customer_total_redeemable_span").text(
+                __currency_trans_from_en(result.total_redeemable, false)
+            );
+            $(".customer_total_redeemable").val(result.total_redeemable);
+            if (parseInt(result.total_redeemable) > 0) {
+                $(".redeem_btn").attr("disabled", false);
+            } else {
+                $(".redeem_btn").attr("disabled", true);
+                $("#is_redeem_points").val(0);
+            }
+
+            calculate_sub_totals();
+        },
+    });
+}
+$(document).on("click", ".redeem_btn", function () {
+    $("#is_redeem_points").val(1);
+    $(this).attr("disabled", true);
+    $("#contact_details_modal").modal("hide");
+    calculate_sub_totals();
+});
+
+$("#customer_id").change();
+
+$(document).on("change", "#tax_id", function () {
+    $("#tax_id_hidden").val($(this).val());
+});
+$(document).on("change", "#deliveryman_id", function () {
+    $("#deliveryman_id_hidden").val($(this).val());
+});

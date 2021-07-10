@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -45,7 +46,7 @@ class BarcodeController extends Controller
      */
     public function create()
     {
-        $products = [];
+        $products = Product::pluck('name', 'id');
 
         return view('barcode.create')->with(compact('products'));
     }

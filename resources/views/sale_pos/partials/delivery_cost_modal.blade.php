@@ -30,8 +30,15 @@
                     <div class="col-md-6"></div>
                     <div class="col-md-6">
                         <label for="deliveryman_id">@lang('lang.deliveryman'):</label>
-                        {!! Form::select('deliveryman_id', $deliverymen, false, ['class' => 'form-control selectpicker',
-                        'data-live-search' => "true"]) !!}
+                        <div class="form-group">
+                            <select class="form-control selectpicker" name="deliveryman_id" id="deliveryman_id" data-live-search="true">
+                                <option value="" selected>@lang('lang.please_select')</option>
+                                @foreach ($deliverymen as $key => $name)
+                                <option value="{{$key}}">{{$name}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="">
                     </div>
                     <div class="col-md-6">
                         <label for="delivery_cost">@lang('lang.delivery_cost'):</label>

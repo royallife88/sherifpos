@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -116,23 +117,35 @@ class TransactionPaymentController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $transaction_id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        //
+        $transaction = Transaction::find($id);
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+        return view('transaction_payment.show')->with(compact(
+            'transaction',
+            'payment_type_array'
+        ));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int  $id
+     * @param  int  $transaction_payment_id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
-        //
+        $payment = TransactionPayment::find($id);
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+        return view('transaction_payment.edit')->with(compact(
+            'payment',
+            'payment_type_array'
+        ));
     }
 
     /**
@@ -144,7 +157,43 @@ class TransactionPaymentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $data = $request->except('_token');
+            $transaction_payment = TransactionPayment::find($id);
+            $transaction_id = $transaction_payment->transaction_id;
+
+            $payment_data = [
+                'transaction_payment_id' =>  $id,
+                'amount' => $this->commonUtil->num_uf($request->amount),
+                'method' => $request->method,
+                'paid_on' => $data['paid_on'],
+                'ref_number' => $request->ref_number,
+                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
+                'bank_name' => $request->bank_name,
+            ];
+            $transaction = Transaction::find($transaction_id);
+
+            $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                }
+            }
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -155,6 +204,25 @@ class TransactionPaymentController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            $transaction_payment = TransactionPayment::find($id);
+            $transaction_id = $transaction_payment->transaction_id;
+            $transaction_payment->delete();
+
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction_id);
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

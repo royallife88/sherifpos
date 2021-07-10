@@ -79,6 +79,13 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('add-stock/add-product-row', 'AddStockController@addProductRow');
     Route::get('add-stock/get-purchase-order-details/{id}', 'AddStockController@getPurchaseOrderDetails');
     Route::resource('add-stock', AddStockController::class);
+    Route::get('remove-stock/get-invoice-details/{id}', 'RemoveStockController@getInvoiceDetails');
+    Route::resource('remove-stock', RemoveStockController::class);
+    Route::resource('transfer', TransferController::class);
+
+    Route::get('quotation/view-all-invoices', 'QuotationController@viewAllInvoices');
+    Route::get('quotation/print/{id}', 'QuotationController@print');
+    Route::resource('quotation', QuotationController::class);
 
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
     Route::resource('transaction-payment', TransactionPaymentController::class);
@@ -90,8 +97,17 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('pos/get-product-items-by-filter/{id}/{type}', 'SellPosController@getProductItemsByFilter');
     Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
+    Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
     Route::resource('pos', SellPosController::class);
+    Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
+    Route::get('sale/print/{id}', 'SellController@print');
+    Route::resource('sale', SellController::class);
+    Route::get('sale-return/add/{id}', 'SellReturnController@add');
+    Route::get('sale-return/print/{id}', 'SellReturnController@print');
+    Route::resource('sale-return', SellReturnController::class);
     Route::resource('cash-rgister', CashRegisterController::class);
+    Route::get('purchase-return/add-product-row', 'PurchaseReturnController@addProductRow');
+    Route::resource('purchase-return', PurchaseReturnController::class);
 
     Route::get('coupon/get-details/{coupon_code}', 'CouponController@getDetails');
     Route::get('coupon/toggle-active/{id}', 'CouponController@toggleActive');
@@ -128,7 +144,12 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::resource('expense', ExpenseController::class);
 
 
+    Route::get('earning-of-points/get-list-of-earned-point', 'EarningOfPointController@getListOfEarnedPoint');
+    Route::resource('earning-of-points', EarningOfPointController::class);
+    Route::get('redemption-of-points/get-list-of-redeemed-point', 'RedemptionOfPointController@getListOfRedeemedPoint');
+    Route::resource('redemption-of-points', RedemptionOfPointController::class);
 
+    Route::resource('sales-promotion', SalesPromotionController::class);
 
 
 

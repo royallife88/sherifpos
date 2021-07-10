@@ -19,11 +19,15 @@ class CreateTransactionSellLinesTable extends Migration
             $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('variation_id');
             $table->decimal('quantity', 15, 4);
+            $table->decimal('quantity_returned', 15, 4)->default(0);
             $table->decimal('sell_price', 15, 4);
+            $table->decimal('sub_total', 15, 4);
             $table->decimal('sub_total', 15, 4);
             $table->decimal('coupon_discount', 15, 4)->nullable();
             $table->string('coupon_discount_type')->nullable();
             $table->decimal('coupon_discount_amount', 15, 4)->nullable();
+            $table->boolean('point_earned')->default(0);
+            $table->boolean('point_redeemed')->default(0);
 
             $table->timestamps();
         });

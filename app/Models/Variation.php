@@ -21,6 +21,27 @@ class Variation extends Model
     {
         return $this->belongsTo(Product::class);
     }
+
+    public function color()
+    {
+        return $this->belongsTo(Color::class);
+    }
+
+    public function Size()
+    {
+        return $this->belongsTo(Size::class);
+    }
+
+    public function grade()
+    {
+        return $this->belongsTo(Grade::class);
+    }
+
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class);
+    }
+
     public function product_stores()
     {
         return $this->hasMany(ProductStore::class, 'variation_id');

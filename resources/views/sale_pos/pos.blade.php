@@ -42,7 +42,10 @@
                                             </span>
                                         </div>
                                     </div>
-
+                                    <div class="col-md-4">
+                                        <button type="button" class="btn btn-primary" style="margin-top: 30px;" data-toggle="modal"
+                                            data-target="#contact_details_modal">@lang('lang.details')</button>
+                                    </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -160,7 +163,9 @@
                         </div>
                         <div class="column-5">
                             <button data-method="draft" style="background-color: #0952a5" type="button"
-                                class="btn btn-custom" id="view-draft-btn"  data-href="{{action('SellPosController@getDraftTransactions')}}"><i class="dripicons-flag"></i>
+                                class="btn btn-custom" id="view-draft-btn"
+                                data-href="{{action('SellPosController@getDraftTransactions')}}"><i
+                                    class="dripicons-flag"></i>
                                 @lang('lang.view_draft')</button>
                         </div>
                         <div class="column-5">
@@ -188,7 +193,8 @@
                         <div class="column-5">
                             <button data-method="cash" style="background-color: #ffc107;" type="button"
                                 class="btn btn-custom" id="recent-transaction-btn"
-                                data-href="{{action('SellPosController@getRecentTransactions')}}"><i class="dripicons-clock"></i>
+                                data-href="{{action('SellPosController@getRecentTransactions')}}"><i
+                                    class="dripicons-clock"></i>
                                 @lang('lang.recent_transactions')</button>
                         </div>
                     </div>
@@ -200,6 +206,7 @@
             @include('sale_pos.partials.tax_modal')
             @include('sale_pos.partials.delivery_cost_modal')
             @include('sale_pos.partials.coupon_modal')
+            @include('sale_pos.partials.contact_details_modal')
 
 
 
@@ -348,7 +355,7 @@
             <div id="recentTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true" class="modal fade text-left">
 
-                <div class="modal-dialog" role="document" style="width: 65%">
+                <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
                     <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title">@lang( 'lang.recent_transactions' )</h4>
@@ -370,6 +377,15 @@
                                             {!! Form::label('end_date', __('lang.end_date'), []) !!}
                                             {!! Form::date('end_date', null, ['class' => 'form-control', 'id' =>
                                             'rt_end_date']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('rt_customer_id', __('lang.customer'), []) !!}
+                                            {!! Form::select('rt_customer_id', $customers, false, ['class' =>
+                                            'form-control selectpicker', 'id' =>
+                                            'rt_customer_id', 'data-live-search' => 'true', 'placeholder' =>
+                                            __('lang.all')]) !!}
                                         </div>
                                     </div>
                                 </div>

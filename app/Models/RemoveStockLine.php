@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CustomerTypePoint extends Model
+class RemoveStockLine extends Model
 {
     use HasFactory;
 
@@ -15,4 +15,13 @@ class CustomerTypePoint extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class);
+    }
+    public function variation()
+    {
+        return $this->belongsTo(Variation::class);
+    }
 }

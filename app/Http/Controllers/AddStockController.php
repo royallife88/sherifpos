@@ -165,8 +165,6 @@ class AddStockController extends Controller
 
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
-            // upload_documents
-
             DB::commit();
 
             if ($data['submit'] == 'print') {
@@ -354,7 +352,7 @@ class AddStockController extends Controller
 
             DB::beginTransaction();
 
-            if ($add_stock->status != 'reaceived') {
+            if ($add_stock->status != 'received') {
                 $add_stock_lines->delete();
             } else {
                 $delete_add_stock_line_ids = [];

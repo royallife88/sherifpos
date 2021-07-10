@@ -68,7 +68,7 @@ function calculate_sub_totals() {
         $(tr).find('.sub_total_span').text(__currency_trans_from_en(sub_total, false))
         total +=  sub_total;
     });
-
+console.log(total, 'total');
     __write_number($('#final_total'), total);
         $('.final_total_span').text(__currency_trans_from_en(total, false))
 }

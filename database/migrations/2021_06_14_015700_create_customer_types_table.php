@@ -16,7 +16,6 @@ class CreateCustomerTypesTable extends Migration
         Schema::create('customer_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('value_of_1000_points')->default(0);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

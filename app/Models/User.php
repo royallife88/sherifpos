@@ -49,9 +49,14 @@ class User extends Authenticatable
             'supplier_module' => 'Supplier Module',
             'hr_management' => 'HR Management',
             'purchase_order' => 'Purchase Order',
+            'sale' => 'Sale',
+            'return' => 'Return',
             'expense' => 'Expense',
             'stock' => 'Stock',
+            'quotation_for_customers' => 'Quotation for Customers',
             'coupons_and_gift_cards' => 'Coupons and Gift Cards',
+            'loyalty_points' => 'Loyalty Points',
+            'sp_module' => 'Sales Promotion',
             'settings' => 'Settings',
         ];
     }
@@ -79,6 +84,19 @@ class User extends Authenticatable
             'supplier_module' => [
                 'supplier' => 'Supplier',
             ],
+            'sale' => [
+                'pos' => 'POS',
+                'pay' => 'Payment',
+                'sale' => 'Sale',
+                'delivery_list' => 'Delivery List',
+                'import' => 'Import',
+            ],
+            'return' => [
+                'sell_return' => 'Sell Return',
+                'sell_return_pay' => 'Sell Return Payment',
+                'purchase_return' => 'Purchase Return',
+                'purchase_return_pay' => 'Purchase Return Payment',
+            ],
             'hr_management' => [
                 'employee' => 'Employee',
                 'jobs' => 'Jobs',
@@ -103,10 +121,22 @@ class User extends Authenticatable
             'stock' => [
                 'add_stock' => 'Add Stock',
                 'pay' => 'Pay',
+                'remove_stock' => 'Remove Stock',
+                'transfer' => 'Transfer',
+            ],
+            'quotation_for_customers' => [
+                'quotation' => 'Quoatation',
             ],
             'coupons_and_gift_cards' => [
                 'coupon' => 'Coupon',
                 'gift_card' => 'Gift Card',
+            ],
+            'loyalty_points' => [
+                'earning_of_points' => 'Earning of Points',
+                'redemption_of_points' => 'Redemption of points',
+            ],
+            'sp_module' => [
+                'sales_promotion' => 'Sales Promotion',
             ],
             'settings' => [
                 'store' => 'Store',

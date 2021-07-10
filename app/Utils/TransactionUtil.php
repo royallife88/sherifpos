@@ -5,10 +5,13 @@ namespace App\Utils;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Customer;
+use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
+use App\Models\RedemptionOfPoint;
 use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
@@ -49,18 +52,17 @@ class TransactionUtil extends Util
             $transaction_payment->save();
         } else {
             $transaction_payment = null;
-            // if(!empty($payment_data['amount'])){
+            if (!empty($payment_data['amount'])) {
+                $transaction_payment = TransactionPayment::create($payment_data);
+                //     if($transaction->type == 'sell'){
+                //         if($payment_data['method'] != 'deposit'){
+                //             if($payment_data['amount'] > $transaction->final_total)
+                //             $payment_data['amount'] = $transaction->final_total;
+                //         }else{
 
-            //     if($transaction->type == 'sell'){
-            //         if($payment_data['method'] != 'deposit'){
-            //             if($payment_data['amount'] > $transaction->final_total)
-            //             $payment_data['amount'] = $transaction->final_total;
-            //         }else{
-
-            //         }
-            //     }
-            // }
-            $transaction_payment = TransactionPayment::create($payment_data);
+                //         }
+                //     }
+            }
         }
 
         return $transaction_payment;
@@ -136,5 +138,234 @@ class TransactionUtil extends Util
         TransactionSellLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_sell_lines)->delete();
 
         return true;
+    }
+
+    /**
+     * Updates reward point of a customer
+     *
+     * @return void
+     */
+    public function updateCustomerRewardPoints(
+        $customer_id,
+        $earned,
+        $earned_before = 0,
+        $redeemed = 0,
+        $redeemed_before = 0
+    ) {
+        $customer = Customer::find($customer_id);
+
+        //Return if walk in customer
+        if ($customer->is_default == 1) {
+            return false;
+        }
+
+        $total_earned = $earned - $earned_before;
+        $total_redeemed = $redeemed - $redeemed_before;
+
+        $diff = $total_earned - $total_redeemed;
+
+        $customer_points = empty($customer->total_rp) ? 0 : $customer->total_rp;
+        $total_points = $customer_points + $diff;
+
+        $customer->total_rp = $total_points;
+        $customer->total_rp_used += $total_redeemed;
+        $customer->save();
+    }
+
+    /**
+     * Calculates reward points to be earned by a customer
+     *
+     * @return integer
+     */
+    public function calculateTotalRewardPointsValue($customer_id, $store_id)
+    {
+        $total_points_value = 0;
+
+        $customer = Customer::find($customer_id);
+        if ($customer->is_default != 1) {
+
+            $customer_type_id = (string) $customer->customer_type_id;
+            if (!empty($customer_type_id)) {
+                $redemption_of_point = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->first();
+                if (!empty($redemption_of_point)) {
+                    if (!empty($redemption_of_point->end_date)) {
+                        //if end date set then check for expiry
+                        if ($redemption_of_point->end_date >= date('Y-m-d')) {
+                            $total_points_value = $this->calculatePointsValue($customer->total_rp,  $redemption_of_point);
+                        }
+                    } else {
+                        //if no end date then its is for unlimited time
+                        $total_points_value = $this->calculatePointsValue($customer->total_rp,  $redemption_of_point);
+                    }
+                }
+            }
+        }
+
+        return $total_points_value;
+    }
+    public function calculatePointsValue($total_points, $redemption_of_point)
+    {
+        return floor(($total_points / 1000) * $redemption_of_point->value_of_1000_points);
+    }
+
+    public function calcuateRedeemPoints($transaction)
+    {
+        $total_points = 0;
+
+        $customer = Customer::find($transaction->customer_id);
+        $store_id = (string) $transaction->store_id;
+
+        if ($customer->is_default != 1) {
+
+            $customer_type_id = (string) $customer->customer_type_id;
+            if (!empty($customer_type_id)) {
+                $redemption_of_points = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->first();
+                if (!empty($redemption_of_points)) {
+                    if (!empty($redemption_of_points->end_date)) {
+                        //if end date set then check for expiry
+                        if ($redemption_of_points->end_date >= date('Y-m-d')) {
+                            $total_points = $this->calculateRedeemPointsByProdct($transaction->transaction_sell_lines,  $redemption_of_points);
+                        }
+                    } else {
+                        //if no end date then its is for unlimited time
+                        $total_points = $this->calculateRedeemPointsByProdct($transaction->transaction_sell_lines,  $redemption_of_points);
+                    }
+                }
+            }
+        }
+        return $total_points;
+    }
+
+    public function calculateRedeemPointsByProdct($sell_lines,  $redemption_of_points)
+    {
+        $points = 0;
+
+        foreach ($sell_lines as $line) {
+            //if product in this order is valid for reward
+            $product_id = (string) $line->product_id;
+            $product_contain = RedemptionOfPoint::where('id', $redemption_of_points->id)->whereJsonContains('product_ids', $product_id)->first();
+            if (!empty($product_contain)) {
+                $line->update(['point_redeemed' => 1]);
+                $points += (1000 / $redemption_of_points->value_of_1000_points) * $line->sub_total;
+            }
+        }
+
+        return floor($points);
+    }
+
+    public function calculateRedeemablePointValue($customer_id, $product_array, $store_id)
+    {
+        $customer = Customer::find($customer_id);
+        $store_id = (string) $store_id;
+
+        $total_redeemable = 0;
+        if ($customer->is_default != 1) {
+
+            $customer_type_id = (string) $customer->customer_type_id;
+            if (!empty($customer_type_id)) {
+                $redemption_of_points = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->first();
+                if (!empty($redemption_of_points)) {
+                    if (!empty($redemption_of_points->end_date)) {
+                        //if end date set then check for expiry
+                        if ($redemption_of_points->end_date >= date('Y-m-d')) {
+                            $total_redeemable = $this->calculateRedeemablePointsByProdct($product_array,  $redemption_of_points, $customer_id, $store_id);
+                        }
+                    } else {
+                        //if no end date then its is for unlimited time
+                        $total_redeemable = $this->calculateRedeemablePointsByProdct($product_array,  $redemption_of_points, $customer_id, $store_id);
+                    }
+                }
+            }
+        }
+        return $total_redeemable;
+    }
+
+    public function calculateRedeemablePointsByProdct($product_array,  $redemption_of_points, $customer_id, $store_id)
+    {
+        $redeemable = 0;
+        $total_redeemable_value = $this->calculateTotalRewardPointsValue($customer_id, $store_id);
+
+        foreach ($product_array as $line) {
+            if ($total_redeemable_value > 0) {
+                //if product in this order is valid for redeem
+                $product_id = (string) $line['product_id'];
+                $sub_total = (string) $line['sub_total'];
+                $product_contain = RedemptionOfPoint::where('id', $redemption_of_points->id)->whereJsonContains('product_ids', $product_id)->first();
+                if (!empty($product_contain)) {
+                    if ($total_redeemable_value >= $sub_total) {
+                        $redeemable += $sub_total;
+                        $total_redeemable_value -= $sub_total;
+                    } else {
+                        $redeemable += $total_redeemable_value;
+                        $total_redeemable_value = 0;
+                    }
+                }
+            }
+        }
+
+        return floor($redeemable);
+    }
+    /**
+     * Calculates reward points to be earned from an order
+     *
+     * @return integer
+     */
+    public function calculateRewardPoints($transaction)
+    {
+        $total_points = 0;
+
+        $customer = Customer::find($transaction->customer_id);
+        $store_id = (string) $transaction->store_id;
+        if ($customer->is_default != 1) {
+
+            $customer_type_id = (string) $customer->customer_type_id;
+            if (!empty($customer_type_id)) {
+                $earning_point_system = EarningOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->first();
+                if (!empty($earning_point_system)) {
+                    if (!empty($earning_point_system->end_date)) {
+                        //if end date set then check for expiry
+                        if ($earning_point_system->end_date >= date('Y-m-d')) {
+                            $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
+                        }
+                    } else {
+                        //if no end date then its is for unlimited time
+                        $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
+                    }
+                }
+            }
+        }
+        return $total_points;
+    }
+
+    /**
+     * calculate point for each valid product
+     *
+     * @param object $sell_lines
+     * @param object $earning_point_system
+     * @return integer
+     */
+    public function calculatePointsByProducts($sell_lines, $earning_point_system)
+    {
+        $points = 0;
+
+        foreach ($sell_lines as $line) {
+            //if product in this order is valid for reward
+            $product_id = (string) $line->product_id;
+            $product_contain = EarningOfPoint::where('id', $earning_point_system->id)->whereJsonContains('product_ids', $product_id)->first();
+            if (!empty($product_contain)) {
+                $line->update(['point_earned' => 1]);
+                $points += $earning_point_system->points_on_per_amount * $line->sub_total;
+            }
+        }
+
+        return floor($points);
     }
 }

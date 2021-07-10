@@ -58,6 +58,49 @@
                 }
             },
         });
+
+        table = $('.dataTable').DataTable({
+            "paging":   false,
+            "info":     false,
+            dom: 'Bfrtip',
+            buttons: [
+                {
+                    extend: 'print',
+                    exportOptions: {
+                        columns: ':visible:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'excel',
+                    exportOptions: {
+                        columns: ':visible:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    exportOptions: {
+                        columns: ':visible:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    exportOptions: {
+                        columns: ':visible:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'copyHtml5',
+                    exportOptions: {
+                        columns: ':visible:not(.notexport)'
+                    }
+                },
+                {
+                    extend: 'colvis',
+                columns: ':gt(0)'
+
+                }
+            ]
+        });
     </script>
     @yield('javascript')
 
@@ -156,11 +199,17 @@
                                             result.msg,
                                             'success'
                                             );
-                                        }
-                                        setTimeout(() => {
+                                            setTimeout(() => {
+                                                location.reload();
+                                            }, 1500);
                                             location.reload();
-                                        }, 1500);
-                                        location.reload();
+                                        }else{
+                                            swal(
+                                            'Error',
+                                            result.msg,
+                                            'error'
+                                            );
+                                        }
                                     },
                                 });
 
@@ -196,51 +245,6 @@
       $('.selectpicker').selectpicker({
           style: 'btn-link',
       });
-
-      $(document).ready( function () {
-        table = $('.dataTable').DataTable({
-            "paging":   false,
-            "info":     false,
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'print',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'csvHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'copyHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'colvis',
-                columns: ':gt(0)'
-
-                }
-            ]
-        });
-    });
     </script>
 </body>
 

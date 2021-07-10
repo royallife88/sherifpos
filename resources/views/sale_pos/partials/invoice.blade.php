@@ -99,89 +99,80 @@
         </div>
         <p>@lang('lang.date'): {{$transaction->created_at}}<br>
             @lang('lang.reference'): {{$transaction->invoice_no}}<br>
-            @lang('lang.customer'): {{$transaction->customer->name}}
+            @lang('lang.customer'): @if(!empty($transaction->customer)){{$transaction->customer->name}}@endif
         </p>
-        <table>
-            <tbody>
+        <div class="table_div" style=" width:100%; height:100%;">
+            <table style="margin: 0 auto;">
+                <tbody>
 
-                @foreach($transaction->transaction_sell_lines as $line)
-                <tr>
-                    <td colspan="2">
-                        {{$line->product->name}}
-                        @if($line->variation->name != "Default")
-                        <b>{{$line->variation->name}}</b>
-                        @endif
-                        <br>{{@num_format($line->quantity)}} x {{@num_format($line->sub_total / $line->quantity)}}
+                    @foreach($transaction->transaction_sell_lines as $line)
+                    <tr>
+                        <td colspan="2">
+                            {{$line->product->name}}
+                            @if($line->variation->name != "Default")
+                            <b>{{$line->variation->name}}</b>
+                            @endif
+                            <br>{{@num_format($line->quantity)}} x {{@num_format($line->sub_total / $line->quantity)}}
 
-                    </td>
-                    <td style="text-align:right;vertical-align:bottom">{{@num_format($line->sub_total)}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-            <tfoot>
-                <tr>
-                    <th colspan="2">@lang('lang.total')</th>
-                    <th style="text-align:right">{{@num_format($transaction->grand_total)}}</th>
-                </tr>
-                {{-- @if($general_setting->invoice_format == 'gst' && $general_setting->state == 1)
-                <tr>
-                    <td colspan="2">IGST</td>
-                    <td style="text-align:right">{{number_format((float)$total_product_tax, 2, '.', '')}}</td>
-                </tr>
-                @elseif($general_setting->invoice_format == 'gst' && $general_setting->state == 2)
-                <tr>
-                    <td colspan="2">SGST</td>
-                    <td style="text-align:right">{{number_format((float)($total_product_tax / 2), 2, '.', '')}}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">CGST</td>
-                    <td style="text-align:right">{{number_format((float)($total_product_tax / 2), 2, '.', '')}}</td>
-                </tr>
-                @endif --}}
-                @if($transaction->total_tax)
-                <tr>
-                    <th colspan="2">@lang('lang.order_tax')</th>
-                    <th style="text-align:right">{{@num_format($transaction->total_tax)}}</th>
-                </tr>
-                @endif
-                @if($transaction->discount_amount)
-                <tr>
-                    <th colspan="2">@lang('lang.order_discount')</th>
-                    <th style="text-align:right">{{@num_format($transaction->discount_amount)}}</th>
-                </tr>
-                @endif
-                @if($transaction->transaction_sell_lines->sum('coupon_discount'))
-                <tr>
-                    <th colspan="2">@lang('lang.coupon_discount')</th>
-                    <th style="text-align:right">{{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
-                </tr>
-                @endif
-                {{-- @if($transaction->shipping_cost)
-                <tr>
-                    <th colspan="2">@lang('lang.Shipping Cost')</th>
-                    <th style="text-align:right">{{number_format((float)$transaction->shipping_cost, 2, '.', '')}}</th>
-                </tr>
-                @endif --}}
-                <tr>
-                    <th colspan="2">@lang('lang.grand_total')</th>
-                    <th style="text-align:right">{{@num_format($transaction->final_total)}}</th>
-                </tr>
-                <tr>
-                    {{-- @if($general_setting->currency_position == 'prefix')
-                    <th class="centered" colspan="3">@lang('lang.In Words'): <span>{{$currency->code}}</span>
-                    <span>{{str_replace("-"," ",$numberInWords)}}</span></th>
-                    @else
-                    <th class="centered" colspan="3">@lang('lang.In Words'):
-                        <span>{{str_replace("-"," ",$numberInWords)}}</span> <span>{{$currency->code}}</span></th>
+                        </td>
+                        <td style="text-align:right;vertical-align:bottom">{{@num_format($line->sub_total)}}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">@lang('lang.total')</th>
+                        <th style="text-align:right">{{@num_format($transaction->grand_total)}}</th>
+                    </tr>
+
+                    @if($transaction->total_tax)
+                    <tr>
+                        <th colspan="2">@lang('lang.order_tax')</th>
+                        <th style="text-align:right">{{@num_format($transaction->total_tax)}}</th>
+                    </tr>
+                    @endif
+                    @if($transaction->discount_amount)
+                    <tr>
+                        <th colspan="2">@lang('lang.order_discount')</th>
+                        <th style="text-align:right">{{@num_format($transaction->discount_amount)}}</th>
+                    </tr>
+                    @endif
+                    @if($transaction->transaction_sell_lines->sum('coupon_discount'))
+                    <tr>
+                        <th colspan="2">@lang('lang.coupon_discount')</th>
+                        <th style="text-align:right">
+                            {{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
+                    </tr>
+                    @endif
+                    {{-- @if($transaction->shipping_cost)
+                    <tr>
+                        <th colspan="2">@lang('lang.Shipping Cost')</th>
+                        <th style="text-align:right">{{number_format((float)$transaction->shipping_cost, 2, '.', '')}}
+                    </th>
+                    </tr>
                     @endif --}}
-                </tr>
-            </tfoot>
-        </table>
+                    @if(!empty($transaction->rp_redeemed_value))
+                    <tr>
+                        <th colspan="2">@lang('lang.redeemed_point_value')</th>
+                        <th style="text-align:right">{{@num_format($transaction->rp_redeemed_value)}}</th>
+                    </tr>
+                    @endif
+                    <tr>
+                        <th colspan="2">@lang('lang.grand_total')</th>
+                        <th style="text-align:right">{{@num_format($transaction->final_total)}}</th>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
         <table>
             <tbody>
                 @foreach($transaction->transaction_payments as $payment_data)
                 <tr style="background-color:#ddd;">
-                    <td style="padding: 5px;width:30%">@lang('lang.paid_by'): @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
+                    <td style="padding: 5px;width:30%">@lang('lang.paid_by'):
+                        @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
                     <td style="padding: 5px;width:40%">@lang('lang.amount'): {{@num_format($payment_data->amount)}}</td>
                 </tr>
                 @endforeach

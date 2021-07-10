@@ -16,9 +16,9 @@ class CustomerType extends Model
      */
     protected $guarded = ['id'];
 
-    public function customer_type_points()
+    public function customers()
     {
-        return $this->hasMany(CustomerTypePoint::class);
+        return $this->hasMany(Customer::class);
     }
 
     public function customer_type_store()

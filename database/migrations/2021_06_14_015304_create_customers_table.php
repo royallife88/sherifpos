@@ -22,6 +22,10 @@ class CreateCustomersTable extends Migration
             $table->string('email')->nullable();
             $table->string('fixed_discount')->comment('percentage value of discount')->nullable();
             $table->string('opening_balance')->nullable();
+            $table->integer('total_rp')->default(0)->comment('rp is the short form of reward points');
+            $table->integer('total_rp_used')->default(0)->comment('rp is the short form of reward points');
+            $table->integer('total_rp_expired')->default(0)->comment('rp is the short form of reward points');
+            $table->boolean('is_default')->default(0);
             $table->unsignedBigInteger('created_by');
 
             $table->timestamps();
