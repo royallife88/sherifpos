@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.supplier'))
+@section('title', __('lang.cash_in_hand'))
 @section('content')
 <section class="forms">
     <div class="container-fluid">
@@ -47,15 +47,13 @@
                                 {!! Form::file('image', []) !!}
                             </div>
                         </div>
-
-                        <div class="row">
+                        <br>
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
                                         class="btn btn-primary">
                                 </div>
                             </div>
-                        </div>
                         {!! Form::close() !!}
                     </div>
                 </div>

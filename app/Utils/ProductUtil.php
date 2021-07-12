@@ -5,6 +5,7 @@ namespace App\Utils;
 use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -13,6 +14,7 @@ use App\Models\PurchaseOrderLine;
 use App\Models\PurchaseReturnLine;
 use App\Models\RedemptionOfPoint;
 use App\Models\RemoveStockLine;
+use App\Models\SalesPromotion;
 use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\TransferLine;
@@ -404,6 +406,39 @@ class ProductUtil extends Util
     }
 
     /**
+     * get the sales promotion details for product if exist
+     *
+     * @param int $product_id
+     * @param int $store_id
+     * @param int $customer_id
+     * @return mix
+     */
+    public function getSalesPromotionDetail($product_id, $store_id, $customer_id)
+    {
+        $total_points = 0;
+
+        $customer = Customer::find($customer_id);
+        $store_id = (string) $store_id;
+
+        if ($customer->is_default != 1) {
+
+            $customer_type_id = (string) $customer->customer_type_id;
+            if (!empty($customer_type_id)) {
+                $sales_promotion = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->first();
+                if (!empty($sales_promotion)) {
+                    if (!empty($sales_promotion->start_date) && !empty($sales_promotion->end_date)) {
+                        //if end date set then check for expiry
+                        if ($sales_promotion->start_date <= date('Y-m-d') && $sales_promotion->end_date >= date('Y-m-d')) {
+                            return SalesPromotion::where('id', $sales_promotion->id)->whereJsonContains('product_ids', $product_id)->first();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    /**
      * Get all details for a product from its variation id
      *
      * @param int $variation_id
@@ -554,6 +589,59 @@ class ProductUtil extends Util
                 $deleted_line->delete();
             }
         }
+
+        return true;
+    }
+    /**
+     * createOrUpdateAddStockLines
+     *
+     * @param [mix] $transfer_lines
+     * @param [mix] $transaction
+     * @return void
+     */
+    public function createOrUpdateAddStockLines($transfer_lines, $transaction)
+    {
+
+        $keep_lines_ids = [];
+
+        foreach ($transfer_lines as $line) {
+            if (!empty($line['transfer_line_id'])) {
+                $transfer_line = TransferLine::find($line['transfer_line_id']);
+
+                $transfer_line->product_id = $line['product_id'];
+                $transfer_line->variation_id = $line['variation_id'];
+                $old_qty = $transfer_line->quantity;
+                $transfer_line->quantity = $this->num_uf($line['quantity']);
+                $transfer_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $transfer_line->sub_total = $this->num_uf($line['sub_total']);
+                $transfer_line->save();
+                $keep_lines_ids[] = $line['transfer_line_id'];
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], $old_qty);
+            } else {
+                $transfer_line_data = [
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $line['product_id'],
+                    'variation_id' => $line['variation_id'],
+                    'quantity' => $this->num_uf($line['quantity']),
+                    'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'sub_total' => $this->num_uf($line['sub_total']),
+                ];
+
+                $transfer_line = TransferLine::create($transfer_line_data);
+
+                $keep_lines_ids[] = $transfer_line->id;
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], 0);
+            }
+        }
+
+        if (!empty($keep_lines_ids)) {
+            $deleted_lines = TransferLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            foreach ($deleted_lines as $deleted_line) {
+                $this->decreaseProductQuantity($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->receiver_store_id, $deleted_line['quantity'], 0);
+                $deleted_line->delete();
+            }
+        }
+
 
         return true;
     }

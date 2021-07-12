@@ -6,6 +6,8 @@ use App\Models\CustomerType;
 use App\Models\Product;
 use App\Models\SalesPromotion;
 use App\Models\Store;
+use App\Utils\ProductUtil;
+use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\Log;
 
 class SalesPromotionController extends Controller
 {
-      /**
+    /**
      * All Utils instance.
      *
      */
@@ -40,11 +42,11 @@ class SalesPromotionController extends Controller
      */
     public function index()
     {
-        $earning_of_points = SalesPromotion::get();
+        $sales_promotions = SalesPromotion::get();
         $stores = Store::pluck('name', 'id');
 
-        return view('earning_of_point.index')->with(compact(
-            'earning_of_points',
+        return view('sales_promotion.index')->with(compact(
+            'sales_promotions',
             'stores',
         ));
     }
@@ -60,7 +62,7 @@ class SalesPromotionController extends Controller
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
 
-        return view('earning_of_point.create')->with(compact(
+        return view('sales_promotion.create')->with(compact(
             'stores',
             'products',
             'customer_types'
@@ -78,19 +80,27 @@ class SalesPromotionController extends Controller
 
         $this->validate(
             $request,
+            ['name' => ['required', 'max:255']],
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
-            ['points_on_per_amount' => ['required', 'max:255']],
+            ['discount_type' => ['required', 'max:255']],
+            ['discount_value' => ['required', 'max:255']],
+            ['start_date' => ['required', 'max:255']],
+            ['end_date' => ['required', 'max:255']],
         );
 
         try {
             $data = $request->except('_token');
             $data['created_by'] = Auth::user()->id;
-            $data['number'] = $this->productUtil->getNumberByType('earning_of_point');
+            $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
+            $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
+            $data['product_ids'] = !empty($request->product_ids) ? $request->product_ids : [];
+            $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
+            $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
+
             DB::beginTransaction();
 
-            $earning_of_point = SalesPromotion::create($data);
+            SalesPromotion::create($data);
 
 
             DB::commit();
@@ -106,7 +116,7 @@ class SalesPromotionController extends Controller
             ];
         }
 
-        return redirect()->to('earning-of-points')->with('status', $output);
+        return redirect()->to('sales-promotion')->with('status', $output);
     }
 
     /**
@@ -117,10 +127,10 @@ class SalesPromotionController extends Controller
      */
     public function show($id)
     {
-        $earning_of_point = SalesPromotion::find($id);
+        $sales_promotion = SalesPromotion::find($id);
 
-        return view('earning_of_point.show')->with(compact(
-            'earning_of_point'
+        return view('sales_promotion.show')->with(compact(
+            'sales_promotion'
         ));
     }
 
@@ -132,13 +142,13 @@ class SalesPromotionController extends Controller
      */
     public function edit($id)
     {
-        $earning_of_point = SalesPromotion::find($id);
+        $sales_promotion = SalesPromotion::find($id);
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
 
-        return view('earning_of_point.edit')->with(compact(
-            'earning_of_point',
+        return view('sales_promotion.edit')->with(compact(
+            'sales_promotion',
             'stores',
             'products',
             'customer_types'
@@ -156,14 +166,24 @@ class SalesPromotionController extends Controller
     {
         $this->validate(
             $request,
+            ['name' => ['required', 'max:255']],
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
-            ['points_on_per_amount' => ['required', 'max:255']],
+            ['discount_type' => ['required', 'max:255']],
+            ['discount_value' => ['required', 'max:255']],
+            ['start_date' => ['required', 'max:255']],
+            ['end_date' => ['required', 'max:255']],
         );
 
         try {
             $data = $request->except('_token', '_method');
+            $data['created_by'] = Auth::user()->id;
+            $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
+            $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
+            $data['product_ids'] = !empty($request->product_ids) ? $request->product_ids : [];
+            $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
+            $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
+
             DB::beginTransaction();
 
             SalesPromotion::where('id', $id)->update($data);
@@ -182,7 +202,7 @@ class SalesPromotionController extends Controller
             ];
         }
 
-        return redirect()->to('earning-of-points')->with('status', $output);
+        return redirect()->to('sales-promotion')->with('status', $output);
     }
 
     /**

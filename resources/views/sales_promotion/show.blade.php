@@ -2,7 +2,7 @@
     <div class="modal-content">
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.earning_of_point_system' )</h4>
+            <h4 class="modal-title">@lang( 'lang.sales_promotion_formal_discount' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
@@ -11,40 +11,55 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <b> {!! Form::label('number', __( 'lang.number' ) . ':') !!} </b> {{$earning_of_point->number}}
+                        <b> {!! Form::label('name', __( 'lang.name' ) . ':') !!} </b> {{$sales_promotion->name}}
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <b>{!! Form::label('store_ids', __( 'lang.store' ) . ':') !!}</b> {{implode(', ', $earning_of_point->stores->pluck('name')->toArray())}}
+                        <b>{!! Form::label('store_ids', __( 'lang.store' ) . ':') !!}</b> {{implode(', ', $sales_promotion->stores->pluck('name')->toArray())}}
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <b>{!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':') !!}</b> {{implode(', ', $earning_of_point->customer_types->pluck('name')->toArray())}}
+                        <b>{!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':') !!}</b> {{implode(', ', $sales_promotion->customer_types->pluck('name')->toArray())}}
+
+                    </div>
+                </div>
+                @if($sales_promotion->product_condition)
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <b>{!! Form::label('product_ids', __( 'lang.product' ) . ':') !!}</b> {{implode(', ', $sales_promotion->products->pluck('name')->toArray())}}
+
+                    </div>
+                </div>
+                @endif
+                @if($sales_promotion->purchase_condition)
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <b>{!! Form::label('purchase_condition_amount', __( 'lang.purchase_condition_amount' ) . ':') !!}</b> {{@num_format($sales_promotion->purchase_condition_amount)}}
+
+                    </div>
+                </div>
+                @endif
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <b>{!! Form::label('discount_type', __( 'lang.discount_type' ) . ':') !!}</b> {{ucfirst($sales_promotion->discount_type)}}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <b>{!! Form::label('discount_value', __( 'lang.discount' ) . ':') !!}</b> {{@num_format($sales_promotion->discount_value)}}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <b>{!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}</b> @if(!empty($sales_promotion->start_date)){{@format_date($sales_promotion->start_date)}}@endif
 
                     </div>
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <b>{!! Form::label('product_ids', __( 'lang.product' ) . ':') !!}</b> {{implode(', ', $earning_of_point->products->pluck('name')->toArray())}}
-
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <b>{!! Form::label('points_on_per_amount', __( 'lang.points_on_per_amount_sale' ) . ':') !!}</b> {{@num_format($earning_of_point->points_on_per_amount)}}
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <b>{!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}</b> @if(!empty($earning_of_point->start_date)){{@format_date($earning_of_point->start_date)}}@endif
-
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <b>{!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':') !!}</b> @if(!empty($earning_of_point->end_date)){{@format_date($earning_of_point->end_date)}}@endif
+                        <b>{!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':') !!}</b> @if(!empty($sales_promotion->end_date)){{@format_date($sales_promotion->end_date)}}@endif
 
                     </div>
                 </div>

@@ -11,7 +11,7 @@ class WagesAndCompensation extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
-     /**
+    /**
      * The attributes that aren't mass assignable.
      *
      * @var array
@@ -30,5 +30,10 @@ class WagesAndCompensation extends Model implements HasMedia
             'recognition' => 'Recognition',
             'other_reward' => 'Other Reward'
         ];
+    }
+
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class);
     }
 }

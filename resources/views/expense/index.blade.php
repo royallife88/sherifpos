@@ -12,9 +12,56 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <a class="btn btn-primary ml-3" href="{{action('ExpenseController@create')}}">
-                            <i class="fa fa-plus"></i> @lang( 'lang.add_new_expense' )</a>
+                        <div class="col-md-12">
+                            <form action="">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('expense_category_id', __('lang.expense_category'), []) !!}
+                                                {!! Form::select('expense_category_id', $expense_categories,
+                                                request()->expense_category_id, ['class'
+                                                =>
+                                                'form-control', 'placeholder' =>
+                                                __('lang.all'),'data-live-search'=>"true"]) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('expense_beneficiary_id', __('lang.expense_beneficiary'), []) !!}
+                                                {!! Form::select('expense_beneficiary_id', $expense_beneficiaries,
+                                                request()->expense_beneficiary_id, ['class'
+                                                =>
+                                                'form-control', 'placeholder' =>
+                                                __('lang.all'),'data-live-search'=>"true"]) !!}
+                                            </div>
+                                        </div>
 
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                                                {!! Form::date('start_date', request()->start_date, ['class' =>
+                                                'form-control']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                                                {!! Form::date('end_date', request()->end_date, ['class' =>
+                                                'form-control']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <br>
+                                            <button type="submit"
+                                                class="btn btn-success mt-2">@lang('lang.filter')</button>
+                                            <a href="{{action('ExpenseController@index')}}"
+                                                class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                         <div class="col-sm-12">
                             <br>
                             <table class="table dataTable">
@@ -42,8 +89,10 @@
                                         </td>
                                         <td>{{@num_format($expense->final_total)}}</td>
                                         <td>{{ucfirst($expense->created_by)}}</td>
-                                        <td>@if(!empty($expense->transaction_payments)){{@format_date($expense->transaction_payments->first()->paid_on)}}@endif</td>
-                                        <td>@if(!empty($expense->next_payment_date)){{@format_date($expense->next_payment_date)}}@endif</td>
+                                        <td>@if(!empty($expense->transaction_payments)){{@format_date($expense->transaction_payments->first()->paid_on)}}@endif
+                                        </td>
+                                        <td>@if(!empty($expense->next_payment_date)){{@format_date($expense->next_payment_date)}}@endif
+                                        </td>
                                         <td>
                                             <a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $expense->id, 'collection_name' => 'expense'])}}"
                                                 data-container=".view_modal"

@@ -113,6 +113,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
                 $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
                 $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->num_uf($line['coupon_discount_amount']) : 0;
+                $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
+                $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['coupon_discount_type'] : null;
+                $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->num_uf($line['coupon_discount_amount']) : 0;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
@@ -126,6 +129,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
                 $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
                 $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->num_uf($line['coupon_discount_amount']) : 0;
+                $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->num_uf($line['coupon_discount']) : 0;
+                $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['coupon_discount_type'] : null;
+                $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->num_uf($line['coupon_discount_amount']) : 0;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);

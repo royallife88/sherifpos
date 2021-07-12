@@ -13,6 +13,11 @@
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount]" class="coupon_discount_value" value="0"> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_type]" class="coupon_discount_type" value=""> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_amount]" class="coupon_discount_amount" value="0"><!-- after calculation actual discounted amount for row product row -->
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_purchase_condition]" class="promotion_purchase_condition" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->purchase_condition}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_purchase_condition_amount]" class="promotion_purchase_condition_amount" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->purchase_condition_amount}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount]" class="promotion_discount_value" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_value}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_type]" class="promotion_discount_type" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_type}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]" class="promotion_discount_amount" value="0">
     </td>
     <td style="width: 20%">
         <div class="input-group"><span class="input-group-btn">

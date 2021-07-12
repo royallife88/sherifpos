@@ -53,6 +53,8 @@ class User extends Authenticatable
             'return' => 'Return',
             'expense' => 'Expense',
             'stock' => 'Stock',
+            'cash' => 'Cash',
+            'reports' => 'Reports',
             'quotation_for_customers' => 'Quotation for Customers',
             'coupons_and_gift_cards' => 'Coupons and Gift Cards',
             'loyalty_points' => 'Loyalty Points',
@@ -134,6 +136,19 @@ class User extends Authenticatable
             'loyalty_points' => [
                 'earning_of_points' => 'Earning of Points',
                 'redemption_of_points' => 'Redemption of points',
+            ],
+            'reports' => [
+                'profit_loss' => 'Profit / Loss Report',
+                'receivable_report' => 'Receivable Report',
+                'payable_report' => 'Payable Report',
+                'expected_receivable_report' => 'Expected Receivable Report',
+                'expected_payable_report' => 'Expected Payable Report',
+            ],
+            'cash' => [
+                'add_cash' => 'Add Cash',
+                'add_closing_cash' => 'Add Closing Cash',
+                'add_cash_out' => 'Add Cash Out',
+                'view_details' => 'View Details',
             ],
             'sp_module' => [
                 'sales_promotion' => 'Sales Promotion',

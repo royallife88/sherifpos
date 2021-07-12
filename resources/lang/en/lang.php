@@ -629,8 +629,35 @@ return [
 
     'sales_promotion' => 'Sales Promotion',
     'sales_promotion_formal_discount' => 'Sales Promotion (Formal Discount)',
+    'edit_sales_promotion' => 'Edit Sales Promotion',
+    'add_sales_promotion_formal_discount' => 'Add New Sales Promotion (Formal Discount)',
     'add_new_sales_promotion' => 'Add New Sales Promotion',
     'view_all_sales_promotion' => 'View All Sales Promotion',
+    'product_condition' => 'Product Condition',
+    'purchase_condition' => 'Purchase Condition',
+
+    'cash_in_hand' => 'Cash in Hand',
+    'add_cash' => 'Add Cash',
+    'pay_later' => 'Pay Later',
+    'bank_transfer' => 'Bank Transfer',
+
+    'profit_loss_report' => 'Profit / Loss Report',
+    'reports' => 'Reports',
+    'income' => 'Income',
+    'information' => 'Information',
+    'expendatures' => 'Expendatures',
+    'total_expenses' => 'Total Expenses',
+    'total_income' => 'Total Income',
+    'profit_and_loss' => 'Profit And Loss',
+    'wages_type' => 'Wages Type',
+    'receivable_report' => 'Receivable Report',
+    'payable_report' => 'Payable Report',
+    'expected_receivable_report' => 'Expected Receivable Report',
+    'expected_payable_report' => 'Expected Payable Report',
+    'total_paid' => 'Total Paid',
+    'expense_type' => 'Expense Type',
+    'name_of_expense' => 'Name of Expense',
+    'supplier_invoice' => 'Supplier Invoice',
 
 
 ];

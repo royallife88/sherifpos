@@ -27,6 +27,13 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
+                            {!! Form::label('store_id', __('lang.store'), []) !!}
+                            {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
                             {!! Form::label('status', __('lang.status'), []) !!}
                             {!! Form::select('status', ['final' => 'Completed', 'pending' => 'Pending'], request()->status, ['class' =>
                             'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}

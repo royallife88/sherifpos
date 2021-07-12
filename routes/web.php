@@ -151,7 +151,15 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
 
     Route::resource('sales-promotion', SalesPromotionController::class);
 
+    Route::get('cash/add-cash', 'CashController@addCash');
+    Route::post('cash/save-add-cash', 'CashController@saveAddCash');
+    Route::resource('cash', CashController::class);
 
+    Route::any('report/get-profit-loss', 'ReportController@getProfitLoss');
+    Route::any('report/get-receivable-report', 'ReportController@getReceivableReport');
+    Route::any('report/get-payable-report', 'ReportController@getPayableReport');
+    Route::any('report/get-receivable-payable-report', 'ReportController@getExpectedReceivableReport');
+    Route::any('report/get-expected-payable-report', 'ReportController@getExpectedPayableReport');
 
 
 

@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
 use App\Models\Transaction;
@@ -63,6 +64,9 @@ class SellController extends Controller
         if (!empty(request()->status)) {
             $query->where('status', request()->status);
         }
+        if (!empty(request()->store_id)) {
+            $query->where('store_id', request()->store_id);
+        }
         if (!empty(request()->payment_status)) {
             $query->where('payment_status', request()->payment_status);
         }
@@ -76,12 +80,14 @@ class SellController extends Controller
         $sales = $query->orderBy('invoice_no', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
+        $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('sale.index')->with(compact(
             'sales',
             'payment_types',
             'customers',
+            'stores',
             'payment_status_array',
         ));
     }

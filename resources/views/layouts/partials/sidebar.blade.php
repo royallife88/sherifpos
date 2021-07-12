@@ -262,6 +262,70 @@
                 </li>
                 @endif
 
+                @if(
+                auth()->user()->can('cash.add_cash.create_and_edit') ||
+                auth()->user()->can('cash.add_cash.view') ||
+                auth()->user()->can('cash.add_closing_cash.create_and_edit') ||
+                auth()->user()->can('cash.add_closing_cash.view') ||
+                auth()->user()->can('cash.add_cash_out.create_and_edit') ||
+                auth()->user()->can('cash.add_cash_out.view') ||
+                auth()->user()->can('cash.view_details.create_and_edit') ||
+                auth()->user()->can('cash.view_details.view')
+                )
+                <li><a href="#cash" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-money"></i><span>{{__('lang.cash')}}</span><span></a>
+                    <ul id="cash"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash'])) show @endif">
+                        {{-- @can('cash.add_cash.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'cash' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('CashController@create')}}">{{__('lang.add_new_add_cash')}}</a></li>
+                        @endcan --}}
+                        @can('cash.add_cash.view')
+                        <li
+                            class="@if(request()->segment(1) == 'cash' && request()->segment(2) == 'add-cash') active @endif">
+                            <a href="{{action('CashController@addCash')}}">{{__('lang.add_cash')}}</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+
+                @if(
+                auth()->user()->can('reports.profit_loss.view')
+                )
+                <li><a href="#reports" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-file-text"></i><span>{{__('lang.reports')}}</span><span></a>
+                    <ul id="reports"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['report'])) show @endif">
+                        @can('reports.profit_loss.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-profit-loss') active @endif">
+                            <a href="{{action('ReportController@getProfitLoss')}}">{{__('lang.profit_loss_report')}}</a></li>
+                        @endcan
+                        @can('reports.receivable_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-receivable-report') active @endif">
+                            <a href="{{action('ReportController@getReceivableReport')}}">{{__('lang.receivable_report')}}</a></li>
+                        @endcan
+                        @can('reports.payable_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-payable-report') active @endif">
+                            <a href="{{action('ReportController@getPayableReport')}}">{{__('lang.payable_report')}}</a></li>
+                        @endcan
+                        @can('reports.expected_receivable_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-expected-receivable-report') active @endif">
+                            <a href="{{action('ReportController@getExpectedReceivableReport')}}">{{__('lang.expected_receivable_report')}}</a></li>
+                        @endcan
+                        @can('reports.expected_payable_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-expected-payable-report') active @endif">
+                            <a href="{{action('ReportController@getExpectedPayableReport')}}">{{__('lang.expected_payable_report')}}</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+
                 @if(auth()->user()->can('coupons_and_gift_cards.coupon.create_and_edit') ||
                 auth()->user()->can('coupons_and_gift_cards.coupon.view') ||
                 auth()->user()->can('coupons_and_gift_cards.gift_card.view') ||
@@ -351,11 +415,11 @@
                             class="@if(request()->segment(1) == 'sales-promotion' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('SalesPromotionController@create')}}">{{__('lang.add_new_sales_promotion')}}</a></li>
                         @endcan
-                        {{-- @can('sp_module.sales_promotion.view')
+                        @can('sp_module.sales_promotion.view')
                         <li
                             class="@if(request()->segment(1) == 'sales-promotion' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('SalesPromotionController@index')}}">{{__('lang.view_all_sales_promotion')}}</a></li>
-                        @endcan --}}
+                        @endcan
                     </ul>
                 </li>
                 @endif

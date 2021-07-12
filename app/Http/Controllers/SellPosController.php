@@ -190,9 +190,10 @@ class SellPosController extends Controller
             $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
         }
 
+        $amount = $this->commonUtil->num_uf($request->amount);
         $payment_data = [
             'transaction_id' => $transaction->id,
-            'amount' => $this->commonUtil->num_uf($request->amount),
+            'amount' => $amount,
             'method' => $request->method,
             'paid_on' => $transaction->transaction_date,
             'ref_number' => $request->ref_number,
@@ -201,12 +202,16 @@ class SellPosController extends Controller
             'card_security' => $request->card_security,
             'card_month' => $request->card_month,
             'cheque_number' => $request->cheque_number,
+            'bank_name' => $request->bank_name,
+            'ref_number' => $request->ref_number,
             'gift_card_number' => $request->gift_card_number,
             'amount_to_be_used' => $request->amount_to_be_used,
             'payment_note' => $request->payment_note,
         ];
         if ($transaction->status != 'draft') {
-            $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+            if($amount > 0){
+                $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+            }
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
             $this->cashRegisterUtil->addSellPayments($transaction, $payment_data);
@@ -487,13 +492,16 @@ class SellPosController extends Controller
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
+            $customer_id = $request->input('customer_id');
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id);
 
+                $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id);
+
                 return view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index'));
+                    ->with(compact('products', 'index', 'sale_promotion_details'));
             }
         }
     }

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.earning_of_point_system'))
+@section('title', __('lang.sales_promotion_formal_discount'))
 @section('content')
 <section class="forms">
     <div class="container-fluid">
@@ -7,14 +7,20 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>@lang('lang.add_earning_of_point_system')</h4>
+                        <h4>@lang('lang.add_sales_promotion_formal_discount')</h4>
                     </div>
                     <div class="card-body">
                         <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                        {!! Form::open(['url' => action('EarningOfPointController@store'), 'id' => 'customer-type-form',
+                        {!! Form::open(['url' => action('SalesPromotionController@store'), 'id' => 'customer-type-form',
                         'method' =>
                         'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                         <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
+                                    {!! Form::text('name', null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('store_ids', __( 'lang.store' ) . ':*') !!}
@@ -31,28 +37,47 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    {!! Form::label('product_ids', __( 'lang.product' ) . ':*') !!}
+                                    <div class="i-checks">
+                                        <input id="product_condition" name="product_condition" type="checkbox" value="1"
+                                            class="form-control-custom">
+                                        <label for="product_condition"><strong>@lang('lang.product_condition')</strong></label>
+                                    </div>
                                     {!! Form::select('product_ids[]', $products, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    {!! Form::label('points_on_per_amount', __( 'lang.points_on_per_amount_sale' ) . ':*') !!} <i class="dripicons-question"
-                                    data-toggle="tooltip" title="@lang('lang.points_on_per_amount_info')"></i>
-                                    {!! Form::text('points_on_per_amount', 1, ['class' => 'form-control', 'required']) !!}
+                                    <div class="i-checks">
+                                        <input id="purchase_condition" name="purchase_condition" type="checkbox" value="1"
+                                            class="form-control-custom">
+                                        <label for="purchase_condition"><strong>@lang('lang.purchase_condition')</strong></label>
+                                    </div>
+                                    {!! Form::text('purchase_condition_amount', 0, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('discount_type', __( 'lang.discount_type' ) . ':*') !!}
+                                    {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], false,['class' => 'form-control selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('discount_value', __( 'lang.discount' ) . ':*') !!}
+                                    {!! Form::text('discount_value', 0, ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}
-                                    {!! Form::date('start_date', 1, ['class' => 'form-control']) !!}
+                                    {!! Form::date('start_date', 1, ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
-                                    {!! Form::date('end_date', 1, ['class' => 'form-control']) !!}
+                                    {!! Form::date('end_date', 1, ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                         </div>

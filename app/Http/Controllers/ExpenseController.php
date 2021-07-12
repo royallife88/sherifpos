@@ -42,16 +42,35 @@ class ExpenseController extends Controller
      */
     public function index()
     {
-        $expenses = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
-            ->where('type', 'expense')
-            ->select('transactions.*', 'users.name as created_by')
+        $expense_query = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
+            ->where('type', 'expense');
+
+
+        if (!empty(request()->start_date)) {
+            $expense_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $expense_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty(request()->expense_category_id)) {
+            $expense_query->where('expense_category_id', request()->expense_category_id);
+        }
+        if (!empty(request()->expense_beneficiary_id)) {
+            $expense_query->where('expense_beneficiary_id', request()->expense_beneficiary_id);
+        }
+        if (!empty(request()->store_id)) {
+            $expense_query->where('store_id', request()->store_id);
+        }
+        $expenses = $expense_query->select('transactions.*', 'users.name as created_by')
             ->get();
 
         $expense_categories = ExpenseCategory::pluck('name', 'id');
+        $expense_beneficiaries = ExpenseBeneficiary::pluck('name', 'id');
 
         return view('expense.index')->with(compact(
             'expenses',
-            'expense_categories'
+            'expense_categories',
+            'expense_beneficiaries'
         ));
     }
 

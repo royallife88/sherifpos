@@ -271,7 +271,7 @@ class AddStockController extends Controller
                 'created_by' => Auth::user()->id
             ];
 
-            if(!empty($data['po_no'])){
+            if (!empty($data['po_no'])) {
                 $transaction_date['purchase_order_id'] = $data['po_no'];
             }
 

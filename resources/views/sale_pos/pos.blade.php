@@ -174,6 +174,16 @@
                                 id="cheque-btn"><i class="fa fa-money"></i> @lang('lang.cheque')</button>
                         </div>
                         <div class="column-5">
+                            <button data-method="bank_transfer" style="background-color: #56962b" type="button"
+                                class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
+                                id="bank-transfer-btn"><i class="fa fa-building-o"></i> @lang('lang.bank_transfer')</button>
+                        </div>
+                        <div class="column-5">
+                            <button data-method="pay-later" style="background-color: #cf2929" type="button"
+                                class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
+                                @lang('lang.pay_later')</button>
+                        </div>
+                        <div class="column-5">
                             <button data-method="gift_card" style="background-color: #5f27cd" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                 id="gift-card-btn"><i class="fa fa-credit-card-alt"></i>

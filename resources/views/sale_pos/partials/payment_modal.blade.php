@@ -59,8 +59,14 @@
                                </div>
                             </div>
 
+                            <div class="form-group col-md-12 bank_field hide">
+                                <label>@lang('lang.bank_name')</label>
+                                <input type="text" name="bank_name" class="form-control">
+                                <label>@lang('lang.ref_number') </label>
+                                <input type="text" name="ref_number" class="form-control">
+                            </div>
                             <div class="form-group col-md-12 cheque_field hide">
-                                <label>@lang('lang.cheque_number') *</label>
+                                <label>@lang('lang.cheque_number')</label>
                                 <input type="text" name="cheque_number" class="form-control">
                             </div>
                             <div class="form-group col-md-12 gift_card_field hide">

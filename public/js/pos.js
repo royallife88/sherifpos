@@ -158,6 +158,7 @@ function get_label_product_row(product_id, variation_id) {
 
     if (add_via_ajax) {
         var store_id = $("#store_id").val();
+        var customer_id = $("#customer_id").val();
         var row_count = $("table#product_table tbody tr").length;
         $.ajax({
             method: "GET",
@@ -168,6 +169,7 @@ function get_label_product_row(product_id, variation_id) {
                 row_count: row_count,
                 variation_id: variation_id,
                 store_id: store_id,
+                customer_id: customer_id,
             },
             success: function (result) {
                 $("table#product_table tbody").append(result);
@@ -192,6 +194,7 @@ function calculate_sub_totals() {
 
         let coupon_discount = calculat_coupon_discount(tr);
         sub_total -= coupon_discount;
+
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
             .find(".sub_total_span")
@@ -200,6 +203,8 @@ function calculate_sub_totals() {
         total += sub_total;
 
         item_count++;
+
+        calculate_promotion_discount(tr);
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -239,9 +244,55 @@ function calculate_sub_totals() {
     }
 
     __write_number($("#final_total"), total);
+    let promo_discount = apply_promotion_discounts();
+    if(promo_discount > 0){
+        __write_number($("#discount_amount"), promo_discount);
+    }
+    total -= promo_discount;
+    __write_number($("#final_total"), total);
     $("#final_total").change();
 
     $(".final_total_span").text(__currency_trans_from_en(total, false));
+}
+function calculate_promotion_discount(tr) {
+    let discount = 0;
+
+    let value = __read_number($(tr).find(".promotion_discount_value"));
+    let type = $(tr).find(".promotion_discount_type").val();
+    let sub_total = __read_number($(tr).find(".sub_total"));
+    if (type == "fixed") {
+        discount = value;
+    }
+    if (type == "percentage") {
+        discount = __get_percent_value(sub_total, value);
+    }
+
+    $(tr).find(".promotion_discount_amount").val(discount);
+}
+
+function apply_promotion_discounts() {
+    let promo_discount = 0;
+    let final_total = __read_number($("#final_total"));
+    $("#product_table > tbody  > tr").each((ele, tr) => {
+        let promotion_discount_amount = __read_number(
+            $(tr).find(".promotion_discount_amount")
+        );
+        let promotion_purchase_condition = __read_number(
+            $(tr).find(".promotion_purchase_condition")
+        );
+        let promotion_purchase_condition_amount = __read_number(
+            $(tr).find(".promotion_purchase_condition_amount")
+        );
+
+        if (promotion_purchase_condition) {
+            if (final_total > promotion_purchase_condition_amount) {
+                promo_discount += promotion_discount_amount;
+            }
+        } else {
+            promo_discount += promotion_discount_amount;
+        }
+    });
+    return promo_discount;
 }
 function calculat_coupon_discount(tr) {
     let discount = 0;
@@ -260,6 +311,16 @@ function calculat_coupon_discount(tr) {
 
     return discount;
 }
+$(document).on("change", "#final_total", function (e) {
+    let final_total = __read_number($("#final_total"));
+
+    __write_number($("#final_total"), final_total);
+    $(".final_total_span").text(__currency_trans_from_en(final_total, false));
+
+    __write_number($("#amount"), final_total);
+    __write_number($("#paying_amount"), final_total);
+});
+
 $("#discount_btn").click(function () {
     calculate_sub_totals();
 });
@@ -387,11 +448,6 @@ $(document).on("click", ".quick_add_purchase_order", function () {
     });
 });
 
-$(document).on("change", "#final_total", function (e) {
-    let final_total = __read_number($("#final_total"));
-    __write_number($("#amount"), final_total);
-    __write_number($("#paying_amount"), final_total);
-});
 $(document).on("click", "#draft-btn", function (e) {
     $("#status").val("draft");
 
@@ -403,12 +459,21 @@ $(document).on("click", "#draft-btn", function (e) {
 
     pos_form_obj.submit();
 });
+$(document).on("click", "#pay-later-btn", function (e) {
+    //Check if product is present or not.
+    if ($("table#product_table tbody").find(".product_row").length <= 0) {
+        toastr.warning("No Product Added");
+        return false;
+    }
+    $('#amount').val(0);
+    pos_form_obj.submit();
+});
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];
     audio.play();
 
     let method = $(this).data("method");
-
+console.log(method);
     $("#method").val(method);
     $("#method").selectpicker("refresh");
     $("#method").change();
@@ -417,6 +482,11 @@ $(document).on("click", ".payment-btn", function (e) {
         $(".cheque_field").removeClass("hide");
     } else {
         $(".cheque_field").addClass("hide");
+    }
+    if (method === "bank_transfer") {
+        $(".bank_field").removeClass("hide");
+    } else {
+        $(".bank_field").addClass("hide");
     }
     if (method === "card") {
         $(".card_field").removeClass("hide");

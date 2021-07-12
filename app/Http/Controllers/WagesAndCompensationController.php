@@ -125,6 +125,7 @@ class WagesAndCompensationController extends Controller
             $data['created_by'] = Auth::user()->id;
             $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
             $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
+            $data['deductibles'] = !empty($data['deductibles']) ? $data['deductibles'] : 0;
 
             DB::beginTransaction();
             $wages_and_compensation = WagesAndCompensation::create($data);
@@ -320,10 +321,10 @@ class WagesAndCompensationController extends Controller
                         ->whereIn('customer_types.id', $employee->commission_customer_types)
                         ->where('status', 'final');
 
-                        if(!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)){
-                            $sold_query->where('transactions.transaction_date', '>=', request()->acount_period_start_date);
-                            $sold_query->where('transactions.transaction_date', '<=', request()->acount_period_end_date);
-                        }
+                    if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
+                        $sold_query->where('transactions.transaction_date', '>=', request()->acount_period_start_date);
+                        $sold_query->where('transactions.transaction_date', '<=', request()->acount_period_end_date);
+                    }
 
                     $sold_value = $sold_query->sum('final_total');
                 }
