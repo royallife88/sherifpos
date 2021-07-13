@@ -88,6 +88,11 @@ class ProductUtil extends Util
 
             $number = 'Inv' . $year . $month . $inv_count;
         }
+        if ($type == 'expense') {
+            $inv_count = Transaction::where('type', $type)->count() + 1;
+
+            $number = 'Exp' . $year . $month . $inv_count;
+        }
         if ($type == 'sell_return') {
             $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
 
@@ -595,30 +600,30 @@ class ProductUtil extends Util
     /**
      * createOrUpdateAddStockLines
      *
-     * @param [mix] $transfer_lines
+     * @param [mix] $add_stocks
      * @param [mix] $transaction
      * @return void
      */
-    public function createOrUpdateAddStockLines($transfer_lines, $transaction)
+    public function createOrUpdateAddStockLines($add_stocks, $transaction)
     {
 
         $keep_lines_ids = [];
 
-        foreach ($transfer_lines as $line) {
-            if (!empty($line['transfer_line_id'])) {
-                $transfer_line = TransferLine::find($line['transfer_line_id']);
+        foreach ($add_stocks as $line) {
+            if (!empty($line['add_stock_id'])) {
+                $add_stock = AddStockLine::find($line['add_stock_id']);
 
-                $transfer_line->product_id = $line['product_id'];
-                $transfer_line->variation_id = $line['variation_id'];
-                $old_qty = $transfer_line->quantity;
-                $transfer_line->quantity = $this->num_uf($line['quantity']);
-                $transfer_line->purchase_price = $this->num_uf($line['purchase_price']);
-                $transfer_line->sub_total = $this->num_uf($line['sub_total']);
-                $transfer_line->save();
-                $keep_lines_ids[] = $line['transfer_line_id'];
-                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], $old_qty);
+                $add_stock->product_id = $line['product_id'];
+                $add_stock->variation_id = $line['variation_id'];
+                $old_qty = $add_stock->quantity;
+                $add_stock->quantity = $this->num_uf($line['quantity']);
+                $add_stock->purchase_price = $this->num_uf($line['purchase_price']);
+                $add_stock->sub_total = $this->num_uf($line['sub_total']);
+                $add_stock->save();
+                $keep_lines_ids[] = $line['add_stock_id'];
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], $old_qty);
             } else {
-                $transfer_line_data = [
+                $add_stock_data = [
                     'transaction_id' => $transaction->id,
                     'product_id' => $line['product_id'],
                     'variation_id' => $line['variation_id'],
@@ -627,17 +632,17 @@ class ProductUtil extends Util
                     'sub_total' => $this->num_uf($line['sub_total']),
                 ];
 
-                $transfer_line = TransferLine::create($transfer_line_data);
+                $add_stock = AddStockLine::create($add_stock_data);
 
-                $keep_lines_ids[] = $transfer_line->id;
-                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], 0);
+                $keep_lines_ids[] = $add_stock->id;
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], 0);
             }
         }
 
         if (!empty($keep_lines_ids)) {
-            $deleted_lines = TransferLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
             foreach ($deleted_lines as $deleted_line) {
-                $this->decreaseProductQuantity($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->receiver_store_id, $deleted_line['quantity'], 0);
+                $this->decreaseProductQuantity($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->store_id, $deleted_line['quantity'], 0);
                 $deleted_line->delete();
             }
         }

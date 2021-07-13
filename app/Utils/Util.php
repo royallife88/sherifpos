@@ -47,10 +47,10 @@ class Util
         $thousand_separator = ',';
         $decimal_separator = '.';
 
-        $currency_precision =  config('constants.currency_precision', 2);
+        $currency_precision =  2;
 
         if ($is_quantity) {
-            $currency_precision = config('constants.quantity_precision', 2);
+            $currency_precision = 2;
         }
 
         $formatted = number_format($input_number, $currency_precision, $decimal_separator, $thousand_separator);

@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
+use App\Models\Product;
+use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
+use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +25,7 @@ class ExpenseController extends Controller
      */
     protected $commonUtil;
     protected $transactionUtil;
+    protected $productUtil;
 
     /**
      * Constructor
@@ -28,10 +33,11 @@ class ExpenseController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
+        $this->productUtil = $productUtil;
     }
 
 
@@ -83,10 +89,12 @@ class ExpenseController extends Controller
     {
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $stores = Store::pluck('name', 'id');
 
         return view('expense.create')->with(compact(
             'expense_categories',
-            'payment_type_array'
+            'payment_type_array',
+            'stores'
         ));
     }
 
@@ -105,8 +113,11 @@ class ExpenseController extends Controller
             $expense_data = [
                 'grand_total' => $data['amount'],
                 'final_total' => $data['amount'],
+                'store_id' => $data['store_id'],
                 'type' => 'expense',
                 'status' => 'final',
+                'invoice_no' => $this->productUtil->getNumberByType('expense'),
+                'transaction_date' => Carbon::now(),
                 'expense_category_id' => $data['expense_category_id'],
                 'expense_beneficiary_id' => $data['expense_beneficiary_id'],
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
@@ -178,9 +189,11 @@ class ExpenseController extends Controller
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::where('expense_category_id', $expense->expense_category_id)->pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
 
         return view('expense.edit')->with(compact(
             'expense',
+            'stores',
             'payment_type_array',
             'expense_beneficiaries',
             'expense_categories'

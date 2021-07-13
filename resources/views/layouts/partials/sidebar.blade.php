@@ -322,6 +322,91 @@
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-expected-payable-report') active @endif">
                             <a href="{{action('ReportController@getExpectedPayableReport')}}">{{__('lang.expected_payable_report')}}</a></li>
                         @endcan
+                        @can('reports.summary_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-summary-report') active @endif">
+                            <a href="{{action('ReportController@getSummaryReport')}}">{{__('lang.summary_report')}}</a></li>
+                        @endcan
+                        @can('reports.best_seller_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-best-seller-report') active @endif">
+                            <a href="{{action('ReportController@getBestSellerReport')}}">{{__('lang.best_seller_report')}}</a></li>
+                        @endcan
+                        @can('reports.product_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-product-report') active @endif">
+                            <a href="{{action('ReportController@getProductReport')}}">{{__('lang.product_report')}}</a></li>
+                        @endcan
+                        @can('reports.daily_sale_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-daily-sale-report') active @endif">
+                            <a href="{{action('ReportController@getDailySaleReport')}}">{{__('lang.daily_sale_report')}}</a></li>
+                        @endcan
+                        @can('reports.monthly_sale_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-sale-report') active @endif">
+                            <a href="{{action('ReportController@getMonthlySaleReport')}}">{{__('lang.monthly_sale_report')}}</a></li>
+                        @endcan
+                        @can('reports.daily_purchase_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-daily-purchase-report') active @endif">
+                            <a href="{{action('ReportController@getDailyPurchaseReport')}}">{{__('lang.daily_purchase_report')}}</a></li>
+                        @endcan
+                        @can('reports.monthly_purchase_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-purchase-report') active @endif">
+                            <a href="{{action('ReportController@getMonthlyPurchaseReport')}}">{{__('lang.monthly_purchase_report')}}</a></li>
+                        @endcan
+                        @can('reports.sale_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-sale-report') active @endif">
+                            <a href="{{action('ReportController@getSaleReport')}}">{{__('lang.sale_report')}}</a></li>
+                        @endcan
+                        @can('reports.payment_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-payment-report') active @endif">
+                            <a href="{{action('ReportController@getPaymentReport')}}">{{__('lang.payment_report')}}</a></li>
+                        @endcan
+                        @can('reports.purchase_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-purchase-report') active @endif">
+                            <a href="{{action('ReportController@getPurchaseReport')}}">{{__('lang.purchase_report')}}</a></li>
+                        @endcan
+                        @can('reports.store_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-store-report') active @endif">
+                            <a href="{{action('ReportController@getStoreReport')}}">{{__('lang.store_report')}}</a></li>
+                        @endcan
+                        @can('reports.store_stock_chart.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-store-stock-chart') active @endif">
+                            <a href="{{action('ReportController@getStoreStockChart')}}">{{__('lang.store_stock_chart')}}</a></li>
+                        @endcan
+                        @can('reports.product_quantity_alert_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-product-quantity-alert-report') active @endif">
+                            <a href="{{action('ReportController@getProductQuantityAlertReport')}}">{{__('lang.product_quantity_alert_report')}}</a></li>
+                        @endcan
+                        @can('reports.user_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-user-report') active @endif">
+                            <a href="{{action('ReportController@getUserReport')}}">{{__('lang.user_report')}}</a></li>
+                        @endcan
+                        @can('reports.customer_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-customer-report') active @endif">
+                            <a href="{{action('ReportController@getCustomerReport')}}">{{__('lang.customer_report')}}</a></li>
+                        @endcan
+                        @can('reports.supplier_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-supplier-report') active @endif">
+                            <a href="{{action('ReportController@getSupplierReport')}}">{{__('lang.supplier_report')}}</a></li>
+                        @endcan
+                        @can('reports.due_report.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-due-report') active @endif">
+                            <a href="{{action('ReportController@getDueReport')}}">{{__('lang.due_report')}}</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endif

@@ -155,11 +155,28 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::post('cash/save-add-cash', 'CashController@saveAddCash');
     Route::resource('cash', CashController::class);
 
-    Route::any('report/get-profit-loss', 'ReportController@getProfitLoss');
-    Route::any('report/get-receivable-report', 'ReportController@getReceivableReport');
-    Route::any('report/get-payable-report', 'ReportController@getPayableReport');
-    Route::any('report/get-receivable-payable-report', 'ReportController@getExpectedReceivableReport');
-    Route::any('report/get-expected-payable-report', 'ReportController@getExpectedPayableReport');
+    Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
+    Route::get('report/get-receivable-report', 'ReportController@getReceivableReport');
+    Route::get('report/get-payable-report', 'ReportController@getPayableReport');
+    Route::get('report/get-receivable-payable-report', 'ReportController@getExpectedReceivableReport');
+    Route::get('report/get-expected-payable-report', 'ReportController@getExpectedPayableReport');
+    Route::get('report/get-summary-report', 'ReportController@getSummaryReport');
+    Route::get('report/get-best-seller-report', 'ReportController@getBestSellerReport');
+    Route::get('report/get-product-report', 'ReportController@getProductReport');
+    Route::get('report/get-daily-sale-report', 'ReportController@getDailySaleReport');
+    Route::get('report/get-monthly-sale-report', 'ReportController@getMonthlySaleReport');
+    Route::get('report/get-daily-purchase-report', 'ReportController@getDailyPurchaseReport');
+    Route::get('report/get-monthly-purchase-report', 'ReportController@getMonthlyPurchaseReport');
+    Route::get('report/get-sale-report', 'ReportController@getSaleReport');
+    Route::get('report/get-payment-report', 'ReportController@getPaymentReport');
+    Route::get('report/get-purchase-report', 'ReportController@getPurchaseReport');
+    Route::get('report/get-store-report', 'ReportController@getStoreReport');
+    Route::get('report/get-store-stock-chart', 'ReportController@getStoreStockChart');
+    Route::get('report/get-product-quantity-alert-report', 'ReportController@getProductQuantityAlertReport');
+    Route::get('report/get-user-report', 'ReportController@getUserReport');
+    Route::get('report/get-customer-report', 'ReportController@getCustomerReport');
+    Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
+    Route::get('report/get-due-report', 'ReportController@getDueReport');
 
 
 

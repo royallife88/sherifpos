@@ -69,6 +69,7 @@
                                     <tr>
                                         <th>@lang('lang.expense_category')</th>
                                         <th>@lang('lang.beneficiary')</th>
+                                        <th>@lang('lang.store')</th>
                                         <th>@lang('lang.amount_paid')</th>
                                         <th>@lang('lang.created_by')</th>
                                         <th>@lang('lang.payment_date')</th>
@@ -86,6 +87,9 @@
                                         </td>
                                         <td>
                                             {{$expense->expense_beneficiary->name}}
+                                        </td>
+                                        <td>
+                                           @if(!empty($expense->store)) {{$expense->store->name}} @endif
                                         </td>
                                         <td>{{@num_format($expense->final_total)}}</td>
                                         <td>{{ucfirst($expense->created_by)}}</td>
