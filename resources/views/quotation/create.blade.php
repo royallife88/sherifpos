@@ -25,7 +25,8 @@
                                         {!! Form::select('customer_id', $customers,
                                         !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' =>
                                         'selectpicker form-control', 'data-live-search'=>"true",
-                                        'style' =>'width: 80%' , 'id' => 'customer_id', 'required', 'placeholder' => __('lang.please_select')]) !!}
+                                        'style' =>'width: 80%' , 'id' => 'customer_id', 'required', 'placeholder' =>
+                                        __('lang.please_select')]) !!}
                                         <span class="input-group-btn">
                                             @can('customer_module.customer.create_and_edit')
                                             <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -58,8 +59,7 @@
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
                                 <div class="table-responsive transaction-list">
-                                    <table id="product_table" style="width: 100% "
-                                        class="table table-striped">
+                                    <table id="product_table" style="width: 100% " class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
@@ -92,7 +92,7 @@
                                         <input type="hidden" id="total_tax" name="total_tax" value="0.00">
                                         <input type="hidden" name="discount_amount" id="discount_amount">
                                         <input type="hidden" id="store_pos_id" name="store_pos_id"
-                                        value="{{$store_pos->id}}" />
+                                            value="{{$store_pos->id}}" />
                                         <input type="hidden" id="is_quotation" name="is_quotation" value="1" />
                                     </div>
                                 </div>
@@ -115,8 +115,7 @@
                             <div class="form-group">
                                 {!! Form::label('block_for_days', __( 'lang.block_for_days' ) . ':') !!}
                                 {!! Form::text('block_for_days', 1, ['class' => 'form-control', 'placeholder' => __(
-                                'lang.block_for_days' ),
-                                'required' ]);
+                                'lang.block_for_days' ) ]);
                                 !!}
                             </div>
                         </div>
@@ -124,8 +123,7 @@
                             <div class="form-group">
                                 {!! Form::label('validity_days', __( 'lang.validity_days' ) . ':') !!}
                                 {!! Form::text('validity_days', null, ['class' => 'form-control', 'placeholder' => __(
-                                'lang.validity_days' ),
-                                'required' ]);
+                                'lang.validity_days' ) ]);
                                 !!}
                             </div>
                         </div>
@@ -154,6 +152,15 @@
                                 {!! Form::text('discount_value', null, ['class' => 'form-control', 'placeholder' => __(
                                 'lang.discount_value' )]);
                                 !!}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
+                                {!! Form::select('terms_and_condition_id', $tac,
+                                null, ['class' =>
+                                'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
+                                __('lang.please_select'), 'id' => 'terms_and_condition_id', 'required']) !!}
                             </div>
                         </div>
 

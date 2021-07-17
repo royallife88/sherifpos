@@ -17,10 +17,10 @@ class CreateCashRegistersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('source_id')->nullable()->comment('Other users in the system as source.');
             $table->enum('status', ['open', 'close']);
-            $table->dateTime('closed_at');
-            $table->decimal('closing_amount', '15', 4);
+            $table->dateTime('closed_at')->nullable();
+            $table->decimal('closing_amount', '15', 4)->default(0);
+            $table->decimal('discrepancy', '15', 4)->default(0);
             $table->string('notes')->nullable();
             $table->timestamps();
         });

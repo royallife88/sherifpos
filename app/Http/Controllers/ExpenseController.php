@@ -149,6 +149,7 @@ class ExpenseController extends Controller
 
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
+            $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit');
             DB::commit();
 
             $output = [

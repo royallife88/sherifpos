@@ -1,31 +1,19 @@
+@php
+    $logo = App\Models\System::getProperty('logo');
+    $site_title = App\Models\System::getProperty('site_title');
+@endphp
 <header class="header no-print">
     <nav class="navbar">
       <div class="container-fluid">
         <div class="navbar-holder d-flex align-items-center justify-content-between">
           <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars"> </i></a>
-          <span class="brand-big">@if($general_setting->site_logo)<img src="{{url('public/logo', $general_setting->site_logo)}}" width="50">&nbsp;&nbsp;@endif<a href="{{url('/')}}"><h1 class="d-inline">{{$general_setting->site_title}}</h1></a></span>
+          <span class="brand-big">@if($logo)<img src="{{asset('/uploads/'.$logo)}}" width="50">&nbsp;&nbsp;@endif<a href="{{url('/')}}"><h1 class="d-inline">{{$site_title}}</h1></a></span>
 
           <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-            <?php
-            //   $add_permission = DB::table('permissions')->where('name', 'sales-add')->first();
-            //   $add_permission_active = DB::table('role_has_permissions')->where([
-            //       ['permission_id', $add_permission->id],
-            //       ['role_id', $role->id]
-            //   ])->first();
-
-            //   $empty_database_permission = DB::table('permissions')->where('name', 'empty_database')->first();
-            //   $empty_database_permission_active = DB::table('role_has_permissions')->where([
-            //       ['permission_id', $empty_database_permission->id],
-            //       ['role_id', $role->id]
-            //   ])->first();
-            ?>
-            {{-- @if($add_permission_active)
-            <li class="nav-item"><a class="dropdown-item btn-pos btn-sm" href="{{route('sale.pos')}}"><i class="dripicons-shopping-bag"></i><span> POS</span></a></li>
-            @endif --}}
+            @can('sale.pos.create_and_edit')
+            <li class="nav-item"><a class="dropdown-item btn-pos btn-sm" href="{{action('SellPosController@create')}}"><i class="dripicons-shopping-bag"></i><span> @lang('lang.pos')</span></a></li>
+            @endcan
             <li class="nav-item"><a id="btnFullscreen"><i class="dripicons-expand"></i></a></li>
-            {{-- @if(\Auth::user()->role_id <= 2)
-              <li class="nav-item"><a href="{{route('cashRegister.index')}}" title="{{trans('file.Cash Register List')}}"><i class="dripicons-archive"></i></a></li>
-            @endif --}}
             {{-- @if($product_qty_alert_active)
               @if(($alert_product + count(\Auth::user()->unreadNotifications)) > 0)
               <li class="nav-item" id="notification-icon">
@@ -56,88 +44,60 @@
               </li>
               @endif
             @endif --}}
+            @php
+                $config_languages = config('constants.langs');
+                $languages = [];
+                foreach ($config_languages as $key => $value) {
+                    $languages[$key] = $value['full_name'];
+                }
+            @endphp
             <li class="nav-item">
-                  <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i> <span>{{__('file.language')}}</span> <i class="fa fa-angle-down"></i></a>
+                  <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i> <span>{{__('lang.language')}}</span> <i class="fa fa-angle-down"></i></a>
                   <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                      @foreach ($languages as $key => $lang)
                       <li>
-                        <a href="{{ url('language_switch/en') }}" class="btn btn-link"> English</a>
+                        <a href="{{action('GeneralController@switchLanguage', $key) }}" class="btn btn-link"> {{$lang}}</a>
                       </li>
-                      <li>
-                        <a href="{{ url('language_switch/es') }}" class="btn btn-link"> Español</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/ar') }}" class="btn btn-link"> عربى</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/pt_BR') }}" class="btn btn-link"> Portuguese</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/fr') }}" class="btn btn-link"> Français</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/de') }}" class="btn btn-link"> Deutsche</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/id') }}" class="btn btn-link"> Malay</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/hi') }}" class="btn btn-link"> हिंदी</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/vi') }}" class="btn btn-link"> Tiếng Việt</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/ru') }}" class="btn btn-link"> русский</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/tr') }}" class="btn btn-link"> Türk</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/it') }}" class="btn btn-link"> Italiano</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/nl') }}" class="btn btn-link"> Nederlands</a>
-                      </li>
-                      <li>
-                        <a href="{{ url('language_switch/lao') }}" class="btn btn-link"> Lao</a>
-                      </li>
+                      @endforeach
+
                   </ul>
             </li>
             @if(Auth::user()->role_id != 5)
             <li class="nav-item">
-                <a class="dropdown-item" href="{{ url('read_me') }}" target="_blank"><i class="dripicons-information"></i> {{trans('file.Help')}}</a>
+                <a class="dropdown-item" href="{{ url('read_me') }}" target="_blank"><i class="dripicons-information"></i> @lang('lang.help')</a>
             </li>
             @endif
             <li class="nav-item">
               <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-user"></i> <span>{{ucfirst(Auth::user()->name)}}</span> <i class="fa fa-angle-down"></i>
               </a>
               <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                  <li>
-                    {{-- <a href="{{route('user.profile', ['id' => Auth::id()])}}"><i class="dripicons-user"></i> {{trans('file.profile')}}</a> --}}
-                  </li>
-                  {{-- @if($general_setting_permission_active)
-                  <li>
-                    <a href="{{route('setting.general')}}"><i class="dripicons-gear"></i> {{trans('file.settings')}}</a>
-                  </li>
-                  @endif --}}
-                  <li>
-                    <a href="{{url('my-transactions/'.date('Y').'/'.date('m'))}}"><i class="dripicons-swap"></i> {{trans('file.My Transaction')}}</a>
-                  </li>
-                  @if(Auth::user()->role_id != 5)
-                  <li>
-                    <a href="{{url('holidays/my-holiday/'.date('Y').'/'.date('m'))}}"><i class="dripicons-vibrate"></i> {{trans('file.My Holiday')}}</a>
-                  </li>
-                  @endif
-                  {{-- @if($empty_database_permission_active)
-                  <li>
-                    <a onclick="return confirm('Are you sure want to delete? If you do this all of your data will be lost.')" href="{{route('setting.emptyDatabase')}}"><i class="dripicons-stack"></i> {{trans('file.Empty Database')}}</a>
-                  </li>
-                  @endif --}}
-                  <li>
-                    <a href="{{ route('logout') }}"
-                       onclick="event.preventDefault();
-                                     document.getElementById('logout-form').submit();"><i class="dripicons-power"></i>
-                        {{trans('file.logout')}}
+                    @php
+                        $employee = App\Models\Employee::where('user_id', Auth::user()->id)->first();
+                    @endphp
+                    <li style="text-align: center">
+                        <img src="@if(!empty($employee->getFirstMediaUrl('employee_photo'))){{$employee->getFirstMediaUrl('employee_photo')}}@else{{asset('images/default.jpg')}}@endif"
+                        style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
+                    </li>
+                    <li>
+                        <a href="{{action('UserController@getProfile')}}"><i class="dripicons-user"></i> @lang('lang.profile')</a>
+                    </li>
+                    @can('settings.general_settings.view')
+                    <li>
+                        <a href="{{action('SettingController@getGeneralSetting')}}"><i class="dripicons-gear"></i> @lang('lang.settings')</a>
+                    </li>
+                    @endcan
+                    <li>
+                        <a href="{{url('my-transactions/'.date('Y').'/'.date('m'))}}"><i class="dripicons-swap"></i> @lang('lang.my_transactions')</a>
+                    </li>
+                    @if(Auth::user()->role_id != 5)
+                    <li>
+                        <a href="{{url('my-holidays/'.date('Y').'/'.date('m'))}}"><i class="dripicons-vibrate"></i> @lang('lang.my_holidays')</a>
+                    </li>
+                    @endif
+
+                    <li>
+                    <a href="#" id="logout-btn"><i class="dripicons-power"></i>
+                        @lang('lang.logout')
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf

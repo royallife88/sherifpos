@@ -52,7 +52,7 @@ class CashRegisterUtil extends Util
      *
      * @return boolean
      */
-    public function addSellPayments($transaction, $payment, $pos_return_transactions = null)
+    public function addPayments($transaction, $payment, $type = 'credit')
     {
         $user_id = auth()->user()->id;
         $register =  CashRegister::where('user_id', $user_id)
@@ -61,10 +61,10 @@ class CashRegisterUtil extends Util
 
 
         $payments_formatted[] = new CashRegisterTransaction([
-            'amount' => (isset($payment['is_return']) && $payment['is_return'] == 1) ? (-1 * $this->num_uf($payment['amount'])) : $this->num_uf($payment['amount']),
+            'amount' => ($transaction->is_return) ? (-1 * $this->num_uf($payment['amount'])) : $this->num_uf($payment['amount']),
             'pay_method' => $payment['method'],
-            'type' => 'credit',
-            'transaction_type' => 'sell',
+            'type' => $type,
+            'transaction_type' => $transaction->type,
             'transaction_id' => $transaction->id
         ]);
 

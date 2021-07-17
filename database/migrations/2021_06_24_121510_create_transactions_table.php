@@ -65,6 +65,7 @@ class CreateTransactionsTable extends Migration
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
             $table->text('notes')->nullable();
+            $table->unsignedBigInteger('terms_and_condition_id')->nullable();
             $table->string('due_date')->nullable();
             $table->integer('notify_me')->nullable();
             $table->string('notify_before_days')->nullable();

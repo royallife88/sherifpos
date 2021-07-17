@@ -31,7 +31,7 @@
                         <tbody>
                             @foreach($transactions as $transaction)
                             <tr>
-                                <td>{{\Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y H:i:s')}}
+                                <td>{{@format_datetime($transaction->transaction_date)}}
                                 </td>
                                 <td>{{$transaction->store->name}}</td>
                                 <td>{{ucfirst($transaction->created_by_user->name)}}</td>

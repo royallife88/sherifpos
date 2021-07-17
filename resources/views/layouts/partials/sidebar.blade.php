@@ -5,7 +5,7 @@
         <div class="main-menu">
             <ul id="side-main-menu" class="side-menu list-unstyled">
                 <li><a href="{{url('/home')}}"> <i
-                            class="dripicons-meter"></i><span>{{ __('file.dashboard') }}</span></a></li>
+                            class="dripicons-meter"></i><span>{{ __('lang.dashboard') }}</span></a></li>
 
                 @if(auth()->user()->can('product_module.product.create_and_edit') ||
                 auth()->user()->can('product_module.product.view') ||
@@ -66,6 +66,13 @@
                             class="@if(request()->segment(1) == 'purchase-order' && empty(request()->segment(2))) active @endif">
                             <a
                                 href="{{action('PurchaseOrderController@index')}}">{{__('lang.view_all_purchase_orders')}}</a>
+                        </li>
+                        @endcan
+                        @can('purchase_order.import.view')
+                        <li
+                            class="@if(request()->segment(1) == 'purchase-order' && request()->segment(2) == 'import') active @endif">
+                            <a
+                                href="{{action('PurchaseOrderController@getImport')}}">{{__('lang.import')}}</a>
                         </li>
                         @endcan
                     </ul>
@@ -275,16 +282,68 @@
                 <li><a href="#cash" aria-expanded="false" data-toggle="collapse"> <i
                             class="fa fa-money"></i><span>{{__('lang.cash')}}</span><span></a>
                     <ul id="cash"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash'])) show @endif">
-                        {{-- @can('cash.add_cash.create_and_edit')
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash', 'cash-out'])) show @endif">
+                        @can('cash.view_details.view')
                         <li
-                            class="@if(request()->segment(1) == 'cash' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CashController@create')}}">{{__('lang.add_new_add_cash')}}</a></li>
-                        @endcan --}}
-                        @can('cash.add_cash.view')
+                            class="@if(request()->segment(1) == 'cash' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashController@index')}}">{{__('lang.cash')}}</a></li>
+                        @endcan
+                        @can('cash.add_cash_out.view')
                         <li
-                            class="@if(request()->segment(1) == 'cash' && request()->segment(2) == 'add-cash') active @endif">
-                            <a href="{{action('CashController@addCash')}}">{{__('lang.add_cash')}}</a></li>
+                            class="@if(request()->segment(1) == 'cash-out' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashOutController@index')}}">{{__('lang.cash_out')}}</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+
+                @if(
+                auth()->user()->can('adjustment.cash_in_adjustment.create_and_edit') ||
+                auth()->user()->can('adjustment.cash_in_adjustment.view')
+                )
+                <li><a href="#adjustment" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-adjust"></i><span>{{__('lang.adjustment')}}</span><span></a>
+                    <ul id="adjustment"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash-in-adjustment', 'cash-out-adjustment', 'customer-balance-adjustment', 'customer-point-adjustment'])) show @endif">
+                        @can('adjustment.cash_in_adjustment.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'cash-in-adjustment' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('CashInAdjustmentController@create')}}">{{__('lang.add_cash_in_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.cash_in_adjustment.view')
+                        <li
+                            class="@if(request()->segment(1) == 'cash-in-adjustment' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashInAdjustmentController@index')}}">{{__('lang.view_cash_in_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.cash_out_adjustment.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'cash-out-adjustment' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('CashOutAdjustmentController@create')}}">{{__('lang.add_cash_out_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.cash_out_adjustment.view')
+                        <li
+                            class="@if(request()->segment(1) == 'cash-out-adjustment' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashOutAdjustmentController@index')}}">{{__('lang.view_cash_out_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.customer_balance_adjustment.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'customer-balance-adjustment' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('CustomerBalanceAdjustmentController@create')}}">{{__('lang.add_customer_balance_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.customer_balance_adjustment.view')
+                        <li
+                            class="@if(request()->segment(1) == 'customer-balance-adjustment' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CustomerBalanceAdjustmentController@index')}}">{{__('lang.view_customer_balance_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.customer_point_adjustment.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'customer-point-adjustment' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('CustomerPointAdjustmentController@create')}}">{{__('lang.add_customer_point_adjustment')}}</a></li>
+                        @endcan
+                        @can('adjustment.customer_point_adjustment.view')
+                        <li
+                            class="@if(request()->segment(1) == 'customer-point-adjustment' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CustomerPointAdjustmentController@index')}}">{{__('lang.view_customer_point_adjustment')}}</a></li>
                         @endcan
                     </ul>
                 </li>
@@ -641,12 +700,61 @@
                 </li>
                 @endif
 
+                @if(auth()->user()->can('sms_module.sms.create_and_edit') ||
+                auth()->user()->can('sms_module.sms.view') )
+                <li><a href="#sms" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-comments-o "></i><span>{{__('lang.sms')}}</span><span></a>
+                    <ul id="sms"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['sms'])) show @endif">
+                        @can('sms_module.sms.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'sms' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('SmsController@create')}}">{{__('lang.send_sms')}}</a></li>
+                        @endcan
+                        @can('sms_module.sms.view')
+                        <li
+                            class="@if(request()->segment(1) == 'sms' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SmsController@index')}}">{{__('lang.view_all_sms')}}</a></li>
+                        @endcan
+                        @can('sms_module.setting.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'sms' &&  request()->segment(2) == 'setting' ) active @endif">
+                            <a href="{{action('SmsController@getSetting')}}">{{__('lang.settings')}}</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+
+                @if(auth()->user()->can('email_module.email.create_and_edit') ||
+                auth()->user()->can('email_module.email.view') )
+                <li><a href="#email" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-envelope "></i><span>{{__('lang.email')}}</span><span></a>
+                    <ul id="email"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['email'])) show @endif">
+                        @can('email_module.email.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'email' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('EmailController@create')}}">{{__('lang.send_email')}}</a></li>
+                        @endcan
+                        @can('email_module.email.view')
+                        <li
+                            class="@if(request()->segment(1) == 'email' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('EmailController@index')}}">{{__('lang.view_all_emails')}}</a></li>
+                        @endcan
+                        @can('email_module.setting.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'email' &&  request()->segment(2) == 'setting' ) active @endif">
+                            <a href="{{action('EmailController@getSetting')}}">{{__('lang.settings')}}</a></li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
 
 
                 <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
                     <ul id="setting"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'get-general-setting'])) show @endif">
                         @can('settings.store.view')
                         <li class="@if(request()->segment(1) == 'store' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('StoreController@index')}}">{{__('lang.stores')}}</a></li>
@@ -655,6 +763,22 @@
                         <li
                             class="@if(request()->segment(1) == 'store-pos' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('StorePosController@index')}}">{{__('lang.pos_for_the_stores')}}</a></li>
+                        @endcan
+                        @can('settings.terms_and_conditions.view')
+                        <li
+                            class="@if(request()->segment(1) == 'terms-and-conditions' && request()->type == 'invoice')) active @endif">
+                            <a href="{{action('TermsAndConditionsController@index')}}?type=invoice">{{__('lang.list_invoice_terms_and_condition')}}</a></li>
+                        @endcan
+
+                        @can('settings.terms_and_conditions.view')
+                        <li
+                            class="@if(request()->segment(1) == 'terms-and-conditions' && request()->type == 'quotation')) active @endif">
+                            <a href="{{action('TermsAndConditionsController@index')}}?type=quotation">{{__('lang.list_quotation_terms_and_condition')}}</a></li>
+                        @endcan
+                        @can('settings.general_settings.view')
+                        <li
+                            class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-general-setting') active @endif">
+                            <a href="{{action('SettingController@getGeneralSetting')}}">{{__('lang.general_settings')}}</a></li>
                         @endcan
 
 

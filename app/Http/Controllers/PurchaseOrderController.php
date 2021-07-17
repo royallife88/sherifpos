@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Mpdf\Tag\Sup;
 
 class PurchaseOrderController extends Controller
 {
@@ -501,5 +502,56 @@ class PurchaseOrderController extends Controller
         }
 
         return $output;
+    }
+
+    public function getImport()
+    {
+        $suppliers = Supplier::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
+
+        return view('purchase_order.import')->with(compact(
+            'suppliers',
+            'stores',
+        ));
+    }
+
+    public function saveImport(Request $request)
+    {
+        //get the file
+        $upload=$request->file('file');
+        $ext = pathinfo($upload->getClientOriginalName(), PATHINFO_EXTENSION);
+        //checking if this is a CSV file
+        if($ext != 'csv')
+            return redirect()->back()->with('message', 'Please upload a CSV file');
+
+        $filePath=$upload->getRealPath();
+        $file_handle = fopen($filePath, 'r');
+        $i = 0;
+        //validate the file
+        while (!feof($file_handle) ) {
+            $current_line = fgetcsv($file_handle);
+            if($current_line && $i > 0){
+
+                $product_data[] = Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('sub_sku', $current_line[0])->first();
+                if(!$product_data[$i-1])
+                    return redirect()->back()->with('message', 'Product does not exist!');
+                $unit[] = Unit::where('unit_code', $current_line[2])->first();
+                if(!$unit[$i-1])
+                    return redirect()->back()->with('message', 'Purchase unit does not exist!');
+                if(strtolower($current_line[5]) != "no tax"){
+                    $tax[] = Tax::where('name', $current_line[5])->first();
+                    if(!$tax[$i-1])
+                        return redirect()->back()->with('message', 'Tax name does not exist!');
+                }
+                else
+                    $tax[$i-1]['rate'] = 0;
+
+                $qty[] = $current_line[1];
+                $cost[] = $current_line[3];
+                $discount[] = $current_line[4];
+            }
+            $i++;
+        }
+
     }
 }

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -102,6 +104,52 @@ class UserController extends Controller
         //
     }
 
+    public function getProfile(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+
+        return view('user.profile')->with(compact(
+            'user'
+        ));
+    }
+    public function updateProfile(Request $request)
+    {
+        $user = User::find(Auth::user()->id);
+        if (!empty($request->current_password) || !empty($request->password) || !empty($request->password_confirmation)) {
+            $this->validate($request, [
+                'current_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                    if (!\Hash::check($value, $user->password)) {
+                        return $fail(__('The current password is incorrect.'));
+                    }
+                }],
+                'password' => 'required|confirmed',
+            ]);
+        }
+
+        try {
+
+            $user->phone = $request->phone;
+
+            if (!empty($request->password)) {
+                $user->password  = Hash::make($request->password);
+            }
+            $user->save();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
+    }
+
     /**
      * check password
      *
@@ -112,9 +160,6 @@ class UserController extends Controller
     {
         $user = User::where('id', $id)->first();
 
-        // if (auth()->user()->can('superadmin')) {
-        //     return ['success' => true];
-        // }
         if (Hash::check(request()->value, $user->password)) {
             return ['success' => true];
         }

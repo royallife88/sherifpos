@@ -210,7 +210,7 @@ class SellReturnController extends Controller
                 }
 
                 $this->transactionUtil->updateTransactionPaymentStatus($sell_return->id);
-
+                $this->cashRegisterUtil->addPayments($sell_return, $payment_data, 'debit');
                 //TODO:: reduce rp points
                 DB::commit();
             }

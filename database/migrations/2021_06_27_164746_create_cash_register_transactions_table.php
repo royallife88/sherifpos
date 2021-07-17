@@ -19,8 +19,10 @@ class CreateCashRegisterTransactionsTable extends Migration
             $table->decimal('amount', 15, 4);
             $table->string('pay_method');
             $table->enum('type', ['debit', 'credit'])->nullable();
-            $table->enum('transaction_type', ['initial', 'sell', 'transfer', 'refund'])->nullable();
+            $table->enum('transaction_type', ['initial', 'sell', 'transfer', 'refund', 'cash_in', 'cash_out'])->nullable();
             $table->unsignedBigInteger('transaction_id');
+            $table->unsignedBigInteger('source_id')->nullable()->comment('Other users in the system as source.');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

@@ -41,6 +41,27 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function employee()
+    {
+        return $this->hasOne(Employee::class);
+    }
+
+    /**
+     * get the array for dropdown of user by job type
+     *
+     * @param [type] $job_type
+     * @return void
+     */
+    public static function getDropdownByJobType($job_type)
+    {
+        $employees = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
+            ->leftjoin('users', 'employees.user_id', 'users.id')
+            ->where('job_types.job_title', $job_type)
+            ->pluck('users.name', 'employees.user_id');
+
+        return $employees;
+    }
+
     public static function modulePermissionArray()
     {
         return [
@@ -54,11 +75,14 @@ class User extends Authenticatable
             'expense' => 'Expense',
             'stock' => 'Stock',
             'cash' => 'Cash',
+            'adjustment' => 'Adjustment',
             'reports' => 'Reports',
             'quotation_for_customers' => 'Quotation for Customers',
             'coupons_and_gift_cards' => 'Coupons and Gift Cards',
             'loyalty_points' => 'Loyalty Points',
             'sp_module' => 'Sales Promotion',
+            'sms_module' => 'SMS Module',
+            'email_module' => 'Email Module',
             'settings' => 'Settings',
         ];
     }
@@ -113,7 +137,8 @@ class User extends Authenticatable
                 'draft_purchase_order' => 'Draft Purchase Order',
                 'purchase_order' => 'Purchase Order',
                 'send_to_admin' => 'Send to Admin',
-                'send_to_supplier' => 'Send to Supplier'
+                'send_to_supplier' => 'Send to Supplier',
+                'import' => 'Import'
             ],
             'expenses' => [
                 'expense_categories' => 'Expense Categories',
@@ -161,17 +186,33 @@ class User extends Authenticatable
                 'due_report' => 'Due Report',
             ],
             'cash' => [
-                'add_cash' => 'Add Cash',
+                'add_cash_in' => 'Add Cash In',
                 'add_closing_cash' => 'Add Closing Cash',
                 'add_cash_out' => 'Add Cash Out',
                 'view_details' => 'View Details',
             ],
+            'adjustment' => [
+                'cash_in_adjustment' => 'Cash In Adjustment',
+                'cash_out_adjustment' => 'Cash Out Adjustment',
+                'customer_balance_adjustment' => 'Customer Balance Adjustment',
+                'customer_point_adjustment' => 'Customer Points Adjustment',
+            ],
             'sp_module' => [
                 'sales_promotion' => 'Sales Promotion',
             ],
+            'sms_module' => [
+                'sms' => 'SMS',
+                'setting' => 'Setting',
+            ],
+            'email_module' => [
+                'email' => 'Email',
+                'setting' => 'Setting',
+            ],
             'settings' => [
                 'store' => 'Store',
-                'store_pos' => 'Pos for the stores'
+                'store_pos' => 'Pos for the stores',
+                'terms_and_conditions' => 'Terms and Conditions',
+                'general_settings' => 'General Settings',
             ],
 
         ];

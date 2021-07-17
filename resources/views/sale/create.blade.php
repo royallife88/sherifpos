@@ -243,6 +243,15 @@
                             <label>@lang('lang.staff_note')</label>
                             <textarea rows="3" class="form-control" name="staff_note"></textarea>
                         </div>
+                        <div class="col-md-4">
+                            {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
+                            <div class="input-group my-group">
+                                {!! Form::select('terms_and_condition_id', $tac,
+                                null, ['class' =>
+                                'selectpicker form-control', 'data-live-search'=>"true",
+                                'style' =>'width: 80%' , 'id' => 'terms_and_condition_id', 'required']) !!}
+                            </div>
+                        </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">

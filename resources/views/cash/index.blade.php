@@ -7,38 +7,58 @@
         <div class="card-header d-flex align-items-center">
             <h4>@lang('lang.cash')</h4>
         </div>
+        <div class="col-md-12 card pt-3 pb-3">
+            <form action="">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                            {!! Form::date('start_date', request()->start_date, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                            {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <br>
+                        <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
+                        <a href="{{action('CashController@index')}}"
+                            class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+                    </div>
+
+                </div>
+            </form>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table id="store_table" class="table dataTable">
                     <thead>
                         <tr>
-                            <th>@lang('lang.store')</th>
-                            <th>@lang('lang.name')</th>
-                            <th>@lang('lang.user')</th>
                             <th>@lang('lang.date_and_time')</th>
-                            <th>@lang('lang.total_sales')</th>
+                            <th>@lang('lang.cashier')</th>
+                            <th>@lang('lang.notes')</th>
+                            <th>@lang('lang.status')</th>
                             <th>@lang('lang.cash_sales')</th>
-                            <th>@lang('lang.credit_card_sales')</th>
-                            <th>@lang('lang.delivery_sales')</th>
-                            <th>@lang('lang.pending_orders')</th>
-                            <th>@lang('lang.pay_later_sales')</th>
-                            <th>@lang('lang.return_sale_of_this_pos')</th>
+                            <th>@lang('lang.cash_in')</th>
+                            <th>@lang('lang.cash_out')</th>
+                            <th>@lang('lang.closing_cash')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($cash_regiters as $store_pos)
+                        @foreach($cash_registers as $cash_register)
                         <tr>
-                            <td>{{$store_pos->store->name}}</td>
-                            <td>{{$store_pos->name}}</td>
-                            <td>{{$store_pos->user->name}}</td>
-                            <td>{{\Carbon\Carbon::parse($store_pos->created_at)->format('m/d/Y H:i:s')}}</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
+                            <td>{{@format_datetime($cash_register->created_at)}}</td>
+                            <td>{{ucfirst($cash_register->cashier->name)}}</td>
+                            <td>{{ucfirst($cash_register->notes)}}</td>
+                            <td>{{ucfirst($cash_register->status)}}</td>
+                            <td>{{@num_format($cash_register->total_cash_sales)}}</td>
+                            <td>{{@num_format($cash_register->total_cash_in)}}</td>
+                            <td>{{@num_format($cash_register->total_cash_out)}}</td>
+                            <td>{{@num_format($cash_register->closing_amount)}}</td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle"
@@ -49,22 +69,39 @@
                                     </button>
                                     <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                         user="menu">
-                                        @can('settings.store_pos.delete')
+                                        @if($cash_register->status == 'open')
+                                        @can('cash.add_cash_in.create_and_edit')
                                         <li>
-
-                                            <a data-href="{{action('StorePosController@edit', $store_pos->id)}}"
+                                            <a data-href="{{action('CashController@addCashIn', $cash_register->id)}}"
                                                 data-container=".view_modal" class="btn btn-modal"><i
-                                                    class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                                    class="fa fa-arrow-down"></i> @lang('lang.add_cash_in')</a>
                                         </li>
                                         <li class="divider"></li>
                                         @endcan
-                                        @can('settings.store_pos.delete')
+                                        @can('cash.add_cash_out.create_and_edit')
                                         <li>
-                                            <a data-href="{{action('StorePosController@destroy', $store_pos->id)}}"
-                                                data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                                class="btn text-red delete_item"><i class="fa fa-trash"></i>
-                                                @lang('lang.delete')</a>
+                                            <a data-href="{{action('CashController@addCashOut', $cash_register->id)}}"
+                                                data-container=".view_modal" class="btn btn-modal"><i
+                                                    class="fa fa-arrow-up"></i> @lang('lang.add_cash_out')</a>
                                         </li>
+                                        <li class="divider"></li>
+                                        @endcan
+                                        @can('cash.add_closing_cash.create_and_edit')
+                                        <li>
+                                            <a data-href="{{action('CashController@addClosingCash', $cash_register->id)}}"
+                                                data-container=".view_modal" class="btn btn-modal"><i
+                                                    class="fa fa-window-close"></i> @lang('lang.add_closing_cash')</a>
+                                        </li>
+                                        <li class="divider"></li>
+                                        @endcan
+                                        @endif
+                                        @can('cash.view_details.view')
+                                        <li>
+                                            <a data-href="{{action('CashController@show', $cash_register->id)}}"
+                                                data-container=".view_modal" class="btn btn-modal"><i
+                                                    class="fa fa-eye"></i> @lang('lang.view_details')</a>
+                                        </li>
+                                        <li class="divider"></li>
                                         @endcan
                                     </ul>
                                 </div>

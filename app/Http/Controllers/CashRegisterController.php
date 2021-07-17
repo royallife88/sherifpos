@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CashRegister;
+use App\Models\CashRegisterTransaction;
 use App\Models\StorePos;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
@@ -76,7 +77,7 @@ class CashRegisterController extends Controller
      */
     public function store(Request $request)
     {
-        // try {
+        try {
             $initial_amount = 0;
             if (!empty($request->input('amount'))) {
                 $initial_amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
@@ -89,19 +90,22 @@ class CashRegisterController extends Controller
                 'status' => 'open',
                 'store_id' => !empty($store_pos) ? $store_pos->store_id : null
             ]);
-            $register->cash_register_transactions()->create([
+            $cash_register_transaction = CashRegisterTransaction::create([
+                'cash_register_id' => $register->id,
                 'amount' => $initial_amount,
                 'pay_method' => 'cash',
                 'type' => 'credit',
-                'transaction_type' => 'initial'
+                'transaction_type' => 'initial',
+                'source_id' => $request->source_id,
+                'notes' => $request->notes,
             ]);
 
             if ($request->has('image')) {
-                $register->addMedia($request->image)->toMediaCollection('brand');
+                $cash_register_transaction->addMedia($request->image)->toMediaCollection('brand');
             }
-        // } catch (\Exception $e) {
-        //     \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+        }
 
         return redirect()->action('SellPosController@create');
     }

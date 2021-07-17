@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\CashRegister;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -12,6 +13,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
+use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Utils\CashRegisterUtil;
@@ -89,7 +91,7 @@ class SellPosController extends Controller
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
-
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
 
         return view('sale_pos.pos')->with(compact(
@@ -97,6 +99,7 @@ class SellPosController extends Controller
             'walk_in_customer',
             'deliverymen',
             'sub_categories',
+            'tac',
             'brands',
             'store_pos',
             'customers',
@@ -113,148 +116,148 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-
         // try {
-        $transaction_data = [
-            'store_id' => $request->store_id,
-            'customer_id' => $request->customer_id,
-            'store_pos_id' => $request->store_pos_id,
-            'type' => 'sell',
-            'final_total' => $this->commonUtil->num_uf($request->final_total),
-            'grand_total' => $this->commonUtil->num_uf($request->grand_total),
-            'gift_card_id' => $request->gift_card_id,
-            'coupon_id' => $request->coupon_id,
-            'transaction_date' => Carbon::now(),
-            'invoice_no' => $this->productUtil->getNumberByType('sell'),
-            'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
-            'status' => $request->status,
-            'sale_note' => $request->sale_note,
-            'staff_note' => $request->staff_note,
-            'discount_type' => $request->discount_type,
-            'discount_value' => $this->commonUtil->num_f($request->discount_value),
-            'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
-            'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
-            'total_tax' => $this->commonUtil->num_f($request->total_tax),
-            'sale_note' => $request->sale_note,
-            'staff_note' => $request->staff_note,
-            'deliveryman_id' => !empty($request->deliveryman_id_hidden) ? $request->deliveryman_id_hidden : null,
-            'delivery_status' => 'pending',
-            'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
-            'delivery_address' => $request->delivery_address,
-            'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
-            'created_by' => Auth::user()->id,
-        ];
-
-        DB::beginTransaction();
-
-        if (!empty($request->is_quotation)) {
-            $transaction_data['is_quotation'] = 1;
-            $transaction_data['status'] = 'draft';
-            $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('quotation');
-            $transaction_data['block_qty'] = !empty($request->block_qty) ? 1 : 0;
-            $transaction_data['block_for_days'] = !empty($request->block_for_days) ? $request->block_for_days : 0; //TODO:: create commond to change these column
-            $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
-        }
-        $transaction = Transaction::create($transaction_data);
-
-        $this->transactionUtil->createOrUpdateTransactionSellLine($transaction, $request->transaction_sell_line);
-
-        foreach ($request->transaction_sell_line as $sell_line) {
-            if (empty($sell_line['transaction_sell_line_id'])) {
-                if ($transaction->status == 'final') {
-                    $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
-                }
-            }
-        }
-
-        // if quotation and qty is blocked(reserved) for sale
-        if ($transaction->is_quotation && $transaction->block_qty) {
-            foreach ($request->transaction_sell_line as $sell_line) {
-                $this->productUtil->updateBlockQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity'], 'add');
-            }
-        }
-
-        if ($transaction->status == 'final') {
-            //if transaction is final then calculate the reward points
-            $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
-            $transaction->rp_earned = $points_earned;
-            if($request->is_redeem_points){
-                // $transaction->rp_redeemed = $request->rp_redeemed; //front end
-                $transaction->rp_redeemed_value = $request->rp_redeemed_value;
-                $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
-                $transaction->rp_redeemed = $rp_redeemed;
-            }
-
-            $transaction->save();
-
-            $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
-        }
-
-        $amount = $this->commonUtil->num_uf($request->amount);
-        $payment_data = [
-            'transaction_id' => $transaction->id,
-            'amount' => $amount,
-            'method' => $request->method,
-            'paid_on' => $transaction->transaction_date,
-            'ref_number' => $request->ref_number,
-            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
-            'card_number' => $request->card_number,
-            'card_security' => $request->card_security,
-            'card_month' => $request->card_month,
-            'cheque_number' => $request->cheque_number,
-            'bank_name' => $request->bank_name,
-            'ref_number' => $request->ref_number,
-            'gift_card_number' => $request->gift_card_number,
-            'amount_to_be_used' => $request->amount_to_be_used,
-            'payment_note' => $request->payment_note,
-        ];
-        if ($transaction->status != 'draft') {
-            if($amount > 0){
-                $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-            }
-            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-
-            $this->cashRegisterUtil->addSellPayments($transaction, $payment_data);
-
-            if (!empty($transaction->coupon_id)) {
-                Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
-            }
-
-            if (!empty($transaction->gift_card__id)) {
-                $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
-                GiftCard::where('id', $transaction->gift_card__id)->update(['balance' => $remaining_balance, 'customer_id' => $request->customer_id]);
-            }
-        }
-
-
-        DB::commit();
-
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-
-
-        if ($transaction->is_direct_sale) {
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
+            $transaction_data = [
+                'store_id' => $request->store_id,
+                'customer_id' => $request->customer_id,
+                'store_pos_id' => $request->store_pos_id,
+                'type' => 'sell',
+                'final_total' => $this->commonUtil->num_uf($request->final_total),
+                'grand_total' => $this->commonUtil->num_uf($request->grand_total),
+                'gift_card_id' => $request->gift_card_id,
+                'coupon_id' => $request->coupon_id,
+                'transaction_date' => Carbon::now(),
+                'invoice_no' => $this->productUtil->getNumberByType('sell'),
+                'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
+                'status' => $request->status,
+                'sale_note' => $request->sale_note,
+                'staff_note' => $request->staff_note,
+                'discount_type' => $request->discount_type,
+                'discount_value' => $this->commonUtil->num_f($request->discount_value),
+                'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
+                'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
+                'total_tax' => $this->commonUtil->num_f($request->total_tax),
+                'sale_note' => $request->sale_note,
+                'staff_note' => $request->staff_note,
+                'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
+                'deliveryman_id' => !empty($request->deliveryman_id_hidden) ? $request->deliveryman_id_hidden : null,
+                'delivery_status' => 'pending',
+                'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
+                'delivery_address' => $request->delivery_address,
+                'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
+                'created_by' => Auth::user()->id,
             ];
 
-            return redirect()->back()->with('status', $output);
-        }
+            DB::beginTransaction();
 
-        if ($request->submit_type == 'send' && $transaction->is_quotation) {
-            $this->notificationUtil->sendQuotationToCustomer($transaction->id);
-        }
+            if (!empty($request->is_quotation)) {
+                $transaction_data['is_quotation'] = 1;
+                $transaction_data['status'] = 'draft';
+                $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('quotation');
+                $transaction_data['block_qty'] = !empty($request->block_qty) ? 1 : 0;
+                $transaction_data['block_for_days'] = !empty($request->block_for_days) ? $request->block_for_days : 0; //TODO:: create commond to change these column
+                $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
+            }
+            $transaction = Transaction::create($transaction_data);
 
-        $html_content = view('sale_pos.partials.invoice')->with(compact(
-            'transaction',
-            'payment_types'
-        ))->render();
+            $this->transactionUtil->createOrUpdateTransactionSellLine($transaction, $request->transaction_sell_line);
 
-        $output = [
-            'success' => true,
-            'html_content' => $html_content,
-            'msg' => __('lang.success')
-        ];
+            foreach ($request->transaction_sell_line as $sell_line) {
+                if (empty($sell_line['transaction_sell_line_id'])) {
+                    if ($transaction->status == 'final') {
+                        $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+                    }
+                }
+            }
+
+            // if quotation and qty is blocked(reserved) for sale
+            if ($transaction->is_quotation && $transaction->block_qty) {
+                foreach ($request->transaction_sell_line as $sell_line) {
+                    $this->productUtil->updateBlockQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity'], 'add');
+                }
+            }
+
+            if ($transaction->status == 'final') {
+                //if transaction is final then calculate the reward points
+                $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
+                $transaction->rp_earned = $points_earned;
+                if ($request->is_redeem_points) {
+                    // $transaction->rp_redeemed = $request->rp_redeemed; //front end
+                    $transaction->rp_redeemed_value = $request->rp_redeemed_value;
+                    $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
+                    $transaction->rp_redeemed = $rp_redeemed;
+                }
+
+                $transaction->save();
+
+                $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+            }
+
+            $amount = $this->commonUtil->num_uf($request->amount);
+            $payment_data = [
+                'transaction_id' => $transaction->id,
+                'amount' => $amount,
+                'method' => $request->method,
+                'paid_on' => $transaction->transaction_date,
+                'ref_number' => $request->ref_number,
+                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                'card_number' => $request->card_number,
+                'card_security' => $request->card_security,
+                'card_month' => $request->card_month,
+                'cheque_number' => $request->cheque_number,
+                'bank_name' => $request->bank_name,
+                'ref_number' => $request->ref_number,
+                'gift_card_number' => $request->gift_card_number,
+                'amount_to_be_used' => $request->amount_to_be_used,
+                'payment_note' => $request->payment_note,
+            ];
+            if ($transaction->status != 'draft') {
+                if ($amount > 0) {
+                    $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                }
+                $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+
+                if (!empty($transaction->coupon_id)) {
+                    Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+                }
+
+                if (!empty($transaction->gift_card__id)) {
+                    $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
+                    GiftCard::where('id', $transaction->gift_card__id)->update(['balance' => $remaining_balance, 'customer_id' => $request->customer_id]);
+                }
+            }
+
+
+            DB::commit();
+
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+
+            if ($transaction->is_direct_sale) {
+                $output = [
+                    'success' => true,
+                    'msg' => __('lang.success')
+                ];
+
+                return redirect()->back()->with('status', $output);
+            }
+
+            if ($request->submit_type == 'send' && $transaction->is_quotation) {
+                $this->notificationUtil->sendQuotationToCustomer($transaction->id);
+            }
+
+            $html_content = view('sale_pos.partials.invoice')->with(compact(
+                'transaction',
+                'payment_types'
+            ))->render();
+
+            $output = [
+                'success' => true,
+                'html_content' => $html_content,
+                'msg' => __('lang.success')
+            ];
         // } catch (\Exception $e) {
         //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
         //     $output = [
@@ -572,7 +575,7 @@ class SellPosController extends Controller
 
         $total_redeemable = 0;
 
-        if(!empty($product_array)){
+        if (!empty($product_array)) {
             $total_redeemable = $this->transactionUtil->calculateRedeemablePointValue($customer_id, $product_array, $store_id);
         }
 

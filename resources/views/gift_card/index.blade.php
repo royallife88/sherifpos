@@ -73,7 +73,7 @@
                 <td>{{$gift_card->card_number}}</td>
                 <td>{{@num_format($gift_card->amount)}}</td>
                 <td>@if(!empty($gift_card->customer)) {{$gift_card->customer->name}} @endif</td>
-                <td>{{\Carbon\Carbon::parse($gift_card->created_at)->format('m/d/Y H:i:s')}}</td>
+                <td>{{@format_datetime($gift_card->created_at)}}</td>
                 <td>{{ucfirst($gift_card->created_by_user->name)}}</td>
                 <td>{{@num_format($gift_card->balance)}}</td>
 

@@ -35,6 +35,15 @@ class Employee extends Model implements HasMedia
 
     ];
 
+    public function job_type()
+    {
+        return $this->belongsTo(JobType::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public static function getWeekDays()
     {
         return [

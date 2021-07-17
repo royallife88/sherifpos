@@ -42,6 +42,15 @@
 
         @include('layouts.partials.footer')
         <div class="modal fade view_modal" role="dialog" aria-hidden="true"></div>
+
+        @php
+            $cash_register = App\Models\CashRegister::where('user_id', Auth::user()->id)->where('status', 'open')->first();
+        @endphp
+        <input type="hidden" name="is_register_close" id="is_register_close" value="@if(!empty($cash_register)){{0}}@else{{1}}@endif">
+        <input type="hidden" name="cash_register_id" id="cash_register_id" value="@if(!empty($cash_register)){{$cash_register->id}}@endif">
+        <div id="closing_cash_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true" class="modal fade text-left">
+        </div>
     </div>
     @include('layouts.partials.javascript')
     <script type="text/javascript">
@@ -245,6 +254,50 @@
       $('.selectpicker').selectpicker({
           style: 'btn-link',
       });
+
+    @if(request()->segment(1) == 'pos')
+    $(window).on("beforeunload", function() {
+        let cash_register_id = $('#cash_register_id').val();
+        let is_register_close = parseInt($('#is_register_close').val());
+        if(!is_register_close){
+            getClosingModal(cash_register_id);
+
+            if(!confirm('Please enter the closing cash')){
+                window.close();
+            }
+        }
+    });
+    @endif
+
+    function getClosingModal(cash_register_id){
+        $.ajax({
+            method: 'get',
+            url: '/cash/add-closing-cash/'+cash_register_id,
+            data: {  },
+            contentType: 'html',
+            success: function(result) {
+                $('#closing_cash_modal').empty().html(result);
+                $('#closing_cash_modal').modal('show');
+                console.log( 'getClosingModal called', result);
+            },
+        });
+    }
+    $(document).on('click', '#closing-save-btn, #adjust-btn', function(e){
+        $('#is_register_close').val(1);
+    })
+    $(document).on('click', '#logout-btn', function(e){
+        let cash_register_id = $('#cash_register_id').val();
+
+        let is_register_close = parseInt($('#is_register_close').val());
+        if(!is_register_close){
+            getClosingModal(cash_register_id);
+            if(!confirm('Please enter the closing cash')){
+                $('#logout-form').submit();
+            }
+        }else{
+            $('#logout-form').submit();
+        }
+    })
     </script>
 </body>
 

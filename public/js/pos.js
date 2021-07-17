@@ -629,7 +629,7 @@ pos_form_validator = pos_form_obj.validate({
     submitHandler: function (form) {
         $("#pos-save").attr("disabled", "true");
         var data = $(form).serialize();
-        data = data + "&method=" + $("#method").val();
+        data = data + "&method=" + $("#method").val()+"&terms_and_condition_id="+ $('#terms_and_condition_id').val();
         var url = $(form).attr("action");
         $.ajax({
             method: "POST",
@@ -679,7 +679,7 @@ $("button#submit-btn").click(function () {
     }
 
     $(this).attr("disabled", true);
-
+    $('#add-payment').modal('hide');
     pos_form_obj.submit();
 });
 
@@ -879,3 +879,7 @@ $(document).on("change", "#tax_id", function () {
 $(document).on("change", "#deliveryman_id", function () {
     $("#deliveryman_id_hidden").val($(this).val());
 });
+
+$(document).on('change', '#terms_and_condition_id', function (){
+    console.log($(this).val());
+})

@@ -160,7 +160,9 @@
                         </tr>
                     </table>
                 </div>
-
+                <div class="col-md-12">
+                    @lang('lang.terms_and_conditions'): @if(!empty($sale->terms_and_conditions)){{$sale->terms_and_conditions->description}} @endif
+                </div>
             </div>
 
         </div>

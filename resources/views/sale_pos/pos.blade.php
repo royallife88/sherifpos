@@ -43,7 +43,8 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
-                                        <button type="button" class="btn btn-primary" style="margin-top: 30px;" data-toggle="modal"
+                                        <button type="button" class="btn btn-primary" style="margin-top: 30px;"
+                                            data-toggle="modal"
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
@@ -132,6 +133,24 @@
                     <div class="payment-amount">
                         <h2>{{__('lang.grand_total')}} <span class="final_total_span">0.00</span></h2>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
+                                    <select name="terms_and_condition_id" id="terms_and_condition_id" required
+                                        class="form-control selectpicker" data-live-searcg="true">
+                                        <option value="">@lang('lang.please_select')</option>
+                                        @foreach ($tac as $key => $item)
+                                        <option value="{{$key}}">{{$item}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="payment-options">
                         <div class="column-5">
                             <button data-method="card" style="background: #0984e3" type="button"
@@ -176,7 +195,8 @@
                         <div class="column-5">
                             <button data-method="bank_transfer" style="background-color: #56962b" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                id="bank-transfer-btn"><i class="fa fa-building-o"></i> @lang('lang.bank_transfer')</button>
+                                id="bank-transfer-btn"><i class="fa fa-building-o"></i>
+                                @lang('lang.bank_transfer')</button>
                         </div>
                         <div class="column-5">
                             <button data-method="pay-later" style="background-color: #cf2929" type="button"
@@ -322,37 +342,46 @@
                                             </a>
                                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                 user="menu">
-                                                {{-- <li>
-                                        <a href="{{route('user.profile', ['id' => Auth::id()])}}"><i
-                                                    class="dripicons-user"></i> {{__('lang.profile')}}</a>
+                                                @php
+                                                    $employee = App\Models\Employee::where('user_id', Auth::user()->id)->first();
+                                                @endphp
+                                                <li style="text-align: center">
+                                                    <img src="@if(!empty($employee->getFirstMediaUrl('employee_photo'))){{$employee->getFirstMediaUrl('employee_photo')}}@else{{asset('images/default.jpg')}}@endif"
+                                                    style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
+                                                </li>
+                                                <li>
+                                                    <a href="{{action('UserController@getProfile')}}"><i
+                                                            class="dripicons-user"></i> @lang('lang.profile')</a>
+                                                </li>
+                                                @can('settings.general_settings.view')
+                                                <li>
+                                                    <a href="{{action('SettingController@getGeneralSetting')}}"><i
+                                                            class="dripicons-gear"></i> @lang('lang.settings')</a>
+                                                </li>
+                                                @endcan
+                                                <li>
+                                                    <a href="{{url('my-transactions/'.date('Y').'/'.date('m'))}}"><i
+                                                            class="dripicons-swap"></i>
+                                                        @lang('lang.my_transactions')</a>
+                                                </li>
+                                                @if(Auth::user()->role_id != 5)
+                                                <li>
+                                                    <a href="{{url('my-holidays/'.date('Y').'/'.date('m'))}}"><i
+                                                            class="dripicons-vibrate"></i> @lang('lang.my_holidays')</a>
+                                                </li>
+                                                @endif
+
+                                                <li>
+                                                    <a href="#" id="logout-btn"><i class="dripicons-power"></i>
+                                                        @lang('lang.logout')
+                                                    </a>
+                                                    <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                        style="display: none;">
+                                                        @csrf
+                                                    </form>
+                                                </li>
+                                            </ul>
                                         </li>
-                                        @if($general_setting_permission_active)
-                                        <li>
-                                            <a href="{{route('setting.general')}}"><i class="dripicons-gear"></i>
-                                                {{__('lang.settings')}}</a>
-                                        </li>
-                                        @endif
-                                        <li>
-                                            <a href="{{url('my-transactions/'.date('Y').'/'.date('m'))}}"><i
-                                                    class="dripicons-swap"></i> {{__('lang.My Transaction')}}</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{url('holidays/my-holiday/'.date('Y').'/'.date('m'))}}"><i
-                                                    class="dripicons-vibrate"></i> {{__('lang.My Holiday')}}</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{ route('logout') }}" onclick="event.preventDefault();
-                                                         document.getElementById('logout-form').submit();"><i
-                                                    class="dripicons-power"></i>
-                                                {{__('lang.logout')}}
-                                            </a>
-                                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                                                style="display: none;">
-                                                @csrf
-                                            </form>
-                                        </li> --}}
-                                    </ul>
-                                    </li>
                                     </ul>
                                 </div>
                             </div>
@@ -466,4 +495,7 @@
 
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
+<script>
+
+</script>
 @endsection

@@ -10,6 +10,7 @@ use App\Models\Employee;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
+use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Utils\CashRegisterUtil;
@@ -107,12 +108,14 @@ class SellController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
 
         return view('sale.create')->with(compact(
             'walk_in_customer',
             'deliverymen',
             'store_pos',
             'customers',
+            'tac',
             'taxes',
             'payment_types',
             'payment_status_array'
@@ -163,12 +166,14 @@ class SellController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
 
         return view('sale.edit')->with(compact(
             'sale',
             'walk_in_customer',
             'deliverymen',
             'store_pos',
+            'tac',
             'customers',
             'taxes',
             'payment_types',
@@ -207,6 +212,7 @@ class SellController extends Controller
                 'total_tax' => $this->commonUtil->num_f($request->total_tax),
                 'sale_note' => $request->sale_note,
                 'staff_note' => $request->staff_note,
+                'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
                 'deliveryman_id' => $request->deliveryman_id,
                 'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
                 'delivery_address' => $request->delivery_address,

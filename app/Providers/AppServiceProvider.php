@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Currency;
+use App\Models\System;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -43,7 +45,7 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('format_time', function ($date) {
             if (!empty($date)) {
                 $time_format = 'h:i A';
-                if (session('business.time_format') == 24) {
+                if (System::getProperty('time_format') == 24) {
                     $time_format = 'H:i';
                 }
                 return "\Carbon\Carbon::createFromTimestamp(strtotime($date))->format('$time_format')";
@@ -55,11 +57,11 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('format_datetime', function ($date) {
             if (!empty($date)) {
                 $time_format = 'h:i A';
-                if (session('business.time_format') == 24) {
+                if (System::getProperty('time_format') == 24) {
                     $time_format = 'H:i';
                 }
 
-                return "\Carbon::createFromTimestamp(strtotime($date))->format(''m/d/Y'' . ' ' . '$time_format')";
+                return "\Carbon\Carbon::createFromTimestamp(strtotime($date))->format('m/d/Y ' . '$time_format')";
             } else {
                 return null;
             }
@@ -69,12 +71,12 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('format_currency', function ($number) {
             return '<?php
             $formated_number = "";
-            if (session("business.currency_symbol_placement") == "before") {
+            if (session("currency")["currency_symbol_placement"] == "before") {
                 $formated_number .= session("currency")["symbol"] . " ";
             }
-            $formated_number .= number_format((float) ' . $number . ', config("constants.currency_precision", 2) , session("currency")["decimal_separator"], session("currency")["thousand_separator"]);
+            $formated_number .= number_format((float) ' . $number . ', session("currency")["currency_precision"] , session("currency")["decimal_separator"], session("currency")["thousand_separator"]);
 
-            if (session("business.currency_symbol_placement") == "after") {
+            if (session("currency")["currency_symbol_placement"] == "after") {
                 $formated_number .= " " . session("currency")["symbol"];
             }
             echo $formated_number; ?>';

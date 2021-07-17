@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\Project;
@@ -11,6 +12,7 @@ use App\Models\System;
 use App\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\DB;
 
 class Util
 {
@@ -378,7 +380,8 @@ class Util
         return $html;
     }
 
-    public function getPurchaseOrderStatusArray(){
+    public function getPurchaseOrderStatusArray()
+    {
         return [
             'draft' => 'Draft',
             'sent_admin' => 'Sent to Admin',
@@ -388,7 +391,8 @@ class Util
             'partially_received' => 'Partially Received',
         ];
     }
-    public function getPaymentStatusArray(){
+    public function getPaymentStatusArray()
+    {
         return [
             'partial' => 'Partially Paid',
             'paid' => 'Paid',
@@ -396,7 +400,8 @@ class Util
         ];
     }
 
-    public function getPaymentTypeArray(){
+    public function getPaymentTypeArray()
+    {
         return [
             'cash' => 'Cash',
             'bank_transfer' => 'Bank Transfer',
@@ -404,7 +409,8 @@ class Util
             'money_transfer' => 'Money Transfer',
         ];
     }
-    public function getPaymentTypeArrayForPos(){
+    public function getPaymentTypeArrayForPos()
+    {
         return [
             'cash' => 'Cash',
             'card' => 'Credit Card',
@@ -415,4 +421,37 @@ class Util
             'paypal' => 'Paypal',
         ];
     }
+
+    /**
+     * Gives a list of all currencies
+     *
+     * @return array
+     */
+    public function allCurrencies()
+    {
+        $currencies = Currency::select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))
+            ->orderBy('country')
+            ->pluck('info', 'id');
+
+        return $currencies;
+    }
+
+     /**
+     * Gives a list of all timezone
+     *
+     * @return array
+     */
+    public function allTimeZones()
+    {
+        $datetime = new \DateTimeZone("EDT");
+
+        $timezones = $datetime->listIdentifiers();
+        $timezone_list = [];
+        foreach ($timezones as $timezone) {
+            $timezone_list[$timezone] = $timezone;
+        }
+
+        return $timezone_list;
+    }
+
 }

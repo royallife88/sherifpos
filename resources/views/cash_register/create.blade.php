@@ -29,7 +29,7 @@
                             <div class="form-group">
                                 {!! Form::label('source_id', __('lang.source'), []) !!}
                                 {!! Form::select('source_id', $users,
-                                false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                                false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'required',
                                 'placeholder' => __('lang.please_select')]) !!}
                             </div>
                         </div>

@@ -45,16 +45,39 @@
     <script type="text/javascript" src="{{asset('vendor/jquery.cookie/jquery.cookie.js')}}">
     </script>
     <script type="text/javascript" src="{{asset('vendor/jquery-validation/jquery.validate.min.js')}}"></script>
-    <script type="text/javascript" src="{{asset('vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js')}}></script>
+    <script type="text/javascript" src="{{asset('vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js')}}"></script>
 <script type=" text/javascript" src="{{asset('js/front.js')}}"></script>
 </head>
-
+@php
+    $logo = App\Models\System::getProperty('logo');
+    $site_title = App\Models\System::getProperty('site_title');
+    $config_languages = config('constants.langs');
+    $languages = [];
+    foreach ($config_languages as $key => $value) {
+        $languages[$key] = $value['full_name'];
+    }
+@endphp
 <body>
     <div class="page login-page">
         <div class="container">
+            <div class="navbar-holder d-flex align-items-center justify-content-between">
+            <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center pull-right" style="margin-left: 95%">
+                <li class="nav-item">
+                    <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i> <span>{{__('lang.language')}}</span> <i class="fa fa-angle-down"></i></a>
+                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                        @foreach ($languages as $key => $lang)
+                        <li>
+                          <a href="{{action('GeneralController@switchLanguage', $key) }}" class="btn btn-link"> {{$lang}}</a>
+                        </li>
+                        @endforeach
+
+                    </ul>
+              </li>
+            </ul>
+            </div>
             <div class="form-outer text-center d-flex align-items-center">
                 <div class="form-inner">
-                    <div class="logo"><span>{{$general_setting->site_title}}</span></div>
+                    <div class="logo"><span>{{$site_title}}</span></div>
                     @if(session()->has('delete_message'))
                     <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
                             data-dismiss="alert" aria-label="Close"><span

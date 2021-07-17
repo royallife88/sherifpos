@@ -1,3 +1,6 @@
 <div class="row" style="text-align: center" >
-    <h1>This is Print footer</h1>
+    @php
+       $letter_footer = App\Models\System::getProperty('letter_footer');
+    @endphp
+    <img src="{{asset('uploads/'.$letter_footer)}}" alt="footer" style="width: 100%;">
 </div>

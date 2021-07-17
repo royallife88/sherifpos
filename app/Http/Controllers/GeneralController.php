@@ -28,4 +28,10 @@ class GeneralController extends Controller
             'uploaded_files'
         ));
     }
+
+    public function switchLanguage($lang){
+        session()->put('language', $lang);
+
+        return redirect()->back();
+    }
 }

@@ -65,7 +65,7 @@
                             href="{{action('PurchaseOrderController@show', $add_stock->purchase_order_id)}}">{{$add_stock->po_no}}</a>
                         @endif</td>
                     <td>{{$add_stock->invoice_no}}</td>
-                    <td> {{\Carbon\Carbon::parse($add_stock->created_at)->format('m/d/Y H:i:s')}}</td>
+                    <td> {{@format_datetime($add_stock->created_at)}}</td>
                     <td> {{@format_date($add_stock->transaction_date)}}</td>
                     <td>
                         {{$add_stock->supplier->name}}

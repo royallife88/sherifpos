@@ -99,4 +99,9 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->hasMany(RemoveStockLine::class);
     }
+
+    public function terms_and_conditions()
+    {
+        return $this->belongsTo(TermsAndCondition::class, 'terms_and_condition_id');
+    }
 }

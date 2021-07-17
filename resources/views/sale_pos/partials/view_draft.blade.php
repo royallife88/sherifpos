@@ -15,7 +15,7 @@
 
         @forelse($transactions as $transaction)
         <tr>
-            <td>{{\Carbon\Carbon::parse($transaction->transaction_date)->format('m/d/Y H:i:s')}}</td>
+            <td>{{@format_datetime($transaction->transaction_date)}}</td>
             <td>{{@num_format($transaction->final_total)}}</td>
             <td>@if(!empty($transaction->customer->customer_type)){{$transaction->customer->customer_type->name}}@endif
             </td>

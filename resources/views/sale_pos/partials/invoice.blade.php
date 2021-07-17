@@ -180,11 +180,16 @@
                     <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again')
                     </td>
                 </tr>
+                @if(!empty($transaction->terms_and_conditions))
+                <tr>
+                    <td>{{$transaction->terms_and_conditions->description}}</td>
+                </tr>
+                @endif
                 <tr>
                     <td class="centered" colspan="3">
-                        <?php //echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS1D::getBarcodePNG($transaction->ref_no, 'C128') . '" width="300" alt="barcode"   />';?>
+                        <img style="margin-top:10px;" src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}" width="300" alt="barcode"   />
                         <br>
-                        <?php //echo '<img style="margin-top:10px;" src="data:image/png;base64,' . DNS2D::getBarcodePNG($transaction->ref_no, 'QRCODE') . '" alt="barcode"   />';?>
+                        <img style="margin-top:10px;" src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}" alt="barcode"   />
                     </td>
                 </tr>
             </tbody>

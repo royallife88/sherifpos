@@ -25,4 +25,9 @@ class CashRegister extends Model implements HasMedia
     {
         return $this->hasMany(CashRegisterTransaction::class);
     }
+
+    public function cashier()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

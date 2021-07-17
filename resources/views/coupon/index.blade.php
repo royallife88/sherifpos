@@ -72,7 +72,7 @@
             <tr>
                 <td>{{$coupon->coupon_code}}</td>
                 <td>{{ucfirst($coupon->type)}}</td>
-                <td>{{\Carbon\Carbon::parse($coupon->created_at)->format('m/d/Y H:i:s')}}</td>
+                <td>{{@format_datetime($coupon->created_at)}}</td>
                 <td>{{ucfirst($coupon->created_by_user->name)}}</td>
                 <td>
                     @if(!$coupon->all_products)

@@ -97,7 +97,7 @@
                         <tbody>
                             @foreach ($add_stocks as $add_stock)
                             <tr>
-                                <td> {{\Carbon\Carbon::parse($add_stock->created_at)->format('m/d/Y H:i:s')}}</td>
+                                <td> {{@format_datetime($add_stock->created_at)}}</td>
                                 <td> @lang('lang.supplier_invoice')</td>
                                 <td></td>
                                 <td>
@@ -153,7 +153,7 @@
 
                             @foreach ($expenses as $expense)
                             <tr>
-                                <td> {{\Carbon\Carbon::parse($expense->created_at)->format('m/d/Y H:i:s')}}</td>
+                                <td> {{@format_datetime($expense->created_at)}}</td>
                                 <td> @lang('lang.expense')</td>
                                 <td>@if(!empty($expense->expense_category)){{$expense->expense_category->name}}@endif
                                 </td>
@@ -184,7 +184,7 @@
                             @endforeach
                             @foreach ($wages as $wage)
                             <tr>
-                                <td> {{\Carbon\Carbon::parse($wage->created_at)->format('m/d/Y H:i:s')}}</td>
+                                <td> {{@format_datetime($wage->created_at)}}</td>
                                 <td> @lang('lang.expense')</td>
                                 <td>{{$wages_payment_types[$wage->payment_type]}}</td>
                                 <td>

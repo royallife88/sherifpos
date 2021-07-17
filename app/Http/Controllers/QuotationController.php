@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
+use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Utils\CashRegisterUtil;
@@ -99,6 +100,7 @@ class QuotationController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
 
         return view('quotation.create')->with(compact(
             'walk_in_customer',
@@ -106,6 +108,7 @@ class QuotationController extends Controller
             'store_pos',
             'customers',
             'taxes',
+            'tac',
             'payment_types',
             'payment_status_array'
         ));
@@ -154,10 +157,12 @@ class QuotationController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $stores = Store::pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
 
         return view('quotation.edit')->with(compact(
             'stores',
             'sale',
+            'tac',
             'store_pos',
             'customers',
             'taxes',
@@ -189,6 +194,7 @@ class QuotationController extends Controller
                 'tax_id' => $request->tax_id,
                 'is_quotation' => 1,
                 'block_qty' => !empty($request->block_qty) ? 1 : 0,
+                'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
                 'block_for_days' => !empty($request->block_for_days) ? $request->block_for_days : 0,
                 'validity_days' => !empty($request->validity_days) ? $request->validity_days : 0,
                 'total_tax' => $this->commonUtil->num_f($request->total_tax),

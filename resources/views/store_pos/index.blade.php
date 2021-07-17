@@ -34,7 +34,7 @@
                 <td>{{$store_pos->store->name}}</td>
                 <td>{{$store_pos->name}}</td>
                 <td>{{$store_pos->user->name}}</td>
-                <td>{{\Carbon\Carbon::parse($store_pos->created_at)->format('m/d/Y H:i:s')}}</td>
+                <td>{{@format_datetime($store_pos->created_at)}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
@@ -49,7 +49,7 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            @can('settings.store_pos.delete')
+                            @can('settings.store_pos.create_and_edit')
                             <li>
 
                                 <a data-href="{{action('StorePosController@edit', $store_pos->id)}}"

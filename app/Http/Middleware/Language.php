@@ -19,9 +19,10 @@ class Language
     public function handle(Request $request, Closure $next)
     {
         $locale = config('app.locale');
-        if (!empty(System::getProperty('language'))) {
-            $locale = System::getProperty('language');
+        if (!empty(session('language'))) {
+            $locale = session('language');
         }
+
         App::setLocale($locale);
 
         return $next($request);

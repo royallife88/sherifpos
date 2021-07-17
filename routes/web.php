@@ -20,13 +20,16 @@ Route::get('/', function () {
         return redirect('/login');
     }
 });
+Route::group(['middleware' => ['language']], function () {
+    Auth::routes();
+});
 
-Auth::routes();
+Route::get('general/switch-language/{lang}', 'GeneralController@switchLanguage');
+Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function () {
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function () {
-
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
+    Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
@@ -54,6 +57,7 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
 
     Route::get('customer/get-dropdown', 'CustomerController@getDropdown');
     Route::get('customer/get-details-by-transaction-type/{customer_id}/{type}', 'CustomerController@getDetailsByTransactionType');
+    Route::get('customer/get-customer-balance/{customer_id}', 'CustomerController@getCustomerBalance');
     Route::resource('customer', CustomerController::class);
     Route::get('customer-type/get-dropdown', 'CustomerTypeController@getDropdown');
     Route::get('customer-type/get-product-discount-row', 'CustomerTypeController@getProductDiscountRow');
@@ -67,8 +71,12 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::resource('store', StoreController::class);
     Route::post('user/check-password/{id}', 'UserController@checkPassword');
     Route::get('user/get-dropdown', 'UserController@getDropdown');
+    Route::get('user/get-profile', 'UserController@getProfile');
+    Route::put('user/update-profile', 'UserController@updateProfile');
     Route::resource('user', UserController::class);
 
+    Route::post('purchase-order/save-import', 'PurchaseOrderController@saveImport');
+    Route::get('purchase-order/import', 'PurchaseOrderController@getImport');
     Route::get('purchase-order/get-products', 'PurchaseOrderController@getProducts');
     Route::get('purchase-order/add-product-row', 'PurchaseOrderController@addProductRow');
     Route::get('purchase-order/get-po-number', 'PurchaseOrderController@getPoNumber');
@@ -151,9 +159,23 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
 
     Route::resource('sales-promotion', SalesPromotionController::class);
 
-    Route::get('cash/add-cash', 'CashController@addCash');
-    Route::post('cash/save-add-cash', 'CashController@saveAddCash');
+    Route::get('cash/add-closing-cash/{cash_register_id}', 'CashController@addClosingCash');
+    Route::post('cash/save-add-closing-cash', 'CashController@saveAddClosingCash');
+    Route::get('cash/add-cash-out/{cash_register_id}', 'CashController@addCashOut');
+    Route::post('cash/save-add-cash-out', 'CashController@saveAddCashOut');
+    Route::get('cash/add-cash-in/{cash_register_id}', 'CashController@addCashIn');
+    Route::post('cash/save-add-cash-in', 'CashController@saveAddCashIn');
     Route::resource('cash', CashController::class);
+    Route::resource('cash-out', CashOutController::class);
+
+
+    Route::get('cash-in-adjustment/get-cash-details/{user_id}', 'CashInAdjustmentController@getCashDetails');
+    Route::resource('cash-in-adjustment', CashInAdjustmentController::class);
+    Route::get('cash-out-adjustment/get-cash-details/{user_id}', 'CashOutAdjustmentController@getCashDetails');
+    Route::resource('cash-out-adjustment', CashOutAdjustmentController::class);
+    Route::resource('customer-balance-adjustment', CustomerBalanceAdjustmentController::class);
+    Route::resource('customer-point-adjustment', CustomerPointAdjustmentController::class);
+
 
     Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
     Route::get('report/get-receivable-report', 'ReportController@getReceivableReport');
@@ -178,14 +200,24 @@ Route::group(['middleware' => ['auth', 'language', 'SetSessionData']], function 
     Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
     Route::get('report/get-due-report', 'ReportController@getDueReport');
 
+    Route::post('sms/save-setting', 'SmsController@saveSetting');
+    Route::get('sms/setting', 'SmsController@getSetting');
+    Route::get('sms/resend/{id}', 'SmsController@resend');
+    Route::resource('sms', SmsController::class);
+    Route::post('email/save-setting', 'EmailController@saveSetting');
+    Route::get('email/setting', 'EmailController@getSetting');
+    Route::get('email/resend/{id}', 'EmailController@resend');
+    Route::resource('email', EmailController::class);
+
+
+    Route::post('settings/update-general-setting', 'SettingController@updateGeneralSetting');
+    Route::get('settings/get-general-setting', 'SettingController@getGeneralSetting');
+    Route::resource('settings', SettingController::class);
 
 
 
-
-
-
-
-
+    Route::get('terms-and-conditions/get-details/{id}', 'TermsAndConditionsController@getDetails');
+    Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
 
 

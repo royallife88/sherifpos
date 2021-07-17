@@ -20,21 +20,40 @@ class SetSessionData
     {
         if (!$request->session()->has('user')) {
 
-            $currency_setting = System::getProperty('currency');
-            $currency_data = [
-                'name' => 'Qatari Riyals',
-                'symbol' => 'QR'
-            ];
+            $currency_id = System::getProperty('currency');
+            if (empty($currency_id)) {
+                $currency_data = [
+                    'country' => 'Qatar',
+                    'symbol' => 'QR',
+                    'decimal_separator' => '.',
+                    'thousand_separator' => ',',
+                    'currency_precision' => 2,
+                    'currency_symbol_placement' => 'before',
+                ];
+            } else {
+                $currency = Currency::find($currency_id);
+                $currency_data = [
+                    'country' => $currency->country,
+                    'code' => $currency->code,
+                    'symbol' => $currency->symbol,
+                    'decimal_separator' => '.',
+                    'thousand_separator' => ',',
+                    'currency_precision' => 2,
+                    'currency_symbol_placement' => 'before',
+                ];
+            }
 
-            // if (!empty($currency_setting)) {
-            //     $currency = Currency::find($currency_setting);
-            //     $currency_data = [
-            //         'id' => $currency->id,
-            //         'name' => $currency->name,
-            //         'symbol' => $currency->symbol
-            //     ];
-            // }
+
             $request->session()->put('currency', $currency_data);
+
+            if(empty(session('language'))){
+                $language = System::getProperty('language');
+
+                if (empty($language)) {
+                    $language = 'en';
+                }
+                $request->session()->put('language', $language);
+            }
         }
 
         return $next($request);
