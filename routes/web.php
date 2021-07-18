@@ -28,6 +28,7 @@ Route::get('general/switch-language/{lang}', 'GeneralController@switchLanguage')
 Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::get('get-dashboard-data/{start_date}/{end_date}', 'HomeController@getDashboardData');
     Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
@@ -86,6 +87,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::get('add-stock/add-product-row', 'AddStockController@addProductRow');
     Route::get('add-stock/get-purchase-order-details/{id}', 'AddStockController@getPurchaseOrderDetails');
+    Route::post('add-stock/save-import', 'AddStockController@saveImport');
+    Route::get('add-stock/get-import', 'AddStockController@getImport');
     Route::resource('add-stock', AddStockController::class);
     Route::get('remove-stock/get-invoice-details/{id}', 'RemoveStockController@getInvoiceDetails');
     Route::resource('remove-stock', RemoveStockController::class);
@@ -107,6 +110,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
     Route::resource('pos', SellPosController::class);
+    Route::post('sale/save-import', 'SellController@saveImport');
+    Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
     Route::get('sale/print/{id}', 'SellController@print');
     Route::resource('sale', SellController::class);

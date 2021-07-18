@@ -72,7 +72,7 @@
                         <li
                             class="@if(request()->segment(1) == 'purchase-order' && request()->segment(2) == 'import') active @endif">
                             <a
-                                href="{{action('PurchaseOrderController@getImport')}}">{{__('lang.import')}}</a>
+                                href="{{action('PurchaseOrderController@getImport')}}">{{__('lang.import_purchase_order')}}</a>
                         </li>
                         @endcan
                     </ul>
@@ -110,7 +110,7 @@
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
-                        @can('stock.transfer.view')
+                        @can('stock.transfer.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'transfer' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('TransferController@create')}}">{{__('lang.add_a_transfer')}}</a>
@@ -120,6 +120,12 @@
                         <li
                             class="@if(request()->segment(1) == 'transfer' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('TransferController@index')}}">{{__('lang.view_transfers')}}</a>
+                        </li>
+                        @endcan
+                        @can('stock.import.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'add-stock' && request()->segment(2) == 'get-import') active @endif">
+                            <a href="{{action('AddStockController@getImport')}}">{{__('lang.import_add_stock')}}</a>
                         </li>
                         @endcan
                     </ul>
@@ -177,6 +183,11 @@
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('SellController@getDeliveryList')}}">{{__('lang.delivery_list')}}</a></li>
+                        @endcan
+                        @can('sale.import.view')
+                        <li
+                            class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('SellController@getImport')}}">{{__('lang.import_sale')}}</a></li>
                         @endcan
                     </ul>
                 </li>

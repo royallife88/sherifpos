@@ -35,7 +35,7 @@
 
 
 <!-- Custom stylesheet - for your changes-->
-<link rel="stylesheet" href="{{asset('css/custom-'.$general_setting->theme) }}" type="text/css" id="custom-style">
+<link rel="stylesheet" href="{{asset('css/custom-default.css') }}" type="text/css" id="custom-style">
 
 <style>
     .my-group .form-control {

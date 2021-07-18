@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\PurchaseOrderLineImport;
 use App\Models\Product;
 use App\Models\PurchaseOrderLine;
 use App\Models\Store;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Maatwebsite\Excel\Facades\Excel;
 use Mpdf\Tag\Sup;
 
 class PurchaseOrderController extends Controller
@@ -517,41 +519,65 @@ class PurchaseOrderController extends Controller
 
     public function saveImport(Request $request)
     {
-        //get the file
-        $upload=$request->file('file');
-        $ext = pathinfo($upload->getClientOriginalName(), PATHINFO_EXTENSION);
-        //checking if this is a CSV file
-        if($ext != 'csv')
-            return redirect()->back()->with('message', 'Please upload a CSV file');
+        try {
+            $data = $request->except('_token');
 
-        $filePath=$upload->getRealPath();
-        $file_handle = fopen($filePath, 'r');
-        $i = 0;
-        //validate the file
-        while (!feof($file_handle) ) {
-            $current_line = fgetcsv($file_handle);
-            if($current_line && $i > 0){
+            $transaction_data = [
+                'store_id' => $data['store_id'],
+                'supplier_id' => $data['supplier_id'],
+                'type' => 'purchase_order',
+                'status' => 'pending',
+                'order_date' => Carbon::now(),
+                'transaction_date' => Carbon::now(),
+                'payment_status' => 'due',
+                'po_no' => $data['po_no'],
+                'grand_total' => 0,
+                'final_total' => 0,
+                'details' => $data['details'],
+                'created_by' => Auth::user()->id
+            ];
 
-                $product_data[] = Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('sub_sku', $current_line[0])->first();
-                if(!$product_data[$i-1])
-                    return redirect()->back()->with('message', 'Product does not exist!');
-                $unit[] = Unit::where('unit_code', $current_line[2])->first();
-                if(!$unit[$i-1])
-                    return redirect()->back()->with('message', 'Purchase unit does not exist!');
-                if(strtolower($current_line[5]) != "no tax"){
-                    $tax[] = Tax::where('name', $current_line[5])->first();
-                    if(!$tax[$i-1])
-                        return redirect()->back()->with('message', 'Tax name does not exist!');
-                }
-                else
-                    $tax[$i-1]['rate'] = 0;
-
-                $qty[] = $current_line[1];
-                $cost[] = $current_line[3];
-                $discount[] = $current_line[4];
+            if ($data['submit'] == 'sent_admin') {
+                $transaction_data['status'] = 'sent_admin';
             }
-            $i++;
+            if ($data['submit'] == 'sent_supplier') {
+                $transaction_data['status'] = 'sent_supplier';
+            }
+
+            DB::beginTransaction();
+            $transaction = Transaction::create($transaction_data);
+
+            Excel::import(new PurchaseOrderLineImport($transaction->id), $request->file);
+
+            $final_total = PurchaseOrderLine::where('transaction_id', $transaction->id)->sum('sub_total');
+            $transaction->grand_total = $final_total;
+            $transaction->final_total = $final_total;
+            $transaction->save();
+
+            DB::commit();
+
+            if ($data['submit'] == 'print') {
+                $print = 'print';
+                $url = action('PurchaseOrderController@show', $transaction->id) . '?print=' . $print;
+
+                return Redirect::to($url);
+            }
+            if ($data['submit'] == 'sent_supplier') {
+                $this->notificationUtil->sendPurchaseOrderToSupplier($transaction->id);
+            }
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
 
+        return redirect()->back()->with('status', $output);
     }
 }

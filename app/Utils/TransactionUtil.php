@@ -13,6 +13,7 @@ use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
 use App\Models\RedemptionOfPoint;
 use App\Models\Store;
+use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\TransactionSellLine;
@@ -21,6 +22,7 @@ use App\Utils\Util;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
+use Mockery\Matcher\Type;
 
 class TransactionUtil extends Util
 {
@@ -373,5 +375,22 @@ class TransactionUtil extends Util
         }
 
         return floor($points);
+    }
+
+    public function calculateDiscountAmount($amount, $type, $value)
+    {
+        if ($type == 'fixed') {
+            return $value;
+        }
+        if ($type == 'percentage') {
+            return ($amount * $value) / 100;
+        }
+    }
+
+    public function calculateTaxAmount($amount, $tax_id)
+    {
+        $tax = Tax::find($tax_id);
+
+        return ($amount * $tax->rate) / 100;
     }
 }

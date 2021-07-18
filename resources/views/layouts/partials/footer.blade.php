@@ -2,7 +2,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-12">
-          <p>&copy; {{$general_setting->site_title}} | {{trans('file.Developed')}} {{trans('file.By')}} <span class="external">{{$general_setting->developed_by}}</span></p>
+          <p>&copy; {{App\Models\System::getProperty('site_title')}} @if(!empty(App\Models\System::getProperty('developed_by')))| @lang('lang.developed_by') <span class="external">{!!App\Models\System::getProperty('developed_by')!!}</span>@endif</p>
         </div>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\TransactionSellLineImport;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Coupon;
@@ -18,10 +19,12 @@ use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SellController extends Controller
 {
@@ -402,5 +405,128 @@ class SellController extends Controller
             'customers',
             'payment_status_array',
         ));
+    }
+
+    public function getImport()
+    {
+        $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
+        $customers = Customer::getCustomerArrayWithMobile();
+        $taxes = Tax::get();
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $deliverymen = Employee::getDropdownByJobType('Deliveryman');
+        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+
+        return view('sale.import')->with(compact(
+            'walk_in_customer',
+            'deliverymen',
+            'store_pos',
+            'customers',
+            'tac',
+            'taxes',
+            'payment_types',
+            'payment_status_array'
+        ));
+    }
+
+    public function saveImport(Request $request)
+    {
+        try {
+            $transaction_data = [
+                'store_id' => $request->store_id,
+                'customer_id' => $request->customer_id,
+                'store_pos_id' => $request->store_pos_id,
+                'type' => 'sell',
+                'final_total' => $this->commonUtil->num_uf($request->final_total),
+                'grand_total' => $this->commonUtil->num_uf($request->grand_total),
+                'gift_card_id' => $request->gift_card_id,
+                'coupon_id' => $request->coupon_id,
+                'transaction_date' => Carbon::now(),
+                'invoice_no' => $this->productUtil->getNumberByType('sell'),
+                'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
+                'status' => $request->status,
+                'sale_note' => $request->sale_note,
+                'staff_note' => $request->staff_note,
+                'discount_type' => $request->discount_type,
+                'discount_value' => $this->commonUtil->num_f($request->discount_value),
+                'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
+                'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
+                'total_tax' => $this->commonUtil->num_f($request->total_tax),
+                'sale_note' => $request->sale_note,
+                'staff_note' => $request->staff_note,
+                'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
+                'deliveryman_id' => !empty($request->deliveryman_id_hidden) ? $request->deliveryman_id_hidden : null,
+                'payment_status' => 'pending',
+                'delivery_status' => 'pending',
+                'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
+                'delivery_address' => $request->delivery_address,
+                'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
+                'created_by' => Auth::user()->id,
+            ];
+
+            DB::beginTransaction();
+
+            if (!empty($request->is_quotation)) {
+                $transaction_data['is_quotation'] = 1;
+                $transaction_data['status'] = 'draft';
+                $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('quotation');
+                $transaction_data['block_qty'] = !empty($request->block_qty) ? 1 : 0;
+                $transaction_data['block_for_days'] = !empty($request->block_for_days) ? $request->block_for_days : 0;
+                $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
+            }
+            $transaction = Transaction::create($transaction_data);
+
+            Excel::import(new TransactionSellLineImport($transaction->id), $request->file);
+
+            foreach ($transaction->transaction_sell_lines as $sell_line) {
+                if (empty($sell_line['transaction_sell_line_id'])) {
+                    if ($transaction->status == 'final') {
+                        $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+                    }
+                }
+            }
+
+            $final_total = TransactionSellLine::where('transaction_id', $transaction->id)->sum('sub_total');
+            $transaction->discount_amount = $this->transactionUtil->calculateDiscountAmount($final_total, $request->discount_type, $request->discount_value);
+            $transaction->total_tax = $this->transactionUtil->calculateTaxAmount($final_total, $request->tax_id);
+            $transaction->grand_total = $final_total;
+            $transaction->final_total = $final_total - $transaction->discount_amount + $transaction->total_tax;
+            $transaction->save();
+
+
+            if ($transaction->status == 'final') {
+                //if transaction is final then calculate the reward points
+                $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
+                $transaction->rp_earned = $points_earned;
+                if ($request->is_redeem_points) {
+                    $transaction->rp_redeemed_value = $request->rp_redeemed_value;
+                    $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
+                    $transaction->rp_redeemed = $rp_redeemed;
+                }
+
+                $transaction->save();
+
+                $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+            }
+
+
+
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

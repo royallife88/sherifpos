@@ -150,6 +150,7 @@ class User extends Authenticatable
                 'pay' => 'Pay',
                 'remove_stock' => 'Remove Stock',
                 'transfer' => 'Transfer',
+                'import' => 'Import',
             ],
             'quotation_for_customers' => [
                 'quotation' => 'Quoatation',

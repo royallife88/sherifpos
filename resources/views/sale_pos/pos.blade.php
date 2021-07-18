@@ -331,7 +331,7 @@
                                         @endif --}}
                                         <li class="nav-item">
                                             <a class="dropdown-item" href="{{ url('read_me') }}" target="_blank"><i
-                                                    class="dripicons-information"></i> {{__('lang.Help')}}</a>
+                                                    class="dripicons-information"></i> {{__('lang.help')}}</a>
                                         </li>&nbsp;
                                         <li class="nav-item">
                                             <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"

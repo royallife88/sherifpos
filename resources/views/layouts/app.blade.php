@@ -1,4 +1,3 @@
-<?php $general_setting = DB::table('general_settings')->find(1); ?>
 <!doctype html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -256,15 +255,13 @@
       });
 
     @if(request()->segment(1) == 'pos')
-    $(window).on("beforeunload", function() {
+    $(window).on("beforeunload", function(e) {
         let cash_register_id = $('#cash_register_id').val();
         let is_register_close = parseInt($('#is_register_close').val());
+        console.log(is_register_close, 'is_register_close');
         if(!is_register_close){
             getClosingModal(cash_register_id);
-
-            if(!confirm('Please enter the closing cash')){
-                window.close();
-            }
+            return 'Please enter the closing cash';
         }
     });
     @endif
@@ -276,7 +273,7 @@
             data: {  },
             contentType: 'html',
             success: function(result) {
-                $('#closing_cash_modal').empty().html(result);
+                $('#closing_cash_modal').empty().append(result);
                 $('#closing_cash_modal').modal('show');
                 console.log( 'getClosingModal called', result);
             },
@@ -291,9 +288,7 @@
         let is_register_close = parseInt($('#is_register_close').val());
         if(!is_register_close){
             getClosingModal(cash_register_id);
-            if(!confirm('Please enter the closing cash')){
-                $('#logout-form').submit();
-            }
+            return 'Please enter the closing cash';
         }else{
             $('#logout-form').submit();
         }

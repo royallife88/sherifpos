@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\AddStockLineImport;
 use App\Models\AddStockLine;
+use App\Models\Email;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
@@ -16,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AddStockController extends Controller
 {
@@ -415,5 +418,97 @@ class AddStockController extends Controller
         return view('add_stock.partials.purchase_order_details')->with(compact(
             'purchase_order'
         ));
+    }
+
+    /**
+     * Show the form for importing a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getImport()
+    {
+        $suppliers = Supplier::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
+
+        $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
+        $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
+        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+        return view('add_stock.import')->with(compact(
+            'suppliers',
+            'status_array',
+            'payment_status_array',
+            'payment_type_array',
+            'stores',
+            'po_nos'
+        ));
+    }
+
+    public function saveImport(Request $request)
+    {
+        try {
+            $data = $request->except('_token');
+
+            if (!empty($data['po_no'])) {
+                $ref_transaction_po = Transaction::find($data['po_no']);
+            }
+
+            $transaction_data = [
+                'store_id' => $data['store_id'],
+                'supplier_id' => $data['supplier_id'],
+                'type' => 'add_stock',
+                'status' => $data['status'],
+                'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
+                'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
+                'payment_status' => 'pending',
+                'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
+                'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,
+                'final_total' => $this->productUtil->num_uf($data['final_total']),
+                'notes' => !empty($data['notes']) ? $data['notes'] : null,
+                'details' => !empty($data['details']) ? $data['details'] : null,
+                'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
+                'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
+                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
+                'created_by' => Auth::user()->id
+            ];
+
+            DB::beginTransaction();
+            $transaction = Transaction::create($transaction_data);
+
+            Excel::import(new AddStockLineImport($transaction->id), $request->file);
+
+            foreach ($transaction->add_stock_lines as $line) {
+                $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $transaction->store_id,  $line->quantity, 0);
+            }
+
+            $final_total = AddStockLine::where('transaction_id', $transaction->id)->sum('sub_total');
+            $transaction->final_total = $final_total;
+            $transaction->save();
+
+            if ($request->files) {
+                foreach ($request->file('files', []) as $key => $file) {
+
+                    $transaction->addMedia($file)->toMediaCollection('add_stock');
+                }
+            }
+
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

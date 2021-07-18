@@ -317,7 +317,7 @@ return [
     'staff_note' => 'Staff Note',
     'payment_note' => 'Payment Note',
     'quick_cash' => 'Quick Cash',
-    'recent_transactions' => 'Recent transactions',
+    'recent_transactions' => 'Recent Transactions',
     'card' => 'Card',
     'paypal' => 'Paypal',
     'deposit' => 'Deposit',
@@ -826,6 +826,24 @@ return [
     'my_holidays' => 'My Holidays',
     'logout' => 'Logout',
 
+    'import_sale' => 'Import Sale',
+    'import_add_stock' => 'Import Add Stock',
+    'download_info_add_stock' => 'The correct column order is (Product Code, Quantity, Purchase Price) and you must follow this. All columns are required',
 
+    'this_year' => 'This Year',
+    'this_month' => 'This Month',
+    'last_7_days' => 'Last 7 Days',
+    'today' => 'Today',
+    'revenue' => 'Revenue',
+    'welcome' => 'Welcome',
+    'cash_flow' => 'Cash Flow',
+    'payment_received' => 'Payment Received',
+    'payment_sent' => 'Payment Sent',
+    'yearly_report' => 'Yearly Report',
+    'latest' => 'Latest',
+    'best_seller' => 'Best Seller',
+    'top' => 'Top',
+    'qty' => 'Qty',
+    'developed_by' => 'Developed By',
 
 ];

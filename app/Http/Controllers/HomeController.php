@@ -5,9 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\Leave;
 use App\Models\Transaction;
+use App\Models\TransactionSellLine;
+use App\Models\WagesAndCompensation;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -30,9 +34,258 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home.index');
+        $start_date = new Carbon('first day of this month');;
+        $end_date = new Carbon('last day of this month');;
+
+        $dashboard_data = $this->getDashboardData($start_date, $end_date);
+
+        $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty');
+        $yearly_best_sellings_qty = $this->getBestSellings(date("Y").'-01-01', date("Y").'-12-31', 'qty');
+        $yearly_best_sellings_price = $this->getBestSellings(date("Y").'-01-01', date("Y").'-12-31', 'total_price');
+
+        //cash flow of last 6 months
+        $start = strtotime(date('Y-m-01', strtotime('-6 month', strtotime(date('Y-m-d')))));
+        $end = strtotime(date('Y-m-' . date('t', mktime(0, 0, 0, date("m"), 1, date("Y")))));
+
+
+        while ($start < $end) {
+            $start_date = date("Y-m", $start) . '-' . '01';
+            $end_date = date("Y-m", $start) . '-' . '31';
+
+            $cash_flow_data  = $this->getDashboardData($start_date, $end_date);
+
+            $payment_received[] = $cash_flow_data['payment_received'];
+            $payment_sent[] = $cash_flow_data['payment_sent'];
+            $month[] = date("F", strtotime($start_date));
+            $start = strtotime("+1 month", $start);
+        }
+
+        // yearly report
+        $start = strtotime(date("Y") . '-01-01');
+        $end = strtotime(date("Y") . '-12-31');
+        while ($start < $end) {
+            $start_date = date("Y") . '-' . date('m', $start) . '-' . '01';
+            $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+
+            $sale_amount =  $this->getSaleAmount($start_date, $end_date);
+            $purchase_amount = $this->getPurchaseAmount($start_date, $end_date);
+            $yearly_sale_amount[] = $sale_amount;
+            $yearly_purchase_amount[] = $purchase_amount;
+            $start = strtotime("+1 month", $start);
+        }
+
+        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->whereIn('transactions.status', ['final']);
+        $sales = $sale_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->leftjoin('users', 'transactions.created_by', 'users.id')
+            ->whereIn('transactions.type', ['sell'])
+            ->where('transactions.payment_status', 'paid')
+            ->whereIn('transactions.status', ['final']);
+
+        $payments = $payment_query->select(
+            'transactions.*',
+            'transaction_payments.method',
+            'transaction_payments.amount',
+            'transaction_payments.ref_number',
+            'transaction_payments.paid_on',
+            'users.name as created_by_name',
+        )->groupBy('transaction_payments.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->where('is_quotation', 1);
+
+        $quotations = $quotation_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock'])
+            ->whereIn('transactions.status', ['received']);
+        $add_stocks = $add_stock_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+
+        return view('home.index')->with(compact(
+            'dashboard_data',
+            'payment_received',
+            'payment_sent',
+            'yearly_sale_amount',
+            'yearly_purchase_amount',
+            'sales',
+            'payments',
+            'quotations',
+            'add_stocks',
+            'payment_types',
+            'best_sellings',
+            'yearly_best_sellings_qty',
+            'yearly_best_sellings_price',
+            'month'
+        ));
     }
 
+    public function getBestSellings($start_date, $end_date, $order_by)
+    {
+        return TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
+            ->where('transaction_date', '>=', $start_date)
+            ->where('transaction_date', '<=', $end_date)
+            ->select(
+                DB::raw('SUM(quantity) as qty'),
+                DB::raw('SUM(sub_total) as total_price'),
+                'transaction_sell_lines.*'
+            )
+            ->groupBy('transaction_sell_lines.product_id')
+            ->orderBy($order_by, 'desc')
+            ->take(5)->get();
+    }
+    public function getSaleAmount($start_date, $end_date)
+    {
+        $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
+        if (!empty($start_date)) {
+            $sell_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sell_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        return $sell_query->sum('final_total');
+    }
+
+    public function getPurchaseAmount($start_date, $end_date)
+    {
+        $purchase_query = Transaction::where('type', 'add_stock')->where('status', 'received');
+        if (!empty($start_date)) {
+            $purchase_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $purchase_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        return $purchase_query->sum('final_total');
+    }
+
+    public function getDashboardData($start_date, $end_date)
+    {
+        $revenue = $this->getSaleAmount($start_date, $end_date);
+
+        $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
+        if (!empty($start_date)) {
+            $sell_return_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        $sell_return = $sell_return_query->sum('final_total');
+
+        $purchase_return_query = Transaction::where('type', 'purchase_return')->where('status', 'final');
+        if (!empty($start_date)) {
+            $purchase_return_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $purchase_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        $purchase_return = $purchase_return_query->sum('final_total');
+
+        $purchase =  $this->getPurchaseAmount($start_date, $end_date);
+
+        $revenue -= $sell_return;
+        $profit = $revenue + $purchase_return - $purchase;
+
+        $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
+        if (!empty($start_date)) {
+            $expense_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $expense_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        $expense = $expense_query->sum('final_total');
+
+        //payment sent queries
+        $payment_received_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'sell')->where('status', 'final');
+        if (!empty($start_date)) {
+            $payment_received_query->whereDate('paid_on', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $payment_received_query->whereDate('paid_on', '<=', $end_date);
+        }
+        $payment_received = $payment_received_query->sum('amount');
+
+        $payment_purchase_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'purchase_return')->where('status', 'final');
+        if (!empty($start_date)) {
+            $payment_purchase_return_query->whereDate('paid_on', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $payment_purchase_return_query->whereDate('paid_on', '<=', $end_date);
+        }
+        $payment_purchase_return = $payment_purchase_return_query->sum('amount');
+        $payment_received_total = $payment_received - $payment_purchase_return;
+
+        //payment sent queries
+        $payment_purchase_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'add_stock')->where('status', 'final');
+        if (!empty($start_date)) {
+            $payment_purchase_query->whereDate('paid_on', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $payment_purchase_query->whereDate('paid_on', '<=', $end_date);
+        }
+        $payment_purchase = $payment_purchase_query->sum('amount');
+
+        $payment_expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'expense')->where('status', 'final');
+        if (!empty($start_date)) {
+            $payment_expense_query->whereDate('paid_on', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $payment_expense_query->whereDate('paid_on', '<=', $end_date);
+        }
+        $payment_expense = $payment_expense_query->sum('amount');
+
+        $wages_query = WagesAndCompensation::where('id', '>', 0);
+        if (!empty($start_date)) {
+            $wages_query->where('payment_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $wages_query->where('payment_date', '<=', $end_date);
+        }
+        $wages_payment = $wages_query->sum('net_amount');
+
+        $sell_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')->where('type', 'sell_return')->where('status', 'final');
+        if (!empty($start_date)) {
+            $sell_return_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        $sell_return_payment =  $sell_return_query->sum('amount');
+
+        $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
+
+        $data['revenue'] = $revenue;
+        $data['sell_return'] = $sell_return;
+        $data['profit'] = $profit;
+        $data['purchase'] = $purchase;
+        $data['expense'] = $expense;
+        $data['purchase_return'] = $purchase_return;
+        $data['payment_received'] = $payment_received_total;
+        $data['payment_sent'] = $payment_sent;
+
+        return $data;
+    }
+
+    /**
+     * show the user transactin
+     *
+     * @param int $year
+     * @param int $month
+     * @return void
+     */
     public function myTransaction($year, $month)
     {
         $start = 1;
@@ -73,6 +326,13 @@ class HomeController extends Controller
         ));
     }
 
+    /**
+     * show the user leaves
+     *
+     * @param int $year
+     * @param int $month
+     * @return void
+     */
     public function myHoliday($year, $month)
     {
         $start = 1;
