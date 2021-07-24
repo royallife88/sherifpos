@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Utils;
 
 use App\Models\Customer;
+use App\Models\Notification as ModelsNotification;
 use App\Models\Supplier;
 use App\Models\Transaction;
 use App\Notifications\PurchaseOrderToSupplierNotification;
@@ -93,5 +93,28 @@ class NotificationUtil extends Util
         if (file_exists($file)) {
             unlink($file);
         }
+    }
+
+    /**
+     * add notification to system
+     *
+     * @param [type] $data
+     * @return void
+     */
+    public function createNotification($data)
+    {
+        ModelsNotification::create([
+            'user_id' => $data['user_id'],
+            'transaction_id' => !empty($data['transaction_id']) ? $data['transaction_id'] : null,
+            'product_id' => !empty($data['product_id']) ? $data['product_id'] : null,
+            'qty_available' => !empty($data['qty_available']) ? $data['qty_available'] : 0,
+            'alert_quantity' => !empty($data['alert_quantity']) ? $data['alert_quantity'] : 0,
+            'days' => !empty($data['days']) ? $data['days'] : 0,
+            'type' => $data['type'],
+            'status' => $data['status'],
+            'created_by' => $data['created_by'],
+        ]);
+
+        return true;
     }
 }

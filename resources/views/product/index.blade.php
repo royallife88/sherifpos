@@ -170,7 +170,6 @@
                 <th>@lang('lang.manufacturing_date')</th>
                 <th>@lang('lang.discount')</th>
                 <th>@lang('lang.purchase_price')</th>
-                <th>@lang('lang.barcode')</th>
 
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -203,7 +202,6 @@
                 </td>
                 <td>{{@num_format($product->discount)}}</td>
                 <td>{{@num_format($product->purchase_price)}}</td>
-                <td>{{$product->barcode}}</td>
 
                 <td>
                     <div class="btn-group">

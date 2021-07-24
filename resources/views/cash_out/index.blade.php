@@ -71,7 +71,6 @@
                                         user="menu">
                                         @can('cash.add_cash_out.create_and_edit')
                                         <li>
-
                                             <a data-href="{{action('CashOutController@edit', $cash_register->id)}}"
                                                 data-container=".view_modal" class="btn btn-modal"><i
                                                     class="dripicons-document-edit"></i> @lang('lang.edit')</a>

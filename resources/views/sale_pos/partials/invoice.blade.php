@@ -112,7 +112,7 @@
                             @if($line->variation->name != "Default")
                             <b>{{$line->variation->name}}</b>
                             @endif
-                            <br>{{@num_format($line->quantity)}} x {{@num_format($line->sub_total / $line->quantity)}}
+                            <br>{{@num_format($line->quantity)}} x {{@num_format($line->sell_price)}} @if(!empty((float)$line->product_discount_amount))-{{@num_format($line->product_discount_amount)}}@endif
 
                         </td>
                         <td style="text-align:right;vertical-align:bottom">{{@num_format($line->sub_total)}}</td>

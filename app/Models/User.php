@@ -6,10 +6,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -49,7 +50,7 @@ class User extends Authenticatable
     /**
      * get the array for dropdown of user by job type
      *
-     * @param [type] $job_type
+     * @param int $job_type
      * @return void
      */
     public static function getDropdownByJobType($job_type)
@@ -105,7 +106,8 @@ class User extends Authenticatable
             ],
             'customer_module' => [
                 'customer' => 'Customer',
-                'customer_type' => 'Customer Type'
+                'customer_type' => 'Customer Type',
+                'add_payment' => 'Add Payment'
             ],
             'supplier_module' => [
                 'supplier' => 'Supplier',

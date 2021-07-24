@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('get-dashboard-data/{start_date}/{end_date}', 'HomeController@getDashboardData');
+    Route::get('get-help', 'HomeController@getHelp');
     Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
@@ -98,6 +99,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('quotation/print/{id}', 'QuotationController@print');
     Route::resource('quotation', QuotationController::class);
 
+    Route::post('transaction-payment/pay-customer-due/{customer_id}', 'TransactionPaymentController@payCustomerDue');
+    Route::get('transaction-payment/get-customer-due/{customer_id}', 'TransactionPaymentController@getCustomerDue');
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
     Route::resource('transaction-payment', TransactionPaymentController::class);
 
@@ -105,7 +108,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
-    Route::get('pos/get-product-items-by-filter/{id}/{type}', 'SellPosController@getProductItemsByFilter');
+    Route::get('pos/get-product-items-by-filter', 'SellPosController@getProductItemsByFilter');
     Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
@@ -224,6 +227,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('terms-and-conditions/get-details/{id}', 'TermsAndConditionsController@getDetails');
     Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
+    Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');
 
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerType;
+use App\Models\Transaction;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -37,10 +38,25 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = Customer::all();
+        $query = Customer::leftjoin('transactions', 'customers.id', 'transactions.customer_id')
+        ->select(
+            'customers.*',
+            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
+            DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
+            DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
+        );
+
+        $customers = $query->groupBy('customers.id')->get();
+        $balances =[];
+        foreach($customers as $customer){
+            $balances[$customer->id] = $this->getCustomerBalance($customer->id)['balance'];
+
+        }
 
         return view('customer.index')->with(compact(
-            'customers'
+            'customers',
+            'balances'
         ));
     }
 
@@ -126,7 +142,77 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-        //
+        $customer_id = $id;
+        $customer = Customer::find($id);
+
+        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->whereIn('transactions.status', ['final']);
+
+        if (!empty(request()->start_date)) {
+            $sale_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $sale_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty($customer_id)) {
+            $sale_query->where('transactions.customer_id', $customer_id);
+        }
+        $sales = $sale_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->get();
+
+
+        $discount_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->whereIn('transactions.status', ['final'])
+            ->where(function($q){
+                $q->where('total_sp_discount', '>', 0);
+                $q->orWhere('total_product_discount', '>', 0);
+                $q->orWhere('total_coupon_discount', '>', 0);
+            });
+
+        if (!empty(request()->start_date)) {
+            $discount_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $discount_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty($customer_id)) {
+            $discount_query->where('transactions.customer_id', $customer_id);
+        }
+        $discounts = $discount_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->get();
+
+        $point_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->whereIn('transactions.status', ['final'])
+            ->where(function($q){
+                $q->where('rp_earned', '>', 0);
+            });
+
+        if (!empty(request()->start_date)) {
+            $point_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $point_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty($customer_id)) {
+            $point_query->where('transactions.customer_id', $customer_id);
+        }
+        $points = $point_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->get();
+
+
+        $customers = Customer::pluck('name', 'id');
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        return view('customer.show')->with(compact(
+            'sales',
+            'points',
+            'discounts',
+            'customers',
+            'customer'
+        ));
     }
 
     /**
@@ -256,6 +342,12 @@ class CustomerController extends Controller
         return $customer_details;
     }
 
+    /**
+     * calculate the customer balance
+     *
+     * @param int $customer_id
+     * @return void
+     */
     public function getCustomerBalance($customer_id)
     {
         $query = Customer::join('transactions as t', 'customers.id', 't.customer_id')

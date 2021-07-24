@@ -19,6 +19,7 @@ class CreateProductStoresTable extends Migration
             $table->unsignedBigInteger('variation_id');
             $table->unsignedBigInteger('store_id');
             $table->decimal('qty_available', 15, 4)->default(0);
+            $table->decimal('expired_qauntity', 15, 4)->default(0);
             $table->decimal('block_qty', 15, 4)->default(0);
             $table->decimal('price', 15, 4);
             $table->timestamps();

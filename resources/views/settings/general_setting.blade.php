@@ -115,6 +115,14 @@
                     </div>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        {!! Form::label('help_page_content', __('lang.help_page_content'), []) !!}
+                        {!! Form::textarea('help_page_content', !empty($settings['help_page_content']) ? $settings['help_page_content'] : null, ['class' => 'form-control', 'id' => 'help_page_content']) !!}
+                    </div>
+                </div>
+            </div>
             <br>
             <br>
             <br>
@@ -130,6 +138,20 @@
 
 @section('javascript')
 <script>
-    $('.selectpicker').selectpicker()
+    $('.selectpicker').selectpicker();
+    $(document).ready(function () {
+    tinymce.init({
+        selector: "#help_page_content",
+        height: 130,
+        plugins: [
+            "advlist autolink lists link charmap print preview anchor textcolor image",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime table contextmenu paste code wordcount",
+        ],
+        toolbar:
+            "insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat",
+        branding: false,
+    });
+});
 </script>
 @endsection

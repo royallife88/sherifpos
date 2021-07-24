@@ -188,6 +188,10 @@ class SellPosController extends Controller
                     $transaction->rp_redeemed = $rp_redeemed;
                 }
 
+                $transaction->total_sp_discount = $transaction->transaction_sell_lines->sum('promotion_discount_amount');
+                $transaction->total_product_discount = $transaction->transaction_sell_lines->sum('product_discount_amount');
+                $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
+
                 $transaction->save();
 
                 $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
@@ -321,27 +325,20 @@ class SellPosController extends Controller
      * @param string $type
      * @return html
      */
-    public function getProductItemsByFilter($id, $type, Request $request)
+    public function getProductItemsByFilter(Request $request)
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id');
 
-        if ($type == 'brand') {
-            $query->where('brand_id', $id);
-        }
-
-        if ($type == 'category') {
-            $query->where('category_id', $id);
-        }
-        if ($type == 'sub_category') {
-            $query->where('sub_category_id', $id);
-        }
-
         if (!empty($request->selling_filter)) {
+            $query->leftjoin('transaction_sell_lines', 'products.id', 'transaction_sell_lines.product_id');
             if ($request->selling_filter == 'best_selling') {
+                $query->select(DB::raw('SUM(quantity) as sold_qty'))->orderBy('sold_qty', 'desc');
             }
             if ($request->selling_filter == 'slow_moving_items') {
+                $query->select(DB::raw('SUM(quantity) as sold_qty'))->orderBy('sold_qty', 'asc');
             }
             if ($request->selling_filter == 'product_in_last_transactions') {
+                $query->orderBy('transaction_sell_lines.created_at', 'desc');
             }
         }
         if (!empty($request->price_filter)) {
@@ -362,8 +359,12 @@ class SellPosController extends Controller
         }
         if (!empty($request->expiry_filter)) {
             if ($request->expiry_filter == 'nearest_expiry') {
+                $query->whereDate('products.expiry_date', '>', Carbon::now());
+                $query->orderBy('products.expiry_date', 'asc');
             }
             if ($request->expiry_filter == 'longest_expiry') {
+                $query->whereDate('products.expiry_date', '>', Carbon::now());
+                $query->orderBy('products.expiry_date', 'desc');
             }
         }
         if (!empty($request->sale_promo_filter)) {
@@ -371,13 +372,13 @@ class SellPosController extends Controller
             }
         }
 
-        $products = $query->select(
+        $query->addSelect(
             'products.*',
             'variations.id as variation_id',
             'variations.name as variation_name',
             'variations.sub_sku',
-        )
-            ->groupBy('variations.id')->get();
+        );
+        $products = $query->groupBy('variations.id')->get();
 
         $html = '';
 
@@ -501,10 +502,11 @@ class SellPosController extends Controller
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id);
 
+                $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
                 $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id);
 
                 return view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details'));
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details'));
             }
         }
     }

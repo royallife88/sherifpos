@@ -35,6 +35,7 @@ $(".selling_filter, .price_filter, .expiry_filter, .sorting_filter").change(
         let class_name = $(this).attr("class");
         $("." + class_name).prop("checked", false);
         $(this).prop("checked", true);
+        getFilterProductRightSide();
     }
 );
 
@@ -44,6 +45,7 @@ $("body").on("click", function (e) {
 
 function getFilterCheckboxValue(class_name) {
     let val = null;
+
     $("." + class_name).each((i, ele) => {
         if ($(ele).prop("checked")) {
             val = $(ele).val();
@@ -52,34 +54,32 @@ function getFilterCheckboxValue(class_name) {
     return val;
 }
 
-$(document).on("click", ".filter-by", function () {
-    var id = $(this).data("id");
-    var type = $(this).data("type");
-
+getFilterProductRightSide();
+function getFilterProductRightSide() {
     var selling_filter = getFilterCheckboxValue("selling_filter");
     var price_filter = getFilterCheckboxValue("price_filter");
     var expiry_filter = getFilterCheckboxValue("expiry_filter");
     var sale_promo_filter = getFilterCheckboxValue("sale_promo_filter");
     var sorting_filter = getFilterCheckboxValue("sorting_filter");
 
-    if (id && type) {
-        $.ajax({
-            method: "get",
-            url: "/pos/get-product-items-by-filter/" + id + "/" + type,
-            data: {
-                selling_filter,
-                price_filter,
-                expiry_filter,
-                sale_promo_filter,
-                sorting_filter,
-            },
-            contentType: "html",
-            success: function (result) {
-                $("#filter-product-table > tbody").empty().append(result);
-            },
-        });
-    }
-});
+    $.ajax({
+        method: "get",
+        url: "/pos/get-product-items-by-filter",
+        data: {
+            selling_filter,
+            price_filter,
+            expiry_filter,
+            sale_promo_filter,
+            sorting_filter,
+        },
+        contentType: "html",
+        success: function (result) {
+            $("#filter-product-table > tbody").hide()
+            $("#filter-product-table > tbody").empty().append(result);
+            $("#filter-product-table > tbody").show(500)
+        },
+    });
+}
 
 $(document).ready(function () {
     //Add products
@@ -187,12 +187,18 @@ function calculate_sub_totals() {
         let sell_price = __read_number($(tr).find(".sell_price"));
         let sub_total = sell_price * quantity;
 
+        __write_number($(tr).find(".sub_total"), sub_total);
+
+        let product_discount = calculate_product_discount(tr);
+        console.log(product_discount, "product_discount");
+        sub_total -= product_discount;
+
         grand_total += sub_total;
         $(".grand_total_span").text(
             __currency_trans_from_en(grand_total, false)
         );
 
-        let coupon_discount = calculat_coupon_discount(tr);
+        let coupon_discount = calculate_coupon_discount(tr);
         sub_total -= coupon_discount;
 
         __write_number($(tr).find(".sub_total"), sub_total);
@@ -245,7 +251,7 @@ function calculate_sub_totals() {
 
     __write_number($("#final_total"), total);
     let promo_discount = apply_promotion_discounts();
-    if(promo_discount > 0){
+    if (promo_discount > 0) {
         __write_number($("#discount_amount"), promo_discount);
     }
     total -= promo_discount;
@@ -253,6 +259,23 @@ function calculate_sub_totals() {
     $("#final_total").change();
 
     $(".final_total_span").text(__currency_trans_from_en(total, false));
+}
+
+function calculate_product_discount(tr) {
+    let discount = 0;
+
+    let value = __read_number($(tr).find(".product_discount_value"));
+    let type = $(tr).find(".product_discount_type").val();
+    let sub_total = __read_number($(tr).find(".sub_total"));
+    if (type == "fixed") {
+        discount = value;
+    }
+    if (type == "percentage") {
+        discount = __get_percent_value(sub_total, value);
+    }
+
+    $(tr).find(".product_discount_amount").val(discount);
+    return discount;
 }
 function calculate_promotion_discount(tr) {
     let discount = 0;
@@ -294,7 +317,7 @@ function apply_promotion_discounts() {
     });
     return promo_discount;
 }
-function calculat_coupon_discount(tr) {
+function calculate_coupon_discount(tr) {
     let discount = 0;
 
     let value = __read_number($(tr).find(".coupon_discount_value"));
@@ -465,7 +488,7 @@ $(document).on("click", "#pay-later-btn", function (e) {
         toastr.warning("No Product Added");
         return false;
     }
-    $('#amount').val(0);
+    $("#amount").val(0);
     pos_form_obj.submit();
 });
 $(document).on("click", ".payment-btn", function (e) {
@@ -473,7 +496,7 @@ $(document).on("click", ".payment-btn", function (e) {
     audio.play();
 
     let method = $(this).data("method");
-console.log(method);
+    console.log(method);
     $("#method").val(method);
     $("#method").selectpicker("refresh");
     $("#method").change();
@@ -629,7 +652,12 @@ pos_form_validator = pos_form_obj.validate({
     submitHandler: function (form) {
         $("#pos-save").attr("disabled", "true");
         var data = $(form).serialize();
-        data = data + "&method=" + $("#method").val()+"&terms_and_condition_id="+ $('#terms_and_condition_id').val();
+        data =
+            data +
+            "&method=" +
+            $("#method").val() +
+            "&terms_and_condition_id=" +
+            $("#terms_and_condition_id").val();
         var url = $(form).attr("action");
         $.ajax({
             method: "POST",
@@ -679,7 +707,7 @@ $("button#submit-btn").click(function () {
     }
 
     $(this).attr("disabled", true);
-    $('#add-payment').modal('hide');
+    $("#add-payment").modal("hide");
     pos_form_obj.submit();
 });
 
@@ -880,6 +908,6 @@ $(document).on("change", "#deliveryman_id", function () {
     $("#deliveryman_id_hidden").val($(this).val());
 });
 
-$(document).on('change', '#terms_and_condition_id', function (){
+$(document).on("change", "#terms_and_condition_id", function () {
     console.log($(this).val());
-})
+});

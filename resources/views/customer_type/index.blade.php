@@ -3,8 +3,8 @@
 
 @section('content')
 <div class="container-fluid">
-    <a style="color: white" href="{{action('CustomerTypeController@create')}}"
-        class="btn btn-info"><i class="dripicons-plus"></i>
+    <a style="color: white" href="{{action('CustomerTypeController@create')}}" class="btn btn-info"><i
+            class="dripicons-plus"></i>
         @lang('lang.customer_type')</a>
 
 </div>
@@ -16,7 +16,7 @@
                 <th>@lang('lang.stores')</th>
                 <th>@lang('lang.number_of_customer')</th>
                 <th>@lang('lang.discount')</th>
-                <th>@lang('lang.points')</th>
+                <th>@lang('lang.loyalty_point_system')</th>
                 <th>@lang('lang.date_and_time')</th>
                 <th>@lang('lang.created_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
@@ -28,18 +28,23 @@
                 <td>{{$customer_type->name}}</td>
                 <td>
                     @php
-                        $this_stores = [];
+                    $this_stores = [];
                     @endphp
                     @foreach ($customer_type->customer_type_store as $item)
                     @php
-                        $this_stores[] = $stores[$item->store_id];
+                    $this_stores[] = $stores[$item->store_id];
                     @endphp
                     @endforeach
                     {{implode(',' , $this_stores)}}
                 </td>
-                <td>@if(!empty($customer_type->customers)){{$customer_type->customers->count()}}@endif</td>
-                <td>{{$customer_type->discount}}</td>
-                <td>{{$customer_type->points}}</td>
+                <td>@if(!empty($customer_type->customers))<a href="{{action('CustomerTypeController@show', $customer_type->id)}}?show=customers" class="btn">{{$customer_type->customers->count()}}</a>@endif</td>
+                <td><a href="{{action('CustomerTypeController@show', $customer_type->id)}}?show=discounts" class="btn">{{@num_format($customer_type->total_sp_discount + $customer_type->total_product_discount + $customer_type->total_coupon_discount)}}</a>
+                </td>
+                @php
+                $loyal_point_system = App\Models\EarningOfPoint::whereJsonContains('customer_type_ids',
+                $customer_type->id)->first();
+                @endphp
+                <td>{{$loyal_point_system}}</td>
                 <td>{{$customer_type->created_at}}</td>
                 <td>{{ucfirst($customer_type->created_by_user->name)}}</td>
                 <td>
@@ -53,8 +58,7 @@
                             @can('customer_module.customer_type.delete')
                             <li>
 
-                                <a data-href="{{action('CustomerTypeController@show', $customer_type->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i
+                                <a href="{{action('CustomerTypeController@show', $customer_type->id)}}" class="btn"><i
                                         class="dripicons-document"></i> @lang('lang.view')</a>
                             </li>
                             <li class="divider"></li>
@@ -62,7 +66,7 @@
                             @can('customer_module.customer_type.view')
                             <li>
                                 <a href="{{action('CustomerTypeController@edit', $customer_type->id)}}"><i
-                                    class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                        class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
@@ -70,7 +74,8 @@
                             <li>
                                 <a data-href="{{action('CustomerTypeController@destroy', $customer_type->id)}}"
                                     data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                    class="btn text-red delete_item"><i class="fa fa-trash"></i> @lang('lang.delete')</a>
+                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                    @lang('lang.delete')</a>
                             </li>
                             @endcan
                         </ul>
@@ -85,7 +90,7 @@
 @endsection
 
 @section('javascript')
-    <script>
+<script>
 
-    </script>
+</script>
 @endsection

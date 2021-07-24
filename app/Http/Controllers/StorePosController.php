@@ -39,6 +39,24 @@ class StorePosController extends Controller
     {
         $store_poses = StorePos::get();
 
+        $query = StorePos::leftjoin('transactions', function ($join) {
+            $join->on('store_pos.id', 'transactions.store_pos_id')->whereIn('type', ['sell', 'sell_return']);
+        })
+            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id');
+        $query->select(
+            'store_pos.*',
+            DB::raw('SUM(IF(transactions.type="sell" AND status="final", final_total, 0)) as total_sales'),
+            DB::raw('SUM(IF(transactions.type="sell_return" AND status="final", final_total, 0)) as total_sales_return'),
+            DB::raw('SUM(IF(transactions.delivery_cost > 0  AND status="final", final_total, 0)) as total_delivery_sales'),
+            DB::raw('SUM(IF(method="cash", amount, 0)) as total_cash'),
+            DB::raw('SUM(IF(method="card", amount, 0)) as total_card'),
+            DB::raw('COUNT(CASE WHEN transactions.status!="final" THEN 1 END) as pending_orders'),
+            DB::raw('SUM(IF(transactions.type="sell" AND transactions.payment_status="pending", final_total, 0)) as pay_later_sales'),
+
+        );
+
+        $store_poses = $query->groupBy('transactions.store_pos_id')->get();
+
         return view('store_pos.index')->with(compact(
             'store_poses'
         ));
@@ -203,5 +221,4 @@ class StorePosController extends Controller
 
         return $output;
     }
-
 }

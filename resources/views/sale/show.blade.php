@@ -45,16 +45,21 @@
                     <table class="table table-bordered table-striped table-condensed" id="product_table">
                         <thead class="bg-success"  style="color: white">
                             <tr>
+                                <th style="width: 25%" class="col-sm-8">@lang( 'lang.image' )</th>
                                 <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
                                 <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                <th style="width: 25%" class="col-sm-4">@lang( 'lang.batch_number' )</th>
                                 <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                 <th style="width: 12%" class="col-sm-4">@lang( 'lang.sell_price' )</th>
+                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.discount' )</th>
                                 <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($sale->transaction_sell_lines as $line)
                             <tr>
+                                <td><img src="@if(!empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                                    alt="photo" width="50" height="50"></td>
                                 <td>
                                     {{$line->product->name}}
 
@@ -67,10 +72,16 @@
                                     {{$line->variation->sub_sku}}
                                 </td>
                                 <td>
-                                    @if(isset($line->quantity)){{$line->quantity}}@else{{1}}@endif
+                                    {{$line->product->batch_number}}
+                                </td>
+                                <td>
+                                    @if(isset($line->quantity)){{@num_format($line->quantity)}}@else{{1}}@endif
                                 </td>
                                 <td>
                                     @if(isset($line->sell_price)){{@num_format($line->sell_price)}}@else{{0}}@endif
+                                </td>
+                                <td>
+                                    @if(isset($line->product_discount_amount)){{@num_format($line->product_discount_amount)}}@else{{0}}@endif
                                 </td>
                                 <td>
                                     {{@num_format($line->sub_total)}}
@@ -80,7 +91,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="4" style="text-align: right"> @lang('lang.total')</th>
+                                <th colspan="6" style="text-align: right"> @lang('lang.total')</th>
+                                <td>{{@num_format($sale->transaction_sell_lines->sum('product_discount_amount'))}}</td>
                                 <td>{{@num_format($sale->grand_total)}}</td>
                             </tr>
                         </tfoot>
@@ -114,6 +126,12 @@
                             <th>@lang('lang.discount'):</th>
                             <td>{{@num_format($sale->discount_amount)}}</td>
                         </tr>
+                        @if(!empty($sale->rp_earned))
+                        <tr>
+                            <th>@lang('lang.point_earned'):</th>
+                            <td>{{@num_format($sale->rp_earned)}}</td>
+                        </tr>
+                        @endif
                         @if(!empty($sale->rp_redeemed_value))
                         <tr>
                             <th>@lang('lang.redeemed_point_value'):</th>

@@ -80,6 +80,10 @@
                                 </thead>
 
                                 <tbody>
+                                    @php
+                                        $total_purchase_payments = 0;
+                                        $total_purchase_due = 0;
+                                    @endphp
                                     @foreach ($sales as $sale)
                                     <tr>
                                         <td>{{@format_date($sale->transaction_date)}}</td>
@@ -99,13 +103,18 @@
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($sale->status)}} @endif</td>
                                     </tr>
-
+                                    @php
+                                        $total_purchase_payments += $sale->transaction_payments->sum('amount');
+                                        $total_purchase_due += $sale->final_total - $sale->transaction_payments->sum('amount');
+                                    @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($sales->sum('amount'))}}</th>
+                                        <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                        <th>{{@num_format($sales->sum('final_total'))}}</th>
+                                        <th>{{@num_format($total_purchase_payments)}}</th>
+                                        <th>{{@num_format($total_purchase_due)}}</th>
                                     </tr>
                                 </tfoot>
                             </table>

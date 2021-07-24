@@ -222,5 +222,43 @@
             }
         })
     })
+    $('.all_module_check_all').change(function(){
+        var all_module_check_all = $(this).prop('checked');
+        $('#permission_table > tbody > tr').each((i, tr) => {
+            $(tr).find('.check_box').each(function(item) {
+                if(all_module_check_all === true){
+                    $(this).prop('checked', true)
+                }else{
+                    $(this).prop('checked', false)
+                }
+            })
+            $(tr).find('.module_check_all').each(function(item) {
+                if(all_module_check_all === true){
+                    $(this).prop('checked', true)
+                }else{
+                    $(this).prop('checked', false)
+                }
+            })
+            $(tr).find('.checked_all').each(function(item) {
+                if(all_module_check_all === true){
+                    $(this).prop('checked', true)
+                }else{
+                    $(this).prop('checked', false)
+                }
+            })
+
+        })
+    })
+    $('.module_check_all').change(function (){
+        let moudle_id = $(this).closest('tr').data('moudle');
+        console.log(moudle_id, 'moudle_id');
+        if($(this).prop('checked')){
+            $('.sub_module_permission_'+moudle_id).find('.checked_all').prop('checked', true);
+            $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', true);
+        }else{
+            $('.sub_module_permission_'+moudle_id).find('.checked_all').prop('checked', false);
+            $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', false);
+        }
+    })
 </script>
 @endsection

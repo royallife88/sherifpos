@@ -1,8 +1,7 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('BrandController@store'), 'method' => 'post', 'id' => $quick_add ?
-        'quick_add_brand_form' : 'brand_add_form', 'files' => true ]) !!}
+        {!! Form::open(['url' => action('BrandController@update', $brand->id), 'method' => 'put', 'id' => 'brand_add_form', 'files' => true ]) !!}
 
         <div class="modal-header">
 
@@ -14,10 +13,9 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
+                {!! Form::text('name', $brand->name, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
                 !!}
             </div>
-            <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
                 {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
                 {!! Form::file('image', ['class' => '' ]) !!}
@@ -25,7 +23,7 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">@lang( 'lang.save' )</button>
+            <button type="submit" class="btn btn-primary">@lang( 'lang.update' )</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 

@@ -39,8 +39,9 @@ class Customer extends Model implements HasMedia
             $customers = [];
             $customers = Customer::where('customer_type_id', $type->id)->get();
 
+            $array[$type->name] = [];
             foreach ($customers as $customer) {
-                $array[$type->name] = [$customer->id => $customer->name];
+                $array[$type->name][$customer->id] = $customer->name;
             }
         }
 

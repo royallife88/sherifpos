@@ -165,13 +165,13 @@
         </div>
     </div>
 
-    <div class="col-md-4">
+    {{-- <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('add_stock', __('lang.add_stock'), []) !!}
             {!! Form::text('add_stock', null, ['class' => 'form-control', 'placeholder' =>
             __('lang.add_stock')]) !!}
         </div>
-    </div>
+    </div> --}}
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('batch_number', __('lang.batch_number'), []) !!}

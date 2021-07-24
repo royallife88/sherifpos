@@ -8,6 +8,7 @@ use App\Models\PurchaseOrderLine;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Models\Variation;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
@@ -139,6 +140,21 @@ class PurchaseOrderController extends Controller
 
             DB::commit();
 
+            if ($data['submit'] == 'sent_admin') {
+                $superadmins = User::where('is_superadmin', 1)->get();
+                $notification_data = [
+                    'user_id' => null,
+                    'transaction_id' => $transaction->id,
+                    'type' => $transaction->type,
+                    'status' => 'unread',
+                    'created_by' => Auth::user()->id,
+                ];
+                foreach ($superadmins as $admin) {
+                    $notification_data['user_id'] = $admin->id;
+                    $this->notificationUtil->createNotification($notification_data);
+                }
+            }
+
             if ($data['submit'] == 'print') {
                 $print = 'print';
                 $url = action('PurchaseOrderController@show', $transaction->id) . '?print=' . $print;
@@ -225,7 +241,7 @@ class PurchaseOrderController extends Controller
                 'transaction_date' => Carbon::now(),
                 'payment_status' => 'due',
                 'po_no' => $data['po_no'],
-                'grand_total' => $this->productUtil->num_uf($data['grand_total']),
+                'grand_total' => $this->productUtil->num_uf($data['final_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
                 'details' => $data['details'],
                 'created_by' => Auth::user()->id
@@ -243,6 +259,22 @@ class PurchaseOrderController extends Controller
             $transaction->update($transaction_data);
 
             $this->productUtil->createOrUpdatePurchaseOrderLines($request->purchase_order_lines, $transaction);
+
+            if ($data['submit'] == 'sent_admin') {
+                $superadmins = User::where('is_superadmin', 1)->get();
+                $notification_data = [
+                    'user_id' => null,
+                    'transaction_id' => $transaction->id,
+                    'type' => $transaction->type,
+                    'status' => 'unread',
+                    'created_by' => Auth::user()->id,
+                ];
+                foreach ($superadmins as $admin) {
+                    $notification_data['user_id'] = $admin->id;
+                    $this->notificationUtil->createNotification($notification_data);
+                }
+            }
+
 
             DB::commit();
 
@@ -487,7 +519,16 @@ class PurchaseOrderController extends Controller
                 'sub_total' => $this->productUtil->num_uf($variation->default_purchase_price * 1),
             ];
 
-            $purchase_order_line = PurchaseOrderLine::create($purchase_order_line_data);
+            PurchaseOrderLine::create($purchase_order_line_data);
+
+            $notification_data = [
+                'user_id' => Auth::user()->id,
+                'transaction_id' => $transaction->id,
+                'type' => $transaction->type,
+                'status' => 'unread',
+                'created_by' => Auth::user()->id,
+            ];
+            $this->notificationUtil->createNotification($notification_data);
 
             DB::commit();
 

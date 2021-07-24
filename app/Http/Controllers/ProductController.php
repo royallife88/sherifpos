@@ -14,6 +14,7 @@ use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
 use App\Models\Tax;
+use App\Models\TransactionSellLine;
 use App\Models\Unit;
 use App\Models\Variation;
 use App\Utils\ProductUtil;
@@ -163,7 +164,6 @@ class ProductController extends Controller
         $customer_types = CustomerType::pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::all();
-
         $quick_add = request()->quick_add;
 
         if ($quick_add) {
@@ -249,6 +249,7 @@ class ProductController extends Controller
                 'tax_id' => $request->tax_id,
                 'tax_method' => $request->tax_method,
                 'discount_type' => $request->discount_type,
+                'discount_customers' => $request->discount_customers,
                 'discount' => $request->discount,
                 'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
                 'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
@@ -393,6 +394,7 @@ class ProductController extends Controller
                 'tax_id' => $request->tax_id,
                 'tax_method' => $request->tax_method,
                 'discount_type' => $request->discount_type,
+                'discount_customers' => $request->discount_customers,
                 'discount' => $request->discount,
                 'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
                 'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
@@ -444,14 +446,25 @@ class ProductController extends Controller
     public function destroy($id)
     {
         try {
-            Product::where('id', $id)->delete();
-            Variation::where('product_id', $id)->delete();
-            ProductStore::where('product_id', $id)->delete();
+            $sell_lines = TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
+                ->join('products', 'transaction_sell_lines.product_id', 'products.id')->groupBy('transaction_sell_lines.product_id')
+                ->where('transactions.type', 'sell')
+                ->first();
 
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+            if (!empty($sell_lines)) {
+                $output = [
+                    'success' => false,
+                    'msg' => __('lang.product_sell_transaction_exist')
+                ];
+            } else {
+                Product::where('id', $id)->delete();
+                Variation::where('product_id', $id)->delete();
+                ProductStore::where('product_id', $id)->delete();
+                $output = [
+                    'success' => true,
+                    'msg' => __('lang.success')
+                ];
+            }
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
             $output = [

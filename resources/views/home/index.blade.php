@@ -63,7 +63,7 @@
         <div class="col-md-7 mt-4">
             <div class="card line-chart-example">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('cash_flow')</h4>
+                    <h4>@lang('lang.cash_flow')</h4>
                 </div>
                 <div class="card-body">
                     @php
@@ -335,7 +335,8 @@
                             @foreach($yearly_best_sellings_price as $best_sellings_price)
                             <tr>
                                 <td>{{$loop->iteration}}</td>
-                                <td>{{$best_sellings_price->product->name}} [{{$best_sellings_price->product->sku}}]</td>
+                                <td>{{$best_sellings_price->product->name}} [{{$best_sellings_price->product->sku}}]
+                                </td>
                                 <td>{{@num_format($best_sellings_price->total_price)}}</td>
                             </tr>
                             @endforeach
@@ -344,69 +345,7 @@
                 </div>
             </div>
         </div>
-        {{-- <div class="col-md-6">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4>@lang('lang.best_seller').' '.date('Y'). '('.trans('file.qty').')'}}</h4>
-        <div class="right-column">
-            <div class="badge badge-primary">@lang('lang.top') 5</div>
-        </div>
     </div>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>SL No</th>
-                    <th>{{trans('file.Product Details')}}</th>
-                    <th>{{trans('file.qty')}}</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($yearly_best_selling_qty as $key => $sale)
-                <?php //$product = DB::table('products')->find($sale->product_id); ?>
-                <tr>
-                    <td>{{$key + 1}}</td>
-                    <td>{{$product->name}}<br>[{{$product->code}}]</td>
-                    <td>{{$sale->sold_qty}}</td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
-    </div>
-</div>
-</div>
-{{-- <div class="col-md-6">
-        <div class="card">
-          <div class="card-header d-flex justify-content-between align-items-center">
-            <h4>@lang('lang.best_seller').' '.date('Y') . '('.trans('file.price').')'}}</h4>
-<div class="right-column">
-    <div class="badge badge-primary">@lang('lang.top') 5</div>
-</div>
-</div>
-<div class="table-responsive">
-    <table class="table">
-        <thead>
-            <tr>
-                <th>SL No</th>
-                <th>{{trans('file.Product Details')}}</th>
-                <th>{{trans('file.grand total')}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach($yearly_best_selling_price as $key => $sale)
-            <?php // $product = DB::table('products')->find($sale->product_id); ?>
-            <tr>
-                <td>{{$key + 1}}</td>
-                <td>{{$product->name}}<br>[{{$product->code}}]</td>
-                <td>{{number_format((float)$sale->total_price, 2, '.', '')}}</td>
-            </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
-</div>
-</div> --}}
-</div>
 </div>
 @endsection
 

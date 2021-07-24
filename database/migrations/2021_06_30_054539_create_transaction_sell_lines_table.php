@@ -22,15 +22,17 @@ class CreateTransactionSellLinesTable extends Migration
             $table->decimal('quantity_returned', 15, 4)->default(0);
             $table->decimal('sell_price', 15, 4);
             $table->decimal('sub_total', 15, 4);
-            $table->decimal('sub_total', 15, 4);
-            $table->decimal('coupon_discount', 15, 4)->nullable();
             $table->string('coupon_discount_type')->nullable();
+            $table->decimal('coupon_discount', 15, 4)->nullable();
             $table->decimal('coupon_discount_amount', 15, 4)->nullable();
-            $table->decimal('promotion_discount', 15, 4)->nullable();
             $table->string('promotion_discount_type')->nullable();
+            $table->decimal('promotion_discount', 15, 4)->nullable();
             $table->decimal('promotion_discount_amount', 15, 4)->nullable();
             $table->boolean('point_earned')->default(0);
             $table->boolean('point_redeemed')->default(0);
+            $table->string('product_discount_type')->nullable();
+            $table->decimal('product_discount_value', 15, 4)->default(0);
+            $table->decimal('product_discount_amount', 15, 4)->default(0);
 
             $table->timestamps();
         });

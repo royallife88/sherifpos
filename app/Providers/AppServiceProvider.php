@@ -91,5 +91,10 @@ class AppServiceProvider extends ServiceProvider
                     echo 'badge-success';
                 }?>";
         });
+
+        //Blade directive to convert.
+        Blade::directive('replace_space', function ($string) {
+            return "str_replace(' ', '_', $string)";
+        });
     }
 }

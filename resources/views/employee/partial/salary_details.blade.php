@@ -37,12 +37,15 @@
                     {!! Form::select('commission_calculation_period', $commission_calculation_period, !empty($employee->commission_calculation_period) ? $employee->commission_calculation_period : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.select_commission_calculation_period')]) !!}
                     <br>
                     <br>
+                    {!! Form::label('commission_customer_types', __('lang.customer_types') . ':', ['class' => 'text-muted']) !!}
                     {!! Form::select('commission_customer_types[]', $customer_types, !empty($employee->commission_customer_types) ? $employee->commission_customer_types : null, ['class' => 'form-control selectpicker', 'multiple', 'data-live-search' => 'true']) !!}
                     <br>
                     <br>
+                    {!! Form::label('commission_stores', __('lang.stores') . ':', ['class' => 'text-muted']) !!}
                     {!! Form::select('commission_stores[]', $stores, !empty($employee->commission_stores) ? $employee->commission_stores : null, ['class' => 'form-control selectpicker', 'multiple', 'data-live-search' => 'true']) !!}
                     <br>
                     <br>
+                    {!! Form::label('commission_cashiers', __('lang.cashiers') . ':', ['class' => 'text-muted']) !!}
                     {!! Form::select('commission_cashiers[]', $cashiers, !empty($employee->commission_cashiers) ? $employee->commission_cashiers : null, ['class' => 'form-control selectpicker', 'multiple', 'data-live-search' => 'true']) !!}
 
                 </div>

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class CustomerType extends Model
 {
-    use HasFactory;
+    use HasFactory, \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
     /**
      * The attributes that aren't mass assignable.

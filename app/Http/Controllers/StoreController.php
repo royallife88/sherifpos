@@ -35,7 +35,16 @@ class StoreController extends Controller
      */
     public function index()
     {
-        $stores = Store::get();
+        $query = Store::leftjoin('transactions', function($join){
+            $join->on('stores.id', 'transactions.store_id')->where('type', 'sell');
+        });
+        $query->select(
+            'stores.*',
+            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_sales'),
+            DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_sales_return')
+        );
+
+        $stores = $query->groupBy('stores.id')->get();
 
         return view('store.index')->with(compact(
             'stores'

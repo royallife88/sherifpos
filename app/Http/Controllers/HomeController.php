@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Leave;
+use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\WagesAndCompensation;
@@ -40,8 +41,8 @@ class HomeController extends Controller
         $dashboard_data = $this->getDashboardData($start_date, $end_date);
 
         $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty');
-        $yearly_best_sellings_qty = $this->getBestSellings(date("Y").'-01-01', date("Y").'-12-31', 'qty');
-        $yearly_best_sellings_price = $this->getBestSellings(date("Y").'-01-01', date("Y").'-12-31', 'total_price');
+        $yearly_best_sellings_qty = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'qty');
+        $yearly_best_sellings_price = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'total_price');
 
         //cash flow of last 6 months
         $start = strtotime(date('Y-m-01', strtotime('-6 month', strtotime(date('Y-m-d')))));
@@ -133,6 +134,7 @@ class HomeController extends Controller
     public function getBestSellings($start_date, $end_date, $order_by)
     {
         return TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
+            ->join('products', 'transaction_sell_lines.product_id', 'products.id')
             ->where('transaction_date', '>=', $start_date)
             ->where('transaction_date', '<=', $end_date)
             ->select(
@@ -369,6 +371,20 @@ class HomeController extends Controller
             'next_year',
             'next_month',
             'holidays'
+        ));
+    }
+
+    /**
+     * show the help page content
+     *
+     * @return void
+     */
+    public function getHelp()
+    {
+        $help_page_content = System::getProperty('help_page_content');
+
+        return view('home.help')->with(compact(
+            'help_page_content'
         ));
     }
 }

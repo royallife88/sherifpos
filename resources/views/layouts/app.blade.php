@@ -153,7 +153,7 @@
 
       $("div.alert").delay(3000).slideUp(750);
 
-      $(document).on('click', 'a.delete_item', function(e) {
+      $(document).on('click', '.delete_item', function(e) {
 		e.preventDefault();
         swal({
             title: 'Are you sure?',

@@ -79,7 +79,7 @@ class CategoryController extends Controller
 
             $category_id = $category->id;
             $sub_category_id = null;
-            if($request->parent_id){
+            if ($request->parent_id) {
                 $category_id = $request->parent_id;
                 $sub_category_id = $category->id;
             }
@@ -127,7 +127,13 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        $category = Category::find($id);
+        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+
+        return view('category.edit')->with(compact(
+            'category',
+            'categories'
+        ));
     }
 
     /**
@@ -139,7 +145,36 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']]
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            $category = Category::find($id);
+
+            $category->update($data);
+            if ($request->has('image')) {
+                $category->addMedia($request->image)->toMediaCollection('category');
+            }
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -150,7 +185,21 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Category::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function getDropdown()
@@ -163,9 +212,9 @@ class CategoryController extends Controller
 
     public function getSubCategoryDropdown()
     {
-        if(!empty(request()->category_id)){
+        if (!empty(request()->category_id)) {
             $categories = Category::where('parent_id', request()->category_id)->pluck('name', 'id');
-        }else{
+        } else {
             $categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');

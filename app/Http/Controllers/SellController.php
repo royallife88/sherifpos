@@ -194,7 +194,6 @@ class SellController extends Controller
     public function update(Request $request, $id)
     {
         try {
-
             $transaction_data = [
                 'customer_id' => $request->customer_id,
                 'final_total' => $this->commonUtil->num_uf($request->final_total),
@@ -240,6 +239,12 @@ class SellController extends Controller
                     $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
                     $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->commonUtil->num_uf($line['coupon_discount_amount']) : 0;
                     $old_qty = $transaction_sell_line->quantity;
+                    $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->transactionUtil->num_uf($line['promotion_discount']) : 0;
+                    $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
+                    $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->transactionUtil->num_uf($line['promotion_discount_amount']) : 0;
+                    $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->transactionUtil->num_uf($line['product_discount_value']) : 0;
+                    $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
+                    $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->transactionUtil->num_uf($line['product_discount_amount']) : 0;
                     $transaction_sell_line->quantity = $this->commonUtil->num_uf($line['quantity']);
                     $transaction_sell_line->sell_price = $this->commonUtil->num_uf($line['sell_price']);
                     $transaction_sell_line->sub_total = $this->commonUtil->num_uf($line['sub_total']);
@@ -259,6 +264,12 @@ class SellController extends Controller
                     $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->commonUtil->num_uf($line['coupon_discount']) : 0;
                     $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
                     $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->commonUtil->num_uf($line['coupon_discount_amount']) : 0;
+                    $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->transactionUtil->num_uf($line['promotion_discount']) : 0;
+                    $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
+                    $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->transactionUtil->num_uf($line['promotion_discount_amount']) : 0;
+                    $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->transactionUtil->num_uf($line['product_discount_value']) : 0;
+                    $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
+                    $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->transactionUtil->num_uf($line['product_discount_amount']) : 0;
                     $transaction_sell_line->quantity = $this->commonUtil->num_uf($line['quantity']);
                     $transaction_sell_line->sell_price = $this->commonUtil->num_uf($line['sell_price']);
                     $transaction_sell_line->sub_total = $this->commonUtil->num_uf($line['sub_total']);

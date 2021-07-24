@@ -66,11 +66,12 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 30%">{{__('lang.product')}}</th>
-                                                    <th style="width: 20%">{{__('lang.quantity')}}</th>
-                                                    <th style="width: 20%">{{__('lang.price')}}</th>
-                                                    <th style="width: 10%">{{__('lang.sub_total')}}</th>
-                                                    <th style="width: 20%"></th>
+                                                    <th style="width: 20%">@lang('lang.product')</th>
+                                                    <th style="width: 15%">@lang('lang.quantity')</th>
+                                                    <th style="width: 15%">@lang('lang.price')</th>
+                                                    <th style="width: 15%">@lang('lang.discount')</th>
+                                                    <th style="width: 15%">@lang('lang.sub_total')</th>
+                                                    <th style="width: 15%">@lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -254,84 +255,11 @@
                                     <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
                                         <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                     class="dripicons-expand"></i></a></li>
-                                        <?php
-                                // $general_setting_permission = DB::table('permissions')->where('name', 'general_setting')->first();
-                                // $general_setting_permission_active = DB::table('role_has_permissions')->where([
-                                //             ['permission_id', $general_setting_permission->id],
-                                //             ['role_id', Auth::user()->role_id]
-                                //         ])->first();
-
-                                // $pos_setting_permission = DB::table('permissions')->where('name', 'pos_setting')->first();
-
-                                // $pos_setting_permission_active = DB::table('role_has_permissions')->where([
-                                //     ['permission_id', $pos_setting_permission->id],
-                                //     ['role_id', Auth::user()->role_id]
-                                // ])->first();
-                            ?>
-                                        {{-- @if($pos_setting_permission_active)
-                            <li class="nav-item"><a class="dropdown-item" href="{{route('setting.pos')}}"
-                                        title="{{__('lang.POS Setting')}}"><i class="dripicons-gear"></i></a> </li>
-                                        @endif --}}
+                                        @include('layouts.partials.notification_list')
                                         <li class="nav-item">
-                                            {{-- <a href="{{route('sales.printLastReciept')}}"
-                                            title="{{__('lang.Print Last Reciept')}}"><i
-                                                class="dripicons-print"></i></a> --}}
-                                        </li>
-                                        <li class="nav-item">
-                                            {{-- <a href="" id="register-details-btn" title="{{__('lang.Cash Register Details')}}"><i
-                                                class="dripicons-briefcase"></i></a> --}}
-                                        </li>
-                                        <?php
-                                // $today_sale_permission = DB::table('permissions')->where('name', 'today_sale')->first();
-                                // $today_sale_permission_active = DB::table('role_has_permissions')->where([
-                                //             ['permission_id', $today_sale_permission->id],
-                                //             ['role_id', Auth::user()->role_id]
-                                //         ])->first();
-
-                                // $today_profit_permission = DB::table('permissions')->where('name', 'today_profit')->first();
-                                // $today_profit_permission_active = DB::table('role_has_permissions')->where([
-                                //             ['permission_id', $today_profit_permission->id],
-                                //             ['role_id', Auth::user()->role_id]
-                                //         ])->first();
-                            ?>
-
-                                        {{-- @if($today_sale_permission_active)
-                            <li class="nav-item">
-                                <a href="" id="today-sale-btn" title="{{__('lang.Today Sale')}}"><i
-                                            class="dripicons-shopping-bag"></i></a>
-                                        </li>
-                                        @endif
-                                        @if($today_profit_permission_active)
-                                        <li class="nav-item">
-                                            <a href="" id="today-profit-btn" title="{{__('lang.Today Profit')}}"><i
-                                                    class="dripicons-graph-line"></i></a>
-                                        </li>
-                                        @endif --}}
-                                        {{-- @if(($alert_product + count(\Auth::user()->unreadNotifications)) > 0)
-                            <li class="nav-item" id="notification-icon">
-                                  <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-bell"></i><span class="badge badge-danger notification-number">{{$alert_product + count(\Auth::user()->unreadNotifications)}}</span>
-                                        <span class="caret"></span>
-                                        <span class="sr-only">Toggle Dropdown</span>
-                                        </a>
-                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default notifications"
-                                            user="menu">
-                                            <li class="notifications">
-                                                <a href="{{route('report.qtyAlert')}}"
-                                                    class="btn btn-link">{{$alert_product}} product exceeds alert
-                                                    quantity</a>
-                                            </li>
-                                            @foreach(\Auth::user()->unreadNotifications as $key => $notification)
-                                            <li class="notifications">
-                                                <a href="#"
-                                                    class="btn btn-link">{{ $notification->data['message'] }}</a>
-                                            </li>
-                                            @endforeach
-                                        </ul>
-                                        </li>
-                                        @endif --}}
-                                        <li class="nav-item">
-                                            <a class="dropdown-item" href="{{ url('read_me') }}" target="_blank"><i
-                                                    class="dripicons-information"></i> {{__('lang.help')}}</a>
+                                            <a class="dropdown-item" href="{{action('HomeController@getHelp')}}"
+                                                target="_blank"><i class="dripicons-information"></i>
+                                                {{__('lang.help')}}</a>
                                         </li>&nbsp;
                                         <li class="nav-item">
                                             <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
@@ -343,11 +271,12 @@
                                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                 user="menu">
                                                 @php
-                                                    $employee = App\Models\Employee::where('user_id', Auth::user()->id)->first();
+                                                $employee = App\Models\Employee::where('user_id',
+                                                Auth::user()->id)->first();
                                                 @endphp
                                                 <li style="text-align: center">
                                                     <img src="@if(!empty($employee->getFirstMediaUrl('employee_photo'))){{$employee->getFirstMediaUrl('employee_photo')}}@else{{asset('images/default.jpg')}}@endif"
-                                                    style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
+                                                        style="width: 60px; border: 2px solid #fff; padding: 4px; border-radius: 50%;" />
                                                 </li>
                                                 <li>
                                                     <a href="{{action('UserController@getProfile')}}"><i
@@ -434,8 +363,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close'
-                                )</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
+                                'lang.close')</button>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->

@@ -5,13 +5,15 @@ namespace App\Utils;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
+use App\Models\Notification;
 use App\Models\Project;
 use App\Models\ReceivedInvoice;
 use App\Models\ReceivedInvoicePayment;
 use App\Models\System;
-use App\User;
+use App\Models\User;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class Util
@@ -436,7 +438,7 @@ class Util
         return $currencies;
     }
 
-     /**
+    /**
      * Gives a list of all timezone
      *
      * @return array
@@ -453,5 +455,21 @@ class Util
 
         return $timezone_list;
     }
+    /**
+     * find user of sepcific role
+     *
+     * @return void
+     */
+    public function getTheUserByRole($role_name)
+    {
+        $users = User::all();
 
+        foreach ($users as $user) {
+            if ($user->hasRole($role_name)) {
+                return $user;
+            }
+        }
+
+        return null;
+    }
 }

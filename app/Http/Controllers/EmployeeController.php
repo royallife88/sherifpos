@@ -164,17 +164,18 @@ class EmployeeController extends Controller
             //add of update number of leaves
             $this->createOrUpdateNumberofLeaves($request, $employee->id);
 
-            // if (!empty($data['permissions'])) {
-            //     foreach ($data['permissions'] as $key => $value) {
-            //         $permissions[] = $key;
-            //     }
+            //assign permissions to employee
+            if (!empty($data['permissions'])) {
+                foreach ($data['permissions'] as $key => $value) {
+                    $permissions[] = $key;
+                }
 
-            //     if (!empty($permissions)) {
-            //         $user->syncPermissions($permissions);
-            //     }
-            // }
+                if (!empty($permissions)) {
+                    $user->syncPermissions($permissions);
+                }
+            }
 
-            $from = System::getProperty('email');
+            $from = System::getProperty('sender_email');
             $app_name = env('APP_NAME');
             // email data
             $employee->pass_string = $data['password'];

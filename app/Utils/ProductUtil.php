@@ -411,6 +411,40 @@ class ProductUtil extends Util
     }
 
     /**
+     * get the product discount details for product if exist
+     *
+     * @param int $product_id
+     * @param int $customer_id
+     * @return mix
+     */
+    public function getProductDiscountDetails($product_id, $customer_id)
+    {
+        $customer = Customer::find($customer_id);
+
+        if ($customer->is_default != 1) {
+            $product = Product::whereJsonContains('discount_customers', $customer_id)
+            ->where('id', $product_id)
+            ->select(
+                'products.discount_type',
+                'products.discount',
+                'products.discount_start_date',
+                'products.discount_end_date',
+                )
+                ->first();
+
+            if (!empty($product)) {
+                if (!empty($product->discount_start_date) && !empty($product->discount_end_date)) {
+                    //if end date set then check for expiry
+                    if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
+                        return $product;
+                    }
+                }
+                return $product;
+            }
+        }
+        return null;
+    }
+    /**
      * get the sales promotion details for product if exist
      *
      * @param int $product_id
@@ -420,8 +454,6 @@ class ProductUtil extends Util
      */
     public function getSalesPromotionDetail($product_id, $store_id, $customer_id)
     {
-        $total_points = 0;
-
         $customer = Customer::find($customer_id);
         $store_id = (string) $store_id;
 

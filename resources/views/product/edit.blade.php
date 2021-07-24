@@ -194,13 +194,13 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('add_stock', __('lang.add_stock'), []) !!}
                                     {!! Form::text('add_stock', null, ['class' => 'form-control', 'placeholder' =>
                                     __('lang.add_stock')]) !!}
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('batch_number', __('lang.batch_number'), []) !!}
@@ -237,7 +237,7 @@
                                     __('lang.expiry_date'), 'readonly']) !!}
                                 </div>
                             </div>
-                            <div class="col-md-4 warning hide">
+                            <div class="col-md-4 warning @if(empty($product->expiry_date)) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('expiry_warning', __('lang.warning'), []) !!}
                                     {!! Form::text('expiry_warning', $product->expiry_warning, ['class' =>
@@ -245,7 +245,7 @@
                                     __('lang.days_before_the_expiry_date')]) !!}
                                 </div>
                             </div>
-                            <div class="col-md-4 convert_status_expire hide">
+                            <div class="col-md-4 convert_status_expire @if(empty($product->expiry_date)) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('convert_status_expire', __('lang.convert_status_expire') ,
                                     []) !!}
@@ -329,7 +329,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-                                    {!! Form::text('discount_start_date', $product->discount_start_date, ['class' =>
+                                    {!! Form::text('discount_start_date',!empty($product->discount_start_date) ? @format_date($product->discount_start_date) : null, ['class' =>
                                     'form-control datepicker',
                                     'placeholder' => __('lang.discount_start_date')]) !!}
                                 </div>
@@ -337,7 +337,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-                                    {!! Form::text('discount_end_date', $product->discount_end_date, ['class' =>
+                                    {!! Form::text('discount_end_date', !empty($product->discount_end_date) ? @format_date($product->discount_end_date) : null, ['class' =>
                                     'form-control datepicker',
                                     'placeholder' => __('lang.discount_end_date')]) !!}
                                 </div>

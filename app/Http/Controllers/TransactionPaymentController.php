@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class TransactionPaymentController extends Controller
@@ -224,5 +226,104 @@ class TransactionPaymentController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get the modal of customer pay due
+     *
+     * @param int $customer_id
+     * @return void
+     */
+    public function getCustomerDue($customer_id)
+    {
+        $customer = Customer::find($customer_id);
+
+        $due = app('App\Http\Controllers\CustomerController')->getCustomerBalance($customer_id)['balance'];
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+        return view('transaction_payment.pay_customer_due')->with(compact(
+            'payment_type_array',
+            'due',
+            'customer'
+        ));
+    }
+
+    /**
+     * pay the customer due amounts
+     *
+     * @param int $customer_id
+     * @return void
+     */
+    public function payCustomerDue(Request $request, $customer_id)
+    {
+        try {
+            $amount = $request->amount;
+            $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->get();
+
+            DB::beginTransaction();
+
+            foreach ($transactions as $transaction) {
+                $due_for_transaction = $this->getDueForTransaction($transaction->id);
+                $paid_amount = 0;
+                if ($amount > 0) {
+                    if ($amount >= $due_for_transaction) {
+                        $paid_amount = $due_for_transaction;
+                        $amount -= $due_for_transaction;
+                    } else if ($amount < $due_for_transaction) {
+                        $paid_amount = $amount;
+                        $amount = 0;
+                    }
+
+                    $payment_data = [
+                        'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
+                        'transaction_id' =>  $transaction->id,
+                        'amount' => $paid_amount,
+                        'method' => $request->method,
+                        'paid_on' => $this->commonUtil->uf_date($request->paid_on),
+                        'ref_number' => $request->ref_number,
+                        'bank_deposit_date' => !empty($request->bank_deposit_date) ? $this->commonUtil->uf_date($request->bank_deposit_date) : null,
+                        'bank_name' => $request->bank_name,
+                    ];
+
+                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+                    if ($request->upload_documents) {
+                        foreach ($request->file('upload_documents', []) as $key => $doc) {
+                            $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                        }
+                    }
+                }
+            }
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
+    }
+
+    /**
+     * calculate the amount due for transaction
+     *
+     * @param int $transaction_id
+     * @return float
+     */
+    public function getDueForTransaction($transaction_id)
+    {
+        $transaction = Transaction::find($transaction_id);
+        $total_paid = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('transactions.id', $transaction_id)
+            ->sum('amount');
+
+        return $transaction->final_total - $total_paid;
     }
 }

@@ -44,12 +44,15 @@ class CreateTransactionsTable extends Migration
             $table->string('discount_type')->nullable();
             $table->decimal('discount_value', 15, 4)->nullable()->comment('discount value applied by user');
             $table->decimal('discount_amount', 15, 4)->nullable()->comment('amount calculated based on type and value');
+            $table->decimal('total_sp_discount', 15, 4)->default(0)->comment('total of sale promotion discount');
+            $table->decimal('total_product_discount', 15, 4)->default(0)->comment('total of product discount');
+            $table->decimal('total_coupon_discount', 15, 4)->default(0)->comment('total of coupon discount');
             $table->string('ref_no')->nullable();
             $table->decimal('grand_total', 15, 4)->nullable();
             $table->decimal('final_total', 15, 4)->default(0.0000);
             $table->text('deliveryman_id')->nullable()->comment('employee id foriegn key from employees table');
             $table->string('delivery_status')->nullable();
-            $table->decimal('delivery_cost', 15,4)->nullable();
+            $table->decimal('delivery_cost', 15,4)->default(0);
             $table->boolean('delivery_cost_paid_by_customer')->default(1);
             $table->text('delivery_address')->nullable();
             $table->unsignedBigInteger('expense_category_id')->nullable();

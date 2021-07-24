@@ -35,7 +35,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('customer_id', __('lang.customer'), []) !!}
-                                    {!! Form::select('customer_id', $customers, false, ['class' => 'form-control
+                                    {!! Form::select('customer_id', $customers, !empty(request()->customer_id) ? request()->customer_id : false, ['class' => 'form-control
                                     selectpicker', 'id' => 'customer_id', 'data-live-search' => "true", 'placeholder' =>
                                     __('lang.please_select'), 'required']) !!}
                                 </div>
@@ -88,7 +88,12 @@
 
 @section('javascript')
 <script type="text/javascript">
-    $('.selectpicker').selectpicker('render')
+    $('.selectpicker').selectpicker('render');
+    @if(!empty(request()->customer_id))
+    $(document).ready(function(){
+        $('#customer_id').change();
+    })
+    @endif
     $(document).on('change', '#amount', function(){
         let amount = __read_number($('#amount'));
         let current_cash = __read_number($('#current_cash'));

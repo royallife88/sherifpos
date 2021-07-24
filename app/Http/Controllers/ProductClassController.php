@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class ProductClassController extends Controller
 {
 
-     /**
+    /**
      * All Utils instance.
      *
      */
@@ -109,7 +109,11 @@ class ProductClassController extends Controller
      */
     public function edit($id)
     {
-        //
+        $product_class = ProductClass::find($id);
+
+        return view('product_class.edit')->with(compact(
+            'product_class'
+        ));
     }
 
     /**
@@ -121,7 +125,29 @@ class ProductClassController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']]
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            $class = ProductClass::where('id', $id)->update($data);
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -132,7 +158,21 @@ class ProductClassController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            ProductClass::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function getDropdown()

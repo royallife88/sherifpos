@@ -57,6 +57,7 @@
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -152,6 +153,7 @@
                             </div>
                         </div>
                     </div>
+                    <br>
                     <div class="row">
                         <div class="col-md-12">
                             <button type="submit" class="btn btn-primary">@lang('lang.update')</button>

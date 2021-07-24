@@ -5,8 +5,7 @@
         data-product="{{$product->name . ' (' . $product->variation_name . ')'}}">
         <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
             width="100%" />
-        <p>{{$product->name}}</p>
-        <span>{{$product->sub_sku}}</span>
+        <p>{{$product->name}} <br> <span>{{$product->sub_sku}}</span></p>
     </td>
     @endforeach
 </tr>
