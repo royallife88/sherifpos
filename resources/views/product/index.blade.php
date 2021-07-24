@@ -180,7 +180,7 @@
                 <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
                         alt="photo" width="50" height="50"></td>
                 <td>{{$product->name}}</td>
-                <td><img class="center-block" style="max-width:90%; !important;height: {{2*0.24}}in !important;"
+                <td><img class="center-block" style="width:150px; !important;height: {{2*0.24}}in !important;"
                         src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type, 3,30,array(39, 48, 54), true)}}">
                 </td>
                 <td>{{$product->product_class->name}}</td>

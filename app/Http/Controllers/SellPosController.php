@@ -327,7 +327,8 @@ class SellPosController extends Controller
      */
     public function getProductItemsByFilter(Request $request)
     {
-        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id');
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+        ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         if (!empty($request->selling_filter)) {
             $query->leftjoin('transaction_sell_lines', 'products.id', 'transaction_sell_lines.product_id');
@@ -377,6 +378,7 @@ class SellPosController extends Controller
             'variations.id as variation_id',
             'variations.name as variation_name',
             'variations.sub_sku',
+            'product_stores.qty_available',
         );
         $products = $query->groupBy('variations.id')->get();
 

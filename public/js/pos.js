@@ -761,10 +761,15 @@ function confirmCancel() {
 }
 
 $(document).on("click", "td.filter_product_add", function () {
-    let product_id = $(this).data("product_id");
+    let qty_available = parseFloat($(this).data('qty_available'));
+    if(qty_available > 0){
+        let product_id = $(this).data("product_id");
 
-    let variation_id = $(this).data("variation_id");
-    get_label_product_row(product_id, variation_id);
+        let variation_id = $(this).data("variation_id");
+        get_label_product_row(product_id, variation_id);
+    }else{
+        alert('Out of stock');
+    }
 });
 
 $(document).on("click", "#view-draft-btn", function () {
