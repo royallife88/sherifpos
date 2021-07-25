@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Product;
+use App\Models\SalesPromotion;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
@@ -328,7 +329,7 @@ class SellPosController extends Controller
     public function getProductItemsByFilter(Request $request)
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-        ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         if (!empty($request->selling_filter)) {
             $query->leftjoin('transaction_sell_lines', 'products.id', 'transaction_sell_lines.product_id');
@@ -370,6 +371,13 @@ class SellPosController extends Controller
         }
         if (!empty($request->sale_promo_filter)) {
             if ($request->sale_promo_filter == 'items_in_sale_promotion') {
+                $sales_promotions = SalesPromotion::whereDate('start_date', '<', Carbon::now())->whereDate('end_date', '>', Carbon::now())->get();
+                $sp_product_ids = [];
+                foreach ($sales_promotions as $sales_promotion) {
+                    $sp_product_ids = array_merge($sp_product_ids, $sales_promotion->product_ids);
+                }
+
+                $query->whereIn('products.id',  $sp_product_ids);
             }
         }
 

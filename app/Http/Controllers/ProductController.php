@@ -14,6 +14,7 @@ use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
 use App\Models\Tax;
+use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\Unit;
 use App\Models\Variation;
@@ -301,7 +302,14 @@ class ProductController extends Controller
      */
     public function show($id)
     {
-        //
+        $product = Product::find($id);
+
+        $stock_detials = ProductStore::where('product_id', $id)->get();
+
+        return view('product.show')->with(compact(
+            'product',
+            'stock_detials'
+        ));
     }
 
     /**
@@ -581,5 +589,25 @@ class ProductController extends Controller
 
             return json_encode($result);
         }
+    }
+
+    /**
+     * get the list of porduct purchases
+     *
+     * @param [type] $id
+     * @return void
+     */
+    public function getPurchaseHistory($id)
+    {
+        $product = Product::find($id);
+        $add_stocks = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            ->where('add_stock_lines.product_id', $id)
+            ->groupBy('transactions.id')
+            ->get();
+
+        return view('product.partial.purchase_history')->with(compact(
+            'product',
+            'add_stocks',
+        ));
     }
 }

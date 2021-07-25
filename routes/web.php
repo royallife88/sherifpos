@@ -35,6 +35,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
+    Route::get('product/get-purchase-history/{id}', 'ProductController@getPurchaseHistory');
     Route::resource('product', ProductController::class);
     Route::get('product-class/get-dropdown', 'ProductClassController@getDropdown');
     Route::resource('product-class', ProductClassController::class);

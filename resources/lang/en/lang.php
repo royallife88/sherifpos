@@ -869,5 +869,9 @@ return [
     'no_new_notification' => 'No new notification',
     'cashiers' => 'Cashiers',
     'expiry' => 'Expiry',
+    'variation_name' => 'Variation Name',
+    'store_name' => 'Store Name',
+    'stock_details' => 'Stock Details',
+    'no_data_found' => 'No data found',
 
 ];

@@ -1,16 +1,24 @@
-<?php $general_setting = DB::table('general_settings')->find(1); ?>
+@php
+    $logo = App\Models\System::getProperty('logo');
+    $site_title = App\Models\System::getProperty('site_title');
+    $config_languages = config('constants.langs');
+    $languages = [];
+    foreach ($config_languages as $key => $value) {
+        $languages[$key] = $value['full_name'];
+    }
+@endphp
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{$general_setting->site_title}}</title>
+    <title>{{$site_title}}</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
     <link rel="manifest" href="{{url('manifest.json')}}">
-    <link rel="icon" type="image/png" href="{{url('logo', $general_setting->site_logo)}}" />
+    <link rel="icon" type="image/png" href="{{asset('/uploads/'.$logo)}}" />
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="{{asset('vendor/bootstrap/css/bootstrap.min.css')}}" type="text/css">
     <link rel="stylesheet" href="{{asset('vendor/bootstrap/css/bootstrap-datepicker.min.css')}}" type="text/css">
@@ -27,11 +35,7 @@
     <!-- theme stylesheet-->
     <link rel="stylesheet" href="{{asset('css/style.default.css')}}" id="theme-stylesheet" type="text/css">
     <!-- Custom stylesheet - for your changes-->
-    <link rel="stylesheet" href="{{asset('css/custom-'.$general_setting->theme)}}" type="text/css">
-    <!-- Tweaks for older IEs-->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-        <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
+    <link rel="stylesheet" href="{{asset('css/custom-default.css')}}" type="text/css">
 
 
     <script type="text/javascript" src="{{asset('vendor/jquery/jquery.min.js')}}"></script>
@@ -48,15 +52,7 @@
     <script type="text/javascript" src="{{asset('vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js')}}"></script>
 <script type=" text/javascript" src="{{asset('js/front.js')}}"></script>
 </head>
-@php
-    $logo = App\Models\System::getProperty('logo');
-    $site_title = App\Models\System::getProperty('site_title');
-    $config_languages = config('constants.langs');
-    $languages = [];
-    foreach ($config_languages as $key => $value) {
-        $languages[$key] = $value['full_name'];
-    }
-@endphp
+
 <body>
     <div class="page login-page">
         <div class="container">
@@ -105,8 +101,7 @@
 
                 </div>
                 <div class="copyrights text-center">
-                    <p>{{trans('lang.developed_by')}} <span class="external">{{$general_setting->developed_by}}</span>
-                    </p>
+                    <p>&copy; {{App\Models\System::getProperty('site_title')}} @if(!empty(App\Models\System::getProperty('developed_by')))| @lang('lang.developed_by') <span class="external">{!!App\Models\System::getProperty('developed_by')!!}</span>@endif</p>
                 </div>
             </div>
         </div>

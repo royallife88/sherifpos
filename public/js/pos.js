@@ -30,7 +30,7 @@ $(document).on("click", "#sub-category-filter", function (e) {
     $(".sub_category").show();
 });
 
-$(".selling_filter, .price_filter, .expiry_filter, .sorting_filter").change(
+$(".selling_filter, .price_filter, .expiry_filter, .sorting_filter, .sale_promo_filter").change(
     function () {
         let class_name = $(this).attr("class");
         $("." + class_name).prop("checked", false);
