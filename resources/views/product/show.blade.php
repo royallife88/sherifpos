@@ -46,6 +46,8 @@
                             @if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif<br>
                             <label style="font-weight: bold;" for="">@lang('lang.manufacturing_date'): </label>
                             @if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif<br>
+                            <label style="font-weight: bold;" for="">@lang('lang.is_service'): </label>
+                            @if(!empty($product->is_service))@lang('lang.yes')@else @lang('lang.no') @endif<br>
                         </div>
                     </div>
 

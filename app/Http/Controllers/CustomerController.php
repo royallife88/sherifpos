@@ -328,6 +328,7 @@ class CustomerController extends Controller
                 DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
                 'customers.name',
                 'customers.address',
+                'customers.deposit_balance',
                 'customers.id as customer_id',
                 'customer_types.name as customer_type'
             );

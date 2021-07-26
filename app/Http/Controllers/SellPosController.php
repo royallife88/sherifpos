@@ -136,6 +136,10 @@ class SellPosController extends Controller
                 'discount_type' => $request->discount_type,
                 'discount_value' => $this->commonUtil->num_f($request->discount_value),
                 'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
+                'current_deposit_balance' => $this->commonUtil->num_f($request->current_deposit_balance),
+                'used_deposit_balance' => $this->commonUtil->num_f($request->used_deposit_balance),
+                'remaining_deposit_balance' => $this->commonUtil->num_f($request->remaining_deposit_balance),
+                'add_to_deposit' => $this->commonUtil->num_f($request->add_to_deposit),
                 'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
                 'total_tax' => $this->commonUtil->num_f($request->total_tax),
                 'sale_note' => $request->sale_note,
@@ -196,6 +200,16 @@ class SellPosController extends Controller
                 $transaction->save();
 
                 $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+
+                //update customer deposit balance if any
+                $customer = Customer::find($transaction->customer_id);
+                if($request->used_deposit_balance > 0){
+                    $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
+                }
+                if($request->add_to_deposit > 0){
+                    $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
+                }
+                $customer->save();
             }
 
             $amount = $this->commonUtil->num_uf($request->amount);

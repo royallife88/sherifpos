@@ -80,6 +80,42 @@ $notifications = App\Models\Notification::where('user_id', Auth::user()->id)->wh
                         class="fa fa-envelope-open"></i></a>
             </div>
         </li>
+        @elseif($notification->type == 'add_stock_due')
+        <li>
+            <a href="{{action('AddStockController@show', $notification->transaction_id)}}">
+                <p style="margin:0px"><i class="fa fa-money " style="color: rgb(255, 19, 19)"></i>
+                    @lang('lang.due_date_for_purchase_payment')</p>
+                <br>
+                <span class="text-muted">@lang('lang.invoice_no'):
+                    {{$notification->transaction->invoice_no}}
+                    </span> <br>
+                <span class="text-muted">@lang('lang.due_date'):
+                    {{@format_date($notification->transaction->due_date)}}</span>
+            </a>
+            <div class="mark-read">
+                <a style="width: 40px;" data-toggle="tooltip" title="@lang('lang.mark_as_read')"
+                    href="{{action('NotificationController@markAsRead', $notification->id)}}" class=""><i
+                        class="fa fa-envelope-open"></i></a>
+            </div>
+        </li>
+        @elseif($notification->type == 'expense_due')
+        <li>
+            <a href="#">
+                <p style="margin:0px"><i class="fa fa-money " style="color: rgb(255, 19, 19)"></i>
+                    @lang('lang.due_date_for_expense')</p>
+                <br>
+                <span class="text-muted">@lang('lang.invoice_no'):
+                    {{$notification->transaction->invoice_no}}
+                    </span> <br>
+                <span class="text-muted">@lang('lang.due_date'):
+                    {{@format_date($notification->transaction->next_payment_date)}}</span>
+            </a>
+            <div class="mark-read">
+                <a style="width: 40px;" data-toggle="tooltip" title="@lang('lang.mark_as_read')"
+                    href="{{action('NotificationController@markAsRead', $notification->id)}}" class=""><i
+                        class="fa fa-envelope-open"></i></a>
+            </div>
+        </li>
         @endif
         @empty
             <div class="text-center">

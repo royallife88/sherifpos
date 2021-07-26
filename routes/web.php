@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
     Route::get('product/get-purchase-history/{id}', 'ProductController@getPurchaseHistory');
+    Route::post('product/save-import', 'ProductController@saveImport');
+    Route::get('product/import', 'ProductController@getImport');
     Route::resource('product', ProductController::class);
     Route::get('product-class/get-dropdown', 'ProductClassController@getDropdown');
     Route::resource('product-class', ProductClassController::class);

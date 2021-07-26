@@ -63,6 +63,10 @@ class CreateTransactionsTable extends Migration
             $table->integer('rp_earned')->default(0);
             $table->integer('rp_redeemed')->default(0);
             $table->integer('rp_redeemed_value')->default(0);
+            $table->decimal('current_deposit_balance', 15, 4)->default(0);
+            $table->decimal('used_deposit_balance', 15, 4)->default(0);
+            $table->decimal('remaining_deposit_balance', 15, 4)->default(0);
+            $table->decimal('add_to_deposit', 15, 4)->default(0);
             $table->text('details')->nullable();
             $table->text('reason')->nullable();
             $table->text('sale_note')->nullable();
@@ -70,8 +74,8 @@ class CreateTransactionsTable extends Migration
             $table->text('notes')->nullable();
             $table->unsignedBigInteger('terms_and_condition_id')->nullable();
             $table->string('due_date')->nullable();
-            $table->integer('notify_me')->nullable();
-            $table->string('notify_before_days')->nullable();
+            $table->boolean('notify_me')->default(0);
+            $table->integer('notify_before_days')->default(0);
             $table->unsignedBigInteger('created_by');
             $table->unsignedBigInteger('deleted_by')->nullable();
 

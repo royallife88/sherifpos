@@ -127,7 +127,8 @@ class PurchaseReturnController extends Controller
                     'status' => 'final',
                     'is_return' => 1,
                     'due_date' => $request->due_date,
-                    'notify_me' => $request->notify_me,
+                    'notify_me' => !empty($request->notify_before_days) ? 1 : 0,
+                    'notify_before_days' => !empty($request->notify_before_days) ? $request->notify_before_days : 0,
                     'created_by' => Auth::user()->id,
                 ];
 
@@ -246,7 +247,8 @@ class PurchaseReturnController extends Controller
                     'status' => 'final',
                     'is_return' => 1,
                     'due_date' => $request->due_date,
-                    'notify_me' => $request->notify_me,
+                    'notify_me' => !empty($request->notify_before_days) ? 1 : 0,
+                    'notify_before_days' => !empty($request->notify_before_days) ? $request->notify_before_days : 0,
                     'created_by' => Auth::user()->id,
                 ];
 

@@ -231,9 +231,9 @@
 
                             <div class="col-md-3 due_fields hide">
                                 <div class="form-group">
-                                    {!! Form::label('notify_me', __('lang.notify_me'). ':', []) !!} <br>
-                                    {!! Form::text('notify_me', $add_stock->notify_me, ['class' => 'form-control',
-                                    'placeholder' => __('lang.notify_me')]) !!}
+                                    {!! Form::label('notify_before_days', __('lang.notify_before_days'). ':', []) !!} <br>
+                                    {!! Form::text('notify_before_days', $add_stock->notify_before_days, ['class' => 'form-control',
+                                    'placeholder' => __('lang.notify_before_days')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-12">

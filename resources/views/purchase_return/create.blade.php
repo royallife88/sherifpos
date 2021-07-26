@@ -124,10 +124,10 @@
 
                     <div class="col-md-3 due_fields hide">
                         <div class="form-group">
-                            {!! Form::label('notify_me', __('lang.notify_me'). ':', []) !!} <br>
-                            {!! Form::text('notify_me', !empty($payment) ? $payment->notify_me : null, ['class' =>
+                            {!! Form::label('notify_before_days', __('lang.notify_before_days'). ':', []) !!} <br>
+                            {!! Form::text('notify_before_days', !empty($payment) ? $payment->notify_before_days : null, ['class' =>
                             'form-control',
-                            'placeholder' => __('lang.notify_me')]) !!}
+                            'placeholder' => __('lang.notify_before_days')]) !!}
                         </div>
                     </div>
 

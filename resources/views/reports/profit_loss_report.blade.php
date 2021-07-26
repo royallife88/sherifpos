@@ -134,6 +134,15 @@
                                 </td>
                             </tr>
                             @endforeach
+
+                            <tr>
+                                <td>@lang('lang.all_purchases')</td>
+                                <td>{{@num_format($purchases->total_amount)}}</td>
+                                <td>
+                                    <a href="{{action('AddStockController@index')}}"
+                                        class="btn btn-primary">@lang('lang.details')</a>
+                                </td>
+                            </tr>
                             @foreach($wages as $wage)
                             <tr>
                                 <td>{{ucfirst($wages_payment_types[$wage->payment_type])}}</td>
@@ -149,13 +158,13 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    <label for="">@lang('lang.total_expenses'): {{@num_format($expenses->sum('total_amount') + $wages->sum('total_amount'))}}</label>
+                    <label for="">@lang('lang.total_expenses'): {{@num_format($expenses->sum('total_amount') + $purchases->total_amount + $wages->sum('total_amount'))}}</label>
                 </div>
             </div>
             <br>
             <div class="col-md-12">
                 <h2><b>@lang('lang.profit_and_loss'):
-                        {{@num_format($sales->sum('total_amount') - $expenses->sum('total_amount') + $wages->sum('total_amount'))}}</b></h2>
+                        {{@num_format($sales->sum('total_amount') - ($expenses->sum('total_amount') + $purchases->total_amount + $wages->sum('total_amount')))}}</b></h2>
             </div>
         </div>
     </div>

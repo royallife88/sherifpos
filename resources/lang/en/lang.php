@@ -873,5 +873,15 @@ return [
     'store_name' => 'Store Name',
     'stock_details' => 'Stock Details',
     'no_data_found' => 'No data found',
+    'yes' => 'Yes',
+    'no' => 'No',
+    'import_products' => 'Product Import',
+    'all_purchases' => 'All Purchases',
+    'due_date_for_purchase_payment' => 'Due date for purchase',
+    'due_date_for_expense' => 'Due date for expense',
+    'use_it' => 'Use It',
+    'remaining_balance' => 'Remaining Balance',
+    'customer_not_have_sufficient_balance' => 'Customer not have sufficient balance',
+    'add_to_deposit' => 'Add to deposit',
 
 ];

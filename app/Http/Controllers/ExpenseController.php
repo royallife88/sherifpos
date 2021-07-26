@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
+use App\Utils\CashRegisterUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
@@ -26,6 +27,7 @@ class ExpenseController extends Controller
     protected $commonUtil;
     protected $transactionUtil;
     protected $productUtil;
+    protected $cashRegisterUtil;
 
     /**
      * Constructor
@@ -33,11 +35,12 @@ class ExpenseController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil, CashRegisterUtil $cashRegisterUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
         $this->productUtil = $productUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
     }
 
 
@@ -143,7 +146,7 @@ class ExpenseController extends Controller
                 'method' => $request->method,
                 'paid_on' => $data['paid_on'],
                 'ref_number' => $request->ref_number,
-                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null, //Test It not saving
+                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,
             ];
 

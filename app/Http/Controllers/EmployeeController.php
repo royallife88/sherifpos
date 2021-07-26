@@ -46,7 +46,7 @@ class EmployeeController extends Controller
     {
         $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')
             ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
-            ->select('users.name', 'employees.*', 'job_types.job_title')->get();
+            ->select('users.name', 'users.email', 'employees.*', 'job_types.job_title')->get();
 
         return view('employee.index')->with(compact(
             'employees'

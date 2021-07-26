@@ -18,6 +18,7 @@
                                         <tr>
                                             <th>@lang('lang.profile_photo')</th>
                                             <th>@lang('lang.employee_name')</th>
+                                            <th>@lang('lang.email')</th>
                                             <th>@lang('lang.mobile')</th>
                                             <th>@lang('lang.job_title')</th>
                                             <th>@lang('lang.wage')</th>
@@ -38,6 +39,9 @@
                                             </td>
                                             <td>
                                                 {{$employee->name}}
+                                            </td>
+                                            <td>
+                                                {{$employee->email}}
                                             </td>
                                             <td>
                                                 {{$employee->mobile}}

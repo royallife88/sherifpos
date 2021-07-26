@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProductImport;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
@@ -24,6 +25,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductController extends Controller
 {
@@ -603,11 +605,49 @@ class ProductController extends Controller
         $add_stocks = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->where('add_stock_lines.product_id', $id)
             ->groupBy('transactions.id')
+            ->select('transactions.*')
             ->get();
 
         return view('product.partial.purchase_history')->with(compact(
             'product',
             'add_stocks',
         ));
+    }
+
+    /**
+     * get import page
+     *
+     */
+    public function getImport()
+    {
+        return view('product.import');
+    }
+
+    /**
+     * save import resource to stores
+     *
+     */
+    public function saveImport(Request $request)
+    {
+        $this->validate($request, [
+            'file' => 'required|mimes:csv,txt'
+        ]);
+        try {
+
+            Excel::import(new ProductImport($this->productUtil, $request), $request->file);
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

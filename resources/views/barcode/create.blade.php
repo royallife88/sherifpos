@@ -37,7 +37,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @include('barcode.partials.show_table_rows', ['index' => 0])
+
                                     </tbody>
                                 </table>
                             </div>

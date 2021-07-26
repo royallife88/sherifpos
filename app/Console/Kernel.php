@@ -26,8 +26,12 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('pos:createQuantityAlertNotification')
-            ->everyMinute();
+            ->daily();
         $schedule->command('pos:createExpiryProductNotification')
+            ->daily();
+        $schedule->command('pos:addStockDueNotify')
+            ->daily();
+        $schedule->command('pos:expenseDueNotify')
             ->daily();
         $schedule->command('queue:work')
             ->everyMinute();

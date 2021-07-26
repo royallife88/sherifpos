@@ -85,6 +85,28 @@ class ReportController extends Controller
             DB::raw('SUM(transactions.final_total) as total_amount')
         )->groupBy('stores.id')->get();
 
+        $purchase_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('transactions.type', 'add_stock')
+            ->where('transactions.status', 'received');
+
+        if (!empty($request->start_date)) {
+            $purchase_query->where('transaction_date', '>=', $request->start_date);
+        }
+        if (!empty($request->end_date)) {
+            $purchase_query->where('transaction_date', '<=', $request->end_date);
+        }
+        if (!empty($request->customer_type_id)) {
+            $purchase_query->where('customer_type_id', $request->customer_type_id);
+        }
+        if (!empty($request->store_id)) {
+            $purchase_query->where('store_id', $request->store_id);
+        }
+
+        $purchases = $purchase_query->select(
+            DB::raw('SUM(transactions.final_total) as total_amount')
+        )->groupBy('transactions.id')->first();
+
+
         $expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('expense_categories', 'transactions.expense_category_id', 'expense_categories.id')
             ->where('transactions.type', 'expense')
@@ -141,6 +163,7 @@ class ReportController extends Controller
             'sales',
             'wages',
             'expenses',
+            'purchases',
             'store_pos',
             'products',
             'employees',

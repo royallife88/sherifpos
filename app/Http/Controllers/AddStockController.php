@@ -132,7 +132,8 @@ class AddStockController extends Controller
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
-                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
+                'notify_me' => !empty($data['notify_before_days']) ? 1 : null,
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null,
                 'created_by' => Auth::user()->id
             ];
 
@@ -270,7 +271,8 @@ class AddStockController extends Controller
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
-                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
+                'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null,
                 'created_by' => Auth::user()->id
             ];
 

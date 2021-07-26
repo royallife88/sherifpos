@@ -83,7 +83,7 @@ class TransactionUtil extends Util
         $total_paid = $transaction_payments->sum('amount');
 
         $transaction = Transaction::find($transaction_id);
-        $final_amount = $transaction->final_total;
+        $final_amount = $transaction->final_total - $transaction->used_deposit_balance;
 
         $payment_status = 'pending';
         if ($final_amount <= $total_paid) {

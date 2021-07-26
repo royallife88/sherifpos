@@ -25,11 +25,34 @@
                             <div class="col-md-6 mt-1">
                                 <label>@lang('lang.change') : </label>
                                 <p id="change" class="ml-2">0.00</p>
+                                <input type="hidden" name="change_amount" id="change_amount">
                             </div>
                             <div class="col-md-6 mt-1">
                                 <label>@lang('lang.payment_method')</label>
                                 {!! Form::select('method', $payment_types, null, ['class' => 'form-control', 'id' =>
                                 'method', 'required', 'data-live-search' => 'true']) !!}
+                            </div>
+                            <div class="col-md-6 deposit-fields hide">
+                                <h6 class="bg-success" style="color: #fff; padding: 10px 15px;">@lang('lang.current_balance'): <span class="current_deposit_balance"></span> <br>
+                                    <span class="hide balance_error_msg"  style="color: red; font-size: 12px">@lang('lang.customer_not_have_sufficient_balance')</span>
+                                </h6>
+                                <input type="hidden" name="current_deposit_balance" id="current_deposit_balance" value="0">
+                            </div>
+                            <div class="col-md-12 deposit-fields hide">
+                               <div class="row">
+                                <div class="col-md-2">
+                                    <button type="button" class="ml-1 btn btn-success use_it_deposit_balance">@lang('lang.use_it')</button>
+                                    <input type="hidden" name="used_deposit_balance" id="used_deposit_balance" value="0">
+                                </div>
+                                <div class="col-md-4">
+                                    <h6  class="bg-success" style="color: #fff; padding: 10px 15px;">@lang('lang.remaining_balance'): <span class="remaining_balance_text"></span> </h6>
+                                    <input type="hidden" name="remaining_deposit_balance" id="remaining_deposit_balance" value="0">
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="button" class="ml-1 btn btn-danger add_to_deposit">@lang('lang.add_to_deposit')</button>
+                                    <input type="hidden" name="add_to_deposit" id="add_to_deposit" value="0">
+                                </div>
+                               </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="i-checks">

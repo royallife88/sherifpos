@@ -496,11 +496,19 @@ $(document).on("click", ".payment-btn", function (e) {
     audio.play();
 
     let method = $(this).data("method");
-    console.log(method);
+
     $("#method").val(method);
     $("#method").selectpicker("refresh");
     $("#method").change();
 
+    if (method === "deposit") {
+        $(".deposit-fields").removeClass("hide");
+        $("#method").val('cash');
+        $("#method").selectpicker("refresh");
+        $("#method").change();
+    } else {
+        $(".deposit-fields").addClass("hide");
+    }
     if (method === "cheque") {
         $(".cheque_field").removeClass("hide");
     } else {
@@ -553,8 +561,9 @@ $(document).on("change", "#amount", function () {
     let amount = __read_number($("#amount"));
     let paying_amount = __read_number($("#paying_amount"));
 
-    let change = paying_amount - amount;
+    let change = amount - paying_amount;
     $("#change").text(__currency_trans_from_en(change, false));
+    $('#change_amount').val(change);
 });
 
 $(document).on("change", "#amount_to_be_used", function () {
@@ -729,10 +738,10 @@ function reset_pos_form() {
         pos_form_obj[0].reset();
     }
     $(
-        "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span "
+        "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance "
     ).text(0);
     $(
-        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points "
+        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance "
     ).val("");
     $("#status").val("final");
     $("button#submit-btn").attr("disabled", false);
@@ -743,6 +752,7 @@ function reset_pos_form() {
     $("#deliveryman_id").val("");
     $("#deliveryman_id").selectpicker("refresh");
     $("tr.product_row").remove();
+    $(this).attr('disabled', false);
 }
 
 function set_default_customer() {
@@ -852,9 +862,49 @@ $(document).on("change", "#customer_id", function () {
             $(".customer_due").text(
                 __currency_trans_from_en(result.due, false)
             );
+            $(".current_deposit_balance").text(
+                __currency_trans_from_en(result.deposit_balance, false)
+            );
+            $('#current_deposit_balance').val(result.deposit_balance);
         },
     });
     getCustomerPointDetails();
+});
+
+$(document).on('click', '.use_it_deposit_balance', function(){
+    let current_deposit_balance = __read_number($('#current_deposit_balance'));
+    let final_total = __read_number($('#final_total'));
+
+    let remaining_balance = 0;
+    if(current_deposit_balance > 0){
+        if(current_deposit_balance > final_total){
+            $('#used_deposit_balance').val(final_total);
+            remaining_balance = current_deposit_balance - final_total;
+        }else if(current_deposit_balance < final_total){
+            $('#used_deposit_balance').val(current_deposit_balance);
+            remaining_balance = 0;
+        }
+        $(".remaining_balance_text").text(
+            __currency_trans_from_en(remaining_balance, false)
+        );
+        $('#remaining_deposit_balance').val(remaining_balance);
+    }else{
+        $('.balance_error_msg').removeClass('hide')
+    }
+
+    let used_deposit_balance = __read_number($('#used_deposit_balance'));
+    let amount = __read_number($('#amount'));
+    __write_number($('#amount'), amount - used_deposit_balance);
+
+
+});
+
+$(document).on('click', '.add_to_deposit', function(){
+    let change_amount = __read_number($('#change_amount'));
+
+    $('#add_to_deposit').val(change_amount);
+    $(this).attr('disabled', true);
+
 });
 
 function getCustomerPointDetails() {
