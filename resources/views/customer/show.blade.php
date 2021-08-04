@@ -57,19 +57,35 @@
                     <div role="tabpanel" class="tab-pane fade @if(empty(request()->show)) show active @endif"
                         id="info-sale">
                         <br>
-                        <br>
                         <div class="col-md-12 text-muted">
-                            <div class="col-md-12 ">
-                                <b>@lang('lang.name'):</b> <span class="customer_name_span">{{$customer->name}}</span>
-                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="col-md-12 ">
+                                        <b>@lang('lang.name'):</b> <span class="customer_name_span">{{$customer->name}}</span>
+                                    </div>
 
-                            <div class="col-md-12">
-                                <b>@lang('lang.mobile'):</b> <span
-                                    class="customer_mobile_span">{{$customer->mobile}}</span>
-                            </div>
-                            <div class="col-md-12">
-                                <b>@lang('lang.address'):</b> <span
-                                    class="customer_address_span">{{$customer->address}}</span>
+                                    <div class="col-md-12">
+                                        <b>@lang('lang.customer_type'):</b> <span
+                                            class="customer_customer_type_span">{{$customer->customer_type->name}}</span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <b>@lang('lang.mobile'):</b> <span
+                                            class="customer_mobile_span">{{$customer->mobile}}</span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <b>@lang('lang.address'):</b> <span
+                                            class="customer_address_span">{{$customer->address}}</span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <b>@lang('lang.email'):</b> <span
+                                            class="customer_email_span">{{$customer->email}}</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="thumbnail">
+                                        <img style="width: 200px; height: 200px;" class="img-fluid" src="@if(!empty($customer->getFirstMediaUrl('customer_photo'))){{$customer->getFirstMediaUrl('customer_photo')}}@endif" alt="Customer photo">
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -107,7 +123,7 @@
                                         <td>
                                             @foreach ($sale->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($sale->discount_amount)}}</td>
@@ -205,7 +221,7 @@
                                         <td>
                                             @foreach ($discount->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($discount->final_total)}}</td>
@@ -298,7 +314,7 @@
                                         <td>
                                             @foreach ($point->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($point->final_total)}}</td>

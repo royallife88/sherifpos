@@ -14,8 +14,15 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required'
+                ]);
                 !!}
+            </div>
+            <div class="form-group hide">
+                {!! Form::label('category_id', __( 'lang.category' ) . ':') !!}
+                {!! Form::select('category_id', $categories,
+                false, ['class' => 'form-control selectpicker', 'data-live-search'=>"true",
+                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'id' => 'brand_category_id']) !!}
             </div>
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
@@ -33,3 +40,16 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+<script>
+    $('#brand_category_id').selectpicker('render');
+
+    $('.view_modal').on('shown.bs.modal', function () {
+        let  brand_category_id = $('#sub_category_id').val();
+        if(brand_category_id){
+            $("#brand_category_id").selectpicker("val", brand_category_id);
+        }else{
+            let  brand_category_id = $('#category_id').val();
+            $("#brand_category_id").selectpicker("val", brand_category_id);
+        }
+    })
+</script>

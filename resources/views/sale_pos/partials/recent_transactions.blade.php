@@ -25,17 +25,17 @@
                 <td>@if(!empty($transaction->customer)){{$transaction->customer->name}}@endif</td>
                 <td>@if(!empty($transaction->transaction_payments->first()->method)){{$payment_types[$transaction->transaction_payments->first()->method]}}@endif
                 </td>
-                <td>{{ucfirst($transaction->status)}}</td>
+                <td>@if($transaction->status == 'final' && $transaction->payment_status == 'pending') @lang('lang.pending') @else {{ucfirst($transaction->status)}} @endif</td>
                 <td></td>
                 <td>
                     <div class="btn-group">
                         @can('sale.pos.create_and_edit')
                         <a href="{{action('SellController@edit', $transaction->id)}}" class="btn btn-success"><i
-                                class="dripicons-document-edit"></i></a>
+                            title="@lang('lang.edit')" data-toggle="tooltip"  class="dripicons-document-edit"></i></a>
                         @endcan
                         @can('sale.pos.delete')
                         <a data-href="{{action('SellController@destroy', $transaction->id)}}"
-                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                            title="@lang('lang.delete')" data-toggle="tooltip" data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                             class="btn btn-danger delete_item" style="color: white"><i class="fa fa-trash"></i></a>
                         @endcan
                         @can('return.sell_return.create_and_edit')
@@ -45,7 +45,7 @@
                         @endcan
                         @if($transaction->status != 'draft' && $transaction->payment_status != 'paid')
                         <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $transaction->id])}}"
-                            data-container=".view_modal" class="btn btn-modal btn-success" style="color: white"><i
+                            title="@lang('lang.pay_now')" data-toggle="tooltip" data-container=".view_modal" class="btn btn-modal btn-success" style="color: white"><i
                                 class="fa fa-money"></i></a>
                         @endif
 

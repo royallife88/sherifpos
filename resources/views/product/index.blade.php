@@ -154,6 +154,7 @@
             <tr>
                 <th>@lang('lang.image')</th>
                 <th>@lang('lang.name')</th>
+                <th>@lang('lang.product_code')</th>
                 <th>@lang('lang.barcode')</th>
                 <th>@lang('lang.class')</th>
                 <th>@lang('lang.category')</th>
@@ -183,17 +184,18 @@
                 <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
                         alt="photo" width="50" height="50"></td>
                 <td>{{$product->name}}</td>
+                <td>@if(!empty($product->variations)) {{implode(', ', $product->variations->pluck('sub_sku')->toArray())}} @else {{$product->sku}} @endif</td>
                 <td><img class="center-block" style="width:150px; !important;height: {{2*0.24}}in !important;"
                         src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type, 3,30,array(39, 48, 54), true)}}">
                 </td>
-                <td>{{$product->product_class->name}}</td>
-                <td>{{$product->category->name}}</td>
-                <td>{{$product->sub_category->name}}</td>
+                <td>@if(!empty($product->product_class)){{$product->product_class->name}}@endif</td>
+                <td>@if(!empty($product->category)){{$product->category->name}}@endif</td>
+                <td>@if(!empty($product->sub_category)){{$product->sub_category->name}}@endif</td>
                 <td><a data-href="{{action('ProductController@getPurchaseHistory', $product->id)}}" data-container=".view_modal" class="btn btn-modal">@lang('lang.view')</a></td>
                 <td>{{$product->batch_number}}</td>
                 <td>{{@num_format($product->sell_price)}}</td>
                 <td>@if(!empty($product->tax->name)){{$product->tax->name}}@endif</td>
-                <td>{{$product->brand->name}}</td>
+                <td>@if(!empty($product->brand)){{$product->brand->name}}@endif</td>
                 <td>{{implode(', ', $product->units->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->colors->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->sizes->pluck('name')->toArray())}}</td>

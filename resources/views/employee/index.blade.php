@@ -95,6 +95,68 @@
                                                     @endif
                                             </td>
                                             <td>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">@lang('lang.action')
+                                                        <span class="caret"></span>
+                                                        <span class="sr-only">Toggle Dropdown</span>
+                                                    </button>
+                                                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                        user="menu">
+                                                        @can('user_management.employee.view')
+                                                        <li>
+                                                            <a href="{{action('EmployeeController@show', $employee->id)}}"
+                                                                class="btn"><i class="fa fa-eye"></i> @lang('lang.view')</a>
+                                                        </li>
+                                                        <li class="divider"></li>
+                                                        @endcan
+                                                        @can('user_management.employee.create_and_edit')
+                                                        <li>
+                                                            <a href="{{action('EmployeeController@edit', $employee->id)}}"
+                                                                class="btn edit_employee"><i
+                                                                    class="fa fa-pencil-square-o"></i> @lang('lang.edit')</a>
+                                                        </li>
+                                                        <li class="divider"></li>
+                                                        @endcan
+                                                        @can('superadmin')
+                                                        <li>
+                                                            <a data-href="{{action('EmployeeController@destroy', $employee->id)}}"
+                                                                data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                                class="btn delete_item text-red"><i class="fa fa-trash"></i> @lang('lang.delete')</a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('superadmin')
+                                                        <li>
+                                                            <a href="{{action('EmployeeController@sendLoginDetails', $employee->id)}}"
+                                                                class="btn"><i class="fa fa-paper-plane"></i> @lang('lang.send_credentials')</a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('hr_management.leaves.create_and_edit')
+                                                        <li>
+                                                            <a class="btn btn-modal"
+                                                                data-href="{{action('LeaveController@create', ['employee_id' => $employee->id])}}"
+                                                                data-container=".view_modal">
+                                                                <i class="fa fa-sign-out"></i> @lang( 'lang.leave')
+                                                            </a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('hr_management.forfeit_leaves.create_and_edit')
+                                                        <li>
+                                                            <a class="btn btn-modal"
+                                                                data-href="{{action('ForfeitLeaveController@create', ['employee_id' => $employee->id])}}"
+                                                                data-container=".view_modal">
+                                                                <i class="fa fa-ban"></i> @lang( 'lang.forfeit_leave')
+                                                            </a>
+                                                        </li>
+                                                        @endcan
+                                                    </ul>
+                                                </div>
+
+                                                {{-- @can('user_management.employee.view')
+                                                <a href="{{action('EmployeeController@show', $employee->id)}}"
+                                                class="btn btn-danger text-white"><i class="fa fa-eye"></i></a>
+                                                @endcan
                                                 @can('user_management.employee.create_and_edit')
                                                 <a href="{{action('EmployeeController@edit', $employee->id)}}"
                                                     class="btn btn-danger text-white edit_employee"><i
@@ -117,7 +179,7 @@
                                                     data-href="{{action('ForfeitLeaveController@create', ['employee_id' => $employee->id])}}"
                                                     data-container=".view_modal">
                                                     <i class="fa fa-ban"></i>@lang( 'lang.forfeit_leave' )</button>
-                                                @endcan
+                                                @endcan --}}
                                             </td>
                                         </tr>
 

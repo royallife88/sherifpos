@@ -88,6 +88,7 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                            @if($sale->status != 'expired')
                             @can('sale.sale.create_and_edit')
                             <li>
                                 <a href="{{action('SellController@edit', $sale->id)}}"
@@ -96,6 +97,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @endif
                             @can('squotation_for_customers.quotation.view')
                             <li>
 

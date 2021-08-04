@@ -82,6 +82,9 @@
                                 </thead>
 
                                 <tbody>
+                                    @php
+                                        $sales_total_paid = 0;
+                                    @endphp
                                     @foreach ($sales as $sale)
                                     <tr>
                                         <td>{{@format_date($sale->transaction_date)}}</td>
@@ -90,7 +93,7 @@
                                         <td>
                                             @foreach ($sale->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($sale->final_total)}}</td>
@@ -101,13 +104,17 @@
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($sale->status)}} @endif</td>
                                     </tr>
-
+                                    @php
+                                        $sales_total_paid += $sale->transaction_payments->sum('amount');
+                                    @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($sales->sum('amount'))}}</th>
+                                        <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                        <th>{{@num_format($sales->sum('final_total'))}}</th>
+                                        <th>{{@num_format($sales_total_paid)}}</th>
+                                        <th>{{@num_format($sales->sum('final_total') - $sales_total_paid)}}</th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -139,7 +146,7 @@
                                         <td>
                                             @foreach ($add_stock->add_stock_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($add_stock->final_total)}}</td>
@@ -188,7 +195,7 @@
                                         <td>
                                             @foreach ($quotation->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($quotation->final_total)}}</td>
@@ -243,7 +250,7 @@
                                                 @continue
                                                 @endif
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($return->final_total)}}</td>

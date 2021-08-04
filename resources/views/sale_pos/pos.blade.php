@@ -67,9 +67,9 @@
                                             <thead>
                                                 <tr>
                                                     <th style="width: 20%">@lang('lang.product')</th>
-                                                    <th style="width: 15%">@lang('lang.quantity')</th>
+                                                    <th style="width: 17%">@lang('lang.quantity')</th>
                                                     <th style="width: 15%">@lang('lang.price')</th>
-                                                    <th style="width: 15%">@lang('lang.discount')</th>
+                                                    <th style="width: 13%">@lang('lang.discount')</th>
                                                     <th style="width: 15%">@lang('lang.sub_total')</th>
                                                     <th style="width: 15%">@lang('lang.action')</th>
                                                 </tr>

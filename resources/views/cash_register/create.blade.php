@@ -52,6 +52,8 @@
                                 <div class="form-group">
                                     <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
                                         class="btn btn-primary">
+                                    <input type="submit" value="{{trans('lang.cancel')}}" id="cancel-submit-btn"
+                                        class="btn btn-danger">
                                 </div>
                             </div>
                         {!! Form::close() !!}

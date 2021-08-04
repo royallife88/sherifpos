@@ -6,8 +6,8 @@
             @if($product->variation_name != "Default")
                 <b>{{$product->variation_name}}</b>
             @endif
-            <input type="hidden" name="add_stock_lines[{{$loop->index + $index}}][product_id]" value="{{$product->product_id}}">
-            <input type="hidden" name="add_stock_lines[{{$loop->index + $index}}][variation_id]" value="{{$product->variation_id}}">
+            <input type="hidden" name="add_stock_lines[{{$loop->index + $index}}][product_id]" class="product_id" value="{{$product->product_id}}">
+            <input type="hidden" name="add_stock_lines[{{$loop->index + $index}}][variation_id]" class="variation_id" value="{{$product->variation_id}}">
         </td>
         <td>
             {{$product->sub_sku}}

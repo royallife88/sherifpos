@@ -17,13 +17,13 @@
                             <label style="font-weight: bold;" for="">@lang('lang.sku'): </label>
                             {{$product->sku}} <br>
                             <label style="font-weight: bold;" for="">@lang('lang.class'): </label>
-                            {{$product->product_class->name}} <br>
+                            @if(!empty($product->product_class)){{$product->product_class->name}}@endif <br>
                             <label style="font-weight: bold;" for="">@lang('lang.category'): </label>
-                            {{$product->category->name}} <br>
+                            @if(!empty($product->category)){{$product->category->name}}@endif <br>
                             <label style="font-weight: bold;" for="">@lang('lang.sub_category'): </label>
-                            {{$product->sub_category->name}} <br>
+                            @if(!empty($product->sub_category)){{$product->sub_category->name}} @endif<br>
                             <label style="font-weight: bold;" for="">@lang('lang.brand'): </label>
-                            {{$product->brand->name}}<br>
+                            @if(!empty($product->brand)){{$product->brand->name}}@endif<br>
                             <label style="font-weight: bold;" for="">@lang('lang.batch_number'): </label>
                             {{$product->batch_number}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.selling_price'): </label>

@@ -10,7 +10,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class Employee extends Model implements HasMedia
 {
-    use HasFactory, InteractsWithMedia;
+    use HasFactory, InteractsWithMedia, \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
     /**
      * The attributes that aren't mass assignable.
@@ -209,5 +209,21 @@ class Employee extends Model implements HasMedia
             ->pluck('users.name', 'employees.id');
 
         return $employees;
+    }
+
+    public function store(){
+        return $this->belongsTo(Store::class);
+    }
+
+    public function commission_customer_type(){
+        return $this->belongsToJson(CustomerType::class, 'commission_customer_types');
+    }
+
+    public function commission_store(){
+        return $this->belongsToJson(Store::class, 'commission_stores');
+    }
+
+    public function commission_cashier(){
+        return $this->belongsToJson(User::class, 'commission_cashiers');
     }
 }

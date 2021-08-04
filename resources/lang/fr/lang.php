@@ -873,5 +873,15 @@ return [
     'store_name' => 'Nom du magasin',
     'stock_details' => 'Détails de l\'action',
     'no_data_found' => 'Aucune donnée disponible',
+    'yes' => 'Oui',
+    'no' => 'Non',
+    'import_products' => 'Importation de produits',
+    'all_purchases' => 'Tous les achats',
+    'due_date_for_purchase_payment' => 'Date limite d\'achat',
+    'due_date_for_expense' => 'Date d\'échéance des dépenses',
+    'use_it' => 'Utilise le',
+    'remaining_balance' => 'Solde restant',
+    'customer_not_have_sufficient_balance' => 'Le client n\'a pas un solde suffisant',
+    'add_to_deposit' => 'Ajouter au dépôt',
 
 ];

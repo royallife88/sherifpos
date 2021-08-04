@@ -193,7 +193,7 @@ class SellController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // try {
             $transaction_data = [
                 'customer_id' => $request->customer_id,
                 'final_total' => $this->commonUtil->num_uf($request->final_total),
@@ -224,21 +224,27 @@ class SellController extends Controller
             DB::beginTransaction();
 
             $transaction = Transaction::find($id);
-            if ($transaction->is_quotation) {
+            if ($transaction->is_quotation && $transaction->status == 'draft') {
                 $transaction_data['ref_no'] = $transaction->invoice_no;
             }
+            $transaction_status = $transaction->status;
+            $is_block_qty = $transaction->block_qty;
             $transaction->update($transaction_data);
 
             $keep_sell_lines = [];
             foreach ($request->transaction_sell_line as $line) {
-                if (!empty($transaction_sell_line['transaction_sell_line_id'])) {
+                if (!empty($line['transaction_sell_line_id'])) {
                     $transaction_sell_line = TransactionSellLine::find($line['transaction_sell_line_id']);
                     $transaction_sell_line->product_id = $line['product_id'];
                     $transaction_sell_line->variation_id = $line['variation_id'];
                     $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->commonUtil->num_uf($line['coupon_discount']) : 0;
                     $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
                     $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->commonUtil->num_uf($line['coupon_discount_amount']) : 0;
-                    $old_qty = $transaction_sell_line->quantity;
+                    if($transaction_status == 'draft'){
+                        $old_qty = 0;
+                    }else{
+                        $old_qty = $transaction_sell_line->quantity;
+                    }
                     $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->transactionUtil->num_uf($line['promotion_discount']) : 0;
                     $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
                     $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->transactionUtil->num_uf($line['promotion_discount_amount']) : 0;
@@ -252,7 +258,7 @@ class SellController extends Controller
                     $transaction_sell_line->save();
                     $keep_sell_lines[] = $line['transaction_sell_line_id'];
                     $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $old_qty);
-                    if ($transaction->block_qty) {
+                    if ($is_block_qty) {
                         $block_qty = $transaction_sell_line->quantity;
                         $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
                     }
@@ -299,13 +305,13 @@ class SellController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }

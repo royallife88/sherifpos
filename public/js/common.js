@@ -2,8 +2,8 @@ $(document).on("submit", "form", function () {
     $(this).validate();
 });
 
-$('.time_picker').timepicker({
-    'step': 15,
+$(".time_picker").timepicker({
+    step: 15,
 });
 
 __currency_decimal_separator = $("input#__decimal").val();
@@ -151,24 +151,9 @@ function __write_number_without_decimal_format(
 }
 
 function __print_receipt(section_id = null) {
-    if (section_id) {
-        var imgs = document
-            .getElementById(section_id)
-            .getElementsByTagName("img");
-    } else {
-        var imgs = document.images;
-    }
-    img_len = imgs.length;
-    if (img_len) {
-        img_counter = 0;
-        [].forEach.call(imgs, function (img) {
-            img.addEventListener("load", incrementImageCounter, false);
-        });
-    } else {
-        setTimeout(function () {
-            window.print();
-        }, 1000);
-    }
+    setTimeout(function () {
+        window.print();
+    }, 1000);
 }
 function incrementImageCounter() {
     img_counter++;
@@ -178,14 +163,14 @@ function incrementImageCounter() {
 }
 
 $(".datepicker").datepicker();
-$('#method').change(function(){
+$("#method").change(function () {
     var method = $(this).val();
 
-    if(method === 'cash'){
-        $('.not_cash_fields').addClass('hide');
-        $('.not_cash').attr('required', false);
-    }else{
-        $('.not_cash_fields').removeClass('hide');
-        $('.not_cash').attr('required', true);
+    if (method === "cash") {
+        $(".not_cash_fields").addClass("hide");
+        $(".not_cash").attr("required", false);
+    } else {
+        $(".not_cash_fields").removeClass("hide");
+        $(".not_cash").attr("required", true);
     }
-})
+});

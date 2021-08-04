@@ -13,8 +13,8 @@
 
         <div class="modal-body">
             <div class="form-group">
-                {!! Form::label('name', __( 'lang.class_name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.class_name' ), 'required' ]);
+                {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
                 !!}
             </div>
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
@@ -22,12 +22,22 @@
                 {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
                 {!! Form::file('image', ['class' => '' ]) !!}
             </div>
-            <div class="form-group">
+            @if($type == 'category')
+            <div class="form-group hide">
+                {!! Form::label('product_class_id', __( 'lang.class' ) . ':') !!}
+                {!! Form::select('product_class_id', $product_classes,
+                false, ['class' => 'form-control', 'data-live-search'=>"true",
+                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'required', 'id' => 'cat_product_class_id']) !!}
+            </div>
+            @endif
+            @if($type == 'sub_category')
+            <div class="form-group hide">
                 {!! Form::label('parent_id', __( 'lang.parent_category' ) . ':') !!}
                 {!! Form::select('parent_id', $categories,
                 false, ['class' => 'form-control', 'data-live-search'=>"true",
-                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select')]) !!}
+                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'id' => 'parent_id']) !!}
             </div>
+            @endif
         </div>
 
         <div class="modal-footer">
@@ -39,3 +49,18 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+<script>
+    $('#cat_product_class_id').selectpicker('render');
+    $('#parent_id').selectpicker('render');
+
+    @if($type == 'category')
+    $('.view_modal').on('shown.bs.modal', function () {
+        $("#cat_product_class_id").selectpicker("val", $('#product_class_id').val());
+    })
+    @endif
+    @if($type == 'sub_category')
+    $('.view_modal').on('shown.bs.modal', function () {
+        $("#parent_id").selectpicker("val", $('#category_id').val());
+    })
+    @endif
+</script>

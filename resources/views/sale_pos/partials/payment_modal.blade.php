@@ -10,6 +10,9 @@
             </div>
             <div class="modal-body">
                 <div class="row">
+                    <div class="col-md-12 customer_name_div hide">
+                        <label for="" style="font-weight: bold">@lang('lang.customer'): <span class="customer_name"></span></label>
+                    </div>
                     <div class="col-md-10" style="padding: 15px ">
                         <div class="row">
                             <div class="col-md-6 mt-1">

@@ -17,6 +17,9 @@
                 <th>@lang('lang.mobile_number')</th>
                 <th>@lang('lang.address')</th>
                 <th>@lang('lang.joining_date')</th>
+                <th>@lang('lang.total_purchase')</th>
+                <th>@lang('lang.pending_orders')</th>
+                <th>@lang('lang.overdue_amount')</th>
                 <th>@lang('lang.created_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -29,6 +32,9 @@
                 <td>{{$supplier->mobile_number}}</td>
                 <td>{{$supplier->address}}</td>
                 <td>{{@format_date($supplier->created_at)}}</td>
+                <td>{{@num_format($supplier->total_purchase)}}</td>
+                <td>@if($supplier->pending_orders > 0) <a href="{{action('SupplierController@show', $supplier->id)}}?show=pending_orders" class=""> @lang('lang.yes') </a> @else @lang('lang.no') @endif</td>
+                <td>{{@num_format($supplier->total_invoice - $supplier->total_paid)}}</td>
                 <td>{{$supplier->created_by_user->name}}</td>
                 <td>
                     <div class="btn-group">
@@ -38,16 +44,24 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            {{-- @can('supplier_module.supplier.delete')
+                            @can('supplier_module.supplier.view')
                             <li>
 
-                                <a data-href="{{action('SupplierController@show', $supplier->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i
-                                        class="dripicons-document"></i> @lang('lang.view')</a>
+                                <a href="{{action('SupplierController@show', $supplier->id)}}"
+                                    class="btn"><i
+                                        class="fa fa-eye"></i> @lang('lang.view')</a>
                             </li>
                             <li class="divider"></li>
-                            @endcan --}}
-                            @can('supplier_module.supplier.edit')
+                            @endcan
+                            @can('supplier_module.supplier.view')
+                            <li>
+                                <a href="{{action('SupplierController@show', $supplier->id)}}?show=statement_of_account"
+                                    class="btn"><i
+                                        class="dripicons-document"></i> @lang('lang.statement_of_account')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @can('supplier_module.supplier.create_and_edit')
                             <li>
                                 <a href="{{action('SupplierController@edit', $supplier->id)}}"><i
                                     class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>

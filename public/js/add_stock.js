@@ -35,12 +35,36 @@ $(document).ready(function () {
                 .append("<div>" + item.text + "</div>")
                 .appendTo(ul);
         };
-
     }
 });
 
 function get_label_product_row(product_id, variation_id) {
-    if (product_id) {
+    //Get item addition method
+    var add_via_ajax = true;
+
+    var is_added = false;
+
+    //Search for variation id in each row of pos table
+    $("#product_table tbody")
+        .find("tr")
+        .each(function () {
+            var row_v_id = $(this).find(".variation_id").val();
+
+            if (row_v_id == variation_id && !is_added) {
+                add_via_ajax = false;
+                is_added = true;
+
+                //Increment product quantity
+                qty_element = $(this).find(".quantity");
+                var qty = __read_number(qty_element);
+                __write_number(qty_element, qty + 1);
+                qty_element.change;
+                calculate_sub_totals();
+                $("input#search_product").focus().select();
+            }
+        });
+
+    if (add_via_ajax) {
         var row_count = $("table#product_table tbody tr").length;
         $.ajax({
             method: "GET",
@@ -53,7 +77,7 @@ function get_label_product_row(product_id, variation_id) {
             },
             success: function (result) {
                 $("table#product_table tbody").append(result);
-                calculate_sub_totals()
+                calculate_sub_totals();
             },
         });
     }
@@ -61,23 +85,23 @@ function get_label_product_row(product_id, variation_id) {
 function calculate_sub_totals() {
     var total = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
-        let quantity = __read_number($(tr).find('.quantity'));
-        let purchase_price = __read_number($(tr).find('.purchase_price'));
+        let quantity = __read_number($(tr).find(".quantity"));
+        let purchase_price = __read_number($(tr).find(".purchase_price"));
         let sub_total = purchase_price * quantity;
-        __write_number($(tr).find('.sub_total'), sub_total);
-        $(tr).find('.sub_total_span').text(__currency_trans_from_en(sub_total, false))
-        total +=  sub_total;
+        __write_number($(tr).find(".sub_total"), sub_total);
+        $(tr)
+            .find(".sub_total_span")
+            .text(__currency_trans_from_en(sub_total, false));
+        total += sub_total;
     });
-console.log(total, 'total');
-    __write_number($('#final_total'), total);
-        $('.final_total_span').text(__currency_trans_from_en(total, false))
+
+    __write_number($("#final_total"), total);
+    $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
 
-$(document).on('change', '.quantity, .purchase_price', function (){
-    calculate_sub_totals()
-})
-$(document).on('click', '.remove_row', function (){
-    $(this).closest('tr').remove();
-
+$(document).on("change", ".quantity, .purchase_price", function () {
+    calculate_sub_totals();
 });
-
+$(document).on("click", ".remove_row", function () {
+    $(this).closest("tr").remove();
+});

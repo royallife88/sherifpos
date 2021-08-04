@@ -20,7 +20,7 @@
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
                 {!! Form::label('color_hex', __( 'lang.color_hex' ) . ':*') !!}
-                {!! Form::text('color_hex', null, ['class' => 'form-control', 'placeholder' => __( 'lang.color_hex' ), 'required' ]);
+                {!! Form::text('color_hex', null, ['class' => 'form-control', 'placeholder' => __( 'lang.color_hex' ) ]);
                 !!}
             </div>
         </div>

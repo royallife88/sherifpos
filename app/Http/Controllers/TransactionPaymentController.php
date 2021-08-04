@@ -113,6 +113,10 @@ class TransactionPaymentController extends Controller
             ];
         }
 
+        if (request()->ajax()) {
+            return $output;
+        }
+
         return redirect()->back()->with('status', $output);
     }
 

@@ -36,12 +36,10 @@ class ProductClassificationTreeController extends Controller
      */
     public function index()
     {
-        $json_tree = $this->productUtil->getProductClassificationTreeObject();
 
         $product_classes = ProductClass::get();
 
         return view('product_classification_tree.index')->with(compact(
-            'json_tree',
             'product_classes'
         ));
     }

@@ -57,9 +57,8 @@
                             <div class="accordion-inner">
                                 @php
                                 $i = 0;
-                                $categories = App\Models\Product::leftjoin('categories', 'products.category_id',
-                                'categories.id')->where('product_class_id', $class->id)->select('categories.id',
-                                'categories.name')->groupBy('category_id')->get();
+                                $categories = App\Models\Category::where('product_class_id', $class->id)->whereNotNull('categories.name')->select('categories.id',
+                                'categories.name')->groupBy('categories.id')->get();
                                 @endphp
                                 @foreach ($categories as $category)
                                 <div class="accordion" id="{{@replace_space($category->name.'_'.$i)}}"
@@ -90,10 +89,7 @@
                                             class="accordion-body collapse in">
                                             <div class="accordion-inner">
                                                 @php
-                                                $sub_categories = App\Models\Product::leftjoin('categories',
-                                                'products.sub_category_id', 'categories.id')->where('category_id',
-                                                $category->id)->select('categories.id',
-                                                'categories.name')->groupBy('sub_category_id')->get();
+                                                $sub_categories =  App\Models\Category::where('parent_id', $category->id)->whereNotNull('categories.name')->select('categories.id','categories.name')->groupBy('categories.id')->get();
                                                 @endphp
                                                 @foreach ($sub_categories as $sub_category)
                                                 <div class="accordion"
@@ -126,11 +122,8 @@
                                                             class="accordion-body collapse in">
                                                             <div class="accordion-inner">
                                                                 @php
-                                                                $brands = App\Models\Product::leftjoin('brands',
-                                                                'products.brand_id',
-                                                                'brands.id')->where('sub_category_id',
-                                                                $sub_category->id)->select('brands.id',
-                                                                'brands.name')->groupBy('brand_id')->get();
+                                                                $brands = App\Models\Brand::where('category_id',
+                                                                $sub_category->id)->select('brands.id', 'brands.name')->groupBy('brands.id')->get();
                                                                 @endphp
                                                                 @foreach ($brands as $brand)
                                                                 <div class="accordion"

@@ -26,7 +26,7 @@
             <span class="input-group-btn">
                 @can('product_module.category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('CategoryController@create')}}?quick_add=1"
+                    data-href="{{action('CategoryController@create')}}?quick_add=1&type=category"
                     data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
@@ -39,11 +39,11 @@
         <div class="input-group my-group">
             {!! Form::select('sub_category_id', [],
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
+            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.sub_category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('CategoryController@create')}}?quick_add=1"
+                    data-href="{{action('CategoryController@create')}}?quick_add=1&type=sub_category"
                     data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan

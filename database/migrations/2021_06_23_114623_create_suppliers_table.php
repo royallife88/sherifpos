@@ -23,7 +23,7 @@ class CreateSuppliersTable extends Migration
             $table->string('address');
             $table->string('city')->nullable();
             $table->string('state')->nullable();
-            $table->string('postal_code');
+            $table->string('postal_code')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

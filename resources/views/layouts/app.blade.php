@@ -258,7 +258,6 @@
     $(window).on("beforeunload", function(e) {
         let cash_register_id = $('#cash_register_id').val();
         let is_register_close = parseInt($('#is_register_close').val());
-        console.log(is_register_close, 'is_register_close');
         if(!is_register_close){
             getClosingModal(cash_register_id);
             return 'Please enter the closing cash';
@@ -275,7 +274,6 @@
             success: function(result) {
                 $('#closing_cash_modal').empty().append(result);
                 $('#closing_cash_modal').modal('show');
-                console.log( 'getClosingModal called', result);
             },
         });
     }
@@ -292,6 +290,9 @@
         }else{
             $('#logout-form').submit();
         }
+    })
+    $(document).on('click', '.close-btn-add-closing-cash', function(){
+        $('#logout-form').submit();
     })
     </script>
 </body>

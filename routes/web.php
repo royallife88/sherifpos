@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,6 +70,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('customer-type/get-product-point-row', 'CustomerTypeController@getProductPointRow');
     Route::resource('customer-type', CustomerTypeController::class);
 
+    Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
 
@@ -143,6 +145,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
         Route::get('get-same-job-employee-details/{id}', 'EmployeeController@getSameJobEmployeeDetails');
         Route::get('get-balance-leave-details/{id}', 'EmployeeController@getBalanceLeaveDetails');
         Route::get('get-employee-details-by-id/{id}', 'EmployeeController@getDetails');
+        Route::get('send-login-details/{employee_id}', 'EmployeeController@sendLoginDetails');
         Route::resource('employee', EmployeeController::class);
         Route::resource('leave-type', LeaveTypeController::class);
 

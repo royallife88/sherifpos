@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ProductClass;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -45,12 +46,16 @@ class CategoryController extends Controller
     public function create()
     {
         $quick_add = request()->quick_add ?? null;
+        $type = request()->type ?? null;
 
         $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+        $product_classes = ProductClass::pluck('name', 'id');
 
         return view('category.create')->with(compact(
+            'type',
             'quick_add',
-            'categories'
+            'categories',
+            'product_classes'
         ));
     }
 
@@ -129,10 +134,12 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+        $product_classes = ProductClass::pluck('name', 'id');
 
         return view('category.edit')->with(compact(
             'category',
-            'categories'
+            'categories',
+            'product_classes'
         ));
     }
 
@@ -204,7 +211,11 @@ class CategoryController extends Controller
 
     public function getDropdown()
     {
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+        if(!empty(request()->product_class_id)){
+            $categories = Category::where('product_class_id', request()->product_class_id)->pluck('name', 'id');
+        }else{
+            $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+        }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
 
         return $categories_dp;

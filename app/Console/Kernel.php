@@ -4,6 +4,7 @@ namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\DB;
 
 class Kernel extends ConsoleKernel
 {
@@ -24,7 +25,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
         $schedule->command('pos:createQuantityAlertNotification')
             ->daily();
         $schedule->command('pos:createExpiryProductNotification')
@@ -33,8 +33,12 @@ class Kernel extends ConsoleKernel
             ->daily();
         $schedule->command('pos:expenseDueNotify')
             ->daily();
+        $schedule->command('pos:reverseBlockQuantity')
+            ->daily();
+        $schedule->command('pos:changeQuotationStatusToExpire')
+            ->daily();
         $schedule->command('queue:work')
-            ->everyMinute();
+            ->everyMinute()->withoutOverlapping();
     }
 
     /**

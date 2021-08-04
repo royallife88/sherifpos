@@ -1,7 +1,7 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'add_payment_form' ])
+        {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' => 'add_payment_form' ])
         !!}
 
         <div class="modal-header">
@@ -37,7 +37,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-                        {!! Form::text('paid_on', null, ['class' => 'form-control datepicker', 'readonly',
+                        {!! Form::text('paid_on', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'readonly', 'required',
                         'placeholder' => __('lang.payment_date')]) !!}
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                 <div class="col-md-4 not_cash_fields hide">
                     <div class="form-group">
                         {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':', []) !!} <br>
-                        {!! Form::text('bank_deposit_date', null, ['class' => 'form-control not_cash datepicker',
+                        {!! Form::text('bank_deposit_date', @format_date(date('Y-m-d')), ['class' => 'form-control not_cash datepicker',
                         'readonly',
                         'placeholder' => __('lang.bank_deposit_date')]) !!}
                     </div>
@@ -87,7 +87,7 @@
 <script>
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker();
-    $('#method').change(function(){
+    $('#add_payment_form #method').change(function(){
         var method = $(this).val();
 
         if(method === 'cash'){

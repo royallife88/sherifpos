@@ -10,10 +10,12 @@ use App\Models\NumberOfLeave;
 use App\Models\Store;
 use App\Models\System;
 use App\Models\User;
+use App\Utils\NotificationUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -26,6 +28,7 @@ class EmployeeController extends Controller
      *
      */
     protected $commonUtil;
+    protected $notificationUtil;
 
     /**
      * Constructor
@@ -33,9 +36,10 @@ class EmployeeController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, NotificationUtil $notificationUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->notificationUtil = $notificationUtil;
     }
     /**
      * Display a listing of the resource.
@@ -128,6 +132,7 @@ class EmployeeController extends Controller
                 'employee_name' => $data['name'],
                 'user_id' => $user->id,
                 'store_id' => $data['store_id'],
+                'pass_string' => Crypt::encrypt($data['password']),
                 'date_of_start_working' => $data['date_of_start_working'],
                 'date_of_birth' => $data['date_of_birth'],
                 'job_type_id' => $data['job_type_id'],
@@ -150,6 +155,7 @@ class EmployeeController extends Controller
                 'check_out' => $data['check_out']
 
             ]);
+
 
             if ($request->hasFile('photo')) {
                 $employee->addMedia($request->photo)->toMediaCollection('employee_photo');
@@ -175,23 +181,9 @@ class EmployeeController extends Controller
                 }
             }
 
-            $from = System::getProperty('sender_email');
-            $app_name = env('APP_NAME');
-            // email data
-            $employee->pass_string = $data['password'];
-            $email_data = array(
-                'email' => $user->email,
-                'user' => $user,
-                'employee' => $employee,
-            );
-
-            // send email with the template
-            if ($request->submit == 'Send credentials') {
-                Mail::send('notification_template.welcom_message', $email_data, function ($message) use ($email_data, $from, $app_name) {
-                    $message->to($email_data['email'], $email_data['user']->name)
-                        ->subject('Welcome')
-                        ->from($from, $app_name);
-                });
+            // send email with the login details
+            if ($request->submit == 'Send Credentials') {
+                $this->notificationUtil->sendLoginDetails($employee->id);
             }
 
             DB::commit();
@@ -233,7 +225,44 @@ class EmployeeController extends Controller
      */
     public function show($id)
     {
-        //
+        $week_days = Employee::getWeekDays();
+        $payment_cycle = Employee::paymentCycle();
+        $commission_type = Employee::commissionType();
+        $commission_calculation_period = Employee::commissionCalculationPeriod();
+        $modulePermissionArray = User::modulePermissionArray();
+        $subModulePermissionArray = User::subModulePermissionArray();
+
+        $employee = Employee::leftjoin('users', 'employees.user_id', 'users.id')->where('employees.id', $id)->select('users.email', 'users.name', 'employees.*')->first();
+        $user = User::find($employee->user_id);
+        $jobs = JobType::getDropdown();
+        $stores = Store::getDropdown();
+        $customer_types = CustomerType::getDropdown();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
+
+
+        $number_of_leaves = LeaveType::leftjoin('number_of_leaves', function ($join) use ($id) {
+            $join->on('leave_types.id', 'number_of_leaves.leave_type_id')->where('employee_id', $id);
+        })
+            ->select('leave_types.id', 'leave_types.name', 'leave_types.number_of_days_per_year as number_of_days', 'number_of_leaves.enabled')
+            ->groupBy('leave_types.id')
+            ->get();
+
+        return view('employee.show')->with(compact(
+            'jobs',
+            'employee',
+            'stores',
+            'stores',
+            'customer_types',
+            'cashiers',
+            'week_days',
+            'payment_cycle',
+            'commission_type',
+            'commission_calculation_period',
+            'number_of_leaves',
+            'modulePermissionArray',
+            'subModulePermissionArray',
+            'user'
+        ));
     }
 
     /**
@@ -346,7 +375,7 @@ class EmployeeController extends Controller
                     'password' => 'required|confirmed|max:255',
                 ]);
                 $user_data['password'] = Hash::make($request->input('password'));
-                $employee_data['pass_string'] = $data['password'];
+                $employee_data['pass_string'] = Crypt::encrypt($data['password']);;
             }
 
             $employee = Employee::find($id);
@@ -504,5 +533,25 @@ class EmployeeController extends Controller
         return view('employee.partial.same_job_employee')->with(compact(
             'employees'
         ));
+    }
+
+    public function sendLoginDetails($employee_id)
+    {
+        try {
+            $this->notificationUtil->sendLoginDetails($employee_id);
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

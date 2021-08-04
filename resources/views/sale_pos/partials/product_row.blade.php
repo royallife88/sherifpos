@@ -19,13 +19,13 @@
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_type]" class="promotion_discount_type" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_type}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]" class="promotion_discount_amount" value="0">
     </td>
-    <td style="width: 15%">
+    <td style="width: 17%">
         <div class="input-group"><span class="input-group-btn">
                 <button type="button" class="btn btn-danger minus">
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-            <input type="text" class="form-control quantity  qty numkey input-number" min=1
+            <input type="text" class="form-control quantity  qty numkey input-number" min=1 max="{{$product->qty_available}}"
                 name="transaction_sell_line[{{$loop->index + $index}}][quantity]" required
                 value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
             <span class="input-group-btn">
@@ -41,7 +41,7 @@
             name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
             value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
     </td>
-    <td style="width: 15%">
+    <td style="width: 13%">
         <input type="hidden" class="form-control product_discount_type"
             name="transaction_sell_line[{{$loop->index + $index}}][product_discount_type]"
             value="@if(!empty($product_discount_details->discount_type)){{$product_discount_details->discount_type}}@else{{0}}@endif">

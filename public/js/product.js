@@ -110,6 +110,7 @@ myDropzone = new Dropzone("div#my-dropzone", {
                             if (response.success) {
                                 swal("Success", response.msg, "success");
                             }
+
                         },
                         error: function (response) {
                             if (!response.success) {
@@ -122,6 +123,8 @@ myDropzone = new Dropzone("div#my-dropzone", {
         });
 
         this.on("sending", function (file, xhr, formData) {
+            document.getElementById("loader").style.display = "block";
+            document.getElementById("content").style.display = "none";
             var data = $("#product-form").serializeArray();
             $.each(data, function (key, el) {
                 formData.append(el.name, el.value);
@@ -129,6 +132,7 @@ myDropzone = new Dropzone("div#my-dropzone", {
         });
         this.on("complete", function (file) {
             this.removeAllFiles(true);
+            myFunction();
         });
     },
     error: function (file, response) {
@@ -197,7 +201,7 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
                 sub_category_id = result.sub_category_id;
                 $.ajax({
                     method: "get",
-                    url: "/category/get-dropdown",
+                    url: "/category/get-dropdown?product_class_id="+$("#product_class_id").val(),
                     data: {},
                     contactType: "html",
                     success: function (data_html) {
@@ -218,6 +222,27 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
     });
 });
 
+$(document).on("change", "#product_class_id", function () {
+    $.ajax({
+        method: "get",
+        url:
+            "/category/get-dropdown?product_class_id=" +
+            $("#product_class_id").val(),
+        data: {},
+        contentType: "html",
+        success: function (result) {
+            $("#category_id").empty().append(result).change();
+            $("#category_id").selectpicker("refresh");
+
+            if (category_id) {
+                $("#category_id").selectpicker("val", category_id);
+            }
+        },
+    });
+});
+$(document).on("change", "#sub_category_id", function () {
+    get_brand_dropdown();
+});
 $(document).on("change", "#category_id", function () {
     $.ajax({
         method: "get",
@@ -233,10 +258,11 @@ $(document).on("change", "#category_id", function () {
             if (sub_category_id) {
                 $("#sub_category_id").selectpicker("val", sub_category_id);
             }
+            get_brand_dropdown()
         },
     });
 });
-
+var brand_id = null;
 $(document).on("submit", "form#quick_add_brand_form", function (e) {
     e.preventDefault();
     var data = new FormData(this);
@@ -251,24 +277,32 @@ $(document).on("submit", "form#quick_add_brand_form", function (e) {
             if (result.success) {
                 swal("Success", result.msg, "success");
                 $(".view_modal").modal("hide");
-                var brand_id = result.brand_id;
-                $.ajax({
-                    method: "get",
-                    url: "/brand/get-dropdown",
-                    data: {},
-                    contactType: "html",
-                    success: function (data_html) {
-                        $("#brand_id").empty().append(data_html);
-                        $("#brand_id").selectpicker("refresh");
-                        $("#brand_id").selectpicker("val", brand_id);
-                    },
-                });
+                brand_id = result.brand_id;
+                get_brand_dropdown();
             } else {
                 swal("Error", result.msg, "error");
             }
         },
     });
 });
+
+function get_brand_dropdown(){
+    let category_id = $('#category_id').val();
+    let sub_category_id = $('#sub_category_id').val();
+    $.ajax({
+        method: "get",
+        url: "/brand/get-dropdown?category_id=" + category_id + '&sub_category_id='+sub_category_id,
+        data: {},
+        contactType: "html",
+        success: function (data_html) {
+            $("#brand_id").empty().append(data_html);
+            $("#brand_id").selectpicker("refresh");
+            if(brand_id){
+                $("#brand_id").selectpicker("val", brand_id);
+            }
+        },
+    });
+}
 $(document).on("submit", "form#quick_add_tax_form", function (e) {
     e.preventDefault();
     var data = new FormData(this);

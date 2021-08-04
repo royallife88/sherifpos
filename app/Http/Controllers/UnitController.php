@@ -65,8 +65,7 @@ class UnitController extends Controller
 
         $this->validate(
             $request,
-            ['name' => ['required', 'max:255']],
-            ['unit_code' => ['required', 'max:255']]
+            ['name' => ['required', 'max:255']]
         );
 
         try {

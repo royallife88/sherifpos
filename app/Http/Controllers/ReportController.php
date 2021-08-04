@@ -803,7 +803,7 @@ class ReportController extends Controller
         })->leftjoin('add_stock_lines as pl', function ($join) {
             $join->on('transactions.id', 'pl.transaction_id');
         })
-            ->leftjoin('products as p', function ($join) {
+            ->join('products as p', function ($join) {
                 $join->on('pl.product_id', 'p.id')
                     ->orOn('tsl.product_id', 'p.id');
             })
@@ -1184,49 +1184,47 @@ class ReportController extends Controller
      */
     public function getPurchaseReport(Request $request)
     {
-        $query = Transaction::leftjoin('add_stock_lines as pl', function ($join) {
-            $join->on('transactions.id', 'pl.transaction_id');
-        })
-            ->leftjoin('products as p', function ($join) {
-                $join->on('pl.product_id', 'p.id');
-            })
-            ->leftjoin('product_stores', 'p.id', 'product_stores.product_id')
-            ->whereIn('transactions.type', ['add_stock'])
-            ->where('transactions.payment_status', 'paid')
-            ->whereIn('transactions.status', ['received']);
+        $products = Product::pluck('name', 'id');
 
-        if (!empty($request->start_date)) {
-            $query->where('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $query->where('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty($request->customer_id)) {
-            $query->where('transactions.customer_id', $request->customer_id);
-        }
-        if (!empty($request->customer_type_id)) {
-            $query->where('customer_type_id', $request->customer_type_id);
-        }
-        if (!empty($request->store_id)) {
-            $query->where('transactions.store_id', $request->store_id);
-        }
-        if (!empty($request->pos_id)) {
-            $query->where('store_pos_id', $request->pos_id);
-        }
-        if (!empty($request->product_id)) {
-            $query->where('pl.product_id', $request->product_id);
-        }
+        $transactions = [];
+        foreach($products as $key => $value){
+            $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            ->where('add_stock_lines.product_id', $key);
 
-        $transactions = $query->select(
-            DB::raw("SUM(IF(transactions.type='add_stock', final_total, 0)) as purchased_amount"),
-            DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
-            DB::raw('SUM(product_stores.qty_available) as in_stock'),
-            'p.name as product_name'
-        )->groupBy('p.id')->get();
+            if (!empty($request->start_date)) {
+                $query->where('transaction_date', '>=', $request->start_date);
+            }
+            if (!empty($request->end_date)) {
+                $query->where('transaction_date', '<=', $request->end_date);
+            }
+            if (!empty($request->customer_id)) {
+                $query->where('transactions.customer_id', $request->customer_id);
+            }
+            if (!empty($request->customer_type_id)) {
+                $query->where('customer_type_id', $request->customer_type_id);
+            }
+            if (!empty($request->store_id)) {
+                $query->where('transactions.store_id', $request->store_id);
+            }
+            if (!empty($request->pos_id)) {
+                $query->where('store_pos_id', $request->pos_id);
+            }
+            if (!empty($request->product_id)) {
+                $query->where('add_stock_lines.product_id', $request->product_id);
+            }
+
+            $trans = $query->select(
+                DB::raw('SUM(add_stock_lines.sub_total) as total_purchase'),
+                DB::raw('SUM(add_stock_lines.quantity) as total_qty'),
+                DB::raw("(SELECT SUM(qty_available) FROM product_stores WHERE add_stock_lines.product_id=product_stores.product_id) as in_stock")
+            )->groupBy('add_stock_lines.product_id')->first();
+
+            $transactions[$key] = $trans;
+        }
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+
 
         return view('reports.purchase_report')->with(compact(
             'transactions',

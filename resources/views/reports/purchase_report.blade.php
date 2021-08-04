@@ -69,22 +69,33 @@
                         </thead>
 
                         <tbody>
-                            @foreach ($transactions as $transaction)
+                            @php
+                                $purchased_amount = 0;
+                                $purchased_qty = 0;
+                                $in_stock = 0;
+                            @endphp
+                            @foreach ($products as $key => $value)
+                            @if(!empty($transactions[$key]))
                             <tr>
-                                <td>{{$transaction->product_name}}</td>
-                                <td> {{@num_format($transaction->purchased_amount)}}</td>
-                                <td> {{@num_format($transaction->purchased_qty)}}</td>
-                                <td> {{@num_format($transaction->in_stock)}}</td>
+                                <td>{{$value}}</td>
+                                <td> {{@num_format($transactions[$key]->total_purchase)}}</td>
+                                <td> {{@num_format($transactions[$key]->total_qty)}}</td>
+                                <td> {{@num_format($transactions[$key]->in_stock)}}</td>
                             </tr>
-
+                            @php
+                                $purchased_amount += $transactions[$key]->total_purchase;
+                                $purchased_qty += $transactions[$key]->total_qty;
+                                $in_stock += $transactions[$key]->in_stock;
+                            @endphp
+                            @endif
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th colspan="" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($transactions->sum('purchased_amount'))}}</th>
-                                <th>{{@num_format($transactions->sum('purchased_qty'))}}</th>
-                                <th>{{@num_format($transactions->sum('in_stock'))}}</th>
+                                <th>{{@num_format($purchased_amount)}}</th>
+                                <th>{{@num_format($purchased_qty)}}</th>
+                                <th>{{@num_format($in_stock)}}</th>
                             </tr>
                         </tfoot>
                     </table>

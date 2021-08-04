@@ -66,7 +66,6 @@ class ColorController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['color_hex' => ['required', 'max:255']]
         );
 
         try {

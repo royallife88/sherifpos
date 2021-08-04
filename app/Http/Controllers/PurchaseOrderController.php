@@ -138,8 +138,6 @@ class PurchaseOrderController extends Controller
 
             $this->productUtil->createOrUpdatePurchaseOrderLines($request->purchase_order_lines, $transaction);
 
-            DB::commit();
-
             if ($data['submit'] == 'sent_admin') {
                 $superadmins = User::where('is_superadmin', 1)->get();
                 $notification_data = [
@@ -164,6 +162,7 @@ class PurchaseOrderController extends Controller
             if ($data['submit'] == 'sent_supplier') {
                 $this->notificationUtil->sendPurchaseOrderToSupplier($transaction->id);
             }
+            DB::commit();
 
             $output = [
                 'success' => true,

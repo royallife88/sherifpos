@@ -191,7 +191,7 @@
         if(supplier_id){
             $.ajax({
                 method: 'get',
-                url: '/supplier/'+supplier_id+'?is_purchase_order=1',
+                url: '/supplier/get-details/'+supplier_id+'?is_purchase_order=1',
                 data: {  },
                 contentType: 'html',
                 success: function(result) {

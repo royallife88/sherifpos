@@ -17,6 +17,12 @@
                 !!}
             </div>
             <div class="form-group">
+                {!! Form::label('category_id', __( 'lang.category' ) . ':') !!}
+                {!! Form::select('category_id', $categories,
+                $brand->category_id, ['class' => 'form-control selectpicker', 'data-live-search'=>"true",
+                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'id' => 'brand_category_id']) !!}
+            </div>
+            <div class="form-group">
                 {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
                 {!! Form::file('image', ['class' => '' ]) !!}
             </div>
@@ -31,3 +37,6 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+<script>
+    $('#brand_category_id').selectpicker('render')
+</script>

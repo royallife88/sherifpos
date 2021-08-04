@@ -13,6 +13,7 @@ use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class CashRegisterController extends Controller
 {
@@ -104,7 +105,14 @@ class CashRegisterController extends Controller
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('brand');
             }
         } catch (\Exception $e) {
-            \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+
+            return redirect()->back()->with('status', $output);
         }
 
         return redirect()->action('SellPosController@create');

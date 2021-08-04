@@ -59,7 +59,7 @@
         <div class="modal-footer">
             <button type="submit" name="submit" class="btn btn-primary hide" value="adjustment" id="adjust-btn">@lang( 'lang.adjustment' )</button>
             <button type="submit" name="submit" class="btn btn-primary" value="save" id="closing-save-btn">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
+            <button type="button" class="btn btn-default close-btn-add-closing-cash">@lang( 'lang.close' )</button>
         </div>
 
         {!! Form::close() !!}

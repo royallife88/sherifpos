@@ -1,7 +1,7 @@
 @forelse ($products->chunk(5) as $chunk)
 <tr>
     @foreach ($chunk as $product)
-    <td class="product-img sound-btn filter_product_add" data-qty_available="{{$product->qty_available}}" data-product_id="{{$product->id}}" data-variation_id="{{$product->variation_id}}" title="{{$product->name}}"
+    <td class="product-img sound-btn filter_product_add" data-is_service="{{$product->is_service}}" data-qty_available="{{$product->qty_available-$product->block_qty}}" data-product_id="{{$product->id}}" data-variation_id="{{$product->variation_id}}" title="{{$product->name}}"
         data-product="{{$product->name . ' (' . $product->variation_name . ')'}}">
         <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
             width="100%" />

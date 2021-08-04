@@ -90,7 +90,7 @@
                                         <td>
                                             @foreach ($sale->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($sale->final_total)}}</td>
@@ -139,7 +139,7 @@
                                         <td>
                                             @foreach ($add_stock->add_stock_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($add_stock->final_total)}}</td>
@@ -188,7 +188,7 @@
                                         <td>
                                             @foreach ($quotation->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($quotation->final_total)}}</td>
@@ -243,7 +243,7 @@
                                                 @continue
                                                 @endif
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($return->final_total)}}</td>

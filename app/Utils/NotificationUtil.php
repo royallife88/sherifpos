@@ -1,14 +1,20 @@
 <?php
+
 namespace App\Utils;
 
 use App\Models\Customer;
+use App\Models\Employee;
 use App\Models\Notification as ModelsNotification;
 use App\Models\Supplier;
+use App\Models\System;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Notifications\PurchaseOrderToSupplierNotification;
 use App\Notifications\QuotationToCustomerNotification;
 use App\Utils\Util;
+use Illuminate\Support\Facades\Crypt;
 use Notification;
+use Illuminate\Support\Facades\Mail;
 
 class NotificationUtil extends Util
 {
@@ -116,5 +122,32 @@ class NotificationUtil extends Util
         ]);
 
         return true;
+    }
+
+    /**
+     * send login details to user by main
+     *
+     * @param int $employee_id
+     * @return void
+     */
+    public function sendLoginDetails($employee_id)
+    {
+        $from = System::getProperty('sender_email');
+        $app_name = env('APP_NAME');
+        // email data
+        $employee = Employee::find($employee_id);
+        $user = User::find($employee->user_id);
+        $employee->pass_string = Crypt::decrypt($employee->pass_string);
+        $email_data = array(
+            'email' => $user->email,
+            'user' => $user,
+            'employee' => $employee,
+        );
+
+        Mail::send('notification_template.welcom_message', $email_data, function ($message) use ($email_data, $from, $app_name) {
+            $message->to($email_data['email'], $email_data['user']->name)
+                ->subject('Welcome')
+                ->from($from, $app_name);
+        });
     }
 }

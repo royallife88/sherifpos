@@ -66,7 +66,6 @@ class SizeController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['size_code' => ['required', 'max:255']]
         );
 
         try {

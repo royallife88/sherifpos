@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Category;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -47,10 +48,12 @@ class BrandController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $brands = Brand::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
 
         return view('brand.create')->with(compact(
             'quick_add',
-            'brands'
+            'brands',
+            'categories'
         ));
     }
 
@@ -122,10 +125,12 @@ class BrandController extends Controller
     {
         $brand = Brand::find($id);
         $brands = Brand::pluck('name', 'id');
+        $categories = Category::pluck('name', 'id');
 
         return view('brand.edit')->with(compact(
             'brand',
-            'brands'
+            'brands',
+            'categories'
         ));
     }
 
@@ -197,7 +202,14 @@ class BrandController extends Controller
 
     public function getDropdown()
     {
-        $brand = Brand::pluck('name', 'id');
+        if (!empty(request()->sub_category_id)) {
+            $brand = Brand::where('category_id', request()->sub_category_id)->pluck('name', 'id');
+        } else if (!empty(request()->category_id)) {
+            $brand = Brand::where('category_id', request()->category_id)->pluck('name', 'id');
+        } else {
+            $brand = Brand::pluck('name', 'id');
+        }
+
         $brand_dp = $this->commonUtil->createDropdownHtml($brand, 'Please Select');
 
         return $brand_dp;

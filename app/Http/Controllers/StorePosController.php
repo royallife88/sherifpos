@@ -55,7 +55,7 @@ class StorePosController extends Controller
 
         );
 
-        $store_poses = $query->groupBy('transactions.store_pos_id')->get();
+        $store_poses = $query->groupBy('store_pos.id')->get();
 
         return view('store_pos.index')->with(compact(
             'store_poses'

@@ -20,7 +20,7 @@
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
                 {!! Form::label('size_code', __( 'lang.size_code' ) . ':*') !!}
-                {!! Form::text('size_code', null, ['class' => 'form-control', 'placeholder' => __( 'lang.size_code' ), 'required' ]);
+                {!! Form::text('size_code', null, ['class' => 'form-control', 'placeholder' => __( 'lang.size_code' )]);
                 !!}
             </div>
         </div>

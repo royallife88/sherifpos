@@ -66,7 +66,7 @@
                                     !!}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            {{-- <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('fixed_discount', __( 'lang.fixed_discount' ) . ':') !!}
                                     {!! Form::text('fixed_discount', $customer->fixed_discount, ['class' => 'form-control', 'placeholder' =>
@@ -83,7 +83,7 @@
                                     'lang.balance' ) ]);
                                     !!}
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
 
 

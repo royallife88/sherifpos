@@ -169,6 +169,11 @@ class AddStockController extends Controller
 
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
+
+            //update purchase order status if selected
+            if (!empty($transaction->purchase_order_id)) {
+                Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);
+            }
             DB::commit();
 
             if ($data['submit'] == 'print') {
@@ -316,7 +321,10 @@ class AddStockController extends Controller
 
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
-
+            //update purchase order status if selected
+            if (!empty($transaction->purchase_order_id)) {
+                Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);
+            }
             DB::commit();
 
             if ($data['submit'] == 'print') {

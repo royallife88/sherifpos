@@ -52,7 +52,7 @@ class CreateQuantityAlertNotification extends Command
     {
         $query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id')
             ->select(DB::raw('SUM(qty_available) as qty'), 'products.*')
-            ->having('qty', '<', 'alert_quantity');
+            ->havingRaw('qty < alert_quantity');
 
         $items = $query->groupBy('products.id')->get();
 

@@ -95,6 +95,7 @@ class CustomerController extends Controller
     {
         $this->validate(
             $request,
+            ['name' => ['required', 'max:255']],
             ['mobile_number' => ['required', 'max:255']],
             ['customer_type_id' => ['required', 'max:255']]
         );
@@ -243,6 +244,7 @@ class CustomerController extends Controller
     {
         $this->validate(
             $request,
+            ['name' => ['required', 'max:255']],
             ['mobile_number' => ['required', 'max:255']],
             ['customer_type_id' => ['required', 'max:255']]
         );

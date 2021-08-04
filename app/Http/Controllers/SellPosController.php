@@ -160,7 +160,7 @@ class SellPosController extends Controller
                 $transaction_data['status'] = 'draft';
                 $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('quotation');
                 $transaction_data['block_qty'] = !empty($request->block_qty) ? 1 : 0;
-                $transaction_data['block_for_days'] = !empty($request->block_for_days) ? $request->block_for_days : 0; //TODO:: create commond to change these column
+                $transaction_data['block_for_days'] = !empty($request->block_for_days) ? $request->block_for_days : 0; //reverse the block qty handle by command using cron job
                 $transaction_data['validity_days'] = !empty($request->validity_days) ? $request->validity_days : 0;
             }
             $transaction = Transaction::create($transaction_data);
@@ -170,7 +170,10 @@ class SellPosController extends Controller
             foreach ($request->transaction_sell_line as $sell_line) {
                 if (empty($sell_line['transaction_sell_line_id'])) {
                     if ($transaction->status == 'final') {
-                        $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+                        $product = Product::find($sell_line['product_id']);
+                        if(!$product->is_service){
+                            $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
+                        }
                     }
                 }
             }
@@ -394,6 +397,9 @@ class SellPosController extends Controller
                 $query->whereIn('products.id',  $sp_product_ids);
             }
         }
+        if(!empty($request->store_id)){
+            $query->where('product_stores.store_id', $request->store_id);
+        }
 
         $query->addSelect(
             'products.*',
@@ -401,6 +407,7 @@ class SellPosController extends Controller
             'variations.name as variation_name',
             'variations.sub_sku',
             'product_stores.qty_available',
+            'product_stores.block_qty',
         );
         $products = $query->groupBy('variations.id')->get();
 
@@ -442,11 +449,12 @@ class SellPosController extends Controller
                     'products.id as product_id',
                     'products.name',
                     'products.type',
-                    // 'products.sku as sku',
+                    'products.is_service',
                     'variations.id as variation_id',
                     'variations.name as variation',
                     'variations.sub_sku as sub_sku',
-                    DB::raw('(product_stores.qty_available - product_stores.block_qty) as qty')
+                    'product_stores.qty_available',
+                    'product_stores.block_qty',
                 );
 
             if (!empty(request()->store_id)) {
@@ -460,7 +468,8 @@ class SellPosController extends Controller
                 $products_array[$product->product_id]['name'] = $product->name;
                 $products_array[$product->product_id]['sku'] = $product->sub_sku;
                 $products_array[$product->product_id]['type'] = $product->type;
-                $products_array[$product->product_id]['qty'] = $this->productUtil->num_uf($product->qty);
+                $products_array[$product->product_id]['is_service'] = $product->is_service;
+                $products_array[$product->product_id]['qty'] = $this->productUtil->num_uf($product->qty_available - $product->block_qty);
                 $products_array[$product->product_id]['variations'][]
                     = [
                         'variation_id' => $product->variation_id,
@@ -480,7 +489,8 @@ class SellPosController extends Controller
                             'text' => $value['name'] . ' - ' . $value['sku'],
                             'variation_id' => 0,
                             'product_id' => $key,
-                            'qty_available' => $value['qty']
+                            'qty_available' => $value['qty'],
+                            'is_service' => $value['is_service']
                         ];
                     }
                     $name = $value['name'];
@@ -497,7 +507,8 @@ class SellPosController extends Controller
                             'text' => $text . ' - ' . $variation['sub_sku'],
                             'product_id' => $key,
                             'variation_id' => $variation['variation_id'],
-                            'qty_available' => $value['qty']
+                            'qty_available' => $value['qty'],
+                            'is_service' => $value['is_service']
                         ];
                     }
                     $i++;

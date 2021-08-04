@@ -61,6 +61,7 @@ function getFilterProductRightSide() {
     var expiry_filter = getFilterCheckboxValue("expiry_filter");
     var sale_promo_filter = getFilterCheckboxValue("sale_promo_filter");
     var sorting_filter = getFilterCheckboxValue("sorting_filter");
+    var store_id = $('#store_id').val();
 
     $.ajax({
         method: "get",
@@ -71,6 +72,7 @@ function getFilterProductRightSide() {
             expiry_filter,
             sale_promo_filter,
             sorting_filter,
+            store_id,
         },
         contentType: "html",
         success: function (result) {
@@ -111,14 +113,21 @@ $(document).ready(function () {
                     }
                 },
                 select: function (event, ui) {
-                    if (ui.item.qty_available > 0) {
-                        $(this).val(null);
+                    if(!ui.item.is_service){
+                        if (ui.item.qty_available > 0) {
+                            $(this).val(null);
+                            get_label_product_row(
+                                ui.item.product_id,
+                                ui.item.variation_id
+                            );
+                        } else {
+                            alert("Out of Stock");
+                        }
+                    }else{
                         get_label_product_row(
                             ui.item.product_id,
                             ui.item.variation_id
                         );
-                    } else {
-                        alert("Out of Stock");
                     }
                 },
             })
@@ -412,11 +421,14 @@ $(document).on("click", ".minus", function () {
 $(document).on("click", ".plus", function () {
     let tr = $(this).closest("tr");
     let qty = parseFloat($(tr).find(".quantity").val());
+    let max = parseFloat($(tr).find(".quantity").attr('max'));
+
     let new_qty = qty + 1;
-    if (new_qty < 0.1) {
+    if (new_qty < 0.1 || new_qty > max) {
         return;
     }
-    $(tr).find(".quantity").val(new_qty).change();
+    $(tr).find(".quantity").val(new_qty);
+    $(tr).find(".quantity").trigger('change');
 });
 
 $(document).on("submit", "form#quick_add_customer_form", function (e) {
@@ -506,8 +518,10 @@ $(document).on("click", ".payment-btn", function (e) {
         $("#method").val('cash');
         $("#method").selectpicker("refresh");
         $("#method").change();
+        $('.customer_name_div').removeClass('hide');
     } else {
         $(".deposit-fields").addClass("hide");
+        $('.customer_name_div').addClass('hide');
     }
     if (method === "cheque") {
         $(".cheque_field").removeClass("hide");
@@ -772,13 +786,18 @@ function confirmCancel() {
 
 $(document).on("click", "td.filter_product_add", function () {
     let qty_available = parseFloat($(this).data('qty_available'));
-    if(qty_available > 0){
-        let product_id = $(this).data("product_id");
+    let is_service = parseInt($(this).data('is_service'));
+    let product_id = $(this).data("product_id");
+    let variation_id = $(this).data("variation_id");
 
-        let variation_id = $(this).data("variation_id");
-        get_label_product_row(product_id, variation_id);
+    if(!is_service){
+        if(qty_available > 0){
+            get_label_product_row(product_id, variation_id);
+        }else{
+            alert('Out of stock');
+        }
     }else{
-        alert('Out of stock');
+        get_label_product_row(product_id, variation_id);
     }
 });
 
@@ -966,3 +985,24 @@ $(document).on("change", "#deliveryman_id", function () {
 $(document).on("change", "#terms_and_condition_id", function () {
     console.log($(this).val());
 });
+
+
+$(document).on('submit', 'form#add_payment_form', function (e){
+    e.preventDefault();
+    let data = $(this).serialize();
+
+    $.ajax({
+        method: 'post',
+        url: $(this).attr('action'),
+        data: data,
+        success: function(result) {
+            if(result.success){
+                swal("Success", result.msg, "success");
+            }else{
+                swal("Error", result.msg, "error");
+            }
+            $('.view_modal').modal('hide');
+            get_recent_transactions();
+        },
+    });
+})

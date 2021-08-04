@@ -59,7 +59,7 @@
                                     {!! Form::select('sub_category_id', $sub_categories,
                                     $product->sub_category_id, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
-                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.sub_category.create_and_edit')
                                         <button class="btn-modal btn btn-default bg-white btn-flat"

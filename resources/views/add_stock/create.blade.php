@@ -119,7 +119,7 @@
                                     {!! Form::label('transaction_date', __('lang.date'). ':*', []) !!} <br>
                                     {!! Form::text('transaction_date', null, ['class' => 'form-control datepicker',
                                     'required',
-                                    'readonly', 'placeholder' => __('lang.date')]) !!}
+                                     'placeholder' => __('lang.date')]) !!}
                                 </div>
                             </div>
 
@@ -140,7 +140,7 @@
                                 <div class="form-group">
                                     {!! Form::label('due_date', __('lang.due_date'). ':', []) !!} <br>
                                     {!! Form::text('due_date', !empty($payment) ? $payment->due_date : null, ['class' =>
-                                    'form-control datepicker', 'readonly',
+                                    'form-control datepicker',
                                     'placeholder' => __('lang.due_date')]) !!}
                                 </div>
                             </div>
@@ -253,6 +253,8 @@
         if(payment_status === 'paid' || payment_status === 'partial'){
             $('.not_cash_fields').addClass('hide');
             $('#method').change();
+            $('#method').attr('required', true);
+            $('#paid_on').attr('required', true);
             $('.payment_fields').removeClass('hide');
         }else{
             $('.payment_fields').addClass('hide');
@@ -265,6 +267,10 @@
         if(payment_status === 'pending'){
             $('.not_cash_fields').addClass('hide');
             $('.not_cash').attr('required', false);
+            $('#method').attr('required', false);
+            $('#paid_on').attr('required', false);
+        }else{
+            $('#method').attr('required', true);
         }
         if(payment_status === 'paid'){
             $('.due_fields').addClass('hide');

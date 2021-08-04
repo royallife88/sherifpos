@@ -161,7 +161,7 @@
                                         <td>
                                             @foreach ($discount->transaction_sell_lines as $line)
                                             ({{@num_format($line->quantity)}})
-                                            {{App\Models\Product::find($line->product_id)->name}} <br>
+                                            @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
                                         </td>
                                         <td>{{@num_format($discount->final_total)}}</td>

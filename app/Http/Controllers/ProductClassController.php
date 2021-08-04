@@ -6,6 +6,7 @@ use App\Models\ProductClass;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class ProductClassController extends Controller
 {
@@ -59,11 +60,18 @@ class ProductClassController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate(
-            $request,
-            ['name' => ['required', 'max:255']]
-        );
-
+        $validator = Validator::make($request->all(), [
+            'name' => ['required', 'max:255', 'unique:product_classes,name']
+        ]);
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json(array(
+                    'success' => false,
+                    'message' => 'There are incorect values in the form!',
+                    'msg' => $validator->getMessageBag()->first()
+                ));
+            }
+        }
         try {
             $data = $request->except('_token', 'quick_add');
 
