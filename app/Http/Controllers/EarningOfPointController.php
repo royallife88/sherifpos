@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CustomerType;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\Store;
 use App\Models\Transaction;
 use App\Utils\ProductUtil;
@@ -62,11 +63,13 @@ class EarningOfPointController extends Controller
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::get();
 
         return view('earning_of_point.create')->with(compact(
             'stores',
             'products',
-            'customer_types'
+            'customer_types',
+            'product_classes'
         ));
     }
 
@@ -78,12 +81,10 @@ class EarningOfPointController extends Controller
      */
     public function store(Request $request)
     {
-
         $this->validate(
             $request,
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
             ['points_on_per_amount' => ['required', 'max:255']],
         );
 
@@ -91,6 +92,9 @@ class EarningOfPointController extends Controller
             $data = $request->except('_token');
             $data['created_by'] = Auth::user()->id;
             $data['number'] = $this->productUtil->getNumberByType('earning_of_point');
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
+
             DB::beginTransaction();
 
             $earning_of_point = EarningOfPoint::create($data);
@@ -139,12 +143,16 @@ class EarningOfPointController extends Controller
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $pct_data = $earning_of_point->pct_data;
 
         return view('earning_of_point.edit')->with(compact(
             'earning_of_point',
             'stores',
             'products',
-            'customer_types'
+            'customer_types',
+            'product_classes',
+            'pct_data'
         ));
     }
 
@@ -161,12 +169,13 @@ class EarningOfPointController extends Controller
             $request,
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
             ['points_on_per_amount' => ['required', 'max:255']],
         );
 
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->except('_token', '_method', 'pct');
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
             DB::beginTransaction();
 
             EarningOfPoint::where('id', $id)->update($data);

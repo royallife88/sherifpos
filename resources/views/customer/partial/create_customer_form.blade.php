@@ -11,7 +11,7 @@
         <div class="form-group">
             {!! Form::label('name', __( 'lang.name' ). ':*' ) !!}
             {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __(
-            'lang.name' ), 'required' ]);
+            'lang.name' ) ]);
             !!}
         </div>
     </div>
@@ -46,23 +46,5 @@
             !!}
         </div>
     </div>
-    {{-- <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('fixed_discount', __( 'lang.fixed_discount' ) . ':') !!}
-            {!! Form::text('fixed_discount', null, ['class' => 'form-control', 'placeholder' =>
-            __(
-            'lang.fixed_discount' ) ]);
-            !!}
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="form-group">
-            {!! Form::label('opening_balance', __( 'lang.balance' ) . ':') !!}
-            {!! Form::text('opening_balance', null, ['class' => 'form-control', 'placeholder' =>
-            __(
-            'lang.balance' ) ]);
-            !!}
-        </div>
-    </div> --}}
 </div>
 <input type="hidden" name="quick_add" value="{{$quick_add}}">

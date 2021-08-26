@@ -19,7 +19,7 @@
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_type]" class="promotion_discount_type" value="@if(!empty($sale_promotion_details)){{$sale_promotion_details->discount_type}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]" class="promotion_discount_amount" value="0">
     </td>
-    <td style="width: 17%">
+    <td style="width: 22%">
         <div class="input-group"><span class="input-group-btn">
                 <button type="button" class="btn btn-danger minus">
                     <span class="dripicons-minus"></span>
@@ -27,7 +27,7 @@
             </span>
             <input type="text" class="form-control quantity  qty numkey input-number" min=1 max="{{$product->qty_available}}"
                 name="transaction_sell_line[{{$loop->index + $index}}][quantity]" required
-                value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
+                value="@if(!empty($edit_quantity)){{$edit_quantity}}@else @if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif @endif">
             <span class="input-group-btn">
                 <button type="button" class="btn btn-success plus">
                     <span class="dripicons-plus"></span>
@@ -57,7 +57,7 @@
         <input type="hidden" class="form-control sub_total"
             name="transaction_sell_line[{{$loop->index + $index}}][sub_total]" value="">
     </td>
-    <td style="width: 15%">
+    <td style="width: 10%">
         <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-danger btn-sx quick_add_purchase_order" title="@lang('lang.add_draft_purchase_order')" data-href="{{action('PurchaseOrderController@quickAddDraft')}}?variation_id={{$product->variation_id}}&product_id={{$product->product_id}}" ><i class="fa fa-plus"></i> @lang('lang.po')</button>
     </td>

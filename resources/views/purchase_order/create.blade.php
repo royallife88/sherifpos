@@ -14,11 +14,11 @@
                     'purchase_order_form']) !!}
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3">
+                            <div class="col-md-3 @if(!session('user.is_superadmin')) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,
-                                    null, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                                    session('user.store_id'), ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
                                     'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>

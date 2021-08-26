@@ -3,38 +3,51 @@
 
 @section('content')
 <section class="">
-    <div class="col-md-12 card pt-3 pb-3">
-        <form action="">
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
-                        {!! Form::select('supplier_id', $suppliers, request()->supplier_id, ['class' =>
-                        'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                    </div>
-                </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="">
+                    <div class="row">
+                        @if(session('user.is_superadmin'))
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('store_id', __('lang.store'), []) !!}
+                                {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            </div>
+                        </div>
+                        @endif
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+                                {!! Form::select('supplier_id', $suppliers, request()->supplier_id, ['class' =>
+                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            </div>
+                        </div>
 
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                        {!! Form::date('start_date', request()->start_date, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                        {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <br>
-                    <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                    <a href="{{action('PurchaseOrderController@index')}}"
-                        class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
-                </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                                {!! Form::date('start_date', request()->start_date, ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                                {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <br>
+                            <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
+                            <a href="{{action('PurchaseOrderController@index')}}"
+                                class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+                        </div>
 
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
     </div>
 
     <div class="table-responsive">
@@ -88,7 +101,7 @@
                                 @can('purchase_order.purchase_order.create_and_edit')
                                 <li>
                                     <a href="{{action('PurchaseOrderController@edit', $purchase_order->id)}}"><i
-                                        class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                            class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
@@ -96,7 +109,8 @@
                                 <li>
                                     <a data-href="{{action('PurchaseOrderController@destroy', $purchase_order->id)}}"
                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                        class="btn text-red delete_item"><i class="fa fa-trash"></i> @lang('lang.delete')</a>
+                                        class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                        @lang('lang.delete')</a>
                                 </li>
                                 @endcan
                             </ul>

@@ -104,14 +104,14 @@
                                                     </button>
                                                     <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                         user="menu">
-                                                        @can('user_management.employee.view')
+                                                        @can('hr_management.employee.view')
                                                         <li>
                                                             <a href="{{action('EmployeeController@show', $employee->id)}}"
                                                                 class="btn"><i class="fa fa-eye"></i> @lang('lang.view')</a>
                                                         </li>
                                                         <li class="divider"></li>
                                                         @endcan
-                                                        @can('user_management.employee.create_and_edit')
+                                                        @can('hr_management.employee.create_and_edit')
                                                         <li>
                                                             <a href="{{action('EmployeeController@edit', $employee->id)}}"
                                                                 class="btn edit_employee"><i
@@ -119,7 +119,7 @@
                                                         </li>
                                                         <li class="divider"></li>
                                                         @endcan
-                                                        @can('superadmin')
+                                                        @can('hr_management.employee.delete')
                                                         <li>
                                                             <a data-href="{{action('EmployeeController@destroy', $employee->id)}}"
                                                                 data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
@@ -153,11 +153,11 @@
                                                     </ul>
                                                 </div>
 
-                                                {{-- @can('user_management.employee.view')
+                                                {{-- @can('hr_management.employee.view')
                                                 <a href="{{action('EmployeeController@show', $employee->id)}}"
                                                 class="btn btn-danger text-white"><i class="fa fa-eye"></i></a>
                                                 @endcan
-                                                @can('user_management.employee.create_and_edit')
+                                                @can('hr_management.employee.create_and_edit')
                                                 <a href="{{action('EmployeeController@edit', $employee->id)}}"
                                                     class="btn btn-danger text-white edit_employee"><i
                                                         class="fa fa-pencil-square-o"></i></a>

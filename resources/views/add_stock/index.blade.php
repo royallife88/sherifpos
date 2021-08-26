@@ -8,6 +8,15 @@
             <div class="card-body">
                 <form action="">
                     <div class="row">
+                        @if(session('user.is_superadmin'))
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('store_id', __('lang.store'), []) !!}
+                                {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            </div>
+                        </div>
+                        @endif
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
@@ -93,21 +102,21 @@
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                                @can('add_stock.add_stock.view')
+                                @can('stock.add_stock.view')
                                 <li>
                                     <a href="{{action('AddStockController@show', $add_stock->id)}}" class=""><i
                                             class="fa fa-eye btn"></i> @lang('lang.view')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('add_stock.add_stock.create_and_edit')
+                                @can('stock.add_stock.create_and_edit')
                                 <li>
                                     <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
                                             class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('add_stock.add_stock.delete')
+                                @can('stock.add_stock.delete')
                                 <li>
                                     <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
@@ -115,7 +124,7 @@
                                         @lang('lang.delete')</a>
                                 </li>
                                 @endcan
-                                @can('add_stock.pay.create_and_edit')
+                                @can('stock.pay.create_and_edit')
                                 @if($add_stock->payment_status != 'paid')
                                 <li>
                                     <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"

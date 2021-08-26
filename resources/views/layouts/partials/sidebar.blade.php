@@ -580,8 +580,8 @@
                 @endif
 
                 <!-- START HR Management -->
-                @if(auth()->user()->can('user_management.add_new_employee.view')
-                || auth()->user()->can('user_management.employee.view')
+                @if(auth()->user()->can('hr_management.add_new_employee.view')
+                || auth()->user()->can('hr_management.employee.view')
                 || auth()->user()->can('hr_management.leave_types.view')
                 || auth()->user()->can('hr_management.leaves.view')
                 || auth()->user()->can('hr_management.forfeit_leaves.view')
@@ -765,7 +765,39 @@
                 <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
                     <ul id="setting"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'get-general-setting'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'get-general-setting', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade'])) show @endif">
+                        @can('product_module.product_class.view')
+                        <li class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ProductClassController@index')}}">{{__('lang.product_class')}}</a></li>
+                        @endcan
+                        @can('product_module.category.view')
+                        <li class="@if(request()->segment(1) == 'category' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CategoryController@index')}}">{{__('lang.category')}}</a></li>
+                        @endcan
+                        @can('product_module.sub_category.view')
+                        <li class="@if(request()->segment(1) == 'sub-category' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CategoryController@getSubCategories')}}">{{__('lang.sub_category')}}</a></li>
+                        @endcan
+                        @can('product_module.brand.view')
+                        <li class="@if(request()->segment(1) == 'brand' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('BrandController@index')}}">{{__('lang.brand')}}</a></li>
+                        @endcan
+                        @can('product_module.unit.view')
+                        <li class="@if(request()->segment(1) == 'unit' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('UnitController@index')}}">{{__('lang.unit')}}</a></li>
+                        @endcan
+                        @can('product_module.color.view')
+                        <li class="@if(request()->segment(1) == 'color' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ColorController@index')}}">{{__('lang.color')}}</a></li>
+                        @endcan
+                        @can('product_module.size.view')
+                        <li class="@if(request()->segment(1) == 'size' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a></li>
+                        @endcan
+                        @can('product_module.grade.view')
+                        <li class="@if(request()->segment(1) == 'grade' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('GradeController@index')}}">{{__('lang.grade')}}</a></li>
+                        @endcan
                         @can('settings.store.view')
                         <li class="@if(request()->segment(1) == 'store' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('StoreController@index')}}">{{__('lang.stores')}}</a></li>

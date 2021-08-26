@@ -36,7 +36,8 @@ class AddStockLineImport implements ToModel, WithHeadingRow, WithValidation
         ->where('sub_sku', $row['product_code'])
         ->select(
             'products.id as product_id',
-            'variations.id as variation_id'
+            'variations.id as variation_id',
+            'purchase_price'
             )
             ->first();
             if(empty($product)){

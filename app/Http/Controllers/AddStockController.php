@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Imports\AddStockLineImport;
 use App\Models\AddStockLine;
 use App\Models\Email;
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
@@ -50,9 +51,16 @@ class AddStockController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::where('type', 'add_stock')->where('status', '!=', 'draft');
+
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
 
         if (!empty(request()->supplier_id)) {
             $query->where('supplier_id', request()->supplier_id);
@@ -67,11 +75,13 @@ class AddStockController extends Controller
         $add_stocks = $query->get();
 
         $suppliers = Supplier::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('add_stock.index')->with(compact(
             'add_stocks',
             'suppliers',
+            'stores',
             'status_array'
         ));
     }
@@ -173,6 +183,11 @@ class AddStockController extends Controller
             //update purchase order status if selected
             if (!empty($transaction->purchase_order_id)) {
                 Transaction::find($transaction->purchase_order_id)->update(['status' => 'received']);
+            }
+
+            //update product status to active if not //added quick product from purchase order
+            foreach ($transaction->add_stock_lines as $line) {
+                Product::where('id', $line->product_id)->update(['active' => 1]);
             }
             DB::commit();
 
@@ -357,7 +372,6 @@ class AddStockController extends Controller
      */
     public function destroy($id)
     {
-        // TODO: check this functionality
         try {
             $add_stock = Transaction::find($id);
 
@@ -371,7 +385,7 @@ class AddStockController extends Controller
                 $delete_add_stock_line_ids = [];
                 foreach ($add_stock_lines as $line) {
                     $delete_add_stock_line_ids[] = $line->id;
-                    $this->productUtil->decreaseProductQuantity($line->product_id, $line->variation_id, $line->store_id, $line->quantity);
+                    $this->productUtil->decreaseProductQuantity($line->product_id, $line->variation_id, $add_stock->store_id, $line->quantity);
                 }
 
                 if (!empty($delete_add_stock_line_ids)) {

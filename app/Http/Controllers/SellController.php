@@ -58,9 +58,12 @@ class SellController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $query = Transaction::where('type', 'sell');
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
+        $query = Transaction::where('type', 'sell')->where('status', 'final');
 
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
@@ -68,8 +71,8 @@ class SellController extends Controller
         if (!empty(request()->status)) {
             $query->where('status', request()->status);
         }
-        if (!empty(request()->store_id)) {
-            $query->where('store_id', request()->store_id);
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
         }
         if (!empty(request()->payment_status)) {
             $query->where('payment_status', request()->payment_status);
@@ -193,125 +196,20 @@ class SellController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
-            $transaction_data = [
-                'customer_id' => $request->customer_id,
-                'final_total' => $this->commonUtil->num_uf($request->final_total),
-                'grand_total' => $this->commonUtil->num_uf($request->grand_total),
-                'gift_card_id' => $request->gift_card_id,
-                'coupon_id' => $request->coupon_id,
-                'invoice_no' => $this->productUtil->getNumberByType('sell'),
-                'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
-                'status' => $request->status,
-                'sale_note' => $request->sale_note,
-                'staff_note' => $request->staff_note,
-                'discount_type' => $request->discount_type,
-                'discount_value' => $this->commonUtil->num_f($request->discount_value),
-                'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
-                'tax_id' => $request->tax_id,
-                'block_qty' => 0,
-                'block_for_days' => 0,
-                'total_tax' => $this->commonUtil->num_f($request->total_tax),
-                'sale_note' => $request->sale_note,
-                'staff_note' => $request->staff_note,
-                'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
-                'deliveryman_id' => $request->deliveryman_id,
-                'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
-                'delivery_address' => $request->delivery_address,
-                'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
-            ];
-
-            DB::beginTransaction();
-
-            $transaction = Transaction::find($id);
-            if ($transaction->is_quotation && $transaction->status == 'draft') {
-                $transaction_data['ref_no'] = $transaction->invoice_no;
-            }
-            $transaction_status = $transaction->status;
-            $is_block_qty = $transaction->block_qty;
-            $transaction->update($transaction_data);
-
-            $keep_sell_lines = [];
-            foreach ($request->transaction_sell_line as $line) {
-                if (!empty($line['transaction_sell_line_id'])) {
-                    $transaction_sell_line = TransactionSellLine::find($line['transaction_sell_line_id']);
-                    $transaction_sell_line->product_id = $line['product_id'];
-                    $transaction_sell_line->variation_id = $line['variation_id'];
-                    $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->commonUtil->num_uf($line['coupon_discount']) : 0;
-                    $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
-                    $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->commonUtil->num_uf($line['coupon_discount_amount']) : 0;
-                    if($transaction_status == 'draft'){
-                        $old_qty = 0;
-                    }else{
-                        $old_qty = $transaction_sell_line->quantity;
-                    }
-                    $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->transactionUtil->num_uf($line['promotion_discount']) : 0;
-                    $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
-                    $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->transactionUtil->num_uf($line['promotion_discount_amount']) : 0;
-                    $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->transactionUtil->num_uf($line['product_discount_value']) : 0;
-                    $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
-                    $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->transactionUtil->num_uf($line['product_discount_amount']) : 0;
-                    $transaction_sell_line->quantity = $this->commonUtil->num_uf($line['quantity']);
-                    $transaction_sell_line->sell_price = $this->commonUtil->num_uf($line['sell_price']);
-                    $transaction_sell_line->sub_total = $this->commonUtil->num_uf($line['sub_total']);
-
-                    $transaction_sell_line->save();
-                    $keep_sell_lines[] = $line['transaction_sell_line_id'];
-                    $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $old_qty);
-                    if ($is_block_qty) {
-                        $block_qty = $transaction_sell_line->quantity;
-                        $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
-                    }
-                } else {
-                    $transaction_sell_line = new TransactionSellLine();
-                    $transaction_sell_line->transaction_id = $transaction->id;
-                    $transaction_sell_line->product_id = $line['product_id'];
-                    $transaction_sell_line->variation_id = $line['variation_id'];
-                    $transaction_sell_line->coupon_discount = !empty($line['coupon_discount']) ? $this->commonUtil->num_uf($line['coupon_discount']) : 0;
-                    $transaction_sell_line->coupon_discount_type = !empty($line['coupon_discount_type']) ? $line['coupon_discount_type'] : null;
-                    $transaction_sell_line->coupon_discount_amount = !empty($line['coupon_discount_amount']) ? $this->commonUtil->num_uf($line['coupon_discount_amount']) : 0;
-                    $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $this->transactionUtil->num_uf($line['promotion_discount']) : 0;
-                    $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
-                    $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $this->transactionUtil->num_uf($line['promotion_discount_amount']) : 0;
-                    $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $this->transactionUtil->num_uf($line['product_discount_value']) : 0;
-                    $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
-                    $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->transactionUtil->num_uf($line['product_discount_amount']) : 0;
-                    $transaction_sell_line->quantity = $this->commonUtil->num_uf($line['quantity']);
-                    $transaction_sell_line->sell_price = $this->commonUtil->num_uf($line['sell_price']);
-                    $transaction_sell_line->sub_total = $this->commonUtil->num_uf($line['sub_total']);
-                    $transaction_sell_line->save();
-                    $keep_sell_lines[] = $transaction_sell_line->id;
-                    $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity']);
-                    if ($transaction->block_qty) {
-                        $block_qty = $transaction_sell_line->quantity;
-                        $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
-                    }
-                }
-            }
-
-            //update stock for deleted lines
-            $deleted_lines = TransactionSellLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_sell_lines)->get();
-            foreach ($deleted_lines as $deleted_line) {
-                $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity);
-                $deleted_line->delete();
-            }
-
-            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-
-            DB::commit();
-
+        try {
+            $this->transactionUtil->updateSellTransaction($request, $id);
 
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }
@@ -331,7 +229,9 @@ class SellController extends Controller
 
             $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
             foreach ($transaction_sell_lines as $transaction_sell_line) {
-                $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity);
+                if ($transaction->status == 'final') {
+                    $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity);
+                }
                 $transaction_sell_line->delete();
             }
             $transaction->delete();

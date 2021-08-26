@@ -168,7 +168,6 @@ class SupplierController extends Controller
         )->groupBy('transactions.id')->get();
 
 
-
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 

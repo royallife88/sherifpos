@@ -43,7 +43,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4  @if(!session('user.is_superadmin')) hide @endif">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
                                     <div class="input-group my-group">
                                         {!! Form::select('store_id', $stores,

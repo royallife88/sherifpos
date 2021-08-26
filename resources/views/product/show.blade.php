@@ -49,13 +49,20 @@
                             <label style="font-weight: bold;" for="">@lang('lang.is_service'): </label>
                             @if(!empty($product->is_service))@lang('lang.yes')@else @lang('lang.no') @endif<br>
                         </div>
+                        <div class="col-md-12">
+                            <label style="font-weight: bold;" for="">@lang('lang.barcode'): </label><br>
+                            <img class="center-block" style="width:auto; !important;height: {{2*0.24}}in !important;"
+                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type, 3,30,array(39, 48, 54), true)}}">
+                        </div>
                     </div>
 
                 </div>
                 <div class="col-md-4">
                     <div class="col-sm-12 col-md-12 invoice-col">
                         <div class="thumbnail">
-                            <img class="img-fluid" src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif" alt="Product Image">
+                            <img class="img-fluid"
+                                src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                                alt="Product Image">
                         </div>
                     </div>
                 </div>

@@ -81,7 +81,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('transaction_date', __('lang.date'). ':*', []) !!} <br>
-                                    {!! Form::text('transaction_date', null, ['class' => 'form-control datepicker',
+                                    {!! Form::text('transaction_date', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker',
                                     'required',
                                     'readonly', 'placeholder' => __('lang.date')]) !!}
                                 </div>

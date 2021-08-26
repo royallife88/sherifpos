@@ -9,16 +9,16 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table id="store_table" class="table dataTable">
+                <table id="" class="table dataTable" style="width: auto">
                     <thead>
                         <tr>
-                            <th>@lang('lang.date_and_time')</th>
-                            <th>@lang('lang.created_by')</th>
-                            <th>@lang('lang.content')</th>
-                            <th>@lang('lang.receiver')</th>
-                            <th width="10%">@lang('lang.attachments')</th>
-                            <th>@lang('lang.notes')</th>
-                            <th class="notexport"  style="width: 30%">@lang('lang.action')</th>
+                            <th style="width: 10% !important;">@lang('lang.date_and_time')</th>
+                            <th style="width: 10% !important;">@lang('lang.created_by')</th>
+                            <th style="width: 40% !important;">@lang('lang.content')</th>
+                            <th style="width: 10% !important;">@lang('lang.receiver')</th>
+                            <th style="width: 10% !important;">@lang('lang.attachments')</th>
+                            <th style="width: 10% !important;">@lang('lang.notes')</th>
+                            <th style="width: 10% !important;" class="notexport">@lang('lang.action')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -27,7 +27,11 @@
                             <td>{{$key->created_at}}</td>
                             <td>{{$key->sent_by}}</td>
                             <td>{!!$key->body!!}</td>
-                            <td>{{$key->emails}}</td>
+                            @php
+                                $emails_array = explode(',', $key->emails);
+                                $emails = implode(' ,', $emails_array);
+                            @endphp
+                            <td>{{$emails}}</td>
                             <td>
                                 @foreach ($key->attachments as $item)
                                 <a target="_blank" href="{{asset($item)}}">{{str_replace('/emails/', '', $item)}}</a>

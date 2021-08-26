@@ -19,7 +19,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                                    {!! Form::text('name', $sales_promotion->name, ['class' => 'form-control']) !!}
+                                    {!! Form::text('name', $sales_promotion->name, ['class' => 'form-control',
+                                    'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -39,37 +40,52 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
-                                    <div class="i-checks">
-                                        <input id="product_condition" name="product_condition" @if($sales_promotion->product_condition) checked @endif type="checkbox" value="1"
-                                            class="form-control-custom">
-                                        <label for="product_condition"><strong>@lang('lang.product_condition')</strong></label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="i-checks" style="margin-top: 30px">
+                                                <input id="product_condition" name="product_condition"
+                                                    @if($sales_promotion->product_condition) checked @endif
+                                                type="checkbox" value="1"
+                                                class="form-control-custom">
+                                                <label
+                                                    for="product_condition"><strong>@lang('lang.product_condition')</strong></label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    {!! Form::select('product_ids[]', $products, $sales_promotion->product_ids,
-                                    ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    <div class="col-md-6">
+                                        @include('product_classification_tree.partials.product_selection_tree')
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="i-checks">
-                                        <input id="purchase_condition" name="purchase_condition" @if($sales_promotion->purchase_condition) checked @endif type="checkbox" value="1"
-                                            class="form-control-custom">
-                                        <label for="purchase_condition"><strong>@lang('lang.purchase_condition')</strong></label>
+                                        <input id="purchase_condition" name="purchase_condition"
+                                            @if($sales_promotion->purchase_condition) checked @endif type="checkbox"
+                                        value="1"
+                                        class="form-control-custom">
+                                        <label
+                                            for="purchase_condition"><strong>@lang('lang.purchase_condition')</strong></label>
                                     </div>
-                                    {!! Form::text('purchase_condition_amount', @num_format($sales_promotion->purchase_condition_amount), ['class' => 'form-control']) !!}
+                                    {!! Form::text('purchase_condition_amount',
+                                    @num_format($sales_promotion->purchase_condition_amount), ['class' =>
+                                    'form-control']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_type', __( 'lang.discount_type' ) . ':*') !!}
-                                    {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], $sales_promotion->discount_type,['class' => 'form-control selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
+                                    {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' =>
+                                    'Percentage'], $sales_promotion->discount_type,['class' => 'form-control
+                                    selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_value', __( 'lang.discount' ) . ':*') !!}
-                                    {!! Form::text('discount_value', @num_format($sales_promotion->discount_value), ['class' => 'form-control', 'required']) !!}
+                                    {!! Form::text('discount_value', @num_format($sales_promotion->discount_value),
+                                    ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -106,6 +122,7 @@
 @endsection
 
 @section('javascript')
+<script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script type="text/javascript">
 </script>
 @endsection

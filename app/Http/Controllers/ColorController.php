@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 
 class ColorController extends Controller
 {
-   /**
+    /**
      * All Utils instance.
      *
      */
@@ -34,7 +34,11 @@ class ColorController extends Controller
      */
     public function index()
     {
-        //
+        $colors = Color::get();
+
+        return view('color.index')->with(compact(
+            'colors'
+        ));
     }
 
     /**
@@ -117,7 +121,11 @@ class ColorController extends Controller
      */
     public function edit($id)
     {
-        //
+        $color = Color::find($id);
+
+        return view('color.edit')->with(compact(
+            'color'
+        ));
     }
 
     /**
@@ -129,7 +137,32 @@ class ColorController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']],
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            $color = Color::where('id', $id)->update($data);
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -140,7 +173,21 @@ class ColorController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Color::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function getDropdown()

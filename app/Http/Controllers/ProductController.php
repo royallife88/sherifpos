@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ProductImport;
+use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
@@ -20,6 +21,7 @@ use App\Models\TransactionSellLine;
 use App\Models\Unit;
 use App\Models\Variation;
 use App\Utils\ProductUtil;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,17 +37,21 @@ class ProductController extends Controller
      */
     protected $commonUtil;
     protected $productUtil;
+    protected $transactionUtil;
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param transactionUtil $transactionUtil
+     * @param Util $commonUtil
+     * @param ProductUtils $productUtil
      * @return void
      */
-    public function __construct(Util $commonUtil, ProductUtil $productUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
+        $this->transactionUtil = $transactionUtil;
     }
 
     /**
@@ -53,10 +59,20 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
+        if (!empty($store_id)) {
+            $products->where('product_stores.store_id', $store_id);
+        }
+
+        if (!empty(request()->product_id)) {
+            $products->where('products.id', request()->product_id);
+        }
 
         if (!empty(request()->product_class_id)) {
             $products->where('product_class_id', request()->product_class_id);
@@ -106,7 +122,7 @@ class ProductController extends Controller
             $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
         }
 
-
+        $products->where('active', 1);
         $products = $products->select(
             'products.*',
             DB::raw('SUM(product_stores.qty_available) as current_stock'),
@@ -457,6 +473,13 @@ class ProductController extends Controller
             $sell_lines = TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
                 ->join('products', 'transaction_sell_lines.product_id', 'products.id')->groupBy('transaction_sell_lines.product_id')
                 ->where('transactions.type', 'sell')
+                ->where('transaction_sell_lines.product_id', $id)
+                ->first();
+
+            $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
+                ->join('products', 'add_stock_lines.product_id', 'products.id')->groupBy('add_stock_lines.product_id')
+                ->where('transactions.type', 'add_stock')
+                ->where('add_stock_lines.product_id', $id)
                 ->first();
 
             if (!empty($sell_lines)) {
@@ -464,8 +487,15 @@ class ProductController extends Controller
                     'success' => false,
                     'msg' => __('lang.product_sell_transaction_exist')
                 ];
+            } else if (!empty($add_stock_lines)) {
+                $output = [
+                    'success' => false,
+                    'msg' => __('lang.product_add_stock_transaction_exist')
+                ];
             } else {
-                Product::where('id', $id)->delete();
+                $product = Product::where('id', $id)->first();
+                $product->clearMediaCollection('product');
+                $product->delete();
                 Variation::where('product_id', $id)->delete();
                 ProductStore::where('product_id', $id)->delete();
                 $output = [
@@ -647,5 +677,31 @@ class ProductController extends Controller
         }
 
         return redirect()->back()->with('status', $output);
+    }
+
+    /**
+     * check sku if already in use
+     *
+     * @param string $sku
+     * @return array
+     */
+    public function checkSku($sku)
+    {
+        $product_sku = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->where('sub_sku', $sku)->first();
+
+        if (!empty($product_sku)) {
+            $output = [
+                'success' => false,
+                'msg' => __('lang.sku_already_in_use')
+            ];
+        } else {
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        }
+
+        return $output;
     }
 }

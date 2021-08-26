@@ -22,6 +22,8 @@ class CreateCouponsTable extends Migration
             $table->decimal('amount_to_be_purchase', 15, 4)->nullable();
             $table->boolean('all_products');
             $table->text('product_ids');
+            $table->text('customer_type_ids');
+            $table->text('pct_data');
             $table->date('expiry_date')->nullable();
             $table->boolean('used')->default(0);
             $table->boolean('active')->default(1);

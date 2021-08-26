@@ -52,6 +52,8 @@ class ReportController extends Controller
      */
     public function getProfitLoss(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
@@ -69,11 +71,12 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $sale_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $sale_query->where('store_id', $request->store_id);
+
+        if (!empty($store_id)) {
+            $sale_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $sale_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $sale_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $sale_query->where('product_id', $request->product_id);
@@ -98,8 +101,8 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $purchase_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $purchase_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $purchase_query->where('store_id', $store_id);
         }
 
         $purchases = $purchase_query->select(
@@ -121,8 +124,8 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $expense_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $expense_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $expense_query->where('store_id', $store_id);
         }
 
         $expenses = $expense_query->select(
@@ -180,6 +183,9 @@ class ReportController extends Controller
      */
     public function getReceivableReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -200,11 +206,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $sale_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $sale_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $sale_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $sale_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $sale_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $sale_query->where('product_id', $request->product_id);
@@ -238,6 +244,10 @@ class ReportController extends Controller
      */
     public function getPayableReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
+
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -254,11 +264,11 @@ class ReportController extends Controller
         if (!empty($request->supplier_id)) {
             $add_stock_query->where('supplier_id', $request->supplier_id);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $add_stock_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $add_stock_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $add_stock_query->where('product_id', $request->product_id);
@@ -289,6 +299,9 @@ class ReportController extends Controller
      */
     public function getExpectedReceivableReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -309,11 +322,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $sale_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $sale_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $sale_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $sale_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $sale_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $sale_query->where('product_id', $request->product_id);
@@ -350,6 +363,9 @@ class ReportController extends Controller
      */
     public function getExpectedPayableReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -366,11 +382,11 @@ class ReportController extends Controller
         if (!empty($request->supplier_id)) {
             $add_stock_query->where('supplier_id', $request->supplier_id);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $add_stock_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $add_stock_query->where('store_pos_id',  $pos_id);
         }
         if (!empty($request->product_id)) {
             $add_stock_query->where('product_id', $request->product_id);
@@ -393,8 +409,8 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $expense_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $expense_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $expense_query->where('store_id', $store_id);
         }
 
         $expenses = $expense_query->select(
@@ -455,6 +471,9 @@ class ReportController extends Controller
      */
     public function getSummaryReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
             ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -471,11 +490,11 @@ class ReportController extends Controller
         if (!empty($request->supplier_id)) {
             $add_stock_query->where('supplier_id', $request->supplier_id);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $add_stock_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $add_stock_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $add_stock_query->where('product_id', $request->product_id);
@@ -508,11 +527,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $sale_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $sale_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $sale_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $sale_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $sale_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $sale_query->where('product_id', $request->product_id);
@@ -545,11 +564,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $sale_return_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $sale_return_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $sale_return_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $sale_return_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $sale_return_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $sale_return_query->where('product_id', $request->product_id);
@@ -582,12 +601,10 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $purchase_return_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $purchase_return_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $purchase_return_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $purchase_return_query->where('store_pos_id', $request->pos_id);
-        }
+
         if (!empty($request->product_id)) {
             $purchase_return_query->where('product_id', $request->product_id);
         }
@@ -615,11 +632,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $payment_received_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $payment_received_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $payment_received_query->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $payment_received_query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $payment_received_query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $payment_received_query->where('product_id', $request->product_id);
@@ -653,11 +670,11 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $payment_sent->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $payment_sent->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $payment_sent->where('store_id', $store_id);
         }
-        if (!empty($request->pos_id)) {
-            $payment_sent->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $payment_sent->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $payment_sent->where('product_id', $request->product_id);
@@ -685,8 +702,8 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $expense_query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $expense_query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $expense_query->where('store_id', $store_id);
         }
 
         $expenses = $expense_query->select(
@@ -749,6 +766,9 @@ class ReportController extends Controller
      */
     public function getBestSellerReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $start = strtotime(date("Y-m", strtotime("-2 months")) . '-01');
         $end = strtotime(date("Y") . '-' . date("m") . '-31');
 
@@ -762,8 +782,8 @@ class ReportController extends Controller
                 ->whereDate('transaction_date', '>=', $start_date)
                 ->whereDate('transaction_date', '<=', $end_date);
 
-            if (!empty($request->store_id)) {
-                $best_selling_query->where('store_id', $request->store_id);
+            if (!empty($store_id)) {
+                $best_selling_query->where('store_id', $store_id);
             }
 
             $best_selling = $best_selling_query->select(DB::raw('product_id, sum(quantity) as sold_qty'))
@@ -798,6 +818,9 @@ class ReportController extends Controller
      */
     public function getProductReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
             $join->on('transactions.id', 'tsl.transaction_id');
         })->leftjoin('add_stock_lines as pl', function ($join) {
@@ -807,7 +830,6 @@ class ReportController extends Controller
                 $join->on('pl.product_id', 'p.id')
                     ->orOn('tsl.product_id', 'p.id');
             })
-            ->leftjoin('product_stores', 'p.id', 'product_stores.product_id')
             ->whereIn('transactions.type', ['sell', 'add_stock'])
             ->where('transactions.payment_status', 'paid')
             ->whereIn('transactions.status', ['final', 'received']);
@@ -824,22 +846,22 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $query->where('transactions.store_id', $request->store_id);
+        $store_query = '';
+
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+            $store_query = 'AND store_id=' . $store_id;
         }
-        if (!empty($request->pos_id)) {
-            $query->where('store_pos_id', $request->pos_id);
-        }
+
         if (!empty($request->product_id)) {
             $query->where('p.id', $request->product_id);
         }
-
         $transactions = $query->select(
             DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
             DB::raw("SUM(IF(transactions.type='add_stock', final_total, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
-            DB::raw('SUM(product_stores.qty_available) as in_stock'),
+            DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.name as product_name'
         )->groupBy('p.id')->get();
 
@@ -847,7 +869,6 @@ class ReportController extends Controller
         $store_pos = StorePos::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
 
-        // TODO:: must test this report
         return view('reports.product_report')->with(compact(
             'transactions',
             'store_pos',
@@ -861,8 +882,10 @@ class ReportController extends Controller
      *
      * @return view
      */
-    public function getDailySaleReport()
+    public function getDailySaleReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $year = request()->year;
         $month = request()->month;
 
@@ -872,7 +895,6 @@ class ReportController extends Controller
         if (empty($month)) {
             $month = Carbon::now()->month;
         }
-        $store_id = request()->store_id;
         $start = 1;
         $number_of_day = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         while ($start <= $number_of_day) {
@@ -933,8 +955,10 @@ class ReportController extends Controller
      *
      * @return view
      */
-    public function getMonthlySaleReport()
+    public function getMonthlySaleReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $year = request()->year;
 
         if (empty($year)) {
@@ -943,8 +967,6 @@ class ReportController extends Controller
 
         $start = strtotime($year . '-01-01');
         $end = strtotime($year . '-12-31');
-
-        $store_id = request()->store_id;
 
         while ($start <= $end) {
             $start_date = $year . '-' . date('m', $start) . '-' . '01';
@@ -992,8 +1014,10 @@ class ReportController extends Controller
      *
      * @return view
      */
-    public function getDailyPurchaseReport()
+    public function getDailyPurchaseReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $year = request()->year;
         $month = request()->month;
 
@@ -1003,7 +1027,6 @@ class ReportController extends Controller
         if (empty($month)) {
             $month = Carbon::now()->month;
         }
-        $store_id = request()->store_id;
         $start = 1;
         $number_of_day = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         while ($start <= $number_of_day) {
@@ -1064,8 +1087,9 @@ class ReportController extends Controller
      *
      * @return view
      */
-    public function getMonthlyPurchaseReport()
+    public function getMonthlyPurchaseReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $year = request()->year;
 
         if (empty($year)) {
@@ -1074,8 +1098,6 @@ class ReportController extends Controller
 
         $start = strtotime($year . '-01-01');
         $end = strtotime($year . '-12-31');
-
-        $store_id = request()->store_id;
 
         while ($start <= $end) {
             $start_date = $year . '-' . date('m', $start) . '-' . '01';
@@ -1126,13 +1148,15 @@ class ReportController extends Controller
      */
     public function getSaleReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::leftjoin('transaction_sell_lines as tsl', function ($join) {
             $join->on('transactions.id', 'tsl.transaction_id');
         })
             ->leftjoin('products as p', function ($join) {
                 $join->on('tsl.product_id', 'p.id');
             })
-            ->leftjoin('product_stores', 'p.id', 'product_stores.product_id')
             ->whereIn('transactions.type', ['sell'])
             ->where('transactions.payment_status', 'paid')
             ->whereIn('transactions.status', ['final']);
@@ -1149,11 +1173,13 @@ class ReportController extends Controller
         if (!empty($request->customer_type_id)) {
             $query->where('customer_type_id', $request->customer_type_id);
         }
-        if (!empty($request->store_id)) {
-            $query->where('transactions.store_id', $request->store_id);
+        $store_query = '';
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id',  $store_id);
+            $store_query = 'AND store_id=' . $store_id;
         }
-        if (!empty($request->pos_id)) {
-            $query->where('store_pos_id', $request->pos_id);
+        if (!empty($pos_id)) {
+            $query->where('store_pos_id', $pos_id);
         }
         if (!empty($request->product_id)) {
             $query->where('tsl.product_id', $request->product_id);
@@ -1162,7 +1188,7 @@ class ReportController extends Controller
         $transactions = $query->select(
             DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
-            DB::raw('SUM(product_stores.qty_available) as in_stock'),
+            DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
             'p.name as product_name'
         )->groupBy('p.id')->get();
 
@@ -1184,12 +1210,14 @@ class ReportController extends Controller
      */
     public function getPurchaseReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $products = Product::pluck('name', 'id');
 
         $transactions = [];
-        foreach($products as $key => $value){
+        foreach ($products as $key => $value) {
             $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
-            ->where('add_stock_lines.product_id', $key);
+                ->where('add_stock_lines.product_id', $key);
 
             if (!empty($request->start_date)) {
                 $query->where('transaction_date', '>=', $request->start_date);
@@ -1203,11 +1231,10 @@ class ReportController extends Controller
             if (!empty($request->customer_type_id)) {
                 $query->where('customer_type_id', $request->customer_type_id);
             }
-            if (!empty($request->store_id)) {
-                $query->where('transactions.store_id', $request->store_id);
-            }
-            if (!empty($request->pos_id)) {
-                $query->where('store_pos_id', $request->pos_id);
+            $store_query = '';
+            if (!empty($store_id)) {
+                $query->where('transactions.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
             }
             if (!empty($request->product_id)) {
                 $query->where('add_stock_lines.product_id', $request->product_id);
@@ -1216,7 +1243,7 @@ class ReportController extends Controller
             $trans = $query->select(
                 DB::raw('SUM(add_stock_lines.sub_total) as total_purchase'),
                 DB::raw('SUM(add_stock_lines.quantity) as total_qty'),
-                DB::raw("(SELECT SUM(qty_available) FROM product_stores WHERE add_stock_lines.product_id=product_stores.product_id) as in_stock")
+                DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=add_stock_lines.product_id ' . $store_query . ') as in_stock'),
             )->groupBy('add_stock_lines.product_id')->first();
 
             $transactions[$key] = $trans;
@@ -1241,6 +1268,8 @@ class ReportController extends Controller
      */
     public function getPaymentReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('users', 'transactions.created_by', 'users.id')
             ->whereIn('transactions.type', ['sell', 'add_stock'])
@@ -1253,8 +1282,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
         }
 
 
@@ -1284,6 +1313,8 @@ class ReportController extends Controller
      */
     public function getStoreReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final']);
 
@@ -1293,8 +1324,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $sale_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $sale_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $sale_query->where('transactions.store_id', $store_id);
         }
 
 
@@ -1311,8 +1342,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $add_stock_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('transactions.store_id', $store_id);
         }
         $add_stocks = $add_stock_query->select(
             'transactions.*'
@@ -1328,8 +1359,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $quotation_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $quotation_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $quotation_query->where('transactions.store_id', $store_id);
         }
         $quotations = $quotation_query->select(
             'transactions.*'
@@ -1345,8 +1376,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $return_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $return_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $return_query->where('transactions.store_id', $store_id);
         }
         $sell_returns = $return_query->select(
             'transactions.*'
@@ -1360,8 +1391,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $expense_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $expense_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $expense_query->where('transactions.store_id', $store_id);
         }
         $expenses = $expense_query->select(
             'transactions.*'
@@ -1387,34 +1418,36 @@ class ReportController extends Controller
      *
      * @return void
      */
-    public function getStoreStockChart()
+    public function getStoreStockChart(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $item_query = ProductStore::where('qty_available', '>', 0);
-        if (!empty(request()->store_id)) {
-            $item_query->where('store_id', request()->store_id);
+        if (!empty($store_id)) {
+            $item_query->where('store_id', $store_id);
         }
         $total_item = $item_query->count();
 
 
 
         $qty_query = ProductStore::where('qty_available', '>', 0);
-        if (!empty(request()->store_id)) {
-            $qty_query->where('store_id', request()->store_id);
+        if (!empty($store_id)) {
+            $qty_query->where('store_id', $store_id);
         }
         $total_qty = $qty_query->sum('qty_available');
 
 
         $price_query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id');
-        if (!empty(request()->store_id)) {
-            $price_query->where('store_id', request()->store_id);
+        if (!empty($store_id)) {
+            $price_query->where('store_id', $store_id);
         }
         $total_price =  $price_query->select(DB::raw('SUM(qty_available * price) as total_price'))->first()->total_price;
 
 
 
         $cost_query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id');
-        if (!empty(request()->store_id)) {
-            $cost_query->where('store_id', request()->store_id);
+        if (!empty($store_id)) {
+            $cost_query->where('store_id', $store_id);
         }
         $total_cost =  $cost_query->select(DB::raw('SUM(qty_available * purchase_price) as total_cost'))->first()->total_cost;
         $stores = Store::getDropdown();
@@ -1436,11 +1469,13 @@ class ReportController extends Controller
      */
     public function getProductQuantityAlertReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id')
             ->select(DB::raw('SUM(qty_available) as qty'), 'products.*')
             ->having('qty', '<', 'alert_quantity');
-        if (!empty($request->store_id)) {
-            $query->where('store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $query->where('store_id',  $store_id);
         }
         if (!empty($request->product_id)) {
             $query->where('products.id', $request->product_id);
@@ -1466,6 +1501,7 @@ class ReportController extends Controller
      */
     public function getUserReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $user_id = $request->user_id;
         if (empty($user_id)) {
             $user_id = Auth::user()->id;
@@ -1498,8 +1534,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $add_stock_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('transactions.store_id',  $store_id);
         }
         if (!empty($user_id)) {
             $add_stock_query->where('transactions.created_by', $user_id);
@@ -1519,8 +1555,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $quotation_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $quotation_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $quotation_query->where('transactions.store_id',  $store_id);
         }
         if (!empty($user_id)) {
             $quotation_query->where('transactions.created_by', $user_id);
@@ -1540,8 +1576,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $return_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $return_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $return_query->where('transactions.store_id',  $store_id);
         }
         if (!empty($user_id)) {
             $return_query->where('transactions.created_by', $user_id);
@@ -1559,8 +1595,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $expense_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $expense_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $expense_query->where('transactions.store_id',  $store_id);
         }
         if (!empty($user_id)) {
             $expense_query->where('transactions.expense_beneficiary_id', $user_id);
@@ -1587,6 +1623,8 @@ class ReportController extends Controller
 
     public function getCustomerReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
         $customer_id = $request->customer_id;
 
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
@@ -1643,8 +1681,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $quotation_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $quotation_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $quotation_query->where('transactions.store_id', $store_id);
         }
         if (!empty($customer_id)) {
             $quotation_query->where('transactions.customer_id', $customer_id);
@@ -1665,8 +1703,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $return_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $return_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $return_query->where('transactions.store_id', $store_id);
         }
         if (!empty($customer_id)) {
             $return_query->where('transactions.customer_id', $customer_id);
@@ -1696,8 +1734,8 @@ class ReportController extends Controller
      */
     public function getSupplierReport(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $supplier_id = $request->supplier_id;
-
         $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock'])
             ->whereIn('transactions.status', ['received']);
 
@@ -1707,8 +1745,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $add_stock_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $add_stock_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $add_stock_query->where('transactions.store_id', $store_id);
         }
         if (!empty($supplier_id)) {
             $add_stock_query->where('transactions.supplier_id', $supplier_id);
@@ -1754,8 +1792,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $po_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $po_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $po_query->where('transactions.store_id', $store_id);
         }
         if (!empty($supplier_id)) {
             $po_query->where('transactions.supplier_id', $supplier_id);
@@ -1775,8 +1813,8 @@ class ReportController extends Controller
         if (!empty($request->end_date)) {
             $return_query->where('transaction_date', '<=', $request->end_date);
         }
-        if (!empty($request->store_id)) {
-            $return_query->where('transactions.store_id', $request->store_id);
+        if (!empty($store_id)) {
+            $return_query->where('transactions.store_id', $store_id);
         }
         if (!empty($supplier_id)) {
             $return_query->where('transactions.supplier_id', $supplier_id);
@@ -1800,10 +1838,26 @@ class ReportController extends Controller
         ));
     }
 
-    public function getDueReport()
+    /**
+     * show the due amount report
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getDueReport(Request $request)
     {
-        $dues = Transaction::where('type', 'sell')->where('payment_status', '!=', 'paid')->where('status', 'final')->get();
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
+        $query = Transaction::where('type', 'sell')->where('payment_status', '!=', 'paid')->where('status', 'final');
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
+        if (!empty($pos_id)) {
+            $query->where('transactions.store_pos_id', $pos_id);
+        }
+
+        $dues =  $query->get();
         $stores = Store::getDropdown();
         $store_pos = StorePos::pluck('name', 'id');
 

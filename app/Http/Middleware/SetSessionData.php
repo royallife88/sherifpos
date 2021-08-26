@@ -3,9 +3,12 @@
 namespace App\Http\Middleware;
 
 use App\Models\Currency;
+use App\Models\StorePos;
 use App\Models\System;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SetSessionData
 {
@@ -46,7 +49,7 @@ class SetSessionData
 
             $request->session()->put('currency', $currency_data);
 
-            if(empty(session('language'))){
+            if (empty(session('language'))) {
                 $language = System::getProperty('language');
 
                 if (empty($language)) {
@@ -54,6 +57,15 @@ class SetSessionData
                 }
                 $request->session()->put('language', $language);
             }
+
+            $user = User::find(Auth::user()->id);
+            $user_pos = StorePos::where('user_id', Auth::user()->id)->first();
+            if (!empty($user_pos)) {
+                $user->pos_id = $user_pos->id;
+                $user->store_id = $user_pos->store_id;
+            }
+
+            $request->session()->put('user', $user);
         }
 
         return $next($request);

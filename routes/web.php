@@ -39,11 +39,13 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('product/get-purchase-history/{id}', 'ProductController@getPurchaseHistory');
     Route::post('product/save-import', 'ProductController@saveImport');
     Route::get('product/import', 'ProductController@getImport');
+    Route::get('product/check-sku/{sku}', 'ProductController@checkSku');
     Route::resource('product', ProductController::class);
     Route::get('product-class/get-dropdown', 'ProductClassController@getDropdown');
     Route::resource('product-class', ProductClassController::class);
     Route::get('category/get-sub-category-dropdown', 'CategoryController@getSubCategoryDropdown');
     Route::get('category/get-dropdown', 'CategoryController@getDropdown');
+    Route::get('sub-category', 'CategoryController@getSubCategories');
     Route::resource('category', CategoryController::class);
     Route::get('brand/get-dropdown', 'BrandController@getDropdown');
     Route::resource('brand', BrandController::class);
@@ -130,7 +132,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('purchase-return/add-product-row', 'PurchaseReturnController@addProductRow');
     Route::resource('purchase-return', PurchaseReturnController::class);
 
-    Route::get('coupon/get-details/{coupon_code}', 'CouponController@getDetails');
+    Route::get('coupon/get-details/{coupon_code}/{customer_id}', 'CouponController@getDetails');
     Route::get('coupon/toggle-active/{id}', 'CouponController@toggleActive');
     Route::get('coupon/generate-code', 'CouponController@generateCode');
     Route::resource('coupon', CouponController::class);
@@ -226,6 +228,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::post('settings/update-general-setting', 'SettingController@updateGeneralSetting');
     Route::get('settings/get-general-setting', 'SettingController@getGeneralSetting');
+
     Route::resource('settings', SettingController::class);
 
 
@@ -234,24 +237,15 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
     Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');
+    Route::get('notification/notification-seen', 'NotificationController@notificationSeen');
+});
+Route::get('testing', 'SettingController@callTesting');
+Route::get('/clear-cache', function () {
+    \Artisan::call('cache:clear');
+    \Artisan::call('config:cache');
+    \Artisan::call('config:clear');
+    \Artisan::call('view:clear');
+    \Artisan::call('route:clear');
 
-
-
-
-
-
-
-
-
-
-
-    Route::get('/clear-cache', function () {
-        \Artisan::call('cache:clear');
-        \Artisan::call('config:cache');
-        \Artisan::call('config:clear');
-        \Artisan::call('view:clear');
-        \Artisan::call('route:clear');
-
-        echo 'cache cleared!';
-    });
+    echo 'cache cleared!';
 });

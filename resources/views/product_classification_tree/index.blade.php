@@ -122,22 +122,22 @@
                                                             class="accordion-body collapse in">
                                                             <div class="accordion-inner">
                                                                 @php
-                                                                $brands = App\Models\Brand::where('category_id',
+                                                                $brands = App\Models\Product::leftjoin('brands', 'products.brand_id', 'brands.id')->where('products.sub_category_id',
                                                                 $sub_category->id)->select('brands.id', 'brands.name')->groupBy('brands.id')->get();
                                                                 @endphp
                                                                 @foreach ($brands as $brand)
                                                                 <div class="accordion"
-                                                                    id="{{@replace_space($brand->name.'_'.$i)}}"
+                                                                    id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
                                                                     style="margin-left: 20px;">
                                                                     <div class="accordion-group">
                                                                         <div class="accordion-heading">
                                                                             <a class="accordion-toggle"
                                                                                 data-toggle="collapse"
-                                                                                data-id="{{@replace_space($brand->name.'_'.$i)}}"
-                                                                                data-parent="#{{@replace_space($brand->name.'_'.$i)}}"
-                                                                                href="#collapse{{@replace_space($brand->name.'_'.$i)}}">
+                                                                                data-id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
+                                                                                data-parent="#{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
+                                                                                href="#collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}">
                                                                                 <i
-                                                                                    class="fa fa-angle-right angle-class-{{@replace_space($brand->name.'_'.$i)}}"></i>
+                                                                                    class="fa fa-angle-right angle-class-{{@replace_space('brand_'.$brand->name.'_'.$i)}}"></i>
                                                                                 {{$brand->name}}
                                                                                 <div class="btn-group pull-right">
                                                                                     <button data-container=".view_modal"
@@ -153,7 +153,7 @@
                                                                                 </div>
                                                                             </a>
                                                                         </div>
-                                                                        <div id="collapse{{@replace_space($brand->name.'_'.$i)}}"
+                                                                        <div id="collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
                                                                             class="accordion-body collapse in">
                                                                             <div class="accordion-inner">
                                                                                 @php

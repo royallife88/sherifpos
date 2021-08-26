@@ -22,7 +22,9 @@ class Coupon extends Model
      * @var array
      */
     protected $casts = [
-        'product_ids' => 'array'
+        'product_ids' => 'array',
+        'pct_data' => 'array',
+        'customer_type_ids' => 'array',
     ];
 
     public function created_by_user()
@@ -32,5 +34,8 @@ class Coupon extends Model
 
     public function products(){
         return $this->belongsToJson(Product::class, 'product_ids');
+    }
+    public function customer_types(){
+        return $this->belongsToJson(CustomerType::class, 'customer_type_ids');
     }
 }

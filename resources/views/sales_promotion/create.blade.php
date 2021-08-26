@@ -18,7 +18,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                                    {!! Form::text('name', null, ['class' => 'form-control']) !!}
+                                    {!! Form::text('name', null, ['class' => 'form-control', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -31,27 +31,36 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
-                                    {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' => 'selectpicker
+                                    {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' =>
+                                    'selectpicker
                                     form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
-                                    <div class="i-checks">
-                                        <input id="product_condition" name="product_condition" type="checkbox" value="1"
-                                            class="form-control-custom">
-                                        <label for="product_condition"><strong>@lang('lang.product_condition')</strong></label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="i-checks" style="margin-top: 30px">
+                                                <input id="product_condition" name="product_condition" type="checkbox"
+                                                    value="1" class="form-control-custom">
+                                                <label
+                                                    for="product_condition"><strong>@lang('lang.product_condition')</strong></label>
+                                            </div>
+                                        </div>
                                     </div>
-                                    {!! Form::select('product_ids[]', $products, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple']) !!}
+                                    <div class="col-md-6">
+                                        @include('product_classification_tree.partials.product_selection_tree')
+                                    </div>
                                 </div>
+
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <div class="i-checks">
-                                        <input id="purchase_condition" name="purchase_condition" type="checkbox" value="1"
-                                            class="form-control-custom">
-                                        <label for="purchase_condition"><strong>@lang('lang.purchase_condition')</strong></label>
+                                        <input id="purchase_condition" name="purchase_condition" type="checkbox"
+                                            value="1" class="form-control-custom">
+                                        <label
+                                            for="purchase_condition"><strong>@lang('lang.purchase_condition')</strong></label>
                                     </div>
                                     {!! Form::text('purchase_condition_amount', 0, ['class' => 'form-control']) !!}
                                 </div>
@@ -59,7 +68,9 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_type', __( 'lang.discount_type' ) . ':*') !!}
-                                    {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], false,['class' => 'form-control selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
+                                    {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' =>
+                                    'Percentage'], false,['class' => 'form-control selecpicker', 'required',
+                                    'placeholder' => __('lang.please_select')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -83,12 +94,12 @@
                         </div>
                         <br>
                         <div class="row">
-                           <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
-                                    class="btn btn-primary">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
+                                        class="btn btn-primary">
+                                </div>
                             </div>
-                           </div>
                         </div>
                         {!! Form::close() !!}
                     </div>
@@ -100,7 +111,8 @@
 @endsection
 
 @section('javascript')
+<script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script type="text/javascript">
-   $('.selectpicker').selectpicker('selectAll');
+    $('.selectpicker').selectpicker('selectAll');
 </script>
 @endsection

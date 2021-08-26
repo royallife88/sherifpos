@@ -33,11 +33,6 @@
             </div>
 
             <div class="form-group">
-                {!! Form::label('customer_id', __('lang.customer'), []) !!}
-                {!! Form::select('customer_id', $customers, false, ['class' => 'form-control selectpicker',
-                'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
-            </div>
-            <div class="form-group">
                 {!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':*') !!}
                 {!! Form::text('expiry_date', null, ['class' => 'form-control datepicker', 'placeholder' => __(
                 'lang.expiry_date' )]);
@@ -77,13 +72,12 @@
 
     $('.refresh_code').click()
     $(document).on('click', '.refresh_code', function(){
-        console.log('asdf');
         $.ajax({
             method: 'get',
             url: '/coupon/generate-code',
             data: {  },
             success: function(result) {
-                $('#coupon_code').val(result);
+                $('#card_number').val(result);
             },
         });
     })

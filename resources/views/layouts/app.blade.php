@@ -43,12 +43,14 @@
         <div class="modal fade view_modal" role="dialog" aria-hidden="true"></div>
 
         @php
-            $cash_register = App\Models\CashRegister::where('user_id', Auth::user()->id)->where('status', 'open')->first();
+        $cash_register = App\Models\CashRegister::where('user_id', Auth::user()->id)->where('status', 'open')->first();
         @endphp
-        <input type="hidden" name="is_register_close" id="is_register_close" value="@if(!empty($cash_register)){{0}}@else{{1}}@endif">
-        <input type="hidden" name="cash_register_id" id="cash_register_id" value="@if(!empty($cash_register)){{$cash_register->id}}@endif">
-        <div id="closing_cash_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-            aria-hidden="true" class="modal fade text-left">
+        <input type="hidden" name="is_register_close" id="is_register_close"
+            value="@if(!empty($cash_register)){{0}}@else{{1}}@endif">
+        <input type="hidden" name="cash_register_id" id="cash_register_id"
+            value="@if(!empty($cash_register)){{$cash_register->id}}@endif">
+        <div id="closing_cash_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+            class="modal fade text-left">
         </div>
     </div>
     @include('layouts.partials.javascript')
@@ -70,6 +72,7 @@
         table = $('.dataTable').DataTable({
             "paging":   false,
             "info":     false,
+            "bAutoWidth": false,
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -293,6 +296,32 @@
     })
     $(document).on('click', '.close-btn-add-closing-cash', function(){
         $('#logout-form').submit();
+    })
+    $(document).on('click', '.notification-list', function(){
+        $.ajax({
+            method: 'get',
+            url: '/notification/notification-seen',
+            data: {  },
+            success: function(result) {
+                if(result){
+                    $('.notification-number').addClass('hide')
+                }
+            },
+        });
+    })
+    $(document).on('click', '.notification_item', function(e){
+        e.preventDefault();
+        let mark_read_action = $(this).data('mark-read-action');
+        let href = $(this).data('href');
+        $.ajax({
+            method: 'get',
+            url: mark_read_action,
+            data: {  },
+            success: function(result) {
+
+            },
+        });
+        window.location = href;
     })
     </script>
 </body>

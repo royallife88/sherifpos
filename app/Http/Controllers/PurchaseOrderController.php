@@ -54,10 +54,16 @@ class PurchaseOrderController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::where('type', 'purchase_order')->where('status', '!=', 'draft');
 
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
         if (!empty(request()->supplier_id)) {
             $query->where('supplier_id', request()->supplier_id);
         }
@@ -71,11 +77,13 @@ class PurchaseOrderController extends Controller
         $purchase_orders = $query->get();
 
         $suppliers = Supplier::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('purchase_order.index')->with(compact(
             'purchase_orders',
             'suppliers',
+            'stores',
             'status_array'
         ));
     }

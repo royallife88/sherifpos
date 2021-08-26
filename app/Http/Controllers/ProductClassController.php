@@ -35,7 +35,11 @@ class ProductClassController extends Controller
      */
     public function index()
     {
-        //
+        $product_classes = ProductClass::get();
+
+        return view('product_class.index')->with(compact(
+             'product_classes'
+        ));
     }
 
     /**

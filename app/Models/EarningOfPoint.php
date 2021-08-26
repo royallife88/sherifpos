@@ -25,6 +25,7 @@ class EarningOfPoint extends Model
         'store_ids' => 'array',
         'customer_type_ids' => 'array',
         'product_ids' => 'array',
+        'pct_data' => 'array',
     ];
 
 

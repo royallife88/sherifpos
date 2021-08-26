@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Coupon;
 use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\User;
+use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,16 +24,19 @@ class CouponController extends Controller
      *
      */
     protected $commonUtil;
+    protected $productUtil;
 
     /**
      * Constructor
      *
+     * @param Util $commonUtil
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->productUtil = $productUtil;
     }
 
     /**
@@ -49,10 +55,13 @@ class CouponController extends Controller
             $query->where('created_by', request()->created_by);
         }
         if (!empty(request()->start_date)) {
-            $query->where('created_at', '>=', request()->start_date);
+            $query->whereDate('created_at', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->where('created_at', '<=', request()->end_date);
+            $query->whereDate('created_at', '<=', request()->end_date);
+        }
+        if (!empty(request()->status)) {
+            $query->where('used', request()->status);
         }
 
         $coupons = $query->get();
@@ -77,10 +86,14 @@ class CouponController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $products = Product::pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $customer_types = CustomerType::pluck('name', 'id');
 
         return view('coupon.create')->with(compact(
             'quick_add',
-            'products'
+            'products',
+            'customer_types',
+            'product_classes'
         ));
     }
 
@@ -98,7 +111,6 @@ class CouponController extends Controller
             ['coupon_code' => ['required', 'max:255']],
             ['type' => ['required', 'max:255']],
             ['amount' => ['required', 'max:255']],
-            ['product_ids' => ['required']],
         );
 
         try {
@@ -110,6 +122,8 @@ class CouponController extends Controller
             $data['expiry_date'] = !empty($data['expiry_date']) ? $this->commonUtil->uf_date($data['expiry_date']) : null;
             $data['created_by'] = Auth::user()->id;
             $data['used'] = 0;
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
             DB::beginTransaction();
 
             $coupon = Coupon::create($data);
@@ -160,10 +174,16 @@ class CouponController extends Controller
         $coupon = Coupon::find($id);
 
         $products = Product::pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $pct_data = $coupon->pct_data;
+        $customer_types = CustomerType::pluck('name', 'id');
 
         return view('coupon.edit')->with(compact(
             'coupon',
-            'products'
+            'products',
+            'product_classes',
+            'customer_types',
+            'pct_data'
         ));
     }
 
@@ -182,11 +202,10 @@ class CouponController extends Controller
             ['coupon_code' => ['required', 'max:255']],
             ['type' => ['required', 'max:255']],
             ['amount' => ['required', 'max:255']],
-            ['product_ids' => ['required']],
         );
 
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->except('_token', '_method', 'pct', 'submit');
             $data['amount_to_be_purchase_checkbox'] = !empty($data['amount_to_be_purchase_checkbox']) ? 1 : 0;
             $data['amount'] = $this->commonUtil->num_uf($data['amount']);
             $data['all_products'] = !empty($data['all_products']) ? 1 : 0;
@@ -194,6 +213,8 @@ class CouponController extends Controller
             $data['expiry_date'] = !empty($data['expiry_date']) ? $this->commonUtil->uf_date($data['expiry_date']) : null;
             $data['created_by'] = Auth::user()->id;
             $data['used'] = 0;
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
             DB::beginTransaction();
 
             $coupon = Coupon::where('id', $id)->update($data);
@@ -280,8 +301,11 @@ class CouponController extends Controller
         return $output;
     }
 
-    public function getDetails($coupon_code){
-        $coupon_details = Coupon::where('coupon_code', $coupon_code)->where('used', 0)->first();
+    public function getDetails($coupon_code, $customer_id)
+    {
+        $customer = Customer::find($customer_id);
+        $customer_type_id = (string) $customer->customer_type_id;
+        $coupon_details = Coupon::where('coupon_code', $coupon_code)->whereJsonContains('customer_type_ids', $customer_type_id)->where('used', 0)->first();
 
         if (empty($coupon_details)) {
             return [

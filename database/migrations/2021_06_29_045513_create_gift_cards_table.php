@@ -17,9 +17,9 @@ class CreateGiftCardsTable extends Migration
             $table->id();
             $table->string('card_number');
             $table->decimal('amount', 15, 4);
-            $table->unsignedBigInteger('customer_id')->nullable();
             $table->date('expiry_date')->nullable();
             $table->decimal('balance', 15, 4)->default(0);
+            $table->boolean('used')->default(0);
             $table->boolean('active')->default(1);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

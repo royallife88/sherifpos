@@ -34,7 +34,11 @@ class UnitController extends Controller
      */
     public function index()
     {
-        //
+        $units = Unit::get();
+
+        return view('unit.index')->with(compact(
+            'units'
+        ));
     }
 
     /**
@@ -117,7 +121,11 @@ class UnitController extends Controller
      */
     public function edit($id)
     {
-        //
+        $unit = Unit::find($id);
+
+        return view('unit.edit')->with(compact(
+            'unit'
+        ));
     }
 
     /**
@@ -129,7 +137,32 @@ class UnitController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']]
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            Unit::where('id', $id)->update($data);
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -140,7 +173,21 @@ class UnitController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Unit::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function getDropdown()

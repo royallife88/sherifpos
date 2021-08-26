@@ -7,6 +7,7 @@
         <div class="card-header d-flex align-items-center">
             <h4>@lang('lang.daily_purchase_report')</h4>
         </div>
+        @if(session('user.is_superadmin'))
         <form action="">
             <div class="col-md-12">
                 <div class="row">
@@ -28,6 +29,7 @@
                 </div>
             </div>
         </form>
+        @endif
         <div class="card-body">
             <div class="col-md-12">
                 <table class="table table-bordered"

@@ -22,8 +22,6 @@
                             {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
                         </div>
                     </div>
-
-
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('customer_id', __('lang.customer'), []) !!}

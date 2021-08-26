@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Notification;
 use App\Models\Product;
 use App\Models\User;
 use App\Utils\NotificationUtil;
@@ -69,7 +70,10 @@ class CreateQuantityAlertNotification extends Command
                     'status' => 'unread',
                     'created_by' => 0,
                 ];
-                $this->notificationUtil->createNotification($notification_data);
+                $notification_exist = Notification::where('user_id', $user->id)->where('type', 'quantity_alert')->where('product_id',$item->id )->where('status', 'unread')->first();
+                if(empty($notification_exist)){
+                    $this->notificationUtil->createNotification($notification_data);
+                }
             }
         }
     }

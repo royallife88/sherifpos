@@ -52,14 +52,18 @@ class ExpenseController extends Controller
     public function index()
     {
         $expense_query = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
+            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->where('type', 'expense');
 
 
+        if (!empty(request()->expense_id)) {
+            $expense_query->where('transactions.id', request()->expense_id);
+        }
         if (!empty(request()->start_date)) {
-            $expense_query->where('transaction_date', '>=', request()->start_date);
+            $expense_query->whereDate('paid_on', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $expense_query->where('transaction_date', '<=', request()->end_date);
+            $expense_query->whereDate('paid_on', '<=', request()->end_date);
         }
         if (!empty(request()->expense_category_id)) {
             $expense_query->where('expense_category_id', request()->expense_category_id);

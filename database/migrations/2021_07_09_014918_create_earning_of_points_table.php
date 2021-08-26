@@ -22,6 +22,7 @@ class CreateEarningOfPointsTable extends Migration
             $table->decimal('points_on_per_amount', 15, 4)->default(0);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->text('pct_data');
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

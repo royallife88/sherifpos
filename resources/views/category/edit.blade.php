@@ -21,7 +21,7 @@
                 {!! Form::file('image', ['class' => '' ]) !!}
             </div>
             @if(empty($category->parent_id))
-            <div class="form-group">
+            <div class="form-group hide">
                 {!! Form::label('product_class_id', __( 'lang.class' ) . ':') !!}
                 {!! Form::select('product_class_id', $product_classes,
                 $category->product_class_id, ['class' => 'form-control', 'data-live-search'=>"true",
@@ -29,7 +29,7 @@
             </div>
             @endif
             @if(!empty($category->parent_id))
-            <div class="form-group">
+            <div class="form-group hide">
                 {!! Form::label('parent_id', __( 'lang.parent_category' ) . ':') !!}
                 {!! Form::select('parent_id', $categories,
                 $category->parent_id, ['class' => 'form-control', 'data-live-search'=>"true",

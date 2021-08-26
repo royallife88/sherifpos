@@ -138,6 +138,12 @@
                             <td>{{@num_format($sale->rp_redeemed_value)}}</td>
                         </tr>
                         @endif
+                        @if($sale->total_coupon_discount > 0)
+                        <tr>
+                            <th>@lang('lang.coupon_discount')</th>
+                            <td>{{@num_format($sale->total_coupon_discount)}}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>@lang('lang.grand_total'):</th>
                             <td>{{@num_format($sale->final_total)}}</td>

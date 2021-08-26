@@ -35,7 +35,11 @@ class BrandController extends Controller
      */
     public function index()
     {
-        //
+        $brands = Brand::get();
+
+        return view('brand.index')->with(compact(
+             'brands'
+        ));
     }
 
     /**
@@ -48,12 +52,10 @@ class BrandController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $brands = Brand::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
 
         return view('brand.create')->with(compact(
             'quick_add',
-            'brands',
-            'categories'
+            'brands'
         ));
     }
 
@@ -70,6 +72,18 @@ class BrandController extends Controller
             $request,
             ['name' => ['required', 'max:255']]
         );
+
+        $brand_exist = Brand::where('name', $request->name)->first();
+
+        if (!empty($brand_exist)) {
+            if ($request->ajax()) {
+                return response()->json(array(
+                    'success' => false,
+                    'message' => 'There are incorect values in the form!',
+                    'msg' => 'Brand name already taken'
+                ));
+            }
+        }
 
         try {
             $data = $request->except('_token', 'quick_add');
@@ -125,12 +139,10 @@ class BrandController extends Controller
     {
         $brand = Brand::find($id);
         $brands = Brand::pluck('name', 'id');
-        $categories = Category::pluck('name', 'id');
 
         return view('brand.edit')->with(compact(
             'brand',
             'brands',
-            'categories'
         ));
     }
 
@@ -156,6 +168,7 @@ class BrandController extends Controller
 
             $brand->update($data);
             if ($request->has('image')) {
+                $brand->clearMediaCollection('brand');
                 $brand->addMedia($request->image)->toMediaCollection('brand');
             }
 

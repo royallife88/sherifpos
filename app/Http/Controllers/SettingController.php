@@ -7,6 +7,7 @@ use App\Models\System;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
@@ -29,7 +30,7 @@ class SettingController extends Controller
         $this->commonUtil = $commonUtil;
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -156,7 +157,7 @@ class SettingController extends Controller
                 ['value' => $request->help_page_content, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
 
-            if(!empty($request->language)){
+            if (!empty($request->language)) {
                 session()->put('language', $request->language);
             }
 
@@ -208,5 +209,11 @@ class SettingController extends Controller
         }
 
         return redirect()->back()->with('status', $output);
+    }
+
+    public function callTesting()
+    {
+        Artisan::call('migrate:reset', ['--force' => true]);
+        print_r('done'); die();
     }
 }

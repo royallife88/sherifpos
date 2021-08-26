@@ -37,16 +37,18 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-3">
+                                    <label style="margin-top: 36px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
+                                </div>
+                                <div class="col-md-4 @if(!session('user.is_superadmin')) hide @endif">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
                                     <div class="input-group my-group">
                                         {!! Form::select('store_id', $stores,
-                                        null, ['class' =>
+                                        session('user.store_id'), ['class' =>
                                         'selectpicker form-control', 'data-live-search'=>"true",
                                         'style' =>'width: 80%' , 'id' => 'store_id', 'required']) !!}
                                     </div>
                                 </div>
-
                                 <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -59,12 +61,13 @@
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
                                 <div class="table-responsive transaction-list">
-                                    <table id="product_table" style="width: 100% " class="table table-striped">
+                                    <table id="product_table" style="width: 100%;" class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>

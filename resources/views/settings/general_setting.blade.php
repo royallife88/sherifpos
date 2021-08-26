@@ -18,10 +18,9 @@
                     'form-control'])
                     !!}
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-3 hide">
                     {!! Form::label('developed_by', __('lang.developed_by'), []) !!}
-                    {!! Form::text('developed_by',!empty($settings['developed_by']) ?
-                    $settings['developed_by'] : null, ['class' =>
+                    {!! Form::text('developed_by', null, ['class' =>
                     'form-control'])
                     !!}
                 </div>

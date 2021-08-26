@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CustomerType;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\RedemptionOfPoint;
 use App\Models\Store;
 use App\Models\Transaction;
@@ -61,10 +62,12 @@ class RedemptionOfPointController extends Controller
     {
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
+        $product_classes = ProductClass::get();
         $customer_types  = CustomerType::pluck('name', 'id');
 
         return view('redemption_of_point.create')->with(compact(
             'stores',
+            'product_classes',
             'products',
             'customer_types'
         ));
@@ -83,7 +86,6 @@ class RedemptionOfPointController extends Controller
             $request,
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
             ['value_of_1000_points' => ['required', 'max:255']],
         );
 
@@ -91,6 +93,8 @@ class RedemptionOfPointController extends Controller
             $data = $request->except('_token');
             $data['created_by'] = Auth::user()->id;
             $data['number'] = $this->productUtil->getNumberByType('redemption_of_point');
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
             DB::beginTransaction();
 
             $redemption_of_point = RedemptionOfPoint::create($data);
@@ -139,9 +143,13 @@ class RedemptionOfPointController extends Controller
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $pct_data = $redemption_of_point->pct_data;
 
         return view('redemption_of_point.edit')->with(compact(
             'redemption_of_point',
+            'pct_data',
+            'product_classes',
             'stores',
             'products',
             'customer_types'
@@ -161,12 +169,13 @@ class RedemptionOfPointController extends Controller
             $request,
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
-            ['product_ids' => ['required', 'max:255']],
             ['value_of_1000_points' => ['required', 'max:255']],
         );
 
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->except('_token', '_method', 'pct');
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
             DB::beginTransaction();
 
             RedemptionOfPoint::where('id', $id)->update($data);

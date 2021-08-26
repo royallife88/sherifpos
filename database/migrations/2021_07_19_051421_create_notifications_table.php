@@ -23,6 +23,7 @@ class CreateNotificationsTable extends Migration
             $table->integer('days')->default(0);
             $table->string('type')->nullable();
             $table->string('status')->default('unread');
+            $table->boolean('is_seen')->default(0);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

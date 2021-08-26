@@ -18,6 +18,15 @@
         <div class="card-body">
             <form action="">
                 <div class="row">
+                    @if(session('user.is_superadmin'))
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('store_id', __('lang.store'), []) !!}
+                            {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+                    @endif
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('customer_id', __('lang.customer'), []) !!}

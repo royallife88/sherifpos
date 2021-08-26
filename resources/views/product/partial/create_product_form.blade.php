@@ -1,4 +1,11 @@
 <div class="row">
+    <div class="col-md-12">
+        <div class="i-checks">
+            <input id="is_service" name="is_service" type="checkbox" value="1"
+                class="form-control-custom">
+            <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
+        </div>
+    </div>
     <div class="col-md-4">
         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
         <div class="input-group my-group">
@@ -144,13 +151,6 @@
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="i-checks" style="margin-top: 40px">
-            <input id="is_service" name="is_service" type="checkbox" value="1"
-                class="form-control-custom">
-            <label for="is_service"><strong>@lang('lang.is_service')</strong></label>
         </div>
     </div>
     <div class="col-md-12 " style="margin-top: 10px;">

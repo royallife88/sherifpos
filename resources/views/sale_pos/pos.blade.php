@@ -42,10 +42,13 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <button type="button" class="btn btn-primary" style="margin-top: 30px;"
                                             data-toggle="modal"
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -66,12 +69,12 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%">@lang('lang.product')</th>
-                                                    <th style="width: 17%">@lang('lang.quantity')</th>
-                                                    <th style="width: 15%">@lang('lang.price')</th>
-                                                    <th style="width: 13%">@lang('lang.discount')</th>
-                                                    <th style="width: 15%">@lang('lang.sub_total')</th>
-                                                    <th style="width: 15%">@lang('lang.action')</th>
+                                                    <th style="width: 20%; font-size: 12px !important;">@lang('lang.product')</th>
+                                                    <th style="width: 22%; font-size: 12px !important;">@lang('lang.quantity')</th>
+                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.price')</th>
+                                                    <th style="width: 13%; font-size: 12px !important;">@lang('lang.discount')</th>
+                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.sub_total')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">@lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

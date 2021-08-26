@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CustomerType;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\SalesPromotion;
 use App\Models\Store;
 use App\Utils\ProductUtil;
@@ -61,11 +62,13 @@ class SalesPromotionController extends Controller
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::get();
 
         return view('sales_promotion.create')->with(compact(
             'stores',
             'products',
-            'customer_types'
+            'customer_types',
+            'product_classes'
         ));
     }
 
@@ -94,9 +97,10 @@ class SalesPromotionController extends Controller
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
-            $data['product_ids'] = !empty($request->product_ids) ? $request->product_ids : [];
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
 
             DB::beginTransaction();
 
@@ -146,12 +150,16 @@ class SalesPromotionController extends Controller
         $stores = Store::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $pct_data = $sales_promotion->pct_data;
 
         return view('sales_promotion.edit')->with(compact(
             'sales_promotion',
             'stores',
             'products',
-            'customer_types'
+            'customer_types',
+            'product_classes',
+            'pct_data'
         ));
     }
 
@@ -176,13 +184,14 @@ class SalesPromotionController extends Controller
         );
 
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->except('_token', '_method', 'pct');
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
-            $data['product_ids'] = !empty($request->product_ids) ? $request->product_ids : [];
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['pct_data'] = $request->pct;
 
             DB::beginTransaction();
 

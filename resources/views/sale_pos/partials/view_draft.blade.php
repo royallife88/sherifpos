@@ -26,16 +26,13 @@
             <td></td>
             <td>
                 <div class="btn-group">
-                    <a href="{{action('SellPosController@edit', $transaction->id)}}" class="btn btn-success"><i
-                            class="dripicons-document-edit"></i></a>
+                    <a target="_blank" href="{{action('SellPosController@edit', $transaction->id)}}?status=draft"
+                        class="btn btn-success"><i class="dripicons-document-edit"></i></a>
                     <button class="btn btn-danger remove_item"
                         data-href={{action('SellPosController@destroy', $transaction->id)}}><i
                             class="dripicons-trash"></i></button>
-                    @if($transaction->status != 'draft' && $transaction->payment_status != 'paid')
-                    <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $transaction->id])}}"
-                        data-container=".view_modal" class="btn btn-modal btn-success" style="color: white"><i
-                            class="fa fa-money"></i></a>
-                    @endif
+                    <a target="_blank" href="{{action('SellPosController@edit', $transaction->id)}}?status=final"
+                        class="btn btn-success"><i class="fa fa-money"></i></a>
 
                 </div>
             </td>

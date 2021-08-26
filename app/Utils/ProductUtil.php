@@ -197,9 +197,15 @@ class ProductUtil extends Util
         $keey_variations = [];
         if (!empty($variations)) {
             foreach ($variations as $v) {
+                if ($v['name'] == 'Default') {
+                    $sub_sku = $product->sku;
+                } else {
+                    $sub_sku = $v['sub_sku'];
+                }
                 if (!empty($v['id'])) {
                     $variation = Variation::find($v['id']);
                     $variation->name = $v['name'];
+                    $variation->sub_sku = $sub_sku;
                     $variation->color_id = $v['color_id'];
                     $variation->size_id = $v['size_id'];
                     $variation->grade_id = $v['grade_id'];
@@ -423,12 +429,12 @@ class ProductUtil extends Util
 
         if ($customer->is_default != 1) {
             $product = Product::whereJsonContains('discount_customers', $customer_id)
-            ->where('id', $product_id)
-            ->select(
-                'products.discount_type',
-                'products.discount',
-                'products.discount_start_date',
-                'products.discount_end_date',
+                ->where('id', $product_id)
+                ->select(
+                    'products.discount_type',
+                    'products.discount',
+                    'products.discount_start_date',
+                    'products.discount_end_date',
                 )
                 ->first();
 
@@ -456,19 +462,28 @@ class ProductUtil extends Util
     {
         $customer = Customer::find($customer_id);
         $store_id = (string) $store_id;
+        $product_id = (string) $product_id;
 
         if ($customer->is_default != 1) {
 
             $customer_type_id = (string) $customer->customer_type_id;
             if (!empty($customer_type_id)) {
                 $sales_promotion = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
-                    ->whereJsonContains('store_ids', $store_id)
-                    ->first();
+                ->whereJsonContains('store_ids', $store_id)
+                ->whereDate('start_date', '<=', date('Y-m-d'))
+                ->whereDate('end_date', '>=', date('Y-m-d'))
+                ->first();
                 if (!empty($sales_promotion)) {
                     if (!empty($sales_promotion->start_date) && !empty($sales_promotion->end_date)) {
                         //if end date set then check for expiry
-                        if ($sales_promotion->start_date <= date('Y-m-d') && $sales_promotion->end_date >= date('Y-m-d')) {
-                            return SalesPromotion::where('id', $sales_promotion->id)->whereJsonContains('product_ids', $product_id)->first();
+                        $start_date = Carbon::parse($sales_promotion->start_date);
+                        $end_date = Carbon::parse($sales_promotion->end_date);
+                        if (Carbon::now()->gte($start_date) && Carbon::now()->lte($end_date)) {
+                            if(!$sales_promotion->product_condition){
+                                return $sales_promotion;
+                            }else{
+                                return SalesPromotion::where('id', $sales_promotion->id)->whereJsonContains('product_ids', $product_id)->first();
+                            }
                         }
                     }
                 }
@@ -892,5 +907,41 @@ class ProductUtil extends Util
         if ($type == 'subtract') {
             ProductStore::where('product_id', $product_id)->where('variation_id', $variation_id)->where('store_id', $store_id)->decrement('block_qty', $qty);
         }
+    }
+
+    /**
+     * extract products using product tree selection
+     *
+     * @param array $data_selected
+     * @return array
+     */
+    public function extractProductIdsfromProductTree($data_selected)
+    {
+        $product_ids = [];
+
+        if (!empty($data_selected['product_class_selected'])) {
+            $pcp = Product::whereIn('product_class_id', $data_selected['product_class_selected'])->select('id')->pluck('id')->toArray();
+            $product_ids = array_merge($product_ids, $pcp);
+        }
+        if (!empty($data_selected['category_selected'])) {
+            $cp = array_values(Product::whereIn('category_id', $data_selected['category_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $cp);
+        }
+        if (!empty($data_selected['sub_category_selected'])) {
+            $scp = array_values(Product::whereIn('sub_category_id', $data_selected['sub_category_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $scp);
+        }
+        if (!empty($data_selected['brand_selected'])) {
+            $bp = array_values(Product::whereIn('brand_id', $data_selected['brand_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $bp);
+        }
+        if (!empty($data_selected['product_selected'])) {
+            $p = array_values(Product::whereIn('id', $data_selected['product_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $p);
+        }
+
+        $product_ids  = array_unique($product_ids);
+
+        return $product_ids;
     }
 }

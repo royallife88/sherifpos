@@ -35,7 +35,24 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::whereNull('parent_id')->get();
+
+        return view('category.index')->with(compact(
+            'categories'
+        ));
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getSubCategories()
+    {
+        $categories = Category::whereNotNull('parent_id')->get();
+
+        return view('category.sub_categories')->with(compact(
+            'categories'
+        ));
     }
 
     /**
@@ -72,7 +89,21 @@ class CategoryController extends Controller
             $request,
             ['name' => ['required', 'max:255']]
         );
+        if (!empty($request->parent_id)) {
+            $category_exist = Category::where('parent_id', $request->parent_id)->where('name', $request->name)->first();
+        } else {
+            $category_exist = Category::where('product_class_id', $request->product_class_id)->where('name', $request->name)->first();
+        }
 
+        if (!empty($category_exist)) {
+            if ($request->ajax()) {
+                return response()->json(array(
+                    'success' => false,
+                    'message' => 'There are incorect values in the form!',
+                    'msg' => 'Category name already taken'
+                ));
+            }
+        }
         try {
             $data = $request->except('_token', 'quick_add');
 
@@ -211,9 +242,9 @@ class CategoryController extends Controller
 
     public function getDropdown()
     {
-        if(!empty(request()->product_class_id)){
+        if (!empty(request()->product_class_id)) {
             $categories = Category::where('product_class_id', request()->product_class_id)->pluck('name', 'id');
-        }else{
+        } else {
             $categories = Category::whereNull('parent_id')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');

@@ -1,88 +1,116 @@
-<div class="modal-dialog" role="document">
-    <div class="modal-content">
+@extends('layouts.app')
+@section('title', __('lang.coupon'))
 
-        {!! Form::open(['url' => action('CouponController@store'), 'method' => 'post', 'id' => $quick_add ?
-        'quick_add_coupon_form' : 'coupon_add_form' ]) !!}
+@section('content')
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header d-flex align-items-center">
+                    <h4>@lang('lang.add_coupon')</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
 
-        <div class="modal-header">
+                            {!! Form::open(['url' => action('CouponController@store'), 'method' => 'post', 'id' =>
+                            $quick_add ?
+                            'quick_add_coupon_form' : 'coupon_add_form' ]) !!}
 
-            <h4 class="modal-title">@lang( 'lang.generate_coupon' )</h4>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                    aria-hidden="true">&times;</span></button>
-        </div>
 
-        <div class="modal-body">
-            <div class="form-group">
-                {!! Form::label('coupon_code', __( 'lang.coupon_code' ) . ':*') !!}
-                <div class="input-group">
-                    {!! Form::text('coupon_code',  \Keygen\Keygen::alphanum(10)->generate(), ['class' => 'form-control', 'placeholder' => __(
-                    'lang.coupon_code' ), 'required' ]);
-                    !!}
-                    <div class="input-group-append">
-                        <button type="button"
-                            class="btn btn-default btn-sm refresh_code"><i class="fa fa-refresh"></i></button>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('coupon_code', __( 'lang.coupon_code' ) . ':*') !!}
+                                        <div class="input-group">
+                                            {!! Form::text('coupon_code', \Keygen\Keygen::alphanum(10)->generate(),
+                                            ['class'
+                                            => 'form-control',
+                                            'placeholder' => __(
+                                            'lang.coupon_code' ), 'required' ]);
+                                            !!}
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-default btn-sm refresh_code"><i
+                                                        class="fa fa-refresh"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
+                                        {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' => 'selectpicker
+                                        form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
+                                        {!! Form::select('type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'],
+                                        false,
+                                        ['class' =>
+                                        'form-control', 'data-live-search' => 'true']) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('amount', __( 'lang.amount' ) . ':*') !!}
+                                        {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder' => __(
+                                        'lang.amount' ),
+                                        'required' ]);
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="checkbox-inline">
+                                            <input type="checkbox" class="amount_to_be_purchase_checkbox"
+                                                name="amount_to_be_purchase_checkbox" value="1">
+                                            @lang('lang.amount_to_be_purchase')
+                                        </label>
+                                        {!! Form::text('amount_to_be_purchase', null, ['class' => 'form-control
+                                        amount_to_be_purchase' ,
+                                        'placeholder' => __( 'lang.amount_to_be_purchase' ) ]);
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    @include('product_classification_tree.partials.product_selection_tree')
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':*') !!}
+                                        {!! Form::text('expiry_date', null, ['class' => 'form-control datepicker',
+                                        'placeholder' => __(
+                                        'lang.expiry_date' )]);
+                                        !!}
+                                    </div>
+                                </div>
+                                <input type="hidden" name="quick_add" value="{{$quick_add }}">
+                            </div>
+                            <div class="row mt-4">
+                                <div class="col-sm-12">
+                                    <input type="submit" class="btn btn-primary" value="@lang('lang.save')"
+                                        name="submit">
+                                </div>
+                            </div>
+                            {!! Form::close() !!}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="form-group">
-                {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
-                {!! Form::select('type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], false, ['class' =>
-                'form-control', 'data-live-search' => 'true']) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('amount', __( 'lang.amount' ) . ':*') !!}
-                {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder' => __( 'lang.amount' ),
-                'required' ]);
-                !!}
-            </div>
-            <div class="form-group">
-                <label class="checkbox-inline">
-                    <input type="checkbox" class="amount_to_be_purchase_checkbox" name="amount_to_be_purchase_checkbox"
-                        value="1">
-                    @lang('lang.amount_to_be_purchase')
-                </label>
-                {!! Form::text('amount_to_be_purchase', null, ['class' => 'form-control amount_to_be_purchase' ,
-                'placeholder' => __( 'lang.amount_to_be_purchase' ) ]);
-                !!}
-            </div>
-            <div class="form-group">
-                <label class="checkbox-inline">
-                    <input type="checkbox" class="all_products" name="all_products" value="1" checked>
-                    @lang('lang.all_products')
-                </label>
-                {!! Form::select('product_ids[]', $products, false, ['class' => 'form-control selectpicker', 'multiple',
-                'data-live-search' => 'true', 'required']) !!}
-            </div>
-            <div class="form-group">
-                {!! Form::label('expiry_date', __( 'lang.expiry_date' ) . ':*') !!}
-                {!! Form::text('expiry_date', null, ['class' => 'form-control datepicker', 'placeholder' => __(
-                'lang.expiry_date' )]);
-                !!}
-            </div>
-            <input type="hidden" name="quick_add" value="{{$quick_add }}">
         </div>
+    </div>
+</div>
+@endsection
 
-        <div class="modal-footer">
-            <button type="submit" class="btn btn-primary">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
-        </div>
-
-        {!! Form::close() !!}
-
-    </div><!-- /.modal-content -->
-</div><!-- /.modal-dialog -->
+@section('javascript')
+<script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script>
     $('.datepicker').datepicker();
     $('.selectpicker').selectpicker('render');
-    $('.selectpicker').selectpicker('selectAll');
+    // $('.selectpicker').selectpicker('selectAll');
 
-    $('.all_products').change(function(){
-        if(!$(this).prop('checked')){
-            $('.selectpicker').selectpicker('deselectAll');
-        }else{
-            $('.selectpicker').selectpicker('selectAll');
-        }
-    })
     $('.amount_to_be_purchase_checkbox').change(function(){
         if($(this).prop('checked')){
             $('.amount_to_be_purchase').attr('required', true);
@@ -104,3 +132,4 @@
         });
     })
 </script>
+@endsection

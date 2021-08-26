@@ -50,13 +50,17 @@
                                             <td>
                                                 {{$line->product->name}}
 
+                                                @if(!empty($line->variation))
                                                 @if($line->variation->name != "Default")
                                                 <b>{{$line->variation->name}}</b>
+                                                @endif
                                                 @endif
 
                                             </td>
                                             <td>
+                                                @if(!empty($line->variation))
                                                 {{$line->variation->sub_sku}}
+                                                @endif
                                             </td>
                                             <td>
                                                 @if(isset($line->quantity)){{@num_format($line->quantity)}}@else{{1}}@endif

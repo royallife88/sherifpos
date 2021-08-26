@@ -7,6 +7,7 @@ use App\Models\CashRegister;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Product;
@@ -171,7 +172,7 @@ class SellPosController extends Controller
                 if (empty($sell_line['transaction_sell_line_id'])) {
                     if ($transaction->status == 'final') {
                         $product = Product::find($sell_line['product_id']);
-                        if(!$product->is_service){
+                        if (!$product->is_service) {
                             $this->productUtil->decreaseProductQuantity($sell_line['product_id'], $sell_line['variation_id'], $transaction->store_id, $sell_line['quantity']);
                         }
                     }
@@ -206,10 +207,10 @@ class SellPosController extends Controller
 
                 //update customer deposit balance if any
                 $customer = Customer::find($transaction->customer_id);
-                if($request->used_deposit_balance > 0){
+                if ($request->used_deposit_balance > 0) {
                     $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
                 }
-                if($request->add_to_deposit > 0){
+                if ($request->add_to_deposit > 0) {
                     $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
                 }
                 $customer->save();
@@ -245,9 +246,13 @@ class SellPosController extends Controller
                     Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
                 }
 
-                if (!empty($transaction->gift_card__id)) {
+                if (!empty($transaction->gift_card_id)) {
                     $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
-                    GiftCard::where('id', $transaction->gift_card__id)->update(['balance' => $remaining_balance, 'customer_id' => $request->customer_id]);
+                    $used = 0;
+                    if ($remaining_balance == 0) {
+                        $used = 1;
+                    }
+                    GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
                 }
             }
 
@@ -310,7 +315,32 @@ class SellPosController extends Controller
      */
     public function edit($id)
     {
-        //
+        $categories = Category::whereNull('parent_id')->get();
+        $sub_categories = Category::whereNotNull('parent_id')->get();
+        $brands = Brand::all();
+        $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
+        $customers = Customer::getCustomerArrayWithMobile();
+        $taxes = Tax::get();
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $deliverymen = Employee::getDropdownByJobType('Deliveryman');
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+
+        $transaction = Transaction::find($id);
+
+        return view('sale_pos.edit')->with(compact(
+            'transaction',
+            'categories',
+            'walk_in_customer',
+            'deliverymen',
+            'sub_categories',
+            'tac',
+            'brands',
+            'store_pos',
+            'customers',
+            'taxes',
+            'payment_types',
+        ));
     }
 
     /**
@@ -322,7 +352,29 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try {
+            $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
+
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $html_content = view('sale_pos.partials.invoice')->with(compact(
+                'transaction',
+                'payment_types'
+            ))->render();
+
+            $output = [
+                'success' => true,
+                'html_content' => $html_content,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     /**
@@ -397,7 +449,7 @@ class SellPosController extends Controller
                 $query->whereIn('products.id',  $sp_product_ids);
             }
         }
-        if(!empty($request->store_id)){
+        if (!empty($request->store_id)) {
             $query->where('product_stores.store_id', $request->store_id);
         }
 
@@ -532,16 +584,17 @@ class SellPosController extends Controller
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
+            $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
-                $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id);
+                $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
 
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
                 $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id);
 
                 return view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details'));
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'));
             }
         }
     }
@@ -551,10 +604,16 @@ class SellPosController extends Controller
      *
      * @return void
      */
-    public function getRecentTransactions()
+    public function getRecentTransactions(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::where('type', 'sell')->where('status', '!=', 'draft');
 
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
         if (!empty(request()->start_date)) {
             $query->whereDate('transaction_date', '>=', request()->start_date);
         }
@@ -577,10 +636,16 @@ class SellPosController extends Controller
      *
      * @return void
      */
-    public function getDraftTransactions()
+    public function getDraftTransactions(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::where('type', 'sell')->where('status', 'draft');
 
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
         if (!empty(request()->start_date)) {
             $query->where('transaction_date', '>=', request()->start_date);
         }
@@ -603,7 +668,6 @@ class SellPosController extends Controller
      */
     public function getCustomerDetails($customer_id)
     {
-
         $customer = Customer::find($customer_id);
         $store_id = request()->store_id;
         $product_array = request()->product_array;
@@ -616,6 +680,8 @@ class SellPosController extends Controller
             $total_redeemable = $this->transactionUtil->calculateRedeemablePointValue($customer_id, $product_array, $store_id);
         }
 
-        return ['customer' => $customer, 'rp_value' => $rp_value, 'total_redeemable'  => $total_redeemable];
+        $customer_type = CustomerType::find($customer->customer_type_id);
+
+        return ['customer' => $customer, 'rp_value' => $rp_value, 'total_redeemable'  => $total_redeemable, 'customer_type_name' => !empty($customer_type) ? $customer_type->name : ''];
     }
 }

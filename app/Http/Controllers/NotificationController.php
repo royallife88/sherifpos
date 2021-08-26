@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
@@ -33,5 +34,12 @@ class NotificationController extends Controller
         }
 
         return redirect()->back()->with('status', $output);
+    }
+
+    public function notificationSeen()
+    {
+        Notification::where('user_id', Auth::user()->id)->where('is_seen', 0)->update(['is_seen' => 1]);
+
+        return true;
     }
 }

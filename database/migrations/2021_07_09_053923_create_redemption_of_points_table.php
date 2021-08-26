@@ -19,6 +19,7 @@ class CreateRedemptionOfPointsTable extends Migration
             $table->text('store_ids');
             $table->text('customer_type_ids');
             $table->text('product_ids');
+            $table->text('pct_data');
             $table->decimal('value_of_1000_points', 15, 4)->default(0);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();

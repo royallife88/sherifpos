@@ -19,6 +19,7 @@ class CreateSalesPromotionsTable extends Migration
             $table->text('store_ids');
             $table->text('customer_type_ids');
             $table->text('product_ids');
+            $table->text('pct_data');
             $table->enum('discount_type', ['fixed', 'percentage'])->default('fixed');
             $table->decimal('discount_value', 15, 4)->default(0);
             $table->boolean('purchase_condition')->default(0);

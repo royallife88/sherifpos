@@ -52,10 +52,16 @@ class QuotationController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
         $query = Transaction::where('type', 'sell')->where('is_quotation', 1)->where('status', '!=', 'final');
 
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', $store_id);
+        }
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
         }
@@ -75,12 +81,14 @@ class QuotationController extends Controller
         $sales = $query->orderBy('invoice_no', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
+        $stores = Store::pluck('name', 'id');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('quotation.index')->with(compact(
             'sales',
             'payment_types',
             'customers',
+            'stores',
             'payment_status_array',
         ));
     }

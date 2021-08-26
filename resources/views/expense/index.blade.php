@@ -72,6 +72,7 @@
                                         <th>@lang('lang.store')</th>
                                         <th>@lang('lang.amount_paid')</th>
                                         <th>@lang('lang.created_by')</th>
+                                        <th>@lang('lang.creation_date')</th>
                                         <th>@lang('lang.payment_date')</th>
                                         <th>@lang('lang.next_payment_date')</th>
                                         <th>@lang('lang.files')</th>
@@ -93,6 +94,7 @@
                                         </td>
                                         <td>{{@num_format($expense->final_total)}}</td>
                                         <td>{{ucfirst($expense->created_by)}}</td>
+                                        <td>{{@format_date($expense->transaction_date)}}</td>
                                         <td>@if(!empty($expense->transaction_payments)){{@format_date($expense->transaction_payments->first()->paid_on)}}@endif
                                         </td>
                                         <td>@if(!empty($expense->next_payment_date)){{@format_date($expense->next_payment_date)}}@endif

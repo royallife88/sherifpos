@@ -40,17 +40,17 @@ class GiftCardController extends Controller
     {
         $query = GiftCard::where('id', '>', 0);
 
-        if (!empty(request()->customer_id)) {
-            $query->where('customer_id', request()->customer_id);
-        }
         if (!empty(request()->created_by)) {
             $query->where('created_by', request()->created_by);
         }
         if (!empty(request()->start_date)) {
-            $query->where('created_at', '>=', request()->start_date);
+            $query->whereDate('created_at', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->where('created_at', '<=', request()->end_date);
+            $query->whereDate('created_at', '<=', request()->end_date);
+        }
+        if (!empty(request()->status)) {
+            $query->where('used', request()->status);
         }
 
         $gift_cards = $query->get();

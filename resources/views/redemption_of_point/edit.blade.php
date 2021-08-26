@@ -33,12 +33,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('product_ids', __( 'lang.product' ) . ':*') !!}
-                                    {!! Form::select('product_ids[]', $products, $redemption_of_point->product_ids,
-                                    ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
-                                </div>
+                                @include('product_classification_tree.partials.product_selection_tree')
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -82,6 +77,7 @@
 @endsection
 
 @section('javascript')
+<script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script type="text/javascript">
 </script>
 @endsection
