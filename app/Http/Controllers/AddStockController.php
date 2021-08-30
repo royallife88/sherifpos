@@ -72,7 +72,7 @@ class AddStockController extends Controller
             $query->where('transaction_date', '<=', request()->end_date);
         }
 
-        $add_stocks = $query->get();
+        $add_stocks = $query->orderBy('transaction_date', 'desc')->get();
 
         $suppliers = Supplier::pluck('name', 'id');
         $stores = Store::pluck('name', 'id');

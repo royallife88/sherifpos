@@ -42,6 +42,11 @@
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.batch_number' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.manufacturing_date' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.expiry_date' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.days_before_the_expiry_date' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.convert_status_expire' )</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -71,6 +76,11 @@
                                             <td>
                                                 {{@num_format($line->sub_total)}}
                                             </td>
+                                            <td>{{$line->batch_number}}</td>
+                                            <td>@if(!empty($line->manufacturing_date)){{@format_date($line->manufacturing_date)}}@endif</td>
+                                            <td>@if(!empty($line->expiry_date)){{@format_date($line->expiry_date)}}@endif</td>
+                                            <td>{{$line->expiry_warning}}</td>
+                                            <td>{{$line->convert_status_expire}}</td>
                                         </tr>
                                         @endforeach
                                     </tbody>

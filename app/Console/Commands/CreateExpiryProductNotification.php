@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\AddStockLine;
 use App\Models\Product;
 use App\Models\ProductStore;
 use App\Models\User;
@@ -51,14 +52,25 @@ class CreateExpiryProductNotification extends Command
      */
     public function handle()
     {
-        $query = Product::leftjoin('product_stores', 'products.id', 'product_stores.product_id')
-            ->select(DB::raw('SUM(qty_available) as qty'), 'products.*');
-
-        $items = $query->groupBy('product_stores.variation_id')->get();
-
         $users = User::get();
 
-        foreach ($items as $item) {
+        $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
+            ->select(
+                'add_stock_lines.id',
+                'transactions.id as transaction_id',
+                'transactions.store_id',
+                'product_id',
+                'variation_id',
+                'expiry_date',
+                'expiry_warning',
+                'convert_status_expire',
+                DB::raw('SUM(quantity - quantity_sold) as remaining_qty')
+            )
+            ->having('remaining_qty', '>', 0)
+            ->groupBy('add_stock_lines.id')
+            ->get();
+
+        foreach ($add_stock_lines as $item) {
             if (!empty($item->expiry_date) && !empty($item->expiry_warning)) {
                 $warning_date = Carbon::parse($item->expiry_date)->subDays($item->expiry_warning);
                 if (Carbon::now()->gt($warning_date) && Carbon::now()->lt(Carbon::parse($item->expiry_date))) {
@@ -66,7 +78,7 @@ class CreateExpiryProductNotification extends Command
                     foreach ($users as $user) {
                         $notification_data = [
                             'user_id' => $user->id,
-                            'product_id' => $item->id,
+                            'product_id' => $item->product_id,
                             'qty_available' => $item->qty,
                             'days' => $days,
                             'type' => 'expiry_alert',
@@ -80,7 +92,7 @@ class CreateExpiryProductNotification extends Command
                     foreach ($users as $user) {
                         $notification_data = [
                             'user_id' => $user->id,
-                            'product_id' => $item->id,
+                            'product_id' => $item->product_id,
                             'qty_available' => $item->qty,
                             'days' => $days,
                             'type' => 'expired',
@@ -96,17 +108,13 @@ class CreateExpiryProductNotification extends Command
             if (!empty($item->expiry_date) && !empty($item->convert_status_expire)) {
                 $expired_date = Carbon::parse($item->expiry_date)->subDays($item->convert_status_expire)->format('Y-m-d');
                 if (Carbon::now()->format('Y-m-d') == $expired_date) {
-                    $product_stores = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-                        ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
-                        ->where('product_stores.product_id', $item->id)
-                        ->select('product_stores.*')
-                        ->groupBy('product_stores.id')->get();
-                    foreach ($product_stores as $product) {
-                        $ps = ProductStore::find($product->id);
-                        $ps->expired_qauntity = $ps->expired_qauntity + $ps->qty_available;
-                        $ps->qty_available = 0;
-                        $ps->save();
-                    }
+                    $ps = ProductStore::where('product_stores.product_id', $item->product_id)
+                        ->where('product_stores.variation_id', $item->variation_id)
+                        ->where('product_stores.store_id', $item->store_id)
+                        ->first();
+                    $ps->expired_qauntity = $ps->expired_qauntity + $item->remaining_qty;
+                    $ps->save();
+                    $item->update(['expired_qauntity' => $item->remaining_qty]);
                 }
             }
         }

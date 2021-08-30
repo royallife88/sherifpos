@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $('.datepicker').datepicker()
     //Add products
     if ($("#search_product").length > 0) {
         $("#search_product")
@@ -103,5 +104,9 @@ $(document).on("change", ".quantity, .purchase_price", function () {
     calculate_sub_totals();
 });
 $(document).on("click", ".remove_row", function () {
+    let index = $(this).data('index');
+
     $(this).closest("tr").remove();
+    $('.row_details_'+index).remove();
+    calculate_sub_totals();
 });

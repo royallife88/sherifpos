@@ -469,19 +469,19 @@ class ProductUtil extends Util
             $customer_type_id = (string) $customer->customer_type_id;
             if (!empty($customer_type_id)) {
                 $sales_promotion = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
-                ->whereJsonContains('store_ids', $store_id)
-                ->whereDate('start_date', '<=', date('Y-m-d'))
-                ->whereDate('end_date', '>=', date('Y-m-d'))
-                ->first();
+                    ->whereJsonContains('store_ids', $store_id)
+                    ->whereDate('start_date', '<=', date('Y-m-d'))
+                    ->whereDate('end_date', '>=', date('Y-m-d'))
+                    ->first();
                 if (!empty($sales_promotion)) {
                     if (!empty($sales_promotion->start_date) && !empty($sales_promotion->end_date)) {
                         //if end date set then check for expiry
                         $start_date = Carbon::parse($sales_promotion->start_date);
                         $end_date = Carbon::parse($sales_promotion->end_date);
                         if (Carbon::now()->gte($start_date) && Carbon::now()->lte($end_date)) {
-                            if(!$sales_promotion->product_condition){
+                            if (!$sales_promotion->product_condition) {
                                 return $sales_promotion;
-                            }else{
+                            } else {
                                 return SalesPromotion::where('id', $sales_promotion->id)->whereJsonContains('product_ids', $product_id)->first();
                             }
                         }
@@ -666,6 +666,11 @@ class ProductUtil extends Util
                 $add_stock->quantity = $this->num_uf($line['quantity']);
                 $add_stock->purchase_price = $this->num_uf($line['purchase_price']);
                 $add_stock->sub_total = $this->num_uf($line['sub_total']);
+                $add_stock->batch_number = $line['batch_number'];
+                $add_stock->manufacturing_date = !empty($line['manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null;
+                $add_stock->expiry_date = !empty($line['expiry_date']) ? $this->uf_date($line['expiry_date']) : null;
+                $add_stock->expiry_warning = $line['expiry_warning'];
+                $add_stock->convert_status_expire = $line['convert_status_expire'];
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_id'];
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], $old_qty);
@@ -677,6 +682,11 @@ class ProductUtil extends Util
                     'quantity' => $this->num_uf($line['quantity']),
                     'purchase_price' => $this->num_uf($line['purchase_price']),
                     'sub_total' => $this->num_uf($line['sub_total']),
+                    'batch_number' => $line['batch_number'],
+                    'manufacturing_date' => !empty($line['manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,
+                    'expiry_date' => !empty($line['expiry_date']) ? $this->uf_date($line['expiry_date']) : null,
+                    'expiry_warning' => $line['expiry_warning'],
+                    'convert_status_expire' => $line['convert_status_expire'],
                 ];
 
                 $add_stock = AddStockLine::create($add_stock_data);

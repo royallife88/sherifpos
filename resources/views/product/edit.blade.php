@@ -194,21 +194,6 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('add_stock', __('lang.add_stock'), []) !!}
-                                    {!! Form::text('add_stock', null, ['class' => 'form-control', 'placeholder' =>
-                                    __('lang.add_stock')]) !!}
-                                </div>
-                            </div> --}}
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('batch_number', __('lang.batch_number'), []) !!}
-                                    {!! Form::text('batch_number', $product->batch_number, ['class' => 'form-control',
-                                    'placeholder' =>
-                                    __('lang.batch_number')]) !!}
-                                </div>
-                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
@@ -216,42 +201,6 @@
                                     => 'UPC-A', 'UPCE' => 'UPC-E', 'EAN8' => 'EAN-8', 'EAN13' => 'EAN-13'],
                                     $product->barcode_type,
                                     ['class' => 'form-control', 'required']) !!}
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('manufacturing_date', __('lang.manufacturing_date') , []) !!}
-                                    {!! Form::text('manufacturing_date', !empty($product->manufacturing_date) ?
-                                    @format_date($product->manufacturing_date) : null, ['class' => 'form-control
-                                    datepicker', 'id' => 'manufacturing_date',
-                                    'placeholder'
-                                    => __('lang.manufacturing_date')]) !!}
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    {!! Form::label('expiry_date', __('lang.expiry_date') , []) !!}
-                                    {!! Form::text('expiry_date', !empty($product->expiry_date) ?
-                                    @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker',
-                                    'placeholder' =>
-                                    __('lang.expiry_date'), 'readonly']) !!}
-                                </div>
-                            </div>
-                            <div class="col-md-4 warning @if(empty($product->expiry_date)) hide @endif">
-                                <div class="form-group">
-                                    {!! Form::label('expiry_warning', __('lang.warning'), []) !!}
-                                    {!! Form::text('expiry_warning', $product->expiry_warning, ['class' =>
-                                    'form-control', 'placeholder' =>
-                                    __('lang.days_before_the_expiry_date')]) !!}
-                                </div>
-                            </div>
-                            <div class="col-md-4 convert_status_expire @if(empty($product->expiry_date)) hide @endif">
-                                <div class="form-group">
-                                    {!! Form::label('convert_status_expire', __('lang.convert_status_expire') ,
-                                    []) !!}
-                                    {!! Form::text('convert_status_expire', $product->convert_status_expire, ['class' =>
-                                    'form-control',
-                                    'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

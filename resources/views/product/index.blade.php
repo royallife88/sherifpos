@@ -98,13 +98,6 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('batch_number', __('lang.batch_number') . ':', []) !!}
-                            {!! Form::select('batch_number', $batch_numbers, false, ['class' => 'form-control
-                            selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button>
                         <a class="btn btn-danger mt-4"
                             href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a>
@@ -144,8 +137,8 @@
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
             <button type="button" value="15"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
-            {{-- <button type="button" value="16"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button> --}}
+            <button type="button" value="16"
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
             <button type="button" value="17"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
             <button type="button" value="18"

@@ -724,6 +724,7 @@ pos_form_validator = pos_form_obj.validate({
                     }
 
                     reset_pos_form();
+                    getFilterProductRightSide();
                     get_recent_transactions();
                 } else {
                     toastr.error(result.msg);

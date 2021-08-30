@@ -264,6 +264,8 @@
         if(!is_register_close){
             getClosingModal(cash_register_id);
             return 'Please enter the closing cash';
+        }else{
+            return;
         }
     });
     @endif
@@ -295,7 +297,12 @@
         }
     })
     $(document).on('click', '.close-btn-add-closing-cash', function(){
-        $('#logout-form').submit();
+        let url = '{{request()->segment(1)}}';
+        if(url !== 'pos'){
+            $('#logout-form').submit();
+        }else{
+            $('#closing_cash_modal').modal('hide')
+        }
     })
     $(document).on('click', '.notification-list', function(){
         $.ajax({

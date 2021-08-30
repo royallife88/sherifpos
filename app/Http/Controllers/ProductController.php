@@ -94,10 +94,6 @@ class ProductController extends Controller
             $products->where('brand_id', request()->brand_id);
         }
 
-        if (!empty(request()->batch_number)) {
-            $products->where('batch_number', request()->batch_number);
-        }
-
         if (!empty(request()->unit_id)) {
             $products->whereJsonContains('multiple_units', request()->unit_id);
         }
@@ -142,7 +138,6 @@ class ProductController extends Controller
         $customer_types = CustomerType::pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::pluck('name', 'id');
-        $batch_numbers = Product::distinct('batch_number')->pluck('batch_number', 'batch_number');
 
         return view('product.index')->with(compact(
             'products',
@@ -158,8 +153,7 @@ class ProductController extends Controller
             'customers',
             'customer_types',
             'customers_tree_arry',
-            'stores',
-            'batch_numbers',
+            'stores'
         ));
     }
 
@@ -255,12 +249,7 @@ class ProductController extends Controller
                 'multiple_grades' => $request->multiple_grades,
                 'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
-                'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
-                'manufacturing_date' => !empty($request->manufacturing_date) ? $this->commonUtil->uf_date($request->manufacturing_date) : null,
-                'expiry_date' => !empty($request->expiry_date) ? $this->commonUtil->uf_date($request->expiry_date) : null,
-                'expiry_warning' => $request->expiry_warning,
-                'convert_status_expire' => $request->convert_status_expire,
                 'alert_quantity' => $request->alert_quantity,
                 'purchase_price' => $request->purchase_price,
                 'sell_price' => $request->sell_price,
@@ -406,12 +395,7 @@ class ProductController extends Controller
                 'multiple_grades' => $request->multiple_grades,
                 'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
-                'batch_number' => $request->batch_number,
                 'barcode_type' => $request->barcode_type,
-                'manufacturing_date' => !empty($request->manufacturing_date) ? $this->commonUtil->uf_date($request->manufacturing_date) : null,
-                'expiry_date' => !empty($request->expiry_date) ? $this->commonUtil->uf_date($request->expiry_date) : null,
-                'expiry_warning' => $request->expiry_warning,
-                'convert_status_expire' => $request->convert_status_expire,
                 'alert_quantity' => $request->alert_quantity,
                 'purchase_price' => $this->commonUtil->num_uf($request->purchase_price),
                 'sell_price' => $this->commonUtil->num_uf($request->sell_price),

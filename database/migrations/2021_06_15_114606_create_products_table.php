@@ -27,12 +27,7 @@ class CreateProductsTable extends Migration
             $table->string('multiple_grades')->nullable();
             $table->boolean('is_service')->default(0);
             $table->text('product_details')->nullable();
-            $table->string('batch_number')->nullable();
             $table->string('barcode_type');
-            $table->string('manufacturing_date')->nullable();
-            $table->string('expiry_date')->nullable();
-            $table->integer('expiry_warning')->nullable();
-            $table->integer('convert_status_expire')->nullable();
             $table->integer('alert_quantity')->nullable();
             $table->decimal('purchase_price', 15, 4);
             $table->decimal('sell_price', 15, 4);
