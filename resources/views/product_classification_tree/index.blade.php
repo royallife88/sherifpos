@@ -160,7 +160,7 @@
                                                                                 $products =
                                                                                 App\Models\Product::where('brand_id',
                                                                                 $brand->id)->select('products.id',
-                                                                                'products.name', 'products.expiry_date')->groupBy('products.id')->get();
+                                                                                'products.name')->groupBy('products.id')->get();
                                                                                 @endphp
                                                                                 @foreach ($products as $product)
                                                                                 <div class="accordion"
@@ -174,7 +174,7 @@
                                                                                                 data-parent="#{{$product->name}}"
                                                                                                 href="#collapse{{$product->name}}">
                                                                                                 <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
-                                                                                                alt="photo" width="50" height="50"> {{$product->name}} <span style="color: #737475">@if(!empty($product->expiry_date)) @lang('lang.expiry') {{@format_date($product->expiry_date)}}@endif</span>
+                                                                                                alt="photo" width="50" height="50"> {{$product->name}}
                                                                                                 <div
                                                                                                     class="btn-group pull-right">
                                                                                                     <button
