@@ -15,7 +15,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('employee_id', __('lang.employee'), []) !!}
-                                    {!! Form::select('employee_id[]', $employees, false, ['class' => 'form-control selectpicker', 'multiple', 'id' => 'employee_id' ,'placeholder' => __('lang.please_select')]) !!}
+                                    {!! Form::select('employee_id[]', $employees, !empty($mobile_number) ? [$mobile_number] : false, ['class' => 'form-control selectpicker', 'multiple', 'id' => 'employee_id' ,'placeholder' => __('lang.please_select')]) !!}
                                 </div>
                             </div>
                         </div>
@@ -66,6 +66,9 @@
 
 @section('javascript')
 <script type="text/javascript">
+    $(document).ready(function(){
+        $('#employee_id').change()
+    })
     $('#employee_id').change(function(){
         let numbers= $(this).val();
         numbers =  numbers.filter(e =>  e);

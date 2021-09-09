@@ -54,6 +54,7 @@
                                 <th>@lang('lang.paid_by')</th>
                                 <th>@lang('lang.amount')</th>
                                 <th>@lang('lang.created_by')</th>
+                                <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
 
@@ -64,9 +65,134 @@
                                 <td>{{$transaction->ref_number}}</td>
                                 <td>@if($transaction->type == 'sell'){{$transaction->invoice_no}}@endif</td>
                                 <td>@if($transaction->type == 'add_stock'){{$transaction->invoice_no}}@endif</td>
-                                <td>@if(!empty($payment_types[$transaction->method])){{$payment_types[$transaction->method]}} @endif</td>
+                                <td>@if(!empty($payment_types[$transaction->method])){{$payment_types[$transaction->method]}}
+                                    @endif</td>
                                 <td>{{@num_format($transaction->amount)}}</td>
                                 <td>{{ucfirst($transaction->created_by_name)}}</td>
+
+                                @if($transaction->type == 'sell')
+                                <td>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">@lang('lang.action')
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            {{-- @can('sale.pos.create_and_edit')
+                                            <li>
+
+                                                <a data-href="{{action('SellController@print', $transaction->id)}}"
+                                            class="btn print-invoice"><i class="dripicons-print"></i>
+                                            @lang('lang.generate_invoice')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan --}}
+                                            @can('sale.pos.view')
+                                            <li>
+
+                                                <a data-href="{{action('SellController@show', $transaction->id)}}"
+                                                    data-container=".view_modal" class="btn btn-modal"><i
+                                                        class="fa fa-eye"></i> @lang('lang.view')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('sale.pos.create_and_edit')
+                                            <li>
+
+                                                <a href="{{action('SellController@edit', $transaction->id)}}" class="btn"><i
+                                                        class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('return.sell_return.create_and_edit')
+                                            <li>
+                                                <a href="{{action('SellReturnController@add', $transaction->id)}}"
+                                                    class="btn"><i class="fa fa-undo"></i> @lang('lang.sale_return')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('sale.pay.create_and_edit')
+                                            @if($transaction->payment_status != 'paid')
+                                            <li>
+                                                <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $transaction->id])}}"
+                                                    data-container=".view_modal" class="btn btn-modal"><i
+                                                        class="fa fa-plus"></i> @lang('lang.add_payment')</a>
+                                            </li>
+                                            @endif
+                                            @endcan
+                                            @can('sale.pay.view')
+                                            @if($transaction->payment_status != 'pending')
+                                            <li>
+                                                <a data-href="{{action('TransactionPaymentController@show', $transaction->id)}}"
+                                                    data-container=".view_modal" class="btn btn-modal"><i
+                                                        class="fa fa-money"></i> @lang('lang.view_payments')</a>
+                                            </li>
+                                            @endif
+                                            @endcan
+                                            @can('sale.pos.delete')
+                                            <li>
+                                                <a data-href="{{action('SellController@destroy', $transaction->id)}}"
+                                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                    @lang('lang.delete')</a>
+                                            </li>
+                                            @endcan
+                                        </ul>
+                                    </div>
+                                </td>
+                                @endif
+                                @if($transaction->type == 'add_stock')
+                                <td>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">@lang('lang.action')
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            @can('stock.add_stock.view')
+                                            <li>
+                                                <a href="{{action('AddStockController@show', $transaction->id)}}"
+                                                    class=""><i class="fa fa-eye btn"></i>
+                                                    @lang('lang.view')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('stock.add_stock.create_and_edit')
+                                            <li>
+                                                <a href="{{action('AddStockController@edit', $transaction->id)}}"><i
+                                                        class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('stock.add_stock.delete')
+                                            <li>
+                                                <a data-href="{{action('AddStockController@destroy', $transaction->id)}}"
+                                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                    class="btn text-red delete_item"><i class="dripicons-trash"></i>
+                                                    @lang('lang.delete')</a>
+                                            </li>
+                                            @endcan
+                                            @can('stock.pay.create_and_edit')
+                                            @if($transaction->payment_status != 'paid')
+                                            <li>
+                                                <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $transaction->id])}}"
+                                                    data-container=".view_modal" class="btn btn-modal"><i
+                                                        class="fa fa-money"></i>
+                                                    @lang('lang.pay')</a>
+                                            </li>
+                                            @endif
+                                            @endcan
+                                        </ul>
+                                    </div>
+                                </td>
+                                @endif
                             </tr>
 
                             @endforeach
@@ -86,5 +212,18 @@
 @endsection
 
 @section('javascript')
-
+<script>
+    $(document).on('click', '.print-invoice', function(){
+     $.ajax({
+         method: 'get',
+         url: $(this).data('href'),
+         data: {  },
+         success: function(result) {
+             if(result.success){
+                 pos_print(result.html_content);
+             }
+         },
+     });
+ })
+</script>
 @endsection

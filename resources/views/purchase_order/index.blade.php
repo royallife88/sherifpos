@@ -119,6 +119,12 @@
                 </tr>
 
                 @endforeach
+                <tfoot>
+                    <tr>
+                        <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                        <td>{{@num_format($purchase_orders->sum('final_total'))}}</td>
+                    </tr>
+                </tfoot>
             </tbody>
             <tfoot>
 

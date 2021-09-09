@@ -36,8 +36,17 @@ class SmsController extends Controller
     {
         $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')->pluck('employee_name', 'mobile');
 
+        $mobile_number = null;
+        if(!empty(request()->employee_id)){
+            $employee = Employee::find(request()->employee_id);
+            if(!empty($employee)){
+                $mobile_number = $employee->mobile;
+            }
+        }
+
         return view('sms.create')->with(compact(
-            'employees'
+            'employees',
+            'mobile_number'
         ));
     }
 

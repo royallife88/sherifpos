@@ -28,8 +28,6 @@
                             {{$product->batch_number}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.selling_price'): </label>
                             {{@num_format($product->sell_price)}}<br>
-                            <label style="font-weight: bold;" for="">@lang('lang.purchase_price'): </label>
-                            {{@num_format($product->purchase_price)}}<br>
                         </div>
                         <div class="col-md-6">
                             <label style="font-weight: bold;" for="">@lang('lang.tax'): </label>
@@ -42,10 +40,8 @@
                             {{implode(', ', $product->sizes->pluck('name')->toArray())}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.grade'): </label>
                             {{implode(', ', $product->grades->pluck('name')->toArray())}}<br>
-                            <label style="font-weight: bold;" for="">@lang('lang.expiry'): </label>
-                            @if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif<br>
-                            <label style="font-weight: bold;" for="">@lang('lang.manufacturing_date'): </label>
-                            @if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif<br>
+                            <label style="font-weight: bold;" for="">@lang('lang.purchase_price'): </label>
+                            {{@num_format($product->purchase_price)}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.is_service'): </label>
                             @if(!empty($product->is_service))@lang('lang.yes')@else @lang('lang.no') @endif<br>
                         </div>
@@ -73,7 +69,7 @@
                     <table class="table">
                         <thead>
                             <tr class="bg-success text-white">
-                                <th>@lang('lang.variation_name')</th>
+                                <th>@lang('lang.name')</th>
                                 <th>@lang('lang.sku')</th>
                                 <th>@lang('lang.store_name')</th>
                                 <th>@lang('lang.current_stock')</th>
@@ -83,7 +79,7 @@
                         <tbody>
                             @foreach ($stock_detials as $stock_detial)
                             <tr>
-                                <td>{{$stock_detial->variation->name}}</td>
+                                <td>{{$stock_detial->product->name}}@if(!empty($stock_detial->variation->name) && $stock_detial->variation->name != 'Default'){{$stock_detial->variation->name}}@endif</td>
                                 <td>{{$stock_detial->variation->sub_sku}}</td>
                                 <td>{{$stock_detial->store->name}}</td>
                                 <td>{{@num_format($stock_detial->qty_available)}}</td>

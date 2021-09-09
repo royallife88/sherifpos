@@ -23,7 +23,7 @@ class EmailController extends Controller
 
 
         return view('email.index')->with(compact(
-            'emails',
+            'emails'
         ));
     }
 
@@ -35,10 +35,17 @@ class EmailController extends Controller
     public function create()
     {
         $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')->pluck('name', 'email');
-
+        $email = null;
+        if(!empty(request()->employee_id)){
+            $employee = Employee::leftjoin('users', 'employees.user_id', 'users.id')->where('employees.id', request()->employee_id)->first();
+            if(!empty($employee)){
+                $email = $employee->email;
+            }
+        }
 
         return view('email.create')->with(compact(
-            'employees'
+            'employees',
+            'email'
         ));
     }
 

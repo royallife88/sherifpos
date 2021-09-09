@@ -110,6 +110,15 @@
 
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                            <td>{{@num_format($cash_registers->sum('total_cash_sales'))}}</td>
+                            <td>{{@num_format($cash_registers->sum('total_cash_in'))}}</td>
+                            <td>{{@num_format($cash_registers->sum('total_cash_out'))}}</td>
+                            <td>{{@num_format($cash_registers->sum('closing_amount'))}}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

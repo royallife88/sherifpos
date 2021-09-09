@@ -139,6 +139,12 @@
 
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="1" style="text-align: right">@lang('lang.total')</th>
+                    <td>{{@num_format($gift_cards->sum('amount'))}}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>

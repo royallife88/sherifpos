@@ -4,6 +4,7 @@ namespace App\Utils;
 
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
+use App\Models\StorePos;
 use App\Models\Supplier;
 use App\Models\Transaction;
 use App\Notifications\PurchaseOrderToSupplierNotification;
@@ -42,6 +43,46 @@ class CashRegisterUtil extends Util
             ->first();
 
         return $register;
+    }
+
+    /**
+     * Retrieves the currently opened cash register for the user
+     *
+     * @param $int user_id
+     *
+     * @return obj
+     */
+    public function getCurrentCashRegisterOrCreate($user_id)
+    {
+        $register =  CashRegister::where('user_id', $user_id)
+            ->where('status', 'open')
+            ->first();
+
+        if (empty($register)) {
+            $store_pos = StorePos::where('user_id', $user_id)->first();
+            $register = CashRegister::create([
+                'user_id' => $user_id,
+                'status' => 'open',
+                'store_id' => !empty($store_pos) ? $store_pos->store_id : null
+            ]);
+        }
+
+        return $register;
+    }
+
+    public function createCashRegisterTransaction($register, $amount, $transaction_type, $type, $source_id, $notes)
+    {
+        $cash_register_transaction = CashRegisterTransaction::create([
+            'cash_register_id' => $register->id,
+            'amount' => $amount,
+            'pay_method' => 'cash',
+            'type' => $type,
+            'transaction_type' => $transaction_type,
+            'source_id' => $source_id,
+            'notes' => $notes,
+        ]);
+
+        return $cash_register_transaction;
     }
 
     /**

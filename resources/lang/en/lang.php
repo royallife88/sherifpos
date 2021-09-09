@@ -914,6 +914,7 @@ return [
     'add_coupon' => 'Add Coupon',
     'edit_coupon' => 'Edit Coupon',
     'earlier' => 'Earlier',
+    'forgot_passowrd' => 'Forgot Password?',
 
 
 

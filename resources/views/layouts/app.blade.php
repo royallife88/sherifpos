@@ -298,11 +298,7 @@
     })
     $(document).on('click', '.close-btn-add-closing-cash', function(){
         let url = '{{request()->segment(1)}}';
-        if(url !== 'pos'){
-            $('#logout-form').submit();
-        }else{
-            $('#closing_cash_modal').modal('hide')
-        }
+        $('#logout-form').submit();
     })
     $(document).on('click', '.notification-list', function(){
         $.ajax({

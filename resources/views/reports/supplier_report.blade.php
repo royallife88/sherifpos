@@ -51,7 +51,8 @@
                             data-toggle="tab">@lang('lang.purchase_order')</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#store-payment" role="tab" data-toggle="tab">@lang('lang.payments')</a>
+                        <a class="nav-link" href="#store-payment" role="tab"
+                            data-toggle="tab">@lang('lang.payments')</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#store-return" role="tab" data-toggle="tab">@lang('lang.return')</a>
@@ -72,6 +73,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -94,6 +96,54 @@
                                         <td>@if($add_stock->status == 'received')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($add_stock->status)}} @endif</td>
+                                        <td>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('stock.add_stock.view')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@show', $add_stock->id)}}"
+                                                            class=""><i class="fa fa-eye btn"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
+                                                                class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.delete')
+                                                    <li>
+                                                        <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i
+                                                                class="dripicons-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                    @can('stock.pay.create_and_edit')
+                                                    @if($add_stock->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i>
+                                                            @lang('lang.pay')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -121,6 +171,7 @@
                                         <th>@lang('lang.paid_by')</th>
                                         <th>@lang('lang.amount')</th>
                                         <th>@lang('lang.created_by')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -136,6 +187,54 @@
                                             @endif</td>
                                         <td>{{@num_format($payment->amount)}}</td>
                                         <td>{{ucfirst($payment->created_by_name)}}</td>
+                                        <td>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('stock.add_stock.view')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@show', $payment->id)}}"
+                                                            class=""><i class="fa fa-eye btn"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@edit', $payment->id)}}"><i
+                                                                class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.delete')
+                                                    <li>
+                                                        <a data-href="{{action('AddStockController@destroy', $payment->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i
+                                                                class="dripicons-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                    @can('stock.pay.create_and_edit')
+                                                    @if($payment->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $payment->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i>
+                                                            @lang('lang.pay')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -163,6 +262,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -171,7 +271,8 @@
                                     <tr>
                                         <td>{{@format_date($purchase_order->transaction_date)}}</td>
                                         <td>{{$purchase_order->po_no}}</td>
-                                        <td>@if(!empty($purchase_order->supplier)){{$purchase_order->supplier->name}}@endif</td>
+                                        <td>@if(!empty($purchase_order->supplier)){{$purchase_order->supplier->name}}@endif
+                                        </td>
                                         <td>
                                             @foreach ($purchase_order->purchase_order_lines as $line)
                                             ({{@num_format($line->quantity)}})
@@ -183,8 +284,46 @@
                                         <td>{{@num_format($purchase_order->final_total - $purchase_order->transaction_payments->sum('amount'))}}
                                         </td>
                                         <td>@if($purchase_order->status == 'final')<span
-                                                class="badge badge-success">@lang('lang.completed')</span>@else
+                                                class="badge badge-success">@lang('lang.completed')</span>@elseif($purchase_order->status == 'sent_admin') Sent Admin @else
                                             {{ucfirst($purchase_order->status)}} @endif</td>
+                                        <td>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('purchase_order.purchase_order.view')
+                                                    <li>
+                                                        <a href="{{action('PurchaseOrderController@show', $purchase_order->id)}}"
+                                                            class=""><i class="fa fa-eye btn"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('purchase_order.purchase_order.create_and_edit')
+                                                    <li>
+                                                        <a
+                                                            href="{{action('PurchaseOrderController@edit', $purchase_order->id)}}"><i
+                                                                class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('purchase_order.purchase_order.delete')
+                                                    <li>
+                                                        <a data-href="{{action('PurchaseOrderController@destroy', $purchase_order->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -212,6 +351,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -224,9 +364,9 @@
                                         <td>
 
                                             @foreach ($return->add_stock_lines as $line)
-                                                @if($line->quantity_returned == 0)
-                                                @continue
-                                                @endif
+                                            @if($line->quantity_returned == 0)
+                                            @continue
+                                            @endif
                                             ({{@num_format($line->quantity)}})
                                             @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
@@ -238,6 +378,65 @@
                                         <td>@if($return->status == 'final')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($return->status)}} @endif</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('return.sell_return.view')
+                                                    <li>
+
+                                                        <a data-href="{{action('PurchaseReturnController@show', $return->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-eye"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.sell_return.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('PurchaseReturnController@edit', $return->id)}}"
+                                                            class="btn"><i class="dripicons-document-edit"></i>
+                                                            @lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.sell_return_pay.create_and_edit')
+                                                    @if($return->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $return->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-plus"></i>
+                                                            @lang('lang.add_payment')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('return.sell_return_pay.view')
+                                                    @if($return->payment_status != 'pending')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@show', $return->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i>
+                                                            @lang('lang.view_payments')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('sale.pos.delete')
+                                                    <li>
+                                                        <a data-href="{{action('SellController@destroy', $return->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach

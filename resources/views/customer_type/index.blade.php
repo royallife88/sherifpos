@@ -23,6 +23,9 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $total_discounts = 0;
+            @endphp
             @foreach($customer_types as $customer_type)
             <tr>
                 <td>{{$customer_type->name}}</td>
@@ -82,9 +85,17 @@
                     </div>
                 </td>
             </tr>
-
+            @php
+                $total_discounts += $customer_type->total_sp_discount + $customer_type->total_product_discount + $customer_type->total_coupon_discount;
+            @endphp
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                <td>{{@num_format($total_discounts)}}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endsection

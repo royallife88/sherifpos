@@ -94,6 +94,12 @@
 
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" style="text-align: right">@lang('lang.total')</th>
+                            <td>{{@num_format($cash_registers->sum('amount'))}}</td>
+                        </tr>
+                    </tfoot>
                 </table>
             </div>
         </div>

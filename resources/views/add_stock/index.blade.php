@@ -68,6 +68,10 @@
             </thead>
 
             <tbody>
+                @php
+                    $total_payments = 0;
+                    $total_pending_amount = 0;
+                @endphp
                 @foreach ($add_stocks as $add_stock)
                 <tr>
                     <td>@if(!empty($add_stock->po_no)&& !empty($add_stock->purchase_order_id))<a
@@ -137,9 +141,21 @@
                         </div>
                     </td>
                 </tr>
-
+                @php
+                    $total_payments += $add_stock->transaction_payments->sum('amount');
+                    $total_pending_amount += $add_stock->final_total - $add_stock->transaction_payments->sum('amount');
+                @endphp
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="5" style="text-align: right">@lang('lang.total')</th>
+                    <td>{{@num_format($add_stocks->sum('final_total'))}}</td>
+                    <td></td>
+                    <td>{{@num_format($total_payments)}}</td>
+                    <td>{{@num_format($total_pending_amount)}}</td>
+                </tr>
+            </tfoot>
             <tfoot>
 
             </tfoot>

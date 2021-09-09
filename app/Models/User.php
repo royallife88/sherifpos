@@ -127,6 +127,8 @@ class User extends Authenticatable
             ],
             'hr_management' => [
                 'employee' => 'Employee',
+                'suspend' => 'Suspend',
+                'send_credentials' => 'Send Credentials',
                 'jobs' => 'Jobs',
                 'leave_types' => 'Leave Type',
                 'leaves' => 'Leaves',

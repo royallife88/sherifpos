@@ -912,4 +912,5 @@ return [
     'add_coupon' => 'Coupon toevoegen',
     'edit_coupon' => 'Coupon bewerken',
     'earlier' => 'Eerder',
+    'forgot_passowrd' => 'Wachtwoord vergeten?',
 ];

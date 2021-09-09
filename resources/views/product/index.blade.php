@@ -209,7 +209,7 @@
                 <td>{{implode(', ', $product->colors->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->sizes->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $product->grades->pluck('name')->toArray())}}</td>
-                <td>{{@num_format($product->current_stock)}}</td>
+                <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
                 <td>{{$product->customer_type}}</td>
                 <td>@if(!empty($product->expiry_date)){{@format_date($product->expiry_date)}}@endif</td>
                 <td>@if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif
@@ -256,6 +256,12 @@
 
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="16" style="text-align: right">@lang('lang.total')</th>
+                <td>{{@num_format($products->sum('current_stock'))}}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endsection

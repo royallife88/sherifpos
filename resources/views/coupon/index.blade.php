@@ -149,6 +149,12 @@
 
                 @endforeach
             </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="2" style="text-align: right">@lang('lang.total')</th>
+                    <td>{{@num_format($coupons->sum('amount'))}}</td>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>

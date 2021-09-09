@@ -78,6 +78,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -100,6 +101,80 @@
                                         <td>@if($sale->status == 'final')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($sale->status)}} @endif</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    {{-- @can('sale.pos.create_and_edit')
+                                                        <li>
+
+                                                            <a data-href="{{action('SellController@print', $sale->id)}}"
+                                                    class="btn print-invoice"><i class="dripicons-print"></i>
+                                                    @lang('lang.generate_invoice')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan --}}
+                                                    @can('sale.pos.view')
+                                                    <li>
+
+                                                        <a data-href="{{action('SellController@show', $sale->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-eye"></i> @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('sale.pos.create_and_edit')
+                                                    <li>
+
+                                                        <a href="{{action('SellController@edit', $sale->id)}}"
+                                                            class="btn"><i class="dripicons-document-edit"></i>
+                                                            @lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.sell_return.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('SellReturnController@add', $sale->id)}}"
+                                                            class="btn"><i class="fa fa-undo"></i>
+                                                            @lang('lang.sale_return')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('sale.pay.create_and_edit')
+                                                    @if($sale->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $sale->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-plus"></i> @lang('lang.add_payment')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('sale.pay.view')
+                                                    @if($sale->payment_status != 'pending')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@show', $sale->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i> @lang('lang.view_payments')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('sale.pos.delete')
+                                                    <li>
+                                                        <a data-href="{{action('SellController@destroy', $sale->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -127,6 +202,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -149,6 +225,54 @@
                                         <td>@if($add_stock->status == 'received')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($add_stock->status)}} @endif</td>
+                                        <td>
+
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('stock.add_stock.view')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@show', $add_stock->id)}}"
+                                                            class=""><i class="fa fa-eye btn"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
+                                                                class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('stock.add_stock.delete')
+                                                    <li>
+                                                        <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i
+                                                                class="dripicons-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                    @can('stock.pay.create_and_edit')
+                                                    @if($add_stock->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i>
+                                                            @lang('lang.pay')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -176,6 +300,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -198,6 +323,56 @@
                                         <td>@if($quotation->status == 'final')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($quotation->status)}} @endif</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @if($quotation->status != 'expired')
+                                                    @can('sale.sale.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('SellController@edit', $quotation->id)}}"
+                                                            class="btn print-invoice"><i class="dripicons-document"></i>
+                                                            @lang('lang.create_invoice')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @endif
+                                                    @can('squotation_for_customers.quotation.view')
+                                                    <li>
+
+                                                        <a data-href="{{action('QuotationController@show', $quotation->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-eye"></i> @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('squotation_for_customers.quotation.create_and_edit')
+                                                    <li>
+
+                                                        <a href="{{action('QuotationController@edit', $quotation->id)}}"
+                                                            class="btn"><i class="dripicons-document-edit"></i>
+                                                            @lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+
+                                                    @can('squotation_for_customers.quotation.delete')
+                                                    <li>
+                                                        <a data-href="{{action('QuotationController@destroy', $quotation->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -225,6 +400,7 @@
                                         <th>@lang('lang.paid')</th>
                                         <th>@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -236,12 +412,12 @@
                                         <td>@if(!empty($return->customer)){{$return->customer->name}}@endif</td>
                                         <td>
                                             @php
-                                                $parent_return = App\Models\Transaction::find($return->return_parent_id);
+                                            $parent_return = App\Models\Transaction::find($return->return_parent_id);
                                             @endphp
                                             @foreach ($parent_return->transaction_sell_lines as $line)
-                                                @if($line->quantity_returned == 0)
-                                                @continue
-                                                @endif
+                                            @if($line->quantity_returned == 0)
+                                            @continue
+                                            @endif
                                             ({{@num_format($line->quantity)}})
                                             @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
@@ -253,6 +429,65 @@
                                         <td>@if($return->status == 'final')<span
                                                 class="badge badge-success">@lang('lang.completed')</span>@else
                                             {{ucfirst($return->status)}} @endif</td>
+                                        <td>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                    data-toggle="dropdown" aria-haspopup="true"
+                                                    aria-expanded="false">@lang('lang.action')
+                                                    <span class="caret"></span>
+                                                    <span class="sr-only">Toggle Dropdown</span>
+                                                </button>
+                                                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                    user="menu">
+                                                    @can('return.sell_return.view')
+                                                    <li>
+
+                                                        <a data-href="{{action('SellReturnController@show', $return->return_parent_id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-eye"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.sell_return.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('SellReturnController@add', $return->return_parent_id)}}"
+                                                            class="btn"><i class="dripicons-document-edit"></i>
+                                                            @lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.sell_return_pay.create_and_edit')
+                                                    @if($return->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $return->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-plus"></i>
+                                                            @lang('lang.add_payment')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('return.sell_return_pay.view')
+                                                    @if($return->payment_status != 'pending')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@show', $return->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                                class="fa fa-money"></i>
+                                                            @lang('lang.view_payments')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('sale.pos.delete')
+                                                    <li>
+                                                        <a data-href="{{action('SellController@destroy', $return->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
+                                                </ul>
+                                            </div>
+                                        </td>
                                     </tr>
 
                                     @endforeach
@@ -278,6 +513,7 @@
                                         <th>@lang('lang.category')</th>
                                         <th>@lang('lang.grand_total')</th>
                                         <th>@lang('lang.notes')</th>
+                                        <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
@@ -286,9 +522,23 @@
                                     <tr>
                                         <td>{{@format_date($expense->transaction_date)}}</td>
                                         <td>{{$expense->invoice_no}}</td>
-                                        <td>@if(!empty($expense->expense_category)){{$expense->expense_category->name}}@endif</td>
+                                        <td>@if(!empty($expense->expense_category)){{$expense->expense_category->name}}@endif
+                                        </td>
                                         <td>{{@num_format($expense->final_total)}}</td>
                                         <td>{{$expense->details}}</td>
+                                        <td>
+                                            @can('account_management.expenses.create_and_edit')
+                                            <a href="{{action('ExpenseController@edit', $expense->id)}}"
+                                                class="btn btn-danger text-white edit_job"><i
+                                                    class="fa fa-pencil-square-o"></i></a>
+                                            @endcan
+                                            @can('account_management.expenses.delete')
+                                            <a data-href="{{action('ExpenseController@destroy', $expense->id)}}"
+                                                data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                class="btn btn-danger text-white delete_item"><i
+                                                    class="fa fa-trash"></i></a>
+                                            @endcan
+                                        </td>
                                     </tr>
 
                                     @endforeach

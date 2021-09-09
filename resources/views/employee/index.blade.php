@@ -126,10 +126,28 @@
                                                                 class="btn delete_item text-red"><i class="fa fa-trash"></i> @lang('lang.delete')</a>
                                                         </li>
                                                         @endcan
-                                                        @can('superadmin')
+                                                        @can('hr_management.suspend.create_and_edit')
+                                                        <li>
+                                                            <a data-href="{{action('EmployeeController@toggleActive', $employee->id)}}"
+                                                                class="btn toggle-active"><i class="fa fa-ban"></i>@if($employee->is_active) @lang('lang.suspend') @else @lang('lang.reactivate')@endif</a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('hr_management.send_credentials.create_and_edit')
                                                         <li>
                                                             <a href="{{action('EmployeeController@sendLoginDetails', $employee->id)}}"
                                                                 class="btn"><i class="fa fa-paper-plane"></i> @lang('lang.send_credentials')</a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('sms_module.sms.create_and_edit')
+                                                        <li>
+                                                            <a href="{{action('SmsController@create', ['employee_id' => $employee->id])}}"
+                                                                class="btn"><i class="fa fa-comments-o"></i> @lang('lang.send_sms')</a>
+                                                        </li>
+                                                        @endcan
+                                                        @can('email_module.email.create_and_edit')
+                                                        <li>
+                                                            <a href="{{action('EmailController@create', ['employee_id' => $employee->id])}}"
+                                                                class="btn"><i class="fa fa-envelope "></i> @lang('lang.send_email')</a>
                                                         </li>
                                                         @endcan
                                                         @can('hr_management.leaves.create_and_edit')
@@ -152,34 +170,6 @@
                                                         @endcan
                                                     </ul>
                                                 </div>
-
-                                                {{-- @can('hr_management.employee.view')
-                                                <a href="{{action('EmployeeController@show', $employee->id)}}"
-                                                class="btn btn-danger text-white"><i class="fa fa-eye"></i></a>
-                                                @endcan
-                                                @can('hr_management.employee.create_and_edit')
-                                                <a href="{{action('EmployeeController@edit', $employee->id)}}"
-                                                    class="btn btn-danger text-white edit_employee"><i
-                                                        class="fa fa-pencil-square-o"></i></a>
-                                                @endcan
-                                                @can('superadmin')
-                                                <a data-href="{{action('EmployeeController@destroy', $employee->id)}}"
-                                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                                    class="btn btn-danger text-white delete_item"><i
-                                                        class="fa fa-trash"></i></a>
-                                                @endcan
-                                                @can('hr_management.leaves.create_and_edit')
-                                                <button type="button" class="btn btn-primary btn-modal "
-                                                    data-href="{{action('LeaveController@create', ['employee_id' => $employee->id])}}"
-                                                    data-container=".view_modal">
-                                                    <i class="fa fa-sign-out"></i>@lang( 'lang.leave' )</button>
-                                                @endcan
-                                                @can('hr_management.forfeit_leaves.create_and_edit')
-                                                <button type="button" class="btn btn-primary btn-modal "
-                                                    data-href="{{action('ForfeitLeaveController@create', ['employee_id' => $employee->id])}}"
-                                                    data-container=".view_modal">
-                                                    <i class="fa fa-ban"></i>@lang( 'lang.forfeit_leave' )</button>
-                                                @endcan --}}
                                             </td>
                                         </tr>
 
@@ -202,6 +192,32 @@
 
 @section('javascript')
 <script>
+  $(document).on('click', 'a.toggle-active', function(e) {
+		e.preventDefault();
 
+        $.ajax({
+            method: 'get',
+            url: $(this).data('href'),
+            data: {  },
+            success: function(result) {
+                if (result.success == true) {
+                    swal(
+                    'Success',
+                    result.msg,
+                    'success'
+                    );
+                    setTimeout(() => {
+                        location.reload();
+                    }, 500);
+                }else{
+                    swal(
+                    'Error',
+                    result.msg,
+                    'error'
+                    );
+                }
+            },
+        });
+    });
 </script>
 @endsection

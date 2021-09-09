@@ -911,4 +911,5 @@ return [
     'add_coupon' => 'کوپن شامل کریں۔',
     'edit_coupon' => 'کوپن میں ترمیم کریں۔',
     'earlier' => 'پہلے۔',
+    'forgot_passowrd' => 'پاسورڈ بھول گے؟',
 ];

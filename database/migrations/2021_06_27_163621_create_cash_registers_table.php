@@ -15,7 +15,7 @@ class CreateCashRegistersTable extends Migration
     {
         Schema::create('cash_registers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->enum('status', ['open', 'close']);
             $table->dateTime('closed_at')->nullable();

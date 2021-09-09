@@ -25,6 +25,9 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $total_due = 0;
+            @endphp
             @foreach($suppliers as $supplier)
             <tr>
                 <td>{{$supplier->name}}</td>
@@ -32,7 +35,7 @@
                 <td>{{$supplier->mobile_number}}</td>
                 <td>{{$supplier->address}}</td>
                 <td>{{@format_date($supplier->created_at)}}</td>
-                <td>{{@num_format($supplier->total_purchase)}}</td>
+                <td><a href="{{action('SupplierController@show', $supplier->id)}}?show=statement_of_account" class="btn">{{@num_format($supplier->total_purchase)}}</a></td>
                 <td>@if($supplier->pending_orders > 0) <a href="{{action('SupplierController@show', $supplier->id)}}?show=pending_orders" class=""> @lang('lang.yes') </a> @else @lang('lang.no') @endif</td>
                 <td>{{@num_format($supplier->total_invoice - $supplier->total_paid)}}</td>
                 <td>{{$supplier->created_by_user->name}}</td>
@@ -79,9 +82,19 @@
                     </div>
                 </td>
             </tr>
-
+            @php
+                $total_due += $supplier->total_invoice - $supplier->total_paid;
+            @endphp
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5" style="text-align: right">@lang('lang.total')</th>
+                <td>{{@num_format($suppliers->sum('total_purchase'))}}</td>
+                <td></td>
+                <td>{{@num_format($total_due)}}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endsection

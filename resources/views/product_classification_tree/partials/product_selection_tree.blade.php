@@ -174,8 +174,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                                             $products =
                                                                                             App\Models\Product::where('brand_id',
                                                                                             $brand->id)->select('products.id',
-                                                                                            'products.name',
-                                                                                            'products.expiry_date')->groupBy('products.id')->get();
+                                                                                            'products.name')->groupBy('products.id')->get();
                                                                                             @endphp
                                                                                             @foreach ($products as
                                                                                             $product)
@@ -203,11 +202,6 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                                                                     width="50"
                                                                                                                     height="50">
                                                                                                                 {{$product->name}}
-                                                                                                                <span
-                                                                                                                    style="color: #737475">@if(!empty($product->expiry_date))
-                                                                                                                    @lang('lang.expiry')
-                                                                                                                    {{@format_date($product->expiry_date)}}@endif</span>
-
                                                                                                             </a>
                                                                                                         </div>
                                                                                                     </div>

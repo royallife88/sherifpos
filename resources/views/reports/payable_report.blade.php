@@ -76,6 +76,7 @@
                                 <th>@lang('lang.supplier')</th>
                                 <th>@lang('lang.amount')</th>
                                 <th>@lang('lang.created_by')</th>
+                                <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
 
@@ -93,6 +94,53 @@
                                 </td>
                                 <td>
                                     {{ucfirst($add_stock->created_by_user->name)}}
+                                </td>
+                                <td>
+
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                            data-toggle="dropdown" aria-haspopup="true"
+                                            aria-expanded="false">@lang('lang.action')
+                                            <span class="caret"></span>
+                                            <span class="sr-only">Toggle Dropdown</span>
+                                        </button>
+                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                            user="menu">
+                                            @can('stock.add_stock.view')
+                                            <li>
+                                                <a href="{{action('AddStockController@show', $add_stock->id)}}"
+                                                    class=""><i class="fa fa-eye btn"></i>
+                                                    @lang('lang.view')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('stock.add_stock.create_and_edit')
+                                            <li>
+                                                <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
+                                                        class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            @endcan
+                                            @can('stock.add_stock.delete')
+                                            <li>
+                                                <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
+                                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                    class="btn text-red delete_item"><i class="dripicons-trash"></i>
+                                                    @lang('lang.delete')</a>
+                                            </li>
+                                            @endcan
+                                            @can('stock.pay.create_and_edit')
+                                            @if($add_stock->payment_status != 'paid')
+                                            <li>
+                                                <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"
+                                                    data-container=".view_modal" class="btn btn-modal"><i
+                                                        class="fa fa-money"></i>
+                                                    @lang('lang.pay')</a>
+                                            </li>
+                                            @endif
+                                            @endcan
+                                        </ul>
+                                    </div>
                                 </td>
                             </tr>
 
@@ -113,5 +161,18 @@
 @endsection
 
 @section('javascript')
-
+<script>
+    $(document).on('click', '.print-invoice', function(){
+     $.ajax({
+         method: 'get',
+         url: $(this).data('href'),
+         data: {  },
+         success: function(result) {
+             if(result.success){
+                 pos_print(result.html_content);
+             }
+         },
+     });
+ })
+</script>
 @endsection

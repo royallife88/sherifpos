@@ -259,6 +259,27 @@
                                         <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                     class="dripicons-expand"></i></a></li>
                                         @include('layouts.partials.notification_list')
+                                        @php
+                                        $config_languages = config('constants.langs');
+                                        $languages = [];
+                                        foreach ($config_languages as $key => $value) {
+                                        $languages[$key] = $value['full_name'];
+                                        }
+                                        @endphp
+                                        <li class="nav-item">
+                                            <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
+                                                aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i>
+                                                <span>{{__('lang.language')}}</span> <i class="fa fa-angle-down"></i></a>
+                                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                                                @foreach ($languages as $key => $lang)
+                                                <li>
+                                                    <a href="{{action('GeneralController@switchLanguage', $key) }}" class="btn btn-link">
+                                                        {{$lang}}</a>
+                                                </li>
+                                                @endforeach
+
+                                            </ul>
+                                        </li>
                                         <li class="nav-item">
                                             <a class="dropdown-item" href="{{action('HomeController@getHelp')}}"
                                                 target="_blank"><i class="dripicons-information"></i>

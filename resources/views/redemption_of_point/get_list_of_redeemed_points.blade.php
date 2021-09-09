@@ -29,6 +29,11 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $total_paid = 0;
+                                $total_point_earned = 0;
+                                $total_balance = 0;
+                            @endphp
                             @foreach($transactions as $transaction)
                             <tr>
                                 <td>{{@format_datetime($transaction->transaction_date)}}
@@ -55,9 +60,22 @@
                                 <td>{{@num_format($transaction->customer->total_rp)}}</td>
 
                             </tr>
-
+                            @php
+                                $total_paid += $transaction->transaction_payments->sum('amount');
+                                $total_point_earned += $transaction->rp_redeemed;
+                                $total_balance += $transaction->customer->total_rp;
+                            @endphp
                             @endforeach
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="6" style="text-align: right">@lang('lang.total')</th>
+                                <td>{{@num_format($transactions->sum('final_total'))}}</td>
+                                <td>{{@num_format($total_paid)}}</td>
+                                <td>{{@num_format($total_point_earned)}}</td>
+                                <td>{{@num_format($total_balance)}}</td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
 

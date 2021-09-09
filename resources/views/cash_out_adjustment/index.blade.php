@@ -64,6 +64,12 @@
 
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                            <td>{{@num_format($cash_out_adjustments->sum('discrepancy'))}}</td>
+                        </tr>
+                    </tfoot>
                     </table>
 
                 </div>

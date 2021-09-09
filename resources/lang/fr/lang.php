@@ -911,4 +911,6 @@ return [
     'edit_coupon' => 'Modifier le coupon',
     'earlier' => 'Plus tôt',
 
+    'forgot_passowrd' => 'Mot de passe oublié?',
+
 ];

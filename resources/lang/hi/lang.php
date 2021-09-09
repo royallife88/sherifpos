@@ -911,4 +911,5 @@ return [
     'add_coupon' => 'कूपन जोड़ें',
     'edit_coupon' => 'कूपन संपादित करें',
     'earlier' => 'पूर्व',
+    'forgot_passowrd' => 'पासवर्ड भूल गए?',
 ];

@@ -216,7 +216,8 @@ class ReportController extends Controller
             $sale_query->where('product_id', $request->product_id);
         }
 
-        $sales = $sale_query->groupBy('transactions.id')->get();
+        $sales = $sale_query->select('transactions.*')
+        ->groupBy('transactions.id')->get();
 
 
         $stores = Store::getDropdown();
@@ -274,7 +275,7 @@ class ReportController extends Controller
             $add_stock_query->where('product_id', $request->product_id);
         }
 
-        $add_stocks = $add_stock_query->groupBy('transactions.id')->get();
+        $add_stocks = $add_stock_query->select('transactions.*')->groupBy('transactions.id')->get();
 
 
         $stores = Store::getDropdown();
@@ -862,7 +863,8 @@ class ReportController extends Controller
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
-            'p.name as product_name'
+            'p.name as product_name',
+            'p.id'
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
@@ -1241,6 +1243,7 @@ class ReportController extends Controller
             }
 
             $trans = $query->select(
+                'add_stock_lines.product_id as id',
                 DB::raw('SUM(add_stock_lines.sub_total) as total_purchase'),
                 DB::raw('SUM(add_stock_lines.quantity) as total_qty'),
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=add_stock_lines.product_id ' . $store_query . ') as in_stock'),

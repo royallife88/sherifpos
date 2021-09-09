@@ -148,6 +148,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
         Route::get('get-balance-leave-details/{id}', 'EmployeeController@getBalanceLeaveDetails');
         Route::get('get-employee-details-by-id/{id}', 'EmployeeController@getDetails');
         Route::get('send-login-details/{employee_id}', 'EmployeeController@sendLoginDetails');
+        Route::get('toggle-active/{employee_id}', 'EmployeeController@toggleActive');
         Route::resource('employee', EmployeeController::class);
         Route::resource('leave-type', LeaveTypeController::class);
 

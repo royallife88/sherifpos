@@ -27,6 +27,10 @@
             </tr>
         </thead>
         <tbody>
+            @php
+                $total_balances = 0;
+                $total_discounts = 0;
+            @endphp
             @foreach($customers as $customer)
             <tr>
                 <td>@if(!empty($customer->customer_type)){{$customer->customer_type->name}}@endif</td>
@@ -101,9 +105,21 @@
                     </div>
                 </td>
             </tr>
-
+            @php
+                $total_balances += $balances[$customer->id];
+                $total_discounts += $customer->total_sp_discount + $customer->total_product_discount +$customer->total_coupon_discount;
+            @endphp
             @endforeach
         </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="5" style="text-align: right">@lang('lang.total')</th>
+                <td>{{@num_format($total_balances)}}</td>
+                <td>{{@num_format($customers->sum('total_purchase'))}}</td>
+                <td>{{@num_format($total_discounts)}}</td>
+                <td>{{@num_format($customers->sum('total_rp'))}}</td>
+            </tr>
+        </tfoot>
     </table>
 </div>
 @endsection

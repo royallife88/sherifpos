@@ -912,5 +912,6 @@ return [
     'add_coupon' => 'Kupon Ekle',
     'edit_coupon' => 'Kuponu Düzenle',
     'earlier' => 'Daha erken',
+    'forgot_passowrd' => 'Parolanızı mı unuttunuz?',
 
 ];

@@ -7,26 +7,41 @@ $(document).ready(function () {});
 
 $(document).on("click", "#category-filter", function (e) {
     e.stopPropagation();
-    $(".filter-window").show("slide", { direction: "right" }, "fast");
-    $(".category").show();
-    $(".brand").hide();
-    $(".sub_category").hide();
+    $('#sub-category-filter').prop('checked', false);
+    if ($(this).prop("checked")) {
+        $(".filter-window").show("slide", { direction: "right" }, "fast");
+        $(".category").show();
+        $(".brand").hide();
+        $(".sub_category").hide();
+    } else {
+        getFilterProductRightSide();
+    }
+});
+
+
+$(document).on("click", "#sub-category-filter", function (e) {
+    e.stopPropagation();
+    $('#category-filter').prop('checked', false);
+    if ($(this).prop("checked")) {
+        $(".filter-window").show("slide", { direction: "right" }, "fast");
+        $(".brand").hide();
+        $(".category").hide();
+        $(".sub_category").show();
+    } else {
+        getFilterProductRightSide();
+    }
 });
 
 $(document).on("click", "#brand-filter", function (e) {
     e.stopPropagation();
-    $(".filter-window").show("slide", { direction: "right" }, "fast");
-    $(".brand").show();
-    $(".category").hide();
-    $(".sub_category").hide();
-});
-
-$(document).on("click", "#sub-category-filter", function (e) {
-    e.stopPropagation();
-    $(".filter-window").show("slide", { direction: "right" }, "fast");
-    $(".brand").hide();
-    $(".category").hide();
-    $(".sub_category").show();
+    if ($(this).prop("checked")) {
+        $(".filter-window").show("slide", { direction: "right" }, "fast");
+        $(".brand").show();
+        $(".category").hide();
+        $(".sub_category").hide();
+    } else {
+        getFilterProductRightSide();
+    }
 });
 
 $(
@@ -56,9 +71,26 @@ function getFilterCheckboxValue(class_name) {
     });
     return val;
 }
+$(document).on("click", ".filter-by", function () {
+    let type = $(this).data("type");
+    let id = $(this).data("id");
 
+    if (type === "category" && $("#category-filter").prop("checked")) {
+        getFilterProductRightSide(id, null, null);
+    }
+    if (type === "sub_category" && $("#sub-category-filter").prop("checked")) {
+        getFilterProductRightSide(null, id, null);
+    }
+    if (type === "brand" && $("#brand-filter").prop("checked")) {
+        getFilterProductRightSide(null, null, id);
+    }
+});
 getFilterProductRightSide();
-function getFilterProductRightSide() {
+function getFilterProductRightSide(
+    category_id = null,
+    sub_category_id = null,
+    brand_id = null
+) {
     var selling_filter = getFilterCheckboxValue("selling_filter");
     var price_filter = getFilterCheckboxValue("price_filter");
     var expiry_filter = getFilterCheckboxValue("expiry_filter");
@@ -76,6 +108,9 @@ function getFilterProductRightSide() {
             sale_promo_filter,
             sorting_filter,
             store_id,
+            category_id,
+            sub_category_id,
+            brand_id,
         },
         contentType: "html",
         success: function (result) {
@@ -641,12 +676,11 @@ $(document).on("click", ".coupon-check", function () {
     let customer_id = $("#customer_id").val();
     $.ajax({
         method: "get",
-        url: "/coupon/get-details/" + coupon_code+ '/'+customer_id,
-        data: {
-        },
+        url: "/coupon/get-details/" + coupon_code + "/" + customer_id,
+        data: {},
         success: function (result) {
             if (!result.success) {
-                $("#coupon-code").val('');
+                $("#coupon-code").val("");
                 $(".coupon_error").text(result.msg);
             } else {
                 $("#coupon_modal").modal("hide");

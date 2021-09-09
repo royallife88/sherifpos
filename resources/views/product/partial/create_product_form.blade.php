@@ -94,7 +94,7 @@
         <div class="input-group my-group">
             {!! Form::select('multiple_units[]', $units,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_units']) !!}
+            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
             <span class="input-group-btn">
                 @can('product_module.unit.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -110,7 +110,7 @@
         <div class="input-group my-group">
             {!! Form::select('multiple_colors[]', $colors,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_colors']) !!}
+            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
             <span class="input-group-btn">
                 @can('product_module.color.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -126,7 +126,7 @@
         <div class="input-group my-group">
             {!! Form::select('multiple_sizes[]', $sizes,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_sizes']) !!}
+            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
             <span class="input-group-btn">
                 @can('product_module.size.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -142,7 +142,7 @@
         <div class="input-group my-group">
             {!! Form::select('multiple_grades[]', $grades,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_grades']) !!}
+            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
             <span class="input-group-btn">
                 @can('product_module.grade.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"

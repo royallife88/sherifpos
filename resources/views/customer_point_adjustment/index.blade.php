@@ -66,6 +66,12 @@
 
                         @endforeach
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                            <td>{{@num_format($customer_point_adjustments->sum('add_new_balance'))}}</td>
+                        </tr>
+                    </tfoot>
                     </table>
 
                 </div>

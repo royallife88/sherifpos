@@ -13,6 +13,7 @@ use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CashRegisterController extends Controller
@@ -83,6 +84,7 @@ class CashRegisterController extends Controller
             if (!empty($request->input('amount'))) {
                 $initial_amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             }
+            DB::beginTransaction();
             $user_id = Auth::user()->id;
             $store_pos = StorePos::where('user_id', $user_id)->first();
 
@@ -91,19 +93,17 @@ class CashRegisterController extends Controller
                 'status' => 'open',
                 'store_id' => !empty($store_pos) ? $store_pos->store_id : null
             ]);
-            $cash_register_transaction = CashRegisterTransaction::create([
-                'cash_register_id' => $register->id,
-                'amount' => $initial_amount,
-                'pay_method' => 'cash',
-                'type' => 'credit',
-                'transaction_type' => 'initial',
-                'source_id' => $request->source_id,
-                'notes' => $request->notes,
-            ]);
+            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $initial_amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
-            if ($request->has('image')) {
-                $cash_register_transaction->addMedia($request->image)->toMediaCollection('brand');
+            if (!empty($request->source_id)) {
+                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $initial_amount, 'cash_out', 'debit', $request->source_id, $request->notes);
             }
+            if ($request->has('image')) {
+                $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');
+                $cash_register_transaction_out->addMedia($request->image)->toMediaCollection('cash_register');
+            }
+            DB::commit();
         } catch (\Exception $e) {
             Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 

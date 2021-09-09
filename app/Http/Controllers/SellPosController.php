@@ -85,8 +85,8 @@ class SellPosController extends Controller
             return redirect()->action('CashRegisterController@create') . '?is_pos=1';
         }
 
-        $categories = Category::whereNull('parent_id')->get();
-        $sub_categories = Category::whereNotNull('parent_id')->get();
+        $categories = Category::whereNull('parent_id')->groupBy('categories.id')->get();
+        $sub_categories = Category::whereNotNull('parent_id')->groupBy('categories.id')->get();
         $brands = Brand::all();
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
@@ -400,6 +400,15 @@ class SellPosController extends Controller
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
+        if (!empty($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+        if (!empty($request->sub_category_id)) {
+            $query->where('sub_category_id', $request->sub_category_id);
+        }
+        if (!empty($request->brand_id)) {
+            $query->where('brand_id', $request->brand_id);
+        }
         if (!empty($request->selling_filter)) {
             $query->leftjoin('transaction_sell_lines', 'products.id', 'transaction_sell_lines.product_id');
             if ($request->selling_filter == 'best_selling') {

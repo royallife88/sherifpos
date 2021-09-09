@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->boolean('is_superadmin')->default(0);
             $table->boolean('is_detault')->default(0);
+            $table->boolean('is_active')->default(1);
             $table->rememberToken();
             $table->timestamps();
         });

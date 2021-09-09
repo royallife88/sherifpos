@@ -139,22 +139,20 @@ class CashController extends Controller
     public function saveAddCashIn(Request $request)
     {
         try {
+            DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
-            $cash_register_transaction = CashRegisterTransaction::create([
-                'cash_register_id' => $register->id,
-                'amount' => $amount,
-                'pay_method' => 'cash',
-                'type' => 'credit',
-                'transaction_type' => 'cash_in',
-                'source_id' => $request->source_id,
-                'notes' => $request->notes,
-            ]);
+            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
-
-            if ($request->has('image')) {
-                $cash_register_transaction->addMedia($request->image)->toMediaCollection('brand');
+            if (!empty($request->source_id)) {
+                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes);
             }
+            if ($request->has('image')) {
+                $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');
+                $cash_register_transaction_out->addMedia($request->image)->toMediaCollection('cash_register');
+            }
+            DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
@@ -202,22 +200,20 @@ class CashController extends Controller
     public function saveAddCashOut(Request $request)
     {
         try {
+            DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
-            $cash_register_transaction = CashRegisterTransaction::create([
-                'cash_register_id' => $register->id,
-                'amount' => $amount,
-                'pay_method' => 'cash',
-                'type' => 'debit',
-                'transaction_type' => 'cash_out',
-                'source_id' => $request->source_id,
-                'notes' => $request->notes,
-            ]);
+            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes);
 
-
-            if ($request->has('image')) {
-                $cash_register_transaction->addMedia($request->image)->toMediaCollection('brand');
+            if (!empty($request->source_id)) {
+                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
             }
+            if ($request->has('image')) {
+                $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');
+                $cash_register_transaction_in->addMedia($request->image)->toMediaCollection('cash_register');
+            }
+            DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
@@ -315,5 +311,4 @@ class CashController extends Controller
 
         return redirect()->back()->with('status', $output);
     }
-
 }

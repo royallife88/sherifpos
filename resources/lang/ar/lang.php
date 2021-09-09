@@ -910,4 +910,5 @@ return [
     'add_coupon' => 'أضف عرض',
     'edit_coupon' => 'تحرير القسيمة',
     'earlier' => 'ابكر',
+    'forgot_passowrd' => 'هل نسيت كلمة السر؟',
 ];

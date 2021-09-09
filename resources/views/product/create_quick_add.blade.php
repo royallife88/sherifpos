@@ -72,8 +72,7 @@
                     <div class="form-group">
                     {!! Form::label('multiple_units', __('lang.unit'), []) !!}
                         {!! Form::select('multiple_units[]', $units,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'multiple', 'id' => 'multiple_units']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
 
                     </div>
                 </div>
@@ -81,8 +80,7 @@
                     <div class="form-group">
                     {!! Form::label('multiple_colors', __('lang.color'), []) !!}
                         {!! Form::select('multiple_colors[]', $colors,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'multiple', 'id' => 'multiple_colors']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
 
                     </div>
                 </div>
@@ -90,8 +88,7 @@
                     <div class="form-group">
                     {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
                         {!! Form::select('multiple_sizes[]', $sizes,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'multiple', 'id' => 'multiple_sizes']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
 
                     </div>
                 </div>
@@ -99,8 +96,7 @@
                     <div class="form-group">
                     {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
                         {!! Form::select('multiple_grades[]', $grades,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'multiple', 'id' => 'multiple_grades']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
 
                     </div>
                 </div>
@@ -118,57 +114,12 @@
                     </div>
                 </div>
 
-                {{-- <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('add_stock', __('lang.add_stock'), []) !!}
-                        {!! Form::text('add_stock', null, ['class' => 'form-control', 'placeholder' =>
-                        __('lang.add_stock')]) !!}
-                    </div>
-                </div> --}}
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('batch_number', __('lang.batch_number'), []) !!}
-                        {!! Form::text('batch_number', null, ['class' => 'form-control', 'placeholder' =>
-                        __('lang.batch_number')]) !!}
-                    </div>
-                </div>
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
                         {!! Form::select('barcode_type', ['C128' => 'Code 128' , 'C39' => 'Code 39', 'UPCA'
                         => 'UPC-A', 'UPCE' => 'UPC-E', 'EAN8' => 'EAN-8', 'EAN13' => 'EAN-13'], false,
                         ['class' => 'form-control', 'required']) !!}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('manufacturing_date', __('lang.manufacturing_date') , []) !!}
-                        {!! Form::text('manufacturing_date', null, ['class' => 'form-control datepicker',
-                        'placeholder'
-                        => __('lang.manufacturing_date')]) !!}
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        {!! Form::label('expiry_date', __('lang.expiry_date') , []) !!}
-                        {!! Form::text('expiry_date', null, ['class' => 'form-control datepicker',
-                        'placeholder' =>
-                        __('lang.expiry_date'), 'readonly']) !!}
-                    </div>
-                </div>
-                <div class="col-md-4 warning hide">
-                    <div class="form-group">
-                        {!! Form::label('expiry_warning', __('lang.warning'), []) !!}
-                        {!! Form::text('expiry_warning', null, ['class' => 'form-control', 'placeholder' =>
-                        __('lang.days_before_the_expiry_date')]) !!}
-                    </div>
-                </div>
-                <div class="col-md-4 convert_status_expire hide">
-                    <div class="form-group">
-                        {!! Form::label('convert_status_expire', __('lang.convert_status_expire') ,
-                        []) !!}
-                        {!! Form::text('convert_status_expire', null, ['class' => 'form-control',
-                        'placeholder' => __('lang.days_before_the_expiry_date')]) !!}
                     </div>
                 </div>
                 <div class="col-md-4">
