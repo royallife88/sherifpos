@@ -111,6 +111,7 @@ class EmployeeController extends Controller
         ]);
 
         try {
+
             DB::beginTransaction();
 
             $data = $request->except('_token');
@@ -131,7 +132,7 @@ class EmployeeController extends Controller
             $employee = Employee::create([
                 'employee_name' => $data['name'],
                 'user_id' => $user->id,
-                'store_id' => $data['store_id'],
+                'store_id' => !empty($data['store_id']) ? $data['store_id'] : [],
                 'pass_string' => Crypt::encrypt($data['password']),
                 'date_of_start_working' => $data['date_of_start_working'],
                 'date_of_birth' => $data['date_of_birth'],
@@ -347,7 +348,7 @@ class EmployeeController extends Controller
 
             $employee_data = [
                 'employee_name' => $data['name'],
-                'store_id' => $data['store_id'],
+                'store_id' => !empty($data['store_id']) ? $data['store_id'] : [],
                 'date_of_start_working' => $data['date_of_start_working'],
                 'date_of_birth' => $data['date_of_birth'],
                 'job_type_id' => $data['job_type_id'],

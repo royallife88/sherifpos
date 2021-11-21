@@ -67,9 +67,10 @@
                 <tr>
                     <th>@lang('lang.coupon_code')</th>
                     <th>@lang('lang.type')</th>
-                    <th>@lang('lang.amount')</th>
+                    <th class="sum">@lang('lang.amount')</th>
                     <th>@lang('lang.customer_type')</th>
                     <th>@lang('lang.date_and_time')</th>
+                    <th>@lang('lang.expiry_date')</th>
                     <th>@lang('lang.created_by')</th>
                     <th>@lang('lang.affected_by_products')</th>
                     <th>@lang('lang.status')</th>
@@ -85,7 +86,8 @@
                     <td>{{@num_format($coupon->amount)}}</td>
                     <td>{{implode(', ', $coupon->customer_types->pluck('name')->toArray())}}</td>
                     <td>{{@format_datetime($coupon->created_at)}}</td>
-                    <td>{{ucfirst($coupon->created_by_user->name)}}</td>
+                    <td>@if(!empty($coupon->expiry_date)){{@format_date($coupon->expiry_date)}}@endif</td>
+                    <td>{{ucfirst($coupon->created_by_user->name ?? '')}}</td>
                     <td>
                         @if(!$coupon->all_products)
                         @foreach ($coupon->products as $item)
@@ -152,7 +154,7 @@
             <tfoot>
                 <tr>
                     <th colspan="2" style="text-align: right">@lang('lang.total')</th>
-                    <td>{{@num_format($coupons->sum('amount'))}}</td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>

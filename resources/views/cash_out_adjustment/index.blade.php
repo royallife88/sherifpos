@@ -17,7 +17,7 @@
                                 <th>@lang('lang.date_and_time')</th>
                                 <th>@lang('lang.store')</th>
                                 <th>@lang('lang.cashier')</th>
-                                <th>@lang('lang.adjustment_value')</th>
+                                <th class="sum">@lang('lang.adjustment_value')</th>
                                 <th>@lang('lang.created_by')</th>
                                 <th>@lang('lang.title_of_creator')</th>
                                 <th>@lang('lang.action')</th>
@@ -27,10 +27,10 @@
                         @foreach ($cash_out_adjustments as $adjustment)
                         <tr>
                             <td>{{@format_datetime($adjustment->date_and_time)}}</td>
-                            <td>{{$adjustment->store->name}}</td>
-                            <td>{{$adjustment->cashier->name}}</td>
+                            <td>{{$adjustment->store->name ?? ''}}</td>
+                            <td>{{$adjustment->cashier->name ?? ''}}</td>
                             <td>{{@num_format($adjustment->discrepancy)}}</td>
-                            <td>{{$adjustment->created_by_user->name}}</td>
+                            <td>{{$adjustment->created_by_user->name ?? ''}}</td>
                             <td>@if(!empty($adjustment->created_by_user->employee->job_type)){{$adjustment->created_by_user->employee->job_type->job_title}}@endif</td>
                             <td>
                                 <div class="btn-group">
@@ -67,7 +67,7 @@
                     <tfoot>
                         <tr>
                             <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                            <td>{{@num_format($cash_out_adjustments->sum('discrepancy'))}}</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                     </table>

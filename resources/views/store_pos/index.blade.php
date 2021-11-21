@@ -35,7 +35,7 @@
                         <tbody>
                             @foreach($store_poses as $store_pos)
                             <tr>
-                                <td>{{$store_pos->store->name}}</td>
+                                <td>{{$store_pos->store->name ?? ''}}</td>
                                 <td>{{$store_pos->name}}</td>
                                 <td>{{$store_pos->user->name}}</td>
                                 <td>{{@format_datetime($store_pos->created_at)}}</td>

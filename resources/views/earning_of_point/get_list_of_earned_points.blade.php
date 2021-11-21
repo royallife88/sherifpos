@@ -33,9 +33,9 @@
                             <tr>
                                 <td>{{@format_datetime($transaction->transaction_date)}}
                                 </td>
-                                <td>{{$transaction->store->name}}</td>
-                                <td>{{ucfirst($transaction->created_by_user->name)}}</td>
-                                <td>{{$transaction->customer->name}}</td>
+                                <td>{{$transaction->store->name ?? ''}}</td>
+                                <td>{{ucfirst($transaction->created_by_user->name ?? '')}}</td>
+                                <td>{{$transaction->customer->name ?? ''}}</td>
                                 <td style="color: rgb(85, 85, 231)"><a data-href="{{action('SellController@show', $transaction->id)}}"
                                         data-container=".view_modal"
                                         class="btn btn-modal">{{$transaction->invoice_no}}</a></td>

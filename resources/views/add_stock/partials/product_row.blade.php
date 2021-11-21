@@ -1,6 +1,6 @@
 @forelse ($products as $product)
 @php
-    $i = $index;
+$i = $index;
 @endphp
 <tr>
     <td>
@@ -18,23 +18,24 @@
         {{$product->sub_sku}}
     </td>
     <td>
-        <input type="text" class="form-control quantity" min=1
-            name="add_stock_lines[{{$i}}][quantity]" required
+        <input type="text" class="form-control quantity" min=1 name="add_stock_lines[{{$i}}][quantity]" required
             value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
     </td>
     <td>
-        <input type="text" class="form-control purchase_price"
-            name="add_stock_lines[{{$i}}][purchase_price]" required
+        <input type="text" class="form-control purchase_price" name="add_stock_lines[{{$i}}][purchase_price]" required
             value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price)}}@else{{0}}@endif">
     </td>
     <td>
         <span class="sub_total_span"></span>
-        <input type="hidden" class="form-control sub_total" name="add_stock_lines[{{$i}}][sub_total]"
-            value="">
+        <input type="hidden" class="form-control sub_total" name="add_stock_lines[{{$i}}][sub_total]" value="">
+    </td>
+    <td>
+        <input type="hidden" name="current_stock" class="current_stock" value="@if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif">
+        <span class="current_stock_text">@if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif</span>
     </td>
     <td rowspan="2">
-        <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row"
-            data-index="{{$i}}"><i class="fa fa-times"></i></button>
+        <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
+                class="fa fa-times"></i></button>
     </td>
 </tr>
 <tr class="row_details_{{$i}}">

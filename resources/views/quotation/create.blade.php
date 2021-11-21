@@ -40,7 +40,7 @@
                                 <div class="col-md-3">
                                     <label style="margin-top: 36px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
                                 </div>
-                                <div class="col-md-4 @if(!session('user.is_superadmin')) hide @endif">
+                                <div class="col-md-4">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
                                     <div class="input-group my-group">
                                         {!! Form::select('store_id', $stores,
@@ -163,8 +163,9 @@
                                 {!! Form::select('terms_and_condition_id', $tac,
                                 null, ['class' =>
                                 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
-                                __('lang.please_select'), 'id' => 'terms_and_condition_id', 'required']) !!}
+                                __('lang.please_select'), 'id' => 'terms_and_condition_id']) !!}
                             </div>
+                            <div class="tac_description_div"><span></span></div>
                         </div>
 
                     </div>

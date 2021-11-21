@@ -2,11 +2,11 @@
     <div class="modal-content">
 
         {!! Form::open(['url' => action('GiftCardController@store'), 'method' => 'post', 'id' => $quick_add ?
-        'quick_add_coupon_form' : 'coupon_add_form' ]) !!}
+        'quick_add_gift_card_form' : 'gift_card_add_form' ]) !!}
 
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.generate_coupon' )</h4>
+            <h4 class="modal-title">@lang( 'lang.generate_gift_card' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
@@ -74,7 +74,7 @@
     $(document).on('click', '.refresh_code', function(){
         $.ajax({
             method: 'get',
-            url: '/coupon/generate-code',
+            url: '/gift_card-code',
             data: {  },
             success: function(result) {
                 $('#card_number').val(result);

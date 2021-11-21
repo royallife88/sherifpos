@@ -11,31 +11,27 @@ $languages[$key] = $value['full_name'];
 }
 @endphp
 <div class="container">
-    <div class="navbar-holder d-flex align-items-center justify-content-between">
-        <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center pull-right" style="margin-left: 95%">
-            <li class="nav-item">
-                <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
-                    aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i>
-                    <span>{{__('lang.language')}}</span> <i class="fa fa-angle-down"></i></a>
-                <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                    @foreach ($languages as $key => $lang)
-                    <li>
-                        <a href="{{action('GeneralController@switchLanguage', $key) }}" class="btn btn-link">
-                            {{$lang}}</a>
-                    </li>
-                    @endforeach
-
-                </ul>
-            </li>
-        </ul>
-    </div>
     <div class="form-outer text-center d-flex align-items-center">
         <div class="form-inner">
+            <div class="navbar-holder">
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" style="color: gray" type="button" id="dropdownMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        @lang('lang.language')
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        @foreach ($languages as $key => $lang)
+                        <a class="dropdown-item" href="{{action('GeneralController@switchLanguage', $key) }}">
+                            {{$lang}}</a>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
             <div class="logo">@if($logo)<img src="{{asset('/uploads/'.$logo)}}" width="200">&nbsp;&nbsp;@endif</div>
             @if(session()->has('delete_message'))
             <div class="alert alert-danger alert-dismissible text-center"><button type="button" class="close"
-                    data-dismiss="alert" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>{{ session()->get('delete_message') }}</div>
+                    data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>{{
+                session()->get('delete_message') }}</div>
             @endif
             <form method="POST" action="{{ route('login') }}" id="login-form">
                 @csrf
@@ -57,11 +53,18 @@ $languages[$key] = $value['full_name'];
                 <button type="submit" class="btn btn-primary btn-block">{{trans('lang.login')}}</button>
             </form>
             <a href="{{ route('password.request') }}" class="forgot-pass">{{trans('lang.forgot_passowrd')}}</a>
+            <p>
+                <a href="{{action('ContactUsController@getContactUs')}}">@lang('lang.contact_us')</a>
+            </p>
+            <div class="copyrights text-center">
+                <p>&copy; {{App\Models\System::getProperty('site_title')}} | <span class="">@lang('lang.developed_by')
+                        <a target="_blank" href="http://sherifshalaby.tech">sherifshalaby.tech</a></span></p>
+                <p>
+                    <a href="mailto:info@sherifshalaby.tech">info@sherifshalaby.tech</a>
+                </p>
+            </div>
         </div>
-        <div class="copyrights text-center">
-            <p>&copy; {{App\Models\System::getProperty('site_title')}} | <span class="">@lang('lang.developed_by') <a
-                        target="_blank" href="http://sherifshalaby.tech">sherifshalaby.tech</a></span></p>
-        </div>
+
     </div>
 </div>
 @endsection

@@ -62,12 +62,12 @@
                         <thead>
                             <tr>
                                 <th>@lang('lang.product_name')</th>
-                                <th>@lang('lang.purchased_amount')</th>
-                                <th>@lang('lang.purchased_qty')</th>
-                                <th>@lang('lang.sold_amount')</th>
-                                <th>@lang('lang.sold_qty')</th>
-                                <th>@lang('lang.profit')</th>
-                                <th>@lang('lang.in_stock')</th>
+                                <th class="sum">@lang('lang.purchased_amount')</th>
+                                <th class="sum">@lang('lang.purchased_qty')</th>
+                                <th class="sum">@lang('lang.sold_amount')</th>
+                                <th class="sum">@lang('lang.sold_qty')</th>
+                                <th class="sum">@lang('lang.profit')</th>
+                                <th class="sum">@lang('lang.in_stock')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -124,12 +124,12 @@
                         <tfoot>
                             <tr>
                                 <th colspan="" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($transactions->sum('purchased_amount'))}}</th>
-                                <th>{{@num_format($transactions->sum('purchased_qty'))}}</th>
-                                <th>{{@num_format($transactions->sum('sold_amount'))}}</th>
-                                <th>{{@num_format($transactions->sum('sold_qty'))}}</th>
-                                <th>{{@num_format($transactions->sum('sold_amount') - $transactions->sum('purchased_amount'))}}</th>
-                                <th>{{@num_format($transactions->sum('in_stock'))}}</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>

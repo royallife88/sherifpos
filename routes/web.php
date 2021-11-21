@@ -40,6 +40,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::post('product/save-import', 'ProductController@saveImport');
     Route::get('product/import', 'ProductController@getImport');
     Route::get('product/check-sku/{sku}', 'ProductController@checkSku');
+    Route::get('product-stocks', 'ProductController@getProductStocks');
     Route::resource('product', ProductController::class);
     Route::get('product-class/get-dropdown', 'ProductClassController@getDropdown');
     Route::resource('product-class', ProductClassController::class);
@@ -74,6 +75,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
+    Route::get('product-classification-tree/get-product-details-rows', 'ProductClassificationTreeController@getProductDetailsRows');
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
 
     Route::get('store/get-dropdown', 'StoreController@getDropdown');
@@ -100,6 +102,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::resource('add-stock', AddStockController::class);
     Route::get('remove-stock/get-invoice-details/{id}', 'RemoveStockController@getInvoiceDetails');
     Route::resource('remove-stock', RemoveStockController::class);
+    Route::get('internal-stock-request/get-product-table', 'InternalStockRequestController@getProductTable');
+    Route::get('internal-stock-request/update-status/{id}', 'InternalStockRequestController@getUpdateStatus');
+    Route::post('internal-stock-request/update-status/{id}', 'InternalStockRequestController@postUpdateStatus');
+    Route::resource('internal-stock-request', InternalStockRequestController::class);
+
+    Route::get('transfer/add-product-row', 'TransferController@addProductRow');
     Route::resource('transfer', TransferController::class);
 
     Route::get('quotation/view-all-invoices', 'QuotationController@viewAllInvoices');
@@ -111,6 +119,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('transaction-payment/add-payment/{id}', 'TransactionPaymentController@addPayment');
     Route::resource('transaction-payment', TransactionPaymentController::class);
 
+    Route::get('store-pos/get-pos-details-by-store/{store_id}', 'StorePosController@getPosDetailsByStore');
     Route::resource('store-pos', StorePosController::class);
 
     Route::get('pos/get-products', 'SellPosController@getProducts');
@@ -119,6 +128,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
+    Route::get('pos/get-payment-row', 'SellPosController@getPaymentRow');
     Route::resource('pos', SellPosController::class);
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
@@ -240,6 +250,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');
     Route::get('notification/notification-seen', 'NotificationController@notificationSeen');
 });
+Route::get('contact-us', 'ContactUsController@getContactUs');
+Route::post('contact-us', 'ContactUsController@sendContactUs');
 Route::get('testing', 'SettingController@callTesting');
 Route::get('/clear-cache', function () {
     \Artisan::call('cache:clear');

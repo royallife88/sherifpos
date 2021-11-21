@@ -53,6 +53,13 @@
                     'form-control selectpicker', 'data-live-search' => "true"])
                     !!}
                 </div>
+                <div class="col-md-3">
+                    {!! Form::label('invoice_lang', __('lang.invoice_lang'), []) !!}
+                    {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'],!empty($settings['invoice_lang']) ?
+                    $settings['invoice_lang'] : null, ['class' =>
+                    'form-control selectpicker', 'data-live-search' => "true"])
+                    !!}
+                </div>
             </div>
             <br>
             <hr>

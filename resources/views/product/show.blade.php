@@ -40,8 +40,10 @@
                             {{implode(', ', $product->sizes->pluck('name')->toArray())}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.grade'): </label>
                             {{implode(', ', $product->grades->pluck('name')->toArray())}}<br>
+                            @can('product_module.purchase_price.view')
                             <label style="font-weight: bold;" for="">@lang('lang.purchase_price'): </label>
                             {{@num_format($product->purchase_price)}}<br>
+                            @endcan
                             <label style="font-weight: bold;" for="">@lang('lang.is_service'): </label>
                             @if(!empty($product->is_service))@lang('lang.yes')@else @lang('lang.no') @endif<br>
                         </div>
@@ -57,7 +59,7 @@
                     <div class="col-sm-12 col-md-12 invoice-col">
                         <div class="thumbnail">
                             <img class="img-fluid"
-                                src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                                src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                 alt="Product Image">
                         </div>
                     </div>
@@ -79,9 +81,11 @@
                         <tbody>
                             @foreach ($stock_detials as $stock_detial)
                             <tr>
-                                <td>{{$stock_detial->product->name}}@if(!empty($stock_detial->variation->name) && $stock_detial->variation->name != 'Default'){{$stock_detial->variation->name}}@endif</td>
-                                <td>{{$stock_detial->variation->sub_sku}}</td>
-                                <td>{{$stock_detial->store->name}}</td>
+                                <td>{{$stock_detial->product->name}}@if(!empty($stock_detial->variation->name) &&
+                                    $stock_detial->variation->name != 'Default'){{$stock_detial->variation->name}}@endif
+                                </td>
+                                <td>{{$stock_detial->variation->sub_sku ?? ''}}</td>
+                                <td>{{$stock_detial->store->name ?? ''}}</td>
                                 <td>{{@num_format($stock_detial->qty_available)}}</td>
                                 <td>{{@num_format($stock_detial->price)}}</td>
                             </tr>

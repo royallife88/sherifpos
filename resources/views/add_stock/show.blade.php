@@ -30,6 +30,9 @@
                             <div class="col-md-4">
                                 {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address}}</b>
                             </div>
+                            <div class="col-md-4">
+                                {!! Form::label('store', __('lang.store'), []) !!}: <b>{{$add_stock->store->name ?? ''}}</b>
+                            </div>
                         </div>
                         <br>
                         <div class="row">

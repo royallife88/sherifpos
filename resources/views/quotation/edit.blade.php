@@ -43,7 +43,7 @@
                                         </span>
                                     </div>
                                 </div>
-                                <div class="col-md-4  @if(!session('user.is_superadmin')) hide @endif">
+                                <div class="col-md-4">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
                                     <div class="input-group my-group">
                                         {!! Form::select('store_id', $stores,
@@ -190,8 +190,9 @@
                                 {!! Form::select('terms_and_condition_id', $tac,
                                 $sale->terms_and_condition_id, ['class' =>
                                 'selectpicker form-control', 'data-live-search'=>"true",
-                                'style' =>'width: 80%' , 'id' => 'terms_and_condition_id', 'required']) !!}
+                                'style' =>'width: 80%' , 'id' => 'terms_and_condition_id']) !!}
                             </div>
+                            <div class="tac_description_div"><span></span></div>
                         </div>
                     </div>
 

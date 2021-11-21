@@ -63,7 +63,8 @@ class CashRegisterUtil extends Util
             $register = CashRegister::create([
                 'user_id' => $user_id,
                 'status' => 'open',
-                'store_id' => !empty($store_pos) ? $store_pos->store_id : null
+                'store_id' => !empty($store_pos) ? $store_pos->store_id : null,
+                'store_pos_id' => !empty($store_pos) ? $store_pos->id : null
             ]);
         }
 
@@ -115,7 +116,7 @@ class CashRegisterUtil extends Util
             $payments_formatted[0]['amount'] = $payments_formatted[0]['amount'] + !empty($pos_return_transactions) ? $this->num_uf($pos_return_transactions->final_total) : 0;
         }
 
-        if (!empty($payments_formatted)) {
+        if (!empty($payments_formatted) && !empty($register)) {
             $register->cash_register_transactions()->saveMany($payments_formatted);
         }
 

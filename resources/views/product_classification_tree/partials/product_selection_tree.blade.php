@@ -1,5 +1,5 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" style="margin-top: 30px;">
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pctModal" style="margin-top: 30px;">
     @lang('lang.select_products')
 </button>
 <style>
@@ -32,12 +32,12 @@ $brand_selected = !empty($pct_data['brand_selected']) ? $pct_data['brand_selecte
 $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_selected'] : [];
 
 @endphp
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="pctModal" tabindex="-1" role="dialog" aria-labelledby="pctModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">@lang('lang.products')</h5>
+                <h5 class="modal-title" id="pctModalLabel">@lang('lang.products')</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -45,16 +45,25 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
             <div class="modal-body" id="pct_modal_body">
                 <div class="col-md-12  no-print">
                     <div class="card">
-                        <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.product_classification_tree')</h4>
+                        <div class="card-header align-items-center">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h4>@lang('lang.product_classification_tree')</h4>
+
+                                </div>
+                                <div class="col-md-6">
+                                    {!! Form::select('search_product', $products, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.search_product'), 'id' => 'search_pct']) !!}
+
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
+                        <div class="card-body" id="accordian_div">
 
                             @foreach ($product_classes as $class)
 
 
                             <div class="accordion top_accordion" id="{{@replace_space($class->name)}}">
-                                <div class="accordion-group">
+                                <div class="accordion-group class_level level">
                                     <div class="row">
                                         <input id="product_class_selected{{$class->id}}"
                                             name="pct[product_class_selected][]" type="checkbox" value="{{$class->id}}" @if(in_array($class->id, $product_class_selected)) checked @endif
@@ -83,7 +92,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                             @foreach ($categories as $category)
                                             <div class="accordion" id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
                                                 style="margin-left: 20px;">
-                                                <div class="accordion-group">
+                                                <div class="accordion-group  category_level level">
                                                     <div class="row">
                                                         <input id="category_selected{{$category->id}}"
                                                             name="pct[category_selected][]" type="checkbox" @if(in_array($category->id, $category_selected)) checked @endif
@@ -107,12 +116,20 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                             @php
                                                             $sub_categories = App\Models\Category::where('parent_id',
                                                             $category->id)->whereNotNull('categories.name')->select('categories.id','categories.name')->groupBy('categories.id')->get();
+
+                                                            $brands = null;
+                                                                $brands = App\Models\Product::leftjoin('brands', 'products.brand_id', 'brands.id')->where('products.category_id',
+                                                                            $category->id)->whereNull('products.sub_category_id')->select('brands.id', 'brands.name')->groupBy('brands.id')->get();
+
                                                             @endphp
+                                                            @if (!empty($brands) && $brands->count() > 0)
+                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected])
+                                                            @endif
                                                             @foreach ($sub_categories as $sub_category)
                                                             <div class="accordion"
                                                                 id="{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
                                                                 style="margin-left: 20px;">
-                                                                <div class="accordion-group">
+                                                                <div class="accordion-group  sub_category_level level">
                                                                     <div class="row">
                                                                         <input
                                                                             id="sub_category_selected{{$sub_category->id}}"
@@ -141,92 +158,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                             $brands = App\Models\Product::leftjoin('brands', 'products.brand_id', 'brands.id')->where('products.sub_category_id',
                                                                             $sub_category->id)->select('brands.id', 'brands.name')->groupBy('brands.id')->get();
                                                                             @endphp
-                                                                            @foreach ($brands as $brand)
-                                                                            <div class="accordion"
-                                                                                id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                style="margin-left: 20px;">
-                                                                                <div class="accordion-group">
-                                                                                    <div class="row">
-                                                                                        <input
-                                                                                            id="brand_selected{{$brand->id}}"
-                                                                                            name="pct[brand_selected][]"
-                                                                                            type="checkbox"
-                                                                                            value="{{$brand->id}}" @if(in_array($brand->id, $brand_selected)) checked @endif
-                                                                                            class="my-new-checkbox">
-                                                                                        <div class="accordion-heading"
-                                                                                            style="width: 80%">
-                                                                                            <a class="accordion-toggle"
-                                                                                                data-toggle="collapse"
-                                                                                                data-id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                                data-parent="#{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                                href="#collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}">
-                                                                                                <i
-                                                                                                    class="fa fa-angle-right angle-class-{{@replace_space('brand_'.$brand->name.'_'.$i)}}"></i>
-                                                                                                {{$brand->name}}
-
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div id="collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                        class="accordion-body collapse in">
-                                                                                        <div class="accordion-inner">
-                                                                                            @php
-                                                                                            $products =
-                                                                                            App\Models\Product::where('brand_id',
-                                                                                            $brand->id)->select('products.id',
-                                                                                            'products.name')->groupBy('products.id')->get();
-                                                                                            @endphp
-                                                                                            @foreach ($products as
-                                                                                            $product)
-                                                                                            <div class="accordion"
-                                                                                                id="{{$product->name}}"
-                                                                                                style="margin-left: 20px;">
-                                                                                                <div
-                                                                                                    class="accordion-group">
-                                                                                                    <div class="row">
-                                                                                                        <input
-                                                                                                            id="product_selected{{$product->id}}"
-                                                                                                            name="pct[product_selected][]"
-                                                                                                            type="checkbox"
-                                                                                                            value="{{$product->id}}" @if(in_array($product->id, $product_selected)) checked @endif
-                                                                                                            class="my-new-checkbox">
-                                                                                                        <div class="accordion-heading"
-                                                                                                            style="width: 80%">
-                                                                                                            <a class="accordion-toggle"
-                                                                                                                data-toggle="collapse"
-                                                                                                                data-id="{{$product->name}}"
-                                                                                                                data-parent="#{{$product->name}}"
-                                                                                                                href="#collapse{{$product->name}}">
-                                                                                                                <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
-                                                                                                                    alt="photo"
-                                                                                                                    width="50"
-                                                                                                                    height="50">
-                                                                                                                {{$product->name}}
-                                                                                                            </a>
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div id="collapse{{$product->name}}"
-                                                                                                        class="accordion-body collapse in">
-                                                                                                        <div
-                                                                                                            class="accordion-inner">
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
-
-                                                                                            </div>
-                                                                                            @php
-                                                                                            $i++;
-                                                                                            @endphp
-                                                                                            @endforeach
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>
-                                                                            @php
-                                                                            $i++;
-                                                                            @endphp
-                                                                            @endforeach
+                                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected])
                                                                         </div>
                                                                     </div>
                                                                 </div>

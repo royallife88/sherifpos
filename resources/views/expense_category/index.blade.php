@@ -59,15 +59,12 @@
                                         <th>@lang('lang.sr_no')</th>
                                         <th>@lang('lang.name')</th>
                                         <th>@lang('lang.beneficiaries')</th>
-                                        <th>@lang('lang.money_paid')</th>
+                                        <th class="sum">@lang('lang.money_paid')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    @php
-                                    $epenses_paid_total = 0;
-                                    @endphp
                                     @foreach ($expense_categories as $expense_category)
                                     <tr>
                                         <td>{{$loop->index +1}}</td>
@@ -91,7 +88,7 @@
                                             </div>
                                             @endforeach
                                         </td>
-                                        <td>{{@num_format(0)}}</td>
+                                        <td>{{@num_format($expense_category->expenses->sum('final_total'))}}</td>
                                         <td>
                                             @can('account_management.expense_categories.create_and_edit')
                                             <a data-href="{{action('ExpenseCategoryController@edit', $expense_category->id)}}"
@@ -107,15 +104,12 @@
                                             @endcan
                                         </td>
                                     </tr>
-                                    @php
-                                    $epenses_paid_total += 0;
-                                    @endphp
                                     @endforeach
                                 </tbody>
                                 <tfoot>
                                     <tr>
                                         <td colspan="3" class="text-right"><strong>@lang('lang.total')</strong></td>
-                                        <td colspan="2">{{@num_format($epenses_paid_total)}}</td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>

@@ -25,7 +25,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="store_id">@lang('lang.store'): </label> @if(!empty($employee->store))
-                                    {{$employee->store->name}} @endif
+                                    {{$employee->store->name ?? ''}} @endif
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="email">@lang('lang.email'): </label> {{$employee->email}}

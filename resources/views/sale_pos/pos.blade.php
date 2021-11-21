@@ -4,6 +4,7 @@
 @section('content')
 <section class="forms pos-section no-print">
     <div class="container-fluid">
+
         <div class="row">
             <audio id="mysoundclip1" preload="auto">
                 <source src="{{asset('audio/beep-timber.mp3')}}">
@@ -13,16 +14,39 @@
                 <source src="{{asset('audio/beep-07.mp3')}}">
                 </source>
             </audio>
-            <div class="col-md-6">
+            <div class="col-md-7">
+                {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
+                true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 0">
-                        {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
-                        true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
-                        <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
                             value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
 
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
+                                            {!! Form::select('store_id', $stores,
+                                            $store_pos->store_id, ['class' => 'selectpicker form-control',
+                                            'data-live-search'=>"true",
+                                            'required',
+                                            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('store_pos_id', __('lang.pos'). ':*', []) !!}
+                                            {!! Form::select('store_pos_id', $store_poses,
+                                            $store_pos->id, ['class' => 'selectpicker form-control',
+                                            'data-live-search'=>"true",
+                                            'required',
+                                            'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="col-md-12">
                                 <div class="row">
                                     <div class="col-md-4">
@@ -48,7 +72,8 @@
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
+                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span
+                                                class="customer_type_name"></span></label>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -69,12 +94,20 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%; font-size: 12px !important;">@lang('lang.product')</th>
-                                                    <th style="width: 22%; font-size: 12px !important;">@lang('lang.quantity')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.price')</th>
-                                                    <th style="width: 13%; font-size: 12px !important;">@lang('lang.discount')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.sub_total')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">@lang('lang.action')</th>
+                                                    <th style="width: 18%; font-size: 12px !important;">
+                                                        @lang('lang.product')</th>
+                                                    <th style="width: 18%; font-size: 12px !important;">
+                                                        @lang('lang.quantity')</th>
+                                                    <th style="width: 16%; font-size: 12px !important;">
+                                                        @lang('lang.price')</th>
+                                                    <th style="width: 13%; font-size: 12px !important;">
+                                                        @lang('lang.discount')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                        @lang('lang.sub_total')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                        @lang('lang.current_stock')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                        @lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -90,9 +123,6 @@
                                             <input type="hidden" id="gift_card_id" name="gift_card_id" />
                                             <input type="hidden" id="coupon_id" name="coupon_id">
                                             <input type="hidden" id="total_tax" name="total_tax" value="0.00">
-
-                                            <input type="hidden" id="store_pos_id" name="store_pos_id"
-                                                value="{{$store_pos->id}}" />
                                             <input type="hidden" id="status" name="status" value="final" />
                                         </div>
                                     </div>
@@ -108,11 +138,10 @@
                                                 id="subtotal">0.00</span>
                                         </div>
                                         <div class="col-sm-4">
-                                            <span class="totals-title">{{__('lang.random_discount')}} <button
-                                                    type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                    data-target="#discount_modal"> <i
-                                                        class="dripicons-document-edit"></i></button></span><span
-                                                id="discount">0.00</span>
+                                            <button style="background-color: #d63031" type="button"
+                                                class="btn btn-md payment-btn text-white" data-toggle="modal"
+                                                data-target="#discount_modal">@lang('lang.random_discount')</button>
+                                            {{-- <span id="discount">0.00</span> --}}
                                         </div>
 
                                         <div class="col-sm-4">
@@ -143,7 +172,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
-                                    <select name="terms_and_condition_id" id="terms_and_condition_id" required
+                                    <select name="terms_and_condition_id" id="terms_and_condition_id"
                                         class="form-control selectpicker" data-live-searcg="true">
                                         <option value="">@lang('lang.please_select')</option>
                                         @foreach ($tac as $key => $item)
@@ -151,6 +180,7 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="tac_description_div"><span></span></div>
                             </div>
                         </div>
                     </div>
@@ -219,7 +249,7 @@
                                 id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.deposit')</button>
                         </div>
                         <div class="column-5">
-                            <button data-method="cash" style="background-color: #d63031;" type="button"
+                            <button data-method="cash" style="background-color: #ff0000;" type="button"
                                 class="btn btn-custom" id="cancel-btn" onclick="return confirmCancel()"><i
                                     class="fa fa-close"></i>
                                 @lang('lang.cancel')</button>
@@ -233,20 +263,21 @@
                         </div>
                     </div>
                 </div>
+
+                @include('sale_pos.partials.payment_modal')
+                @include('sale_pos.partials.discount_modal')
+                @include('sale_pos.partials.tax_modal')
+                @include('sale_pos.partials.delivery_cost_modal')
+                @include('sale_pos.partials.coupon_modal')
+                @include('sale_pos.partials.contact_details_modal')
+
+
+
+                {!! Form::close() !!}
             </div>
 
-            @include('sale_pos.partials.payment_modal')
-            @include('sale_pos.partials.discount_modal')
-            @include('sale_pos.partials.tax_modal')
-            @include('sale_pos.partials.delivery_cost_modal')
-            @include('sale_pos.partials.coupon_modal')
-            @include('sale_pos.partials.contact_details_modal')
-
-
-
-            {!! Form::close() !!}
             <!-- product list -->
-            <div class="col-md-6">
+            <div class="col-md-5">
                 <!-- navbar-->
                 <header class="header">
                     <nav class="navbar">
@@ -256,6 +287,8 @@
                                 <div class="navbar-header">
 
                                     <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                                        <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"><i
+                                                    class="fa fa-power-off"></i></button></li>
                                         <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                     class="dripicons-expand"></i></a></li>
                                         @include('layouts.partials.notification_list')
@@ -267,13 +300,17 @@
                                         }
                                         @endphp
                                         <li class="nav-item">
-                                            <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
-                                                aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-web"></i>
-                                                <span>{{__('lang.language')}}</span> <i class="fa fa-angle-down"></i></a>
-                                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                                            <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false"
+                                                class="nav-link dropdown-item"><i class="dripicons-web"></i>
+                                                <span>{{__('lang.language')}}</span> <i
+                                                    class="fa fa-angle-down"></i></a>
+                                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                user="menu">
                                                 @foreach ($languages as $key => $lang)
                                                 <li>
-                                                    <a href="{{action('GeneralController@switchLanguage', $key) }}" class="btn btn-link">
+                                                    <a href="{{action('GeneralController@switchLanguage', $key) }}"
+                                                        class="btn btn-link">
                                                         {{$lang}}</a>
                                                 </li>
                                                 @endforeach

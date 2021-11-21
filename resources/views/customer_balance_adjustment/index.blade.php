@@ -17,7 +17,7 @@
                                 <th>@lang('lang.date_and_time')</th>
                                 <th>@lang('lang.store')</th>
                                 <th>@lang('lang.customer')</th>
-                                <th>@lang('lang.adjustment_value')</th>
+                                <th class="sum">@lang('lang.adjustment_value')</th>
                                 <th>@lang('lang.created_by')</th>
                                 <th>@lang('lang.title_of_creator')</th>
                                 <th>@lang('lang.notes')</th>
@@ -28,10 +28,10 @@
                         @foreach ($customer_balance_adjustments as $adjustment)
                         <tr>
                             <td>{{@format_datetime($adjustment->date_and_time)}}</td>
-                            <td>{{$adjustment->store->name}}</td>
-                            <td>{{$adjustment->customer->name}}</td>
+                            <td>{{$adjustment->store->name ?? ''}}</td>
+                            <td>{{$adjustment->customer->name ?? ''}}</td>
                             <td>{{@num_format($adjustment->add_new_balance)}}</td>
-                            <td>{{$adjustment->created_by_user->name}}</td>
+                            <td>{{$adjustment->created_by_user->name ?? ''}}</td>
                             <td>@if(!empty($adjustment->created_by_user->employee->job_type)){{$adjustment->created_by_user->employee->job_type->job_title}}@endif</td>
                             <td>{{$adjustment->notes}}</td>
                             <td>
@@ -69,7 +69,7 @@
                     <tfoot>
                         <tr>
                             <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                            <td>{{@num_format($customer_balance_adjustments->sum('add_new_balance'))}}</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                     </table>

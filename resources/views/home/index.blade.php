@@ -9,14 +9,24 @@
                 <h3>@lang('lang.welcome') <span>{{Auth::user()->name}}</span> </h3>
             </div>
             <div class="filter-toggle btn-group">
-                <button class="btn btn-secondary date-btn" data-start_date="{{date('Y-m-d')}}"
-                    data-end_date="{{date('Y-m-d')}}">@lang('lang.today')</button>
-                <button class="btn btn-secondary date-btn" data-start_date="{{date('Y-m-d', strtotime(' -7 day'))}}"
-                    data-end_date="{{date('Y-m-d')}}">@lang('lang.last_7_days')</button>
-                <button class="btn btn-secondary date-btn active" data-start_date="{{date('Y').'-'.date('m').'-'.'01'}}"
-                    data-end_date="{{date('Y-m-d')}}">@lang('lang.this_month')</button>
-                <button class="btn btn-secondary date-btn" data-start_date="{{date('Y').'-01'.'-01'}}"
-                    data-end_date="{{date('Y').'-12'.'-31'}}">@lang('lang.this_year')</button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="store_id"><b>@lang('lang.store')</b></label>
+                        {!! Form::select('store_id', $stores, false, ['class' => 'form-control filter', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+
+                    </div>
+                    <div class="col-md-4">
+                        <label for="from_date"><b>@lang('lang.from_date')</b></label>
+                        <input type="date" class="form-control filter" name="from_date" id="from_date" value="{{date('Y-m-d')}}"
+                            placeholder="{{__('lang.from_date')}}">
+
+                    </div>
+                    <div class="col-md-4">
+                        <label for="to_date"><b>@lang('lang.to_date')</b></label>
+                        <input type="date" class="form-control filter" name="to_date" id="to_date" value="{{date('Y-m-t')}}"
+                            placeholder="{{__('lang.to_date')}}">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -27,7 +37,15 @@
         <div class="col-md-12 form-group">
             <div class="row">
                 <!-- Count item widget-->
-                <div class="col-sm-3">
+                <div class="col-sm-2">
+                    <div class="wrapper count-title text-center">
+                        <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i></div>
+                        <div class="name"><strong style="color: #498636">@lang('lang.current_stock_value')</strong></div>
+                        <div class="count-number current_stock_value-data">{{@num_format($dashboard_data['current_stock_value'])}}</div>
+                    </div>
+                </div>
+                <!-- Count item widget-->
+                <div class="col-sm-2">
                     <div class="wrapper count-title text-center">
                         <div class="icon"><i class="dripicons-graph-bar" style="color: #733686"></i></div>
                         <div class="name"><strong style="color: #733686">@lang('lang.revenue')</strong></div>
@@ -35,7 +53,7 @@
                     </div>
                 </div>
                 <!-- Count item widget-->
-                <div class="col-sm-3">
+                <div class="col-sm-2">
                     <div class="wrapper count-title text-center">
                         <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i></div>
                         <div class="name"><strong style="color: #ff8952">@lang('lang.sale_return')</strong></div>
@@ -352,19 +370,28 @@
 
 @section('javascript')
 <script>
-    $(".date-btn").on("click", function() {
-        $(".date-btn").removeClass("active");
-        $(this).addClass("active");
-        var start_date = $(this).data('start_date');
-        var end_date = $(this).data('end_date');
+    $(document).on("change", '.filter', function() {
+        var store_id = $('#store_id').val();
+        var start_date = $('#from_date').val();
+        if(!start_date) {
+            start_date = 0;
+        }
+        var end_date = $('#to_date').val();
+        if(!end_date) {
+            end_date = 0;
+        }
         $.ajax({
             method: 'get',
             url: '/get-dashboard-data/'+start_date+'/'+end_date,
-            data: {  },
+            data: { store_id:store_id },
             success: function(result) {
                 $('.revenue-data').hide();
                 $(".revenue-data").text(__currency_trans_from_en(result.revenue, false));
                 $('.revenue-data').show(500);
+
+                $('.current_stock_value-data').hide();
+                $(".current_stock_value-data").text(__currency_trans_from_en(result.current_stock_value, false));
+                $('.current_stock_value-data').show(500);
 
                 $('.sell_return-data').hide();
                 $(".sell_return-data").text(__currency_trans_from_en(result.sell_return, false));

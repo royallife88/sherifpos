@@ -42,7 +42,7 @@
                             <th>@lang('lang.job_title')</th>
                             <th>@lang('lang.receiver')</th>
                             <th>@lang('lang.receiver_title')</th>
-                            <th>@lang('lang.amount')</th>
+                            <th class="sum">@lang('lang.amount')</th>
                             <th>@lang('lang.notes')</th>
 
                             <th class="notexport">@lang('lang.action')</th>
@@ -53,9 +53,9 @@
                         <tr>
                             <td>{{@format_datetime($cash_register->created_at)}}</td>
                             <td>{{ucfirst($cash_register->cashier_name)}}</td>
-                            <td>{{ucfirst($cash_register->job_title)}}</td>
-                            <td>{{ucfirst($cash_register->source->name)}}</td>
-                            <td>{{ucfirst($cash_register->source->employee->job_type->job_title)}}</td>
+                            <td>{{ucfirst($cash_register->job_title ?? '')}}</td>
+                            <td>{{ucfirst($cash_register->source->name ?? '')}}</td>
+                            <td>{{ucfirst($cash_register->source->employee->job_type->job_title ?? '')}}</td>
                             <td>{{@num_format($cash_register->amount)}}</td>
                             <td>{{$cash_register->notes}}</td>
 
@@ -97,7 +97,7 @@
                     <tfoot>
                         <tr>
                             <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                            <td>{{@num_format($cash_registers->sum('amount'))}}</td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>

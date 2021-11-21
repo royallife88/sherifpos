@@ -136,7 +136,7 @@
                                         <td>{{$purchase_order->po_no}}</td>
                                         <td> {{@format_date($purchase_order->transaction_date)}}</td>
                                         <td>
-                                            {{ucfirst($purchase_order->created_by_user->name)}}
+                                            {{ucfirst($purchase_order->created_by_user->name ?? '')}}
                                         </td>
                                         <td>
                                             @if(!empty($purchase_order->supplier)){{$purchase_order->supplier->name}}@endif
@@ -206,9 +206,9 @@
                                     <tr>
                                         <th>@lang('lang.date')</th>
                                         <th>@lang('lang.reference_no')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.paid')</th>
-                                        <th>@lang('lang.due')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.paid')</th>
+                                        <th class="sum">@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
                                         <th>@lang('lang.due_date')</th>
                                         <th>@lang('lang.action')</th>
@@ -289,9 +289,9 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="2" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($add_stocks->sum('final_total'))}}</th>
-                                        <th>{{@num_format($total_purchase_payments)}}</th>
-                                        <th>{{@num_format($total_purchase_due)}}</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>

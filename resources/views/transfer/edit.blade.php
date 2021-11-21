@@ -79,8 +79,11 @@
                                             <td>
                                                 {{$product->variation->sub_sku}}
                                             </td>
+                                            @php
+                                                $qty_available = App\Models\ProductStore::where('variation_id', $product->variation_id)->where('store_id', $transfer->sender_store_id)->first();
+                                            @endphp
                                             <td>
-                                                <input type="text" class="form-control quantity" min=1
+                                                <input type="text" class="form-control quantity" min=1 max="{{$qty_available ? $qty_available->qty_available : $product->quantity}}"
                                                 name="transfer_lines[{{$loop->index}}][quantity]" required value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
                                             </td>
                                             <td>
@@ -145,7 +148,7 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/add_stock.js')}}"></script>
+<script src="{{asset('js/transfer.js')}}"></script>
 <script type="text/javascript">
 
 </script>

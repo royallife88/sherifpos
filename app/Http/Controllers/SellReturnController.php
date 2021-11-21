@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
 use App\Models\Transaction;
@@ -55,6 +56,9 @@ class SellReturnController extends Controller
      */
     public function index()
     {
+        $store_id = $this->transactionUtil->getFilterOptionValues(request())['store_id'];
+        $pos_id = $this->transactionUtil->getFilterOptionValues(request())['pos_id'];
+
         $query = Transaction::where('type', 'sell_return');
 
         if (!empty(request()->customer_id)) {
@@ -72,16 +76,26 @@ class SellReturnController extends Controller
         if (!empty(request()->end_date)) {
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+        if (!empty($pos_id)) {
+            $query->where('store_pos_id', $pos_id);
+        }
 
         $sale_returns = $query->orderBy('invoice_no', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $stores = Store::getDropdown();
+        $store_pos = StorePos::pluck('name', 'id');
 
         return view('sell_return.index')->with(compact(
             'sale_returns',
             'payment_types',
             'customers',
+            'stores',
+            'store_pos',
             'payment_status_array',
         ));
     }
@@ -116,8 +130,9 @@ class SellReturnController extends Controller
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
 
         $sell_return = Transaction::where('type', 'sell_return')
-        ->where('return_parent_id', $id)
-        ->first();
+            ->where('return_parent_id', $id)
+            ->first();
+            $stores = Store::getDropdown();
 
         return view('sell_return.create')->with(compact(
             'sell_return',
@@ -130,6 +145,7 @@ class SellReturnController extends Controller
             'store_pos',
             'customers',
             'taxes',
+            'stores',
             'payment_type_array',
         ));
     }

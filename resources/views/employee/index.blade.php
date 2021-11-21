@@ -33,9 +33,8 @@
                                     <tbody>
                                         @foreach ($employees as $employee)
                                         <tr>
-                                            <td>
-                                                <img src="@if(!empty($employee->getFirstMediaUrl('employee_photo'))){{$employee->getFirstMediaUrl('employee_photo')}}@else{{asset('images/default.jpg')}}@endif"
-                                                    style="width: 60px; border: 2px solid #fff; padding: 4px;" />
+                                            <td><img src="@if(!empty($employee->getFirstMediaUrl('employee_photo'))){{$employee->getFirstMediaUrl('employee_photo')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                alt="photo" width="50" height="50">
                                             </td>
                                             <td>
                                                 {{$employee->name}}

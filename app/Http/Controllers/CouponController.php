@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Product;
 use App\Models\ProductClass;
+use App\Models\Store;
 use App\Models\User;
 use App\Utils\ProductUtil;
 use App\Utils\Util;
@@ -88,11 +89,13 @@ class CouponController extends Controller
         $products = Product::pluck('name', 'id');
         $product_classes = ProductClass::get();
         $customer_types = CustomerType::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('coupon.create')->with(compact(
             'quick_add',
             'products',
             'customer_types',
+            'stores',
             'product_classes'
         ));
     }
@@ -114,7 +117,7 @@ class CouponController extends Controller
         );
 
         try {
-            $data = $request->except('_token', 'quick_add');
+            $data = $request->except('_token', 'quick_add', 'search_product');
             $data['amount_to_be_purchase_checkbox'] = !empty($data['amount_to_be_purchase_checkbox']) ? 1 : 0;
             $data['amount'] = $this->commonUtil->num_uf($data['amount']);
             $data['all_products'] = !empty($data['all_products']) ? 1 : 0;
@@ -177,12 +180,14 @@ class CouponController extends Controller
         $product_classes = ProductClass::get();
         $pct_data = $coupon->pct_data;
         $customer_types = CustomerType::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('coupon.edit')->with(compact(
             'coupon',
             'products',
             'product_classes',
             'customer_types',
+            'stores',
             'pct_data'
         ));
     }
@@ -205,7 +210,7 @@ class CouponController extends Controller
         );
 
         try {
-            $data = $request->except('_token', '_method', 'pct', 'submit');
+            $data = $request->except('_token', '_method', 'pct', 'submit', 'search_product');
             $data['amount_to_be_purchase_checkbox'] = !empty($data['amount_to_be_purchase_checkbox']) ? 1 : 0;
             $data['amount'] = $this->commonUtil->num_uf($data['amount']);
             $data['all_products'] = !empty($data['all_products']) ? 1 : 0;
@@ -303,9 +308,10 @@ class CouponController extends Controller
 
     public function getDetails($coupon_code, $customer_id)
     {
+        $store_id = request()->get('store_id');
         $customer = Customer::find($customer_id);
         $customer_type_id = (string) $customer->customer_type_id;
-        $coupon_details = Coupon::where('coupon_code', $coupon_code)->whereJsonContains('customer_type_ids', $customer_type_id)->where('used', 0)->first();
+        $coupon_details = Coupon::where('coupon_code', $coupon_code)->whereJsonContains('customer_type_ids', $customer_type_id)->whereJsonContains('store_ids', $store_id)->where('used', 0)->first();
 
         if (empty($coupon_details)) {
             return [

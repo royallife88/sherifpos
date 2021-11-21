@@ -13,6 +13,8 @@ $site_title = App\Models\System::getProperty('site_title');
                     </a></span>
 
                 <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                    <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"><i
+                                class="fa fa-power-off"></i></button></li>
                     @can('sale.pos.create_and_edit')
                     <li class="nav-item"><a class="dropdown-item btn-pos btn-sm"
                             href="{{action('SellPosController@create')}}"><i class="dripicons-shopping-bag"></i><span>

@@ -60,7 +60,7 @@
                     <td> {{@format_date($remove_stock->transaction_date)}}</td>
                     <td>{{$remove_stock->invoice_no}}</td>
                     <td>
-                        {{$remove_stock->store->name}}
+                        {{$remove_stock->store->name ?? ''}}
                     </td>
                     <td>
                         {{$remove_stock->reason}}

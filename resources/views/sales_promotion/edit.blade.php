@@ -40,6 +40,16 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
+                                    {!! Form::select('type',['item_discount' => __('lang.item_discount'),
+                                    'package_promotion' => __('lang.package_promotion')], $sales_promotion->type, ['class' =>
+                                    'selectpicker
+                                    form-control', 'data-live-search' => "true", 'placeholder' =>
+                                    __('lang.please_select'),'required']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -57,6 +67,27 @@
                                         @include('product_classification_tree.partials.product_selection_tree')
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-12 product_details_div mt-5 mb-5">
+                                <table class="table" id="sale_promotion_table">
+                                    <thead class="bg-success" style="color: white">
+                                        <tr>
+                                            <th>@lang('lang.image')</th>
+                                            <th>@lang('lang.name')</th>
+                                            <th>@lang('lang.sku')</th>
+                                            <th>@lang('lang.purchase_price')</th>
+                                            <th>@lang('lang.sell_price')</th>
+                                            <th>@lang('lang.stock')</th>
+                                            <th>@lang('lang.expiry_date')</th>
+                                            <th>@lang('lang.date_of_purchase')</th>
+                                            <th  class="qty_hide  @if ($sales_promotion->type == 'item_discount') hide @endif">@lang('lang.qty')</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @include('product_classification_tree.partials.product_details_row', ['products' => $product_details, 'type' => $sales_promotion->type])
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -100,6 +131,16 @@
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
                                     {!! Form::date('end_date', $sales_promotion->end_date, ['class' => 'form-control'])
                                     !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5">
+                                <div class="form-group">
+                                    <div class="i-checks">
+                                        <input id="generate_barcode" name="generate_barcode" type="checkbox" value="1" @if($sales_promotion->generate_barcode == '1') checked @endif
+                                            class="form-control-custom">
+                                        <label
+                                            for="generate_barcode"><strong>@lang('lang.generate_barcode')</strong></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

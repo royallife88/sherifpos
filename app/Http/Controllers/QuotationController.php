@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
@@ -81,7 +82,7 @@ class QuotationController extends Controller
         $sales = $query->orderBy('invoice_no', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('quotation.index')->with(compact(
@@ -107,7 +108,7 @@ class QuotationController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
 
         return view('quotation.create')->with(compact(
@@ -164,7 +165,7 @@ class QuotationController extends Controller
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
 
         return view('quotation.edit')->with(compact(
@@ -301,10 +302,23 @@ class QuotationController extends Controller
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
-            $html_content = view('sale_pos.partials.invoice')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
+            $invoice_lang = System::getProperty('invoice_lang');
+            if (empty($invoice_lang)) {
+                $invoice_lang = request()->session()->get('language');
+            }
+
+            if ($invoice_lang == 'ar_and_en') {
+                $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
+                    'transaction',
+                    'payment_types'
+                ))->render();
+            } else {
+                $html_content = view('sale_pos.partials.invoice')->with(compact(
+                    'transaction',
+                    'payment_types',
+                    'invoice_lang'
+                ))->render();
+            }
 
             $output = [
                 'success' => true,

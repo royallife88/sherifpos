@@ -59,6 +59,7 @@ class DatabaseSeeder extends Seeder
             ['key' => 'site_title', 'value' => 'sherifsalaby.tech', 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'developed_by', 'value' => '<a target="_blank" href="http://www.fiverr.com/derbari">Derbari</a>', 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'help_page_content', 'value' => null, 'created_by' => 1, 'date_and_time' => Carbon::now()],
+            ['key' => 'invoice_lang', 'value' => 'system_lang', 'created_by' => 1, 'date_and_time' => Carbon::now()],
 
         );
 

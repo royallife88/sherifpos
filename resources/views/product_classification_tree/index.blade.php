@@ -93,7 +93,16 @@
                                                     @php
                                                     $sub_categories = App\Models\Category::where('parent_id',
                                                     $category->id)->whereNotNull('categories.name')->select('categories.id','categories.name')->groupBy('categories.id')->get();
+                                                    $brands = null;
+                                                    $brands = App\Models\Product::leftjoin('brands',
+                                                    'products.brand_id', 'brands.id')->where('products.category_id',
+                                                    $category->id)->whereNull('products.sub_category_id')->select('brands.id',
+                                                    'brands.name')->groupBy('brands.id')->get();
                                                     @endphp
+                                                    @if (!empty($brands) && $brands->count() > 0)
+                                                    @include('product_classification_tree.partials.brand_inner_part',
+                                                    ['brands' => $brands])
+                                                    @endif
                                                     @foreach ($sub_categories as $sub_category)
                                                     <div class="accordion"
                                                         id="{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
@@ -131,98 +140,8 @@
                                                                     $sub_category->id)->select('brands.id',
                                                                     'brands.name')->groupBy('brands.id')->get();
                                                                     @endphp
-                                                                    @foreach ($brands as $brand)
-                                                                    <div class="accordion"
-                                                                        id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                        style="margin-left: 20px;">
-                                                                        <div class="accordion-group">
-                                                                            <div class="accordion-heading">
-                                                                                <a class="accordion-toggle"
-                                                                                    data-toggle="collapse"
-                                                                                    data-id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                    data-parent="#{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                    href="#collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}">
-                                                                                    <i
-                                                                                        class="fa fa-angle-right angle-class-{{@replace_space('brand_'.$brand->name.'_'.$i)}}"></i>
-                                                                                    {{$brand->name}}
-                                                                                    <div class="btn-group pull-right">
-                                                                                        <button
-                                                                                            data-container=".view_modal"
-                                                                                            data-href="{{action('BrandController@edit', $brand->id)}}"
-                                                                                            class="btn btn-modal btn-primary btn-xs"><i
-                                                                                                class="dripicons-document-edit"></i>
-                                                                                        </button>
-                                                                                        <button
-                                                                                            data-href="{{action('BrandController@destroy', $brand->id)}}"
-                                                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                                                                            class="btn delete_item btn-danger btn-xs"><i
-                                                                                                class="dripicons-trash"></i></button>
-                                                                                    </div>
-                                                                                </a>
-                                                                            </div>
-                                                                            <div id="collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                                                                                class="accordion-body collapse in">
-                                                                                <div class="accordion-inner">
-                                                                                    @php
-                                                                                    $products =
-                                                                                    App\Models\Product::where('brand_id',
-                                                                                    $brand->id)->select('products.id',
-                                                                                    'products.name')->groupBy('products.id')->get();
-                                                                                    @endphp
-                                                                                    @foreach ($products as $product)
-                                                                                    <div class="accordion"
-                                                                                        id="{{$product->name}}"
-                                                                                        style="margin-left: 20px;">
-                                                                                        <div class="accordion-group">
-                                                                                            <div
-                                                                                                class="accordion-heading">
-                                                                                                <a class="accordion-toggle"
-                                                                                                    data-toggle="collapse"
-                                                                                                    data-id="{{$product->name}}"
-                                                                                                    data-parent="#{{$product->name}}"
-                                                                                                    href="#collapse{{$product->name}}">
-                                                                                                    <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
-                                                                                                        alt="photo"
-                                                                                                        width="50"
-                                                                                                        height="50">
-                                                                                                    {{$product->name}}
-                                                                                                    <div
-                                                                                                        class="btn-group pull-right">
-                                                                                                        <button
-                                                                                                            data-href="{{action('ProductController@edit', $product->id)}}"
-                                                                                                            class="btn btn-primary btn-xs product_edit"><i
-                                                                                                                class="dripicons-document-edit"></i>
-                                                                                                        </button>
-                                                                                                        <button
-                                                                                                            data-href="{{action('ProductController@destroy', $product->id)}}"
-                                                                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                                                                                            class="btn delete_item btn-danger btn-xs"><i
-                                                                                                                class="dripicons-trash"></i></button>
-                                                                                                    </div>
-                                                                                                </a>
-                                                                                            </div>
-                                                                                            <div id="collapse{{$product->name}}"
-                                                                                                class="accordion-body collapse in">
-                                                                                                <div
-                                                                                                    class="accordion-inner">
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                    @php
-                                                                                    $i++;
-                                                                                    @endphp
-                                                                                    @endforeach
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-
-                                                                    </div>
-                                                                    @php
-                                                                    $i++;
-                                                                    @endphp
-                                                                    @endforeach
+                                                                    @include('product_classification_tree.partials.brand_inner_part',
+                                                                    ['brands' => $brands])
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -255,13 +174,15 @@
                 <h4>{{number_format(App\Models\Product::count())}} @lang('lang.items')</h4>
                 <h4>{{number_format(App\Models\ProductClass::count())}} @lang('lang.product_class')</h4>
                 <h4>{{number_format(App\Models\Category::whereNull('parent_id')->count())}} @lang('lang.category')</h4>
-                <h4>{{number_format(App\Models\Category::whereNotNull('parent_id')->count())}} @lang('lang.sub_category')</h4>
+                <h4>{{number_format(App\Models\Category::whereNotNull('parent_id')->count())}}
+                    @lang('lang.sub_category')</h4>
                 <h4>{{number_format(App\Models\Brand::count())}} @lang('lang.brand')</h4>
                 <h4>{{number_format(App\Models\Unit::count())}} @lang('lang.unit')</h4>
                 <h4>{{number_format(App\Models\Color::count())}} @lang('lang.color')</h4>
                 <h4>{{number_format(App\Models\Size::count())}} @lang('lang.size')</h4>
                 <h4>{{number_format(App\Models\Grade::count())}} @lang('lang.grade')</h4>
-                <h4>{{number_format(DB::table('media')->where('collection_name', 'product')->count())}} @lang('lang.image')</h4>
+                <h4>{{number_format(DB::table('media')->where('collection_name', 'product')->count())}}
+                    @lang('lang.image')</h4>
             </div>
         </div>
     </div>

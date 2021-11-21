@@ -37,6 +37,8 @@ class Kernel extends ConsoleKernel
             ->daily();
         $schedule->command('pos:changeQuotationStatusToExpire')
             ->daily();
+        $schedule->command('pos:sendSaleDataMall')
+            ->dailyAt('23:55')->timezone('Asia/Qatar');
         $schedule->command('queue:work')
             ->everyMinute()->withoutOverlapping();
     }

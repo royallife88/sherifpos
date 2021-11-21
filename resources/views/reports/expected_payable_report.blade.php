@@ -90,7 +90,7 @@
                                 <th>@lang('lang.expense_type')</th>
                                 <th>@lang('lang.beneficiary')</th>
                                 <th>@lang('lang.store')</th>
-                                <th>@lang('lang.amount')</th>
+                                <th  class="sum">@lang('lang.amount')</th>
                                 <th>@lang('lang.due_date')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -105,7 +105,7 @@
                                 <td>
                                     {{$add_stock->supplier->name}}
                                 </td>
-                                <td>{{$add_stock->store->name}}</td>
+                                <td>{{$add_stock->store->name ?? ''}}</td>
                                 <td>
                                     {{@num_format($add_stock->final_total)}}
                                 </td>
@@ -221,9 +221,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($add_stocks->sum('final_total') + $wages->sum('net_amount') + $expenses->sum('final_total'))}}
-                                </th>
-                                <td colspan="2"></td>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>

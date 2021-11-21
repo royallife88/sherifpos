@@ -91,7 +91,8 @@ class CashRegisterController extends Controller
             $register = CashRegister::create([
                 'user_id' => $user_id,
                 'status' => 'open',
-                'store_id' => !empty($store_pos) ? $store_pos->store_id : null
+                'store_id' => !empty($store_pos) ? $store_pos->store_id : null,
+                'store_pos_id' => !empty($store_pos) ? $store_pos->id : null
             ]);
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $initial_amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 

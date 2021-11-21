@@ -1,6 +1,6 @@
 @forelse ($add_stock->add_stock_lines as $product)
 <tr>
-    <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+    <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
             alt="photo" width="50" height="50"></td>
     <td>
         {{$product->product->name}}

@@ -16,12 +16,19 @@ class Store extends Model
      */
     protected $guarded = ['id'];
 
-    public function store_pos(){
+    public function store_pos()
+    {
         return $this->hasMany(StorePos::class);
     }
 
     public static function getDropdown()
     {
-        return Store::pluck('name', 'id')->toArray();
+        if (session('user.is_superadmin')) {
+            $stores = Store::pluck('name', 'id')->toArray();
+        } else {
+            $employee = Employee::where('user_id', auth()->user()->id)->first();
+            $stores = Store::whereIn('id', (array) $employee->store_id)->pluck('name', 'id')->toArray();
+        }
+        return $stores;
     }
 }

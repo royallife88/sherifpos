@@ -61,9 +61,9 @@
                     <th>@lang('lang.supplier')</th>
                     <th>@lang('lang.payment_status')</th>
                     <th>@lang('lang.payment_type')</th>
-                    <th>@lang('lang.grand_total')</th>
-                    <th>@lang('lang.paid')</th>
-                    <th>@lang('lang.due')</th>
+                    <th class="sum">@lang('lang.grand_total')</th>
+                    <th class="sum">@lang('lang.paid')</th>
+                    <th class="sum">@lang('lang.due')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -148,9 +148,9 @@
             <tfoot>
                 <tr>
                     <th colspan="5" style="text-align: right">@lang('lang.totals')</th>
-                    <td>{{@num_format($purchase_returns->sum('final_total'))}}</td>
-                    <td>{{@num_format($total_paid)}}</td>
-                    <td>{{@num_format($total_due)}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>

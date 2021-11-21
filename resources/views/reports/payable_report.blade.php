@@ -74,7 +74,7 @@
                                 <th>@lang('lang.date_and_time')</th>
                                 <th>@lang('lang.invoice_date')</th>
                                 <th>@lang('lang.supplier')</th>
-                                <th>@lang('lang.amount')</th>
+                                <th class="sum">@lang('lang.amount')</th>
                                 <th>@lang('lang.created_by')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -93,7 +93,7 @@
                                     {{@num_format($add_stock->final_total)}}
                                 </td>
                                 <td>
-                                    {{ucfirst($add_stock->created_by_user->name)}}
+                                    {{ucfirst($add_stock->created_by_user->name ?? '')}}
                                 </td>
                                 <td>
 
@@ -149,7 +149,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($add_stocks->sum('amount'))}}</th>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>

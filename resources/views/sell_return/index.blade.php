@@ -28,7 +28,20 @@
                                 'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
-
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('store_id', __('lang.store'), []) !!}
+                                {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('pos_id', __('lang.pos'), []) !!}
+                                {!! Form::select('pos_id', $store_pos, request()->pos_id, ['class' =>
+                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            </div>
+                        </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('start_date', __('lang.start_date'), []) !!}
@@ -61,17 +74,13 @@
                     <th>@lang('lang.customer')</th>
                     <th>@lang('lang.payment_status')</th>
                     <th>@lang('lang.payment_type')</th>
-                    <th>@lang('lang.grand_total')</th>
-                    <th>@lang('lang.paid')</th>
-                    <th>@lang('lang.due')</th>
+                    <th class="sum">@lang('lang.grand_total')</th>
+                    <th class="sum">@lang('lang.paid')</th>
+                    <th class="sum">@lang('lang.due')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
             <tbody>
-                @php
-                $total_paid = 0;
-                $total_due = 0;
-                @endphp
                 @foreach($sale_returns as $sale)
                 <tr>
                     <td>{{@format_date($sale->transaction_date)}}</td>
@@ -79,7 +88,8 @@
                     <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                     <td>@if(!empty($payment_status_array[$sale->payment_status])){{$payment_status_array[$sale->payment_status]}}@endif
                     </td>
-                    <td>@if(!empty($sale->transaction_payments->count() > 0)){{$payment_types[$sale->transaction_payments->first()->method]}}@endif
+                    <td>@if(!empty($sale->transaction_payments->count() >
+                        0)){{$payment_types[$sale->transaction_payments->first()->method]}}@endif
                     </td>
                     <td>{{@num_format($sale->final_total)}}</td>
                     <td>{{@num_format($sale->transaction_payments->sum('amount'))}}</td>
@@ -104,8 +114,8 @@
                                 @endcan
                                 @can('return.sell_return.create_and_edit')
                                 <li>
-                                    <a href="{{action('SellReturnController@add', $sale->return_parent_id)}}" class="btn"><i
-                                            class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                    <a href="{{action('SellReturnController@add', $sale->return_parent_id)}}"
+                                        class="btn"><i class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
@@ -139,18 +149,14 @@
                         </div>
                     </td>
                 </tr>
-                @php
-                $total_paid += $sale->transaction_payments->sum('amount');
-                $total_due += $sale->final_total - $sale->transaction_payments->sum('amount');
-                @endphp
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="5" style="text-align: right">@lang('lang.totals')</th>
-                    <td>{{@num_format($sale_returns->sum('final_total'))}}</td>
-                    <td>{{@num_format($total_paid)}}</td>
-                    <td>{{@num_format($total_due)}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>

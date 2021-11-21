@@ -52,7 +52,7 @@
                                 <th>@lang('lang.sale_ref')</th>
                                 <th>@lang('lang.purchase_ref')</th>
                                 <th>@lang('lang.paid_by')</th>
-                                <th>@lang('lang.amount')</th>
+                                <th  class="sum">@lang('lang.amount')</th>
                                 <th>@lang('lang.created_by')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -200,7 +200,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($transactions->sum('amount'))}}</th>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>

@@ -83,7 +83,7 @@
                                 <th>@lang('lang.customer')</th>
                                 <th>@lang('lang.sale_status')</th>
                                 <th>@lang('lang.payment_status')</th>
-                                <th>@lang('lang.grand_total')</th>
+                                <th class="sum">@lang('lang.grand_total')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -184,7 +184,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="5" style="text-align: right">@lang('lang.totals')</th>
-                                <td>{{@num_format($sales->sum('final_total'))}}</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

@@ -90,6 +90,11 @@
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['add-stock', 'remove-stock', 'transfer'])) show @endif">
                         @can('stock.add_stock.create_and_edit')
                         <li
+                            class="@if(request()->segment(1) == 'product-stocks' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ProductController@getProductStocks')}}">{{__('lang.product_stocks')}}</a></li>
+                        @endcan
+                        @can('stock.add_stock.create_and_edit')
+                        <li
                             class="@if(request()->segment(1) == 'add-stock' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('AddStockController@create')}}">{{__('lang.add_new_stock')}}</a></li>
                         @endcan
@@ -128,6 +133,11 @@
                             <a href="{{action('AddStockController@getImport')}}">{{__('lang.import_add_stock')}}</a>
                         </li>
                         @endcan
+                        @can('stock.internal_stock_request.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'internal-stock-request' && request()->segment(2) == 'create') active @endif">
+                            <a href="{{action('InternalStockRequestController@create')}}">{{__('lang.internal_stock_request')}}</a></li>
+                        @endcan
                     </ul>
                 </li>
                 @endif
@@ -162,7 +172,7 @@
 
                 @if(auth()->user()->can('sale.pos.create_and_edit') || auth()->user()->can('sale.pos.view') )
                 <li><a href="#sale" aria-expanded="false" data-toggle="collapse"> <i
-                            class="dripicons-cart"></i><span>{{__('lang.sale')}}</span><span></a>
+                            class="dripicons-cart"></i><span>{{__('lang.sales')}}</span><span></a>
                     <ul id="sale"
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['pos', 'sale'])) show @endif">
                         @can('sale.pos.view')
@@ -177,16 +187,16 @@
                         @can('sale.sale.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SellController@create')}}">{{__('lang.add_sale')}}</a></li>
+                            <a href="{{action('SellController@create')}}">{{__('lang.add_sales')}}</a></li>
                         @endcan
                         @can('sale.delivery_list.view')
                         <li
-                            class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
+                            class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'get-delivery-list') active @endif">
                             <a href="{{action('SellController@getDeliveryList')}}">{{__('lang.delivery_list')}}</a></li>
                         @endcan
                         @can('sale.import.view')
                         <li
-                            class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
+                            class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'get-import') active @endif">
                             <a href="{{action('SellController@getImport')}}">{{__('lang.import_sale')}}</a></li>
                         @endcan
                     </ul>

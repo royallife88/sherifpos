@@ -102,7 +102,8 @@ class User extends Authenticatable
                 'grade' => 'Grade',
                 'tax' => 'Tax',
                 'product_classification_tree' => 'Product Classification Tree',
-                'barcode', 'Barcode',
+                'barcode' => 'Barcode',
+                'purchase_price' => 'Purchase Price',
             ],
             'customer_module' => [
                 'customer' => 'Customer',

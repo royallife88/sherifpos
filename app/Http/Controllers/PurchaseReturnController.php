@@ -90,7 +90,7 @@ class PurchaseReturnController extends Controller
     public function create()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
@@ -209,7 +209,7 @@ class PurchaseReturnController extends Controller
     {
         $purchase_return = Transaction::find($id);
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 

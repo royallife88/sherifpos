@@ -77,7 +77,7 @@ class PurchaseOrderController extends Controller
         $purchase_orders = $query->get();
 
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('purchase_order.index')->with(compact(
@@ -96,7 +96,7 @@ class PurchaseOrderController extends Controller
     public function create()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $po_no = $this->productUtil->getNumberByType('purchase_order');
 
@@ -160,7 +160,7 @@ class PurchaseOrderController extends Controller
                     $this->notificationUtil->createNotification($notification_data);
                 }
             }
-
+            DB::commit();
             if ($data['submit'] == 'print') {
                 $print = 'print';
                 $url = action('PurchaseOrderController@show', $transaction->id) . '?print=' . $print;
@@ -170,7 +170,6 @@ class PurchaseOrderController extends Controller
             if ($data['submit'] == 'sent_supplier') {
                 $this->notificationUtil->sendPurchaseOrderToSupplier($transaction->id);
             }
-            DB::commit();
 
             $output = [
                 'success' => true,
@@ -216,7 +215,7 @@ class PurchaseOrderController extends Controller
         $purchase_order = Transaction::find($id);
 
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('purchase_order.edit')->with(compact(
@@ -482,11 +481,13 @@ class PurchaseOrderController extends Controller
         $purchase_orders = $query->get();
 
         $suppliers = Supplier::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('purchase_order.index')->with(compact(
             'purchase_orders',
             'suppliers',
+            'stores',
             'status_array'
         ));
     }
@@ -557,7 +558,7 @@ class PurchaseOrderController extends Controller
     public function getImport()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('purchase_order.import')->with(compact(
             'suppliers',

@@ -28,7 +28,7 @@
             @foreach($earning_of_points as $earning_of_point)
             <tr>
                 <td>{{$earning_of_point->created_at}}</td>
-                <td>{{ucfirst($earning_of_point->created_by_user->name)}}</td>
+                <td>{{ucfirst($earning_of_point->created_by_user->name ?? '')}}</td>
                 <td>{{$earning_of_point->number}}</td>
                 <td>{{implode(', ', $earning_of_point->stores->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $earning_of_point->customer_types->pluck('name')->toArray())}}</td>

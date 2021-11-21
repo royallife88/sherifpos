@@ -30,6 +30,7 @@ class CreateTransactionsTable extends Migration
             $table->boolean('is_direct_sale')->default(0);
             $table->boolean('is_return')->default(0);
             $table->boolean('is_quotation')->default(0);
+            $table->boolean('is_internal_stock_transfer')->default(0);
             $table->boolean('block_qty')->default(0);
             $table->integer('block_for_days')->default(0);
             $table->integer('validity_days')->default(0);

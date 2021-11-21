@@ -14,6 +14,7 @@ use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
 use App\Models\RedemptionOfPoint;
 use App\Models\Store;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
@@ -24,6 +25,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\DB;
 use Mockery\Matcher\Type;
+use Psy\CodeCleaner\FunctionContextPass;
 
 class TransactionUtil extends Util
 {
@@ -189,13 +191,13 @@ class TransactionUtil extends Util
         $qty_difference = $this->num_uf($new_quantity) - $this->num_uf($old_quantity);
         if ($qty_difference != 0) {
             $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
-            ->where('transactions.store_id', $store_id)
-            ->where('product_id', $product_id)
-            ->where('variation_id', $variation_id)
-            ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
-            ->having('remaining_qty', '>', 0)
-            ->groupBy('add_stock_lines.id')
-            ->get();
+                ->where('transactions.store_id', $store_id)
+                ->where('product_id', $product_id)
+                ->where('variation_id', $variation_id)
+                ->select('add_stock_lines.id', DB::raw('SUM(quantity - quantity_sold) as remaining_qty'))
+                ->having('remaining_qty', '>', 0)
+                ->groupBy('add_stock_lines.id')
+                ->get();
             foreach ($add_stock_lines as $line) {
                 if ($qty_difference == 0) {
                     return true;
@@ -607,5 +609,28 @@ class TransactionUtil extends Util
         DB::commit();
 
         return $transaction;
+    }
+
+    public function getInvoicePrint($transaction, $payment_types)
+    {
+        $invoice_lang = System::getProperty('invoice_lang');
+        if (empty($invoice_lang)) {
+            $invoice_lang = request()->session()->get('language');
+        }
+
+        if ($invoice_lang == 'ar_and_en') {
+            $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
+                'transaction',
+                'payment_types'
+            ))->render();
+        } else {
+            $html_content = view('sale_pos.partials.invoice')->with(compact(
+                'transaction',
+                'payment_types',
+                'invoice_lang'
+            ))->render();
+        }
+
+        return $html_content;
     }
 }

@@ -27,7 +27,8 @@
             @foreach ($errors->all() as $message)
             <div class="alert alert-danger alert-dismissible text-center">
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>{{ $message }}</div>
+                        aria-hidden="true">&times;</span></button>{{ $message }}
+            </div>
             @endforeach
             <input type="hidden" id="__decimal" value=".">
             <input type="hidden" id="__currency_precision" value="2">
@@ -40,7 +41,7 @@
         </div>
 
         @include('layouts.partials.footer')
-        <div class="modal fade view_modal" role="dialog" aria-hidden="true"></div>
+        <div class="modal fade view_modal no-print" role="dialog" aria-hidden="true"></div>
 
         @php
         $cash_register = App\Models\CashRegister::where('user_id', Auth::user()->id)->where('status', 'open')->first();
@@ -69,56 +70,20 @@
             },
         });
 
-        table = $('.dataTable').DataTable({
-            "paging":   false,
-            "info":     false,
-            "bAutoWidth": false,
-            dom: 'Bfrtip',
-            buttons: [
-                {
-                    extend: 'print',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'excel',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'csvHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'pdfHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'copyHtml5',
-                    exportOptions: {
-                        columns: ':visible:not(.notexport)'
-                    }
-                },
-                {
-                    extend: 'colvis',
-                columns: ':gt(0)'
-
-                }
-            ]
-        });
     </script>
     @yield('javascript')
 
     <script type="text/javascript">
-        @if (session('status'))
+    @if (session('status'))
         swal(@if(session('status.success') == '1')"Success" @else "Error" @endif, "{{ session('status.msg') }}" , @if(session('status.success') == '1')"success" @else "error" @endif);
     @endif
+    $(document).ready(function(){
+        let cash_register_id = $('#cash_register_id').val();
+
+        if(cash_register_id){
+            $('#power_off_btn').removeClass('hide');
+        }
+    })
 
     jQuery.validator.setDefaults( {
         errorPlacement: function(error, element) {
@@ -257,8 +222,8 @@
           style: 'btn-link',
       });
 
-    @if(request()->segment(1) == 'pos')
-    $(window).on("beforeunload", function(e) {
+
+    $(document).on('click', "#power_off_btn", function(e) {
         let cash_register_id = $('#cash_register_id').val();
         let is_register_close = parseInt($('#is_register_close').val());
         if(!is_register_close){
@@ -268,13 +233,13 @@
             return;
         }
     });
-    @endif
 
-    function getClosingModal(cash_register_id){
+
+    function getClosingModal(cash_register_id, type = 'close'){
         $.ajax({
             method: 'get',
             url: '/cash/add-closing-cash/'+cash_register_id,
-            data: {  },
+            data: { type },
             contentType: 'html',
             success: function(result) {
                 $('#closing_cash_modal').empty().append(result);
@@ -290,15 +255,15 @@
 
         let is_register_close = parseInt($('#is_register_close').val());
         if(!is_register_close){
-            getClosingModal(cash_register_id);
+            getClosingModal(cash_register_id, 'logout');
             return 'Please enter the closing cash';
         }else{
             $('#logout-form').submit();
         }
     })
-    $(document).on('click', '.close-btn-add-closing-cash', function(){
-        let url = '{{request()->segment(1)}}';
-        $('#logout-form').submit();
+    $(document).on('click', '.close-btn-add-closing-cash', function(e){
+        e.preventDefault()
+        $('form#logout-form').submit();
     })
     $(document).on('click', '.notification-list', function(){
         $.ajax({

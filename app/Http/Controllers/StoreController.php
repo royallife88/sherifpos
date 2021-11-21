@@ -60,7 +60,7 @@ class StoreController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('store.create')->with(compact(
             'quick_add',
@@ -208,7 +208,7 @@ class StoreController extends Controller
 
     public function getDropdown()
     {
-        $store = Store::pluck('name', 'id');
+        $store = Store::getDropdown();
         $store_dp = $this->commonUtil->createDropdownHtml($store, 'Please Select');
 
         return $store_dp;

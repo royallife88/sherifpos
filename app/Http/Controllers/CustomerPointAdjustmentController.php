@@ -55,7 +55,7 @@ class CustomerPointAdjustmentController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
         $customers = Customer::pluck('name', 'id');
 
@@ -120,7 +120,7 @@ class CustomerPointAdjustmentController extends Controller
      */
     public function edit($id)
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
         $customers = Customer::pluck('name', 'id');
         $customer_point_adjustment = CustomerPointAdjustment::find($id);

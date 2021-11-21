@@ -65,7 +65,7 @@ class TransferController extends Controller
         }
 
         $transfers = $query->orderBy('invoice_no', 'desc')->get();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
 
         return view('transfer.index')->with(compact(
@@ -81,7 +81,7 @@ class TransferController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('transfer.create')->with(compact(
             'stores'
@@ -150,7 +150,7 @@ class TransferController extends Controller
     public function show($id)
     {
         $transfer = Transaction::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('transfer.show')->with(compact(
             'stores',
@@ -167,7 +167,7 @@ class TransferController extends Controller
     public function edit($id)
     {
         $transfer = Transaction::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('transfer.edit')->with(compact(
             'stores',
@@ -263,5 +263,27 @@ class TransferController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * Returns the html for product row
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function addProductRow(Request $request)
+    {
+        if ($request->ajax()) {
+            $product_id = $request->input('product_id');
+            $variation_id = $request->input('variation_id');
+            $sender_store_id = $request->input('sender_store_id');
+
+            if (!empty($product_id)) {
+                $index = $request->input('row_count');
+                $products = $this->productUtil->getDetailsFromProductTransfer($sender_store_id, $product_id, $variation_id);
+
+                return view('transfer.partials.product_row')
+                    ->with(compact('products', 'index'));
+            }
+        }
     }
 }

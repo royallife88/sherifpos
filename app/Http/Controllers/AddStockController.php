@@ -75,7 +75,7 @@ class AddStockController extends Controller
         $add_stocks = $query->orderBy('transaction_date', 'desc')->get();
 
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('add_stock.index')->with(compact(
@@ -94,7 +94,7 @@ class AddStockController extends Controller
     public function create()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
@@ -142,8 +142,8 @@ class AddStockController extends Controller
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
-                'notify_me' => !empty($data['notify_before_days']) ? 1 : null,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null,
+                'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
                 'created_by' => Auth::user()->id
             ];
 
@@ -242,7 +242,7 @@ class AddStockController extends Controller
     {
         $add_stock = Transaction::find($id);
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
@@ -292,7 +292,7 @@ class AddStockController extends Controller
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
                 'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null,
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
                 'created_by' => Auth::user()->id
             ];
 
@@ -303,6 +303,11 @@ class AddStockController extends Controller
             DB::beginTransaction();
             $transaction = Transaction::where('id', $id)->first();
             $transaction->update($transaction_data);
+
+            $mismtach = $this->productUtil->checkSoldAndPurchaseQtyMismatch($request->add_stock_lines, $transaction);
+            if ($mismtach) {
+                return $this->productUtil->sendQunatityMismacthResponse($mismtach['product_name'], $mismtach['quantity']);
+            }
 
             $this->productUtil->createOrUpdateAddStockLines($request->add_stock_lines, $transaction);
 
@@ -424,10 +429,11 @@ class AddStockController extends Controller
         if ($request->ajax()) {
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
+            $store_id = $request->input('store_id');
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
-                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id);
+                $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
 
                 return view('add_stock.partials.product_row')
                     ->with(compact('products', 'index'));
@@ -452,7 +458,7 @@ class AddStockController extends Controller
     public function getImport()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
@@ -493,7 +499,7 @@ class AddStockController extends Controller
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
-                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : null,
+                'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : 0,
                 'created_by' => Auth::user()->id
             ];
 

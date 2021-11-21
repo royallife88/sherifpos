@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid no-print">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -13,14 +13,13 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
                     true, 'class' => 'pos-form', 'id' => 'add_sale_form']) !!}
-                    <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
 
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col-md-3">
                                     {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                     <div class="input-group my-group">
                                         {!! Form::select('customer_id', $customers,
@@ -38,6 +37,33 @@
                                     </div>
                                 </div>
 
+                                <div class="col-md-3">
+                                    {!! Form::label('transaction_date', __('lang.date_and_time'), []) !!}
+                                    <input type="datetime-local" id="transaction_date" name="transaction_date"
+                                        value="{{date('Y-m-d\TH:i')}}" class="form-control">
+
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
+                                        {!! Form::select('store_id', $stores,
+                                        $store_pos->store_id ?? null, ['class' => 'selectpicker form-control',
+                                        'data-live-search'=>"true",
+                                        'required',
+                                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('store_pos_id', __('lang.pos'). ':*', []) !!}
+                                        {!! Form::select('store_pos_id', $store_poses,
+                                        $store_pos->id ?? null, ['class' => 'selectpicker form-control',
+                                        'data-live-search'=>"true",
+                                        'required',
+                                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                    </div>
+                                </div>
+
                                 <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -50,8 +76,7 @@
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
                                 <div class="table-responsive transaction-list">
-                                    <table id="product_table" style="width: 100% "
-                                        class="table table-striped">
+                                    <table id="product_table" style="width: 100% " class="table table-striped">
                                         <thead>
                                             <tr>
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
@@ -84,8 +109,6 @@
                                         <input type="hidden" id="total_tax" name="total_tax" value="0.00">
                                         <input type="hidden" id="is_direct_sale" name="is_direct_sale" value="1">
                                         <input type="hidden" name="discount_amount" id="discount_amount">
-                                        <input type="hidden" id="store_pos_id" name="store_pos_id"
-                                            value="{{$store_pos->id}}" />
                                     </div>
                                 </div>
                             </div>
@@ -117,8 +140,7 @@
                             <div class="form-group">
                                 {!! Form::label('discount_value', __( 'lang.discount_value' ) . ':*') !!}
                                 {!! Form::text('discount_value', null, ['class' => 'form-control', 'placeholder' => __(
-                                'lang.discount_value' ),
-                                'required' ]);
+                                'lang.discount_value' )]);
                                 !!}
                             </div>
                         </div>
@@ -145,13 +167,14 @@
                         </div>
                         <div class="col-md-3 mt-1 payment_fields hide">
                             <label>@lang('lang.payment_method')</label>
-                            {!! Form::select('method', $payment_types, null, ['class' => 'form-control', 'id' =>
+                            {!! Form::select('payments[0][method]', $payment_types, null, ['class' => 'form-control',
+                            'id' =>
                             'method', 'required', 'data-live-search' => 'true']) !!}
                         </div>
                         <div class="col-md-3 mt-1 payment_fields hide">
                             <label>@lang('lang.received_amount') *</label>
-                            <input type="text" name="amount" class="form-control numkey" required id="amount"
-                                step="any">
+                            <input type="text" name="payments[0][amount]" class="form-control numkey" required
+                                id="amount" step="any">
                         </div>
                         <div class="col-md-3 mt-1 payment_fields hide">
                             <label>@lang('lang.paying_amount') *</label>
@@ -165,40 +188,41 @@
 
                         <div class="col-md-12 hide">
                             <div class="i-checks">
-                                <input id="print_the_transaction" name="print_the_transaction" type="checkbox" checked value="1"
-                                    class="form-control-custom">
-                                <label for="print_the_transaction"><strong>@lang('lang.print_the_transaction')</strong></label>
+                                <input id="print_the_transaction" name="print_the_transaction" type="checkbox" checked
+                                    value="1" class="form-control-custom">
+                                <label
+                                    for="print_the_transaction"><strong>@lang('lang.print_the_transaction')</strong></label>
                             </div>
                         </div>
                         <div class="form-group col-md-12 mt-3 card_field payment_fields hide">
-                           <div class="row">
-                            <div class="col-md-4">
-                                <label>@lang('lang.card_number') *</label>
-                                <input type="text" name="card_number" class="form-control">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>@lang('lang.card_number') *</label>
+                                    <input type="text" name="payments[0][card_number]" class="form-control">
+                                </div>
+                                <div class="col-md-3">
+                                    <label>@lang('lang.card_security')</label>
+                                    <input type="text" name="payments[0][card_security]" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label>@lang('lang.month')</label>
+                                    <input type="text" name="payments[0][card_month]" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <label>@lang('lang.year')</label>
+                                    <input type="text" name="payments[0][card_year]" class="form-control">
+                                </div>
                             </div>
-                            <div class="col-md-3">
-                                <label>@lang('lang.card_security')</label>
-                                <input type="text" name="card_security" class="form-control">
-                            </div>
-                            <div class="col-md-2">
-                                <label>@lang('lang.month')</label>
-                                <input type="text" name="card_month" class="form-control">
-                            </div>
-                            <div class="col-md-2">
-                                <label>@lang('lang.year')</label>
-                                <input type="text" name="card_year" class="form-control">
-                            </div>
-                           </div>
                         </div>
 
                         <div class="form-group col-md-12 cheque_field payment_fields hide">
                             <label>@lang('lang.cheque_number') *</label>
-                            <input type="text" name="cheque_number" class="form-control">
+                            <input type="text" name="payments[0][cheque_number]" class="form-control">
                         </div>
                         <div class="form-group col-md-12 gift_card_field hide">
                             <div class="col-md-12">
                                 <label>@lang('lang.gift_card_number') *</label>
-                                <input type="text" name="gift_card_number" id="gift_card_number"
+                                <input type="text" name="payments[0][gift_card_number]" id="gift_card_number"
                                     class="form-control" placeholder="@lang('lang.enter_gift_card_number')">
                                 <span class="gift_card_error" style="color: red;"></span>
                             </div>
@@ -206,32 +230,31 @@
                                 <div class="col-md-4">
                                     <label><b>@lang('lang.current_balance'):</b> </label><br>
                                     <span class="gift_card_current_balance"></span>
-                                    <input type="hidden" name="gift_card_current_balance"
+                                    <input type="hidden" name="payments[0][gift_card_current_balance]"
                                         id="gift_card_current_balance">
                                 </div>
                                 <div class="col-md-4">
                                     <label>@lang('lang.enter_amount_to_be_used') </label>
-                                    <input type="text" name="amount_to_be_used" id="amount_to_be_used"
+                                    <input type="text" name="payments[0][amount_to_be_used]" id="amount_to_be_used"
                                         class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label>@lang('lang.remaining_balance') </label>
-                                    <input type="text" name="remaining_balance" id="remaining_balance"
+                                    <input type="text" name="payments[0][remaining_balance]" id="remaining_balance"
                                         class="form-control">
                                 </div>
                                 <div class="col-md-4">
                                     <label><b>@lang('lang.final_total'):</b> </label>
                                 </div>
                                 <div class="col-md-4">
-                                    <input type="text" name="gift_card_final_total" id="gift_card_final_total"
-                                        class="form-control">
+                                    <input type="text" name="payments[0][gift_card_final_total]"
+                                        id="gift_card_final_total" class="form-control">
                                 </div>
                             </div>
                         </div>
                         <div class="form-group col-md-12">
                             <label>@lang('lang.payment_note')</label>
-                            <textarea id="payment_note" rows="2" class="form-control"
-                                name="payment_note"></textarea>
+                            <textarea id="payment_note" rows="2" class="form-control" name="payment_note"></textarea>
                         </div>
                     </div>
                     <div class="row">
@@ -249,16 +272,54 @@
                                 {!! Form::select('terms_and_condition_id', $tac,
                                 null, ['class' =>
                                 'selectpicker form-control', 'data-live-search'=>"true",
-                                'style' =>'width: 80%' , 'id' => 'terms_and_condition_id', 'required']) !!}
+                                'style' =>'width: 80%' , 'id' => 'terms_and_condition_id']) !!}
                             </div>
+                            <div class="tac_description_div"><span></span></div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row mt-5">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">@lang('lang.save')</button>
+                            <button type="submit" name="action" value="submit"
+                                class="btn btn-primary">@lang('lang.save')</button>
+                            <button type="button" class="btn btn-success" name="action" value="print" id="print-btn">
+                                @lang('lang.print')
+                            </button>
+                            <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#sendModal">
+                                @lang('lang.send')
+                            </button>
                         </div>
                     </div>
 
+                    <!-- Modal -->
+                    <div class="modal fade" id="sendModal" tabindex="-1" role="dialog" aria-labelledby="sendModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="sendModalLabel">@lang('lang.emails')</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <small class="text-muted"
+                                                style="font-size: 12px">@lang('lang.separated_by_comma')</small>
+                                            {!! Form::text('emails', null, ['class' => 'form-control', 'id' =>
+                                            'emails']) !!}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">@lang('lang.close')</button>
+                                    <button type="submit" name="action" value="send" id="send-btn"
+                                        class="btn btn-primary">@lang('lang.send')</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     {!! Form::close() !!}
                 </div>
             </div>
@@ -273,7 +334,7 @@
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
 <script>
-$(document).on("change", "#method", function (e) {
+    $(document).on("change", "#method", function (e) {
     let method = $(this).val();
 
 
@@ -326,5 +387,43 @@ $(document).on("change", "#method", function (e) {
 
         $('#method').change();
     })
+
+    //on click event jquery
+    $(document).on('click', '#send-btn', function () {
+        if($('#add_sale_form').valid()){
+            $('#add_sale_form').submit()
+        }
+    });
+
+    $(document).on('click', '#print-btn', function () {
+        var form = $('#add_sale_form');
+        if(form.valid()){
+            var data = $(form).serialize();
+            data =
+                data +"&action=print"
+            var url = $(form).attr("action");
+            $.ajax({
+                method: "POST",
+                url: url,
+                data: data,
+                dataType: "json",
+                success: function (result) {
+                    if (result.success == 1) {
+                        pos_print(result.html_content);
+                        reset_pos_form();
+                    } else {
+                        toastr.error(result.msg);
+                    }
+
+                },
+            });
+        }
+    });
+
+    $(document).on('change', '#emails', function () {
+        //remove white space from string javascript
+        var email_list = $(this).val().replace(/\s/g, '');
+        $(this).val(email_list);
+    });
 </script>
 @endsection

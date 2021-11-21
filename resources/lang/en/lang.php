@@ -567,13 +567,13 @@ return [
 
     'sales_list' => 'Sales List',
     'sale_status' => 'Sales Status',
-    'add_sale' => 'Add Sale',
     'generate_invoice' => 'Generate Invoice',
     'total_tax' => 'Total Tax',
     'view_payments' => 'View Payments',
     'edit_payment' => 'Edit Payments',
 
     'add_sale' => 'Add Sale',
+    'add_sales' => 'Add Sales',
     'totals' => 'Totals',
     'edit_sale' => 'Edit Sale',
     'update' => 'Update',
@@ -901,9 +901,6 @@ return [
     'pay_now' => 'Pay Now',
     'pending' => 'Pending',
     'product_code' => 'Product Code',
-
-
-
     'add_new_service' => 'Or Add New Service',
     'select_products' => 'Select Products',
     'unlimited' => 'Unlimted',
@@ -918,6 +915,28 @@ return [
 
 
 
+    'product_stocks' => 'Product Stocks',
+    'invoice_lang' => 'Invoice Language',
+    'item' => 'Item',
+    'search_product' => 'Search Product...',
+    'date_of_purchase' => 'Date of purchase',
+    'item_discount' => 'Item Discount',
+    'package_promotion' => 'Package Promotion',
+    'generate_barcode' => 'Generate Barcode',
+    'from_date' => 'From Date',
+    'to_date' => 'To Date',
+    'current_stock_value' => 'Current Stock Value',
+    'sold_qty_mismatch_purchase_qty' => 'Mismatch between sold and purchase quantity.',
+    'contact_us' => 'Contact Us',
+    'your_message' => 'Your message',
+    'country_code' => 'Country Code',
+    'your_message_sent_sccuessfully' => 'Your message has been sent successfully.',
+    'new_stock' => 'New Stock',
+    'internal_stock_request' => 'Internal Stock Request',
+    'internal_stock_request_list' => 'Internal Stock Request List',
+    'approved' => 'Approved',
+    'request_stock_should_not_greater_than_current_stock' => 'Request stock should not greater than current stock.',
+    'update_status' => 'Update status',
 
 
 ];

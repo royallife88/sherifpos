@@ -66,7 +66,7 @@
                         <tbody>
                             @foreach ($items as $item)
                             <tr>
-                                <td><img src="@if(!empty($item->getFirstMediaUrl('product'))){{$item->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                                <td><img src="@if(!empty($item->getFirstMediaUrl('product'))){{$item->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                         alt="photo" width="50" height="50"></td>
                                 <td>{{$item->name}}</td>
                                 <td>{{$item->sku}}</td>

@@ -15,7 +15,7 @@
                 <th>@lang('lang.name')</th>
                 <th>@lang('lang.stores')</th>
                 <th>@lang('lang.number_of_customer')</th>
-                <th>@lang('lang.discount')</th>
+                <th class="sum">@lang('lang.discount')</th>
                 <th>@lang('lang.loyalty_point_system')</th>
                 <th>@lang('lang.date_and_time')</th>
                 <th>@lang('lang.created_by')</th>
@@ -49,7 +49,7 @@
                 @endphp
                 <td>{{$loyal_point_system}}</td>
                 <td>{{$customer_type->created_at}}</td>
-                <td>{{ucfirst($customer_type->created_by_user->name)}}</td>
+                <td>{{ucfirst($customer_type->created_by_user->name ?? '')}}</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -93,7 +93,7 @@
         <tfoot>
             <tr>
                 <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                <td>{{@num_format($total_discounts)}}</td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

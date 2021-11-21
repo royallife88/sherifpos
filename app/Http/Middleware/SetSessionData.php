@@ -21,7 +21,7 @@ class SetSessionData
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->session()->has('user')) {
+        if (!$request->session()->has('user') || empty(session('user.store_id'))) {
 
             $currency_id = System::getProperty('currency');
             if (empty($currency_id)) {
@@ -67,6 +67,12 @@ class SetSessionData
 
             $request->session()->put('user', $user);
         }
+
+        $logo = System::getProperty('logo');
+        if (empty($logo)) {
+            $logo = 'sharifshalaby.png';
+        }
+        $request->session()->put('logo', $logo);
 
         return $next($request);
     }

@@ -35,7 +35,7 @@
                                             {{$expense_beneficiary->name}}
                                         </td>
                                         <td>
-                                            {{$expense_beneficiary->expense_category->name}}
+                                            {{$expense_beneficiary->expense_category->name ?? ''}}
                                         </td>
                                         <td>
                                             @can('account_management.expense_beneficiaries.create_and_edit')

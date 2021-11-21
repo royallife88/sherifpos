@@ -5,7 +5,7 @@
             <p style="margin:0px"><i class="dripicons-card"></i> @lang('lang.purchase_order') #
                 {{$notification->transaction->po_no}}</p>
             <span class="text-muted">@lang('lang.new_purchase_order_created_by')
-                {{$notification->created_by_user->name}}</span>
+                @if(!empty($notification->created_by_user)){{$notification->created_by_user->name}}@endif</span>
         </a>
 
     </li>

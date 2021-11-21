@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\SendSmsJob;
+use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Sms;
+use App\Models\Supplier;
 use App\Models\System;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SmsController extends Controller
@@ -34,19 +37,39 @@ class SmsController extends Controller
      */
     public function create()
     {
-        $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')->pluck('employee_name', 'mobile');
+        $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')->select('name', 'mobile')->pluck('name', 'mobile')->toArray();
+        $customers = Customer::select('name', 'mobile_number as mobile')->pluck('name', 'mobile')->toArray();
+        $suppliers = Supplier::select('name', 'mobile_number as mobile')->pluck('name', 'mobile')->toArray();
 
-        $mobile_number = null;
-        if(!empty(request()->employee_id)){
+        $employee_mobile_number = null;
+        if (!empty(request()->employee_id)) {
             $employee = Employee::find(request()->employee_id);
-            if(!empty($employee)){
-                $mobile_number = $employee->mobile;
+            if (!empty($employee)) {
+                $employee_mobile_number = $employee->mobile;
+            }
+        }
+        $customer_mobile_number = null;
+        if (!empty(request()->customer_id)) {
+            $customer = Customer::find(request()->customer_id);
+            if (!empty($customer)) {
+                $customer_mobile_number = $customer->mobile;
+            }
+        }
+        $supplier_mobile_number = null;
+        if (!empty(request()->supplier_id)) {
+            $supplier = Supplier::find(request()->supplier_id);
+            if (!empty($supplier)) {
+                $supplier_mobile_number = $supplier->mobile;
             }
         }
 
         return view('sms.create')->with(compact(
             'employees',
-            'mobile_number'
+            'customers',
+            'suppliers',
+            'employee_mobile_number',
+            'customer_mobile_number',
+            'supplier_mobile_number',
         ));
     }
 

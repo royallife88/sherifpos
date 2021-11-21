@@ -13,7 +13,15 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellReturnController@store'), 'method' => 'post', 'files' =>
                     true, 'class' => 'pos-form', 'id' => 'sell_return_form']) !!}
-                    <input type="hidden" name="store_id" id="store_id" value="{{$sale->store_id}}">
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('store_id', __('lang.store'), []) !!}
+                            {!! Form::select('store_id', $stores, $sale->store_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
 
@@ -23,7 +31,7 @@
                                 @lang('lang.invoice_no'): {{$sale->invoice_no}}
                             </div>
                             <div class="col-md-4">
-                                @lang('lang.customer'): {{$sale->customer->name}}
+                                @lang('lang.customer'): {{$sale->customer->name ?? ''}}
                             </div>
                         </div>
                     </div>
@@ -51,8 +59,7 @@
                                                 <td></td>
                                                 <td></td>
                                                 <th style="text-align: right">@lang('lang.total')</th>
-                                                <th><span
-                                                        class="grand_total_span">{{@num_format(0)}}</span>
+                                                <th><span class="grand_total_span">{{@num_format(0)}}</span>
                                                 </th>
                                             </tr>
                                         </tfoot>
@@ -64,10 +71,8 @@
                                     <div class="form-group">
                                         <input type="hidden" id="transaction_id" name="transaction_id"
                                             value="{{$sale->id}}" />
-                                        <input type="hidden" id="final_total" name="final_total"
-                                            value="{{0}}" />
-                                        <input type="hidden" id="grand_total" name="grand_total"
-                                            value="{{0}}" />
+                                        <input type="hidden" id="final_total" name="final_total" value="{{0}}" />
+                                        <input type="hidden" id="grand_total" name="grand_total" value="{{0}}" />
                                         <input type="hidden" id="store_pos_id" name="store_pos_id"
                                             value="{{$sale->store_pos_id}}" />
                                         <input type="hidden" id="customer_id" name="customer_id"
@@ -82,7 +87,8 @@
                         <div class="col-md-12">
                             @if(!empty($sell_return))
                             @if($sell_return->transaction_payments->count() > 0)
-                            @include('transaction_payment.partials.payment_form', ['payment' => $sell_return->transaction_payments->first()])
+                            @include('transaction_payment.partials.payment_form', ['payment' =>
+                            $sell_return->transaction_payments->first()])
                             @endif
                             @else
                             @include('transaction_payment.partials.payment_form')

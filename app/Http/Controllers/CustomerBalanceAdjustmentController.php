@@ -52,7 +52,7 @@ class CustomerBalanceAdjustmentController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
         $customers = Customer::pluck('name', 'id');
 
@@ -115,7 +115,7 @@ class CustomerBalanceAdjustmentController extends Controller
      */
     public function edit($id)
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
         $customers = Customer::pluck('name', 'id');
         $customer_balance_adjustment = CustomerBalanceAdjustment::find($id);

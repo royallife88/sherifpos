@@ -24,10 +24,8 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="store_id">@lang('lang.store')</label>
-                                        {!! Form::select('store_id', $stores, null, ['class' => 'form-control
-                                        selectpicker',
-                                        'placeholder'
-                                        => __('lang.please_select'), 'data-live-search' => 'true', 'id' => 'store_id'])
+                                        {!! Form::select('store_id[]', $stores, null, ['class' => 'form-control
+                                        selectpicker', 'multiple', 'data-live-search' => 'true', 'id' => 'store_id'])
                                         !!}
                                     </div>
                                     <div class="col-sm-6">

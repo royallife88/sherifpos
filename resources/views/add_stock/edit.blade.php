@@ -16,7 +16,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
-                                <div class="form-group @if(!session('user.is_superadmin')) hide @endif">
+                                <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,
                                     $add_stock->store_id, ['class' => 'selectpicker form-control',
@@ -127,7 +127,7 @@
                                                     value="{{$product->sub_total}}">
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-danger btn-sx remove_row"><i
+                                                <button type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
                                                         class="fa fa-times"></i></button>
                                             </td>
                                         </tr>

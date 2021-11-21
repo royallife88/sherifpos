@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CashInAdjustment;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
+use App\Models\Store;
+use App\Models\StorePos;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\Util;
@@ -55,6 +57,12 @@ class CashController extends Controller
         if (!empty(request()->end_date)) {
             $query->whereDate('created_at', '<=', request()->end_date);
         }
+        if (!empty(request()->store_id)) {
+            $query->where('store_id', request()->store_id);
+        }
+        if (!empty(request()->store_pos_id)) {
+            $query->where('store_pos_id', request()->store_pos_id);
+        }
 
         $cash_registers = $query->select(
             'cash_registers.*',
@@ -64,8 +72,15 @@ class CashController extends Controller
         )
             ->groupBy('cash_registers.id')->get();
 
+
+        $stores = Store::getDropdown();
+        $store_pos = StorePos::pluck('name', 'id');
+
         return view('cash.index')->with(compact(
-            'cash_registers'
+            'cash_registers',
+            'stores',
+            'store_pos'
+
         ));
     }
     /**
@@ -241,6 +256,7 @@ class CashController extends Controller
             return redirect()->action('CashRegisterController@create');
         }
 
+        $type = request()->get('type');
         $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id');
         $query->where('cash_registers.id', $cash_register_id);
 
@@ -256,6 +272,7 @@ class CashController extends Controller
         return view('cash.add_closing_cash')->with(compact(
             'cash_register',
             'cash_register_id',
+            'type',
             'total_cash',
             'users'
         ));

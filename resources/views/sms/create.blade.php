@@ -11,11 +11,37 @@
                         <h4>@lang('lang.sms')</h4>
                     </div>
                     <div class="col-md-12">
+                        <input id="select_all" name="select_all" type="checkbox" value="1"
+                        class="form-control-custom">
+                        <label for="select_all"><strong>@lang('lang.select_all')</strong></label>
+                    </div>
+                    <div class="col-md-12">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('employee_id', __('lang.employee'), []) !!}
-                                    {!! Form::select('employee_id[]', $employees, !empty($mobile_number) ? [$mobile_number] : false, ['class' => 'form-control selectpicker', 'multiple', 'id' => 'employee_id' ,'placeholder' => __('lang.please_select')]) !!}
+                                    {!! Form::select('employee_id[]', ['select_all' => __('lang.select_all')] + $employees, !empty($employee_mobile_number) ?
+                                    [$employee_mobile_number] : false, ['class' => 'form-control selectpicker',
+                                    'multiple',
+                                    'data-live-search' =>'true' ,'id' => 'employee_id']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('customer_id', __('lang.customer'), []) !!}
+                                    {!! Form::select('customer_id[]', ['select_all' => __('lang.select_all')] + $customers, !empty($customer_mobile_number) ?
+                                    [$customer_mobile_number] : false, ['class' => 'form-control selectpicker',
+                                    'multiple',
+                                    'data-live-search' =>'true' ,'id' => 'customer_id']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+                                    {!! Form::select('supplier_id[]', ['select_all' => __('lang.select_all')] + $suppliers, !empty($supplier_mobile_number) ?
+                                    [$supplier_mobile_number] : false, ['class' => 'form-control selectpicker',
+                                    'multiple',
+                                    'data-live-search' =>'true' ,'id' => 'supplier_id']) !!}
                                 </div>
                             </div>
                         </div>
@@ -70,10 +96,51 @@
         $('#employee_id').change()
     })
     $('#employee_id').change(function(){
-        let numbers= $(this).val();
-        numbers =  numbers.filter(e =>  e);
-        $('#to').val(numbers.join())
-
+        let numbers = $(this).val()
+        if(numbers.includes('select_all')){
+            $('#employee_id').selectpicker('selectAll')
+        }
+        get_numbers()
     })
+    $('#customer_id').change(function(){
+        let numbers = $(this).val()
+        if(numbers.includes('select_all')){
+            $('#customer_id').selectpicker('selectAll')
+        }
+        get_numbers()
+    })
+    $('#supplier_id').change(function(){
+        let numbers = $(this).val()
+        if(numbers.includes('select_all')){
+            $('#supplier_id').selectpicker('selectAll')
+        }
+        get_numbers()
+    })
+
+
+
+    $('#select_all').change(function(){
+        if($(this).prop('checked')){
+            $('#employee_id').selectpicker('selectAll')
+            $('#customer_id').selectpicker('selectAll')
+            $('#supplier_id').selectpicker('selectAll')
+        }else{
+            $('#employee_id').selectpicker('deselectAll')
+            $('#customer_id').selectpicker('deselectAll')
+            $('#supplier_id').selectpicker('deselectAll')
+        }
+        get_numbers()
+    })
+
+    function get_numbers(){
+        let employee_numbers = $('#employee_id').val();
+        let customer_numbers = $('#customer_id').val();
+        let supplier_numbers = $('#supplier_id').val();
+        let numbers = employee_numbers.concat(customer_numbers).concat(supplier_numbers);
+        var list_numbers = numbers.filter(function(e) { return e !== 'select_all' })
+
+        list_numbers =  list_numbers.filter(e =>  e);
+        $('#to').val(list_numbers.join())
+    }
 </script>
 @endsection

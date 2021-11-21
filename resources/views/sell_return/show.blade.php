@@ -17,7 +17,7 @@
                         @lang('lang.date'): <b>{{@format_date($sale->transaction_date)}}</b>
                     </div>
                     <div class="col-md-12">
-                        @lang('lang.store'): <b>{{$sale->store->name}}</b>
+                        @lang('lang.store'): <b>{{$sale->store->name ?? ''}}</b>
                     </div>
                 </div>
                 <br>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-12">
                         {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
-                        <b>{{$sale->customer->name}}</b>
+                        <b>{{$sale->customer->name ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
                         {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email}}</b>

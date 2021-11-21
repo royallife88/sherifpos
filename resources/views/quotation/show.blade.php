@@ -16,24 +16,24 @@
                     <h5>@lang('lang.date'): {{@format_date($sale->transaction_date)}}</h5>
                 </div>
                 <div class="col-md-12">
-                    <h5>@lang('lang.store'): {{$sale->store->name}}</h5>
+                    <h5>@lang('lang.store'): {{$sale->store->name ?? ''}}</h5>
                 </div>
             </div>
             <br>
             <div class="row">
                 <div class="col-md-12">
                     {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
-                    <b>{{$sale->customer->name}}</b>
+                    <b>{{$sale->customer->name ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email}}</b>
+                    {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
                     {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                    <b>{{$sale->customer->mobile_number}}</b>
+                    <b>{{$sale->customer->mobile_number ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address}}</b>
+                    {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ?? ''}}</b>
                 </div>
             </div>
 

@@ -62,19 +62,14 @@
                         <thead>
                             <tr>
                                 <th>@lang('lang.product_name')</th>
-                                <th>@lang('lang.purchased_amount')</th>
-                                <th>@lang('lang.purchased_qty')</th>
-                                <th>@lang('lang.in_stock')</th>
+                                <th class="sum">@lang('lang.purchased_amount')</th>
+                                <th class="sum">@lang('lang.purchased_qty')</th>
+                                <th class="sum">@lang('lang.in_stock')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
 
                         <tbody>
-                            @php
-                                $purchased_amount = 0;
-                                $purchased_qty = 0;
-                                $in_stock = 0;
-                            @endphp
                             @foreach ($products as $key => $value)
                             @if(!empty($transactions[$key]))
                             <tr>
@@ -118,20 +113,15 @@
                                     </div>
                                 </td>
                             </tr>
-                            @php
-                                $purchased_amount += $transactions[$key]->total_purchase;
-                                $purchased_qty += $transactions[$key]->total_qty;
-                                $in_stock += $transactions[$key]->in_stock;
-                            @endphp
                             @endif
                             @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="" style="text-align: right">@lang('lang.total')</th>
-                                <th>{{@num_format($purchased_amount)}}</th>
-                                <th>{{@num_format($purchased_qty)}}</th>
-                                <th>{{@num_format($in_stock)}}</th>
+                                <th style="text-align: right">@lang('lang.total')</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </tfoot>
                     </table>

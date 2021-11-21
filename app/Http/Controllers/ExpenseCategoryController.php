@@ -68,7 +68,7 @@ class ExpenseCategoryController extends Controller
 
             $output = [
                 'success' => true,
-                'msg' => __('lang.expense_category_added')
+                'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
@@ -122,7 +122,7 @@ class ExpenseCategoryController extends Controller
 
             $output = [
                 'success' => true,
-                'msg' => __('lang.expense_category_updated')
+                'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
@@ -149,7 +149,7 @@ class ExpenseCategoryController extends Controller
 
             $output = [
                 'success' => true,
-                'msg' => __('lang.expense_category_deleted')
+                'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());

@@ -19,7 +19,7 @@
                 <th>@lang('lang.joining_date')</th>
                 <th>@lang('lang.total_purchase')</th>
                 <th>@lang('lang.pending_orders')</th>
-                <th>@lang('lang.overdue_amount')</th>
+                <th class="sum">@lang('lang.overdue_amount')</th>
                 <th>@lang('lang.created_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -31,14 +31,16 @@
             @foreach($suppliers as $supplier)
             <tr>
                 <td>{{$supplier->name}}</td>
-                <td><img src="{{$supplier->getFirstMediaUrl('supplier_photo')}}" alt="photo" width="50" height="50"></td>
+                <td><img src="@if(!empty($supplier->getFirstMediaUrl('supplier_photo'))){{$supplier->getFirstMediaUrl('supplier_photo')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                    alt="photo" width="50" height="50">
+                </td>
                 <td>{{$supplier->mobile_number}}</td>
                 <td>{{$supplier->address}}</td>
                 <td>{{@format_date($supplier->created_at)}}</td>
                 <td><a href="{{action('SupplierController@show', $supplier->id)}}?show=statement_of_account" class="btn">{{@num_format($supplier->total_purchase)}}</a></td>
                 <td>@if($supplier->pending_orders > 0) <a href="{{action('SupplierController@show', $supplier->id)}}?show=pending_orders" class=""> @lang('lang.yes') </a> @else @lang('lang.no') @endif</td>
                 <td>{{@num_format($supplier->total_invoice - $supplier->total_paid)}}</td>
-                <td>{{$supplier->created_by_user->name}}</td>
+                <td>{{$supplier->created_by_user->name ?? ''}}</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -90,9 +92,9 @@
         <tfoot>
             <tr>
                 <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                <td>{{@num_format($suppliers->sum('total_purchase'))}}</td>
                 <td></td>
-                <td>{{@num_format($total_due)}}</td>
+                <td></td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

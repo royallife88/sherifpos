@@ -1,0 +1,26 @@
+<table>
+    <tr>
+        <td>
+            @lang('lang.country_code')
+        </td>
+        <td>{{$data['country_code']}}</td>
+    </tr>
+    <tr>
+        <td>
+            @lang('lang.phone_number')
+        </td>
+        <td>{{$data['phone_number']}}</td>
+    </tr>
+    <tr>
+        <td>
+            @lang('lang.email')
+        </td>
+        <td>{{$data['email']}}</td>
+    </tr>
+    <tr>
+        <td>
+            @lang('lang.message')
+        </td>
+        <td>{{$data['message']}}</td>
+    </tr>
+</table>

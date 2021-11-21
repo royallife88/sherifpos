@@ -37,11 +37,10 @@ $("#show_to_customer").change(function () {
     }
 });
 $(document).on("click", ".remove_row", function () {
-    row_id = $(this).closest("tr").data('row_id');
+    row_id = $(this).closest("tr").data("row_id");
     $(this).closest("tr").remove();
-    $('.variant_store_checkbox_'+row_id).remove();
-    $('.variant_store_prices_'+row_id).remove();
-
+    $(".variant_store_checkbox_" + row_id).remove();
+    $(".variant_store_prices_" + row_id).remove();
 });
 
 $(document).on("click", ".add_row", function () {
@@ -102,17 +101,22 @@ myDropzone = new Dropzone("div#my-dropzone", {
                 if (myDropzone.getAcceptedFiles().length) {
                     myDropzone.processQueue();
                 } else {
+                    document.getElementById("loader").style.display = "block";
+                    document.getElementById("content").style.display = "none";
                     $.ajax({
                         type: "POST",
                         url: "/product",
                         data: $("#product-form").serialize(),
                         success: function (response) {
+                            myFunction();
                             if (response.success) {
                                 swal("Success", response.msg, "success");
+                            }else{
+                                swal("Error", response.msg, "error");
                             }
-
                         },
                         error: function (response) {
+                            myFunction();
                             if (!response.success) {
                                 swal("Error", response.msg, "error");
                             }
@@ -201,7 +205,9 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
                 sub_category_id = result.sub_category_id;
                 $.ajax({
                     method: "get",
-                    url: "/category/get-dropdown?product_class_id="+$("#product_class_id").val(),
+                    url:
+                        "/category/get-dropdown?product_class_id=" +
+                        $("#product_class_id").val(),
                     data: {},
                     contactType: "html",
                     success: function (data_html) {
@@ -283,9 +289,9 @@ $(document).on("submit", "form#quick_add_brand_form", function (e) {
     });
 });
 
-function get_brand_dropdown(){
-    let category_id = $('#category_id').val();
-    let sub_category_id = $('#sub_category_id').val();
+function get_brand_dropdown() {
+    let category_id = $("#category_id").val();
+    let sub_category_id = $("#sub_category_id").val();
     $.ajax({
         method: "get",
         url: "/brand/get-dropdown",
@@ -294,7 +300,7 @@ function get_brand_dropdown(){
         success: function (data_html) {
             $("#brand_id").empty().append(data_html);
             $("#brand_id").selectpicker("refresh");
-            if(brand_id){
+            if (brand_id) {
                 $("#brand_id").selectpicker("val", brand_id);
             }
         },
@@ -518,14 +524,20 @@ $(document).on("change", "#sku", function () {
     let sku = $(this).val();
 
     $.ajax({
-        method: 'get',
-        url: '/product/check-sku/'+sku,
-        data: {  },
-        success: function(result) {
-            console.log(result.success);
+        method: "get",
+        url: "/product/check-sku/" + sku,
+        data: {},
+        success: function (result) {
             if (!result.success) {
                 swal("Error", result.msg, "error");
             }
         },
     });
+});
+
+$(document).on("change", "#purchase_price", function () {
+    $(".default_purchase_price").val($(this).val());
+});
+$(document).on("change", "#sell_price", function () {
+    $(".default_sell_price").val($(this).val());
 });

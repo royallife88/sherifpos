@@ -14,7 +14,7 @@
                     'purchase_order_form']) !!}
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3 @if(!session('user.is_superadmin')) hide @endif">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,

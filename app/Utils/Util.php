@@ -405,22 +405,22 @@ class Util
     public function getPaymentTypeArray()
     {
         return [
-            'cash' => 'Cash',
-            'bank_transfer' => 'Bank Transfer',
-            'cheque' => 'Cheque',
+            'cash' => __('lang.cash'),
+            'bank_transfer' => __('lang.bank_transfer'),
+            'cheque' => __('lang.cheque'),
             'money_transfer' => 'Money Transfer',
         ];
     }
     public function getPaymentTypeArrayForPos()
     {
         return [
-            'cash' => 'Cash',
-            'card' => 'Credit Card',
-            'cheque' => 'Cheque',
-            'gift_card' => 'Gift Card',
-            'bank_transfer' => 'Bank Transfer',
-            'deposit' => 'Deposit',
-            'paypal' => 'Paypal',
+            'cash' => __('lang.cash'),
+            'card' => __('lang.credit_card'),
+            'cheque' => __('lang.cheque'),
+            'gift_card' => __('lang.gift_card'),
+            'bank_transfer' => __('lang.bank_transfer'),
+            'deposit' => __('lang.deposit'),
+            'paypal' => __('lang.paypal'),
         ];
     }
 

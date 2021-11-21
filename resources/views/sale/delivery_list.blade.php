@@ -67,17 +67,13 @@
                 <th>@lang('lang.sale_status')</th>
                 <th>@lang('lang.delivery_status')</th>
                 <th>@lang('lang.payment_status')</th>
-                <th>@lang('lang.grand_total')</th>
-                <th>@lang('lang.paid')</th>
-                <th>@lang('lang.due')</th>
+                <th class="sum">@lang('lang.grand_total')</th>
+                <th class="sum">@lang('lang.paid')</th>
+                <th class="sum">@lang('lang.due')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
         <tbody>
-            @php
-                $total_paid = 0;
-                $total_due = 0;
-            @endphp
             @foreach($sales as $sale)
             <tr>
                 <td>{{@format_date($sale->transaction_date)}}</td>
@@ -153,18 +149,14 @@
                     </div>
                 </td>
             </tr>
-            @php
-                $total_paid += $sale->transaction_payments->sum('amount');
-                $total_due += $sale->final_total - $sale->transaction_payments->sum('amount');
-            @endphp
             @endforeach
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="5" style="text-align: right">@lang('lang.totals')</th>
-                <td>{{@num_format($sales->sum('final_total'))}}</td>
-                <td>{{@num_format($total_paid)}}</td>
-                <td>{{@num_format($total_due)}}</td>
+                <th colspan="6" style="text-align: right">@lang('lang.totals')</th>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

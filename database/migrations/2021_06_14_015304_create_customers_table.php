@@ -20,6 +20,7 @@ class CreateCustomersTable extends Migration
             $table->string('mobile_number');
             $table->text('address')->nullable();
             $table->string('email')->nullable();
+            $table->decimal('deposit_balance', 15, 4)->default(0);
             $table->string('fixed_discount')->comment('percentage value of discount')->nullable();
             $table->string('opening_balance')->nullable();
             $table->integer('total_rp')->default(0)->comment('rp is the short form of reward points');

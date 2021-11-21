@@ -14,6 +14,7 @@ use App\Models\Product;
 use App\Models\SalesPromotion;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
@@ -82,7 +83,7 @@ class SellPosController extends Controller
     {
         //Check if there is a open register, if no then redirect to Create Register screen.
         if ($this->cashRegisterUtil->countOpenedRegister() == 0) {
-            return redirect()->action('CashRegisterController@create') . '?is_pos=1';
+            return redirect()->to('/cash-rgister/create?is_pos=1');
         }
 
         $categories = Category::whereNull('parent_id')->groupBy('categories.id')->get();
@@ -95,6 +96,8 @@ class SellPosController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+        $stores = Store::getDropdown();
+        $store_poses = [];
 
         return view('sale_pos.pos')->with(compact(
             'categories',
@@ -105,11 +108,23 @@ class SellPosController extends Controller
             'brands',
             'store_pos',
             'customers',
+            'stores',
+            'store_poses',
             'taxes',
             'payment_types',
         ));
     }
 
+    public function getPaymentRow()
+    {
+        $index = request()->index ?? 0;
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        return view('sale_pos.partials.payment_row')->with(compact(
+            'index',
+            'payment_types'
+        ));
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -118,6 +133,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
             $transaction_data = [
                 'store_id' => $request->store_id,
@@ -128,7 +144,7 @@ class SellPosController extends Controller
                 'grand_total' => $this->commonUtil->num_uf($request->grand_total),
                 'gift_card_id' => $request->gift_card_id,
                 'coupon_id' => $request->coupon_id,
-                'transaction_date' => Carbon::now(),
+                'transaction_date' => !empty($request->transaction_date) ? $request->transaction_date : Carbon::now(),
                 'invoice_no' => $this->productUtil->getNumberByType('sell'),
                 'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
                 'status' => $request->status,
@@ -191,7 +207,7 @@ class SellPosController extends Controller
                 $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
                 $transaction->rp_earned = $points_earned;
                 if ($request->is_redeem_points) {
-                    // $transaction->rp_redeemed = $request->rp_redeemed; //front end
+                    // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
                     $transaction->rp_redeemed_value = $request->rp_redeemed_value;
                     $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
                     $transaction->rp_redeemed = $rp_redeemed;
@@ -216,31 +232,33 @@ class SellPosController extends Controller
                 $customer->save();
             }
 
-            $amount = $this->commonUtil->num_uf($request->amount);
-            $payment_data = [
-                'transaction_id' => $transaction->id,
-                'amount' => $amount,
-                'method' => $request->method,
-                'paid_on' => $transaction->transaction_date,
-                'ref_number' => $request->ref_number,
-                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
-                'card_number' => $request->card_number,
-                'card_security' => $request->card_security,
-                'card_month' => $request->card_month,
-                'cheque_number' => $request->cheque_number,
-                'bank_name' => $request->bank_name,
-                'ref_number' => $request->ref_number,
-                'gift_card_number' => $request->gift_card_number,
-                'amount_to_be_used' => $request->amount_to_be_used,
-                'payment_note' => $request->payment_note,
-            ];
             if ($transaction->status != 'draft') {
-                if ($amount > 0) {
-                    $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-                }
-                $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                foreach ($request->payments as $payment) {
 
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                    $amount = $this->commonUtil->num_uf($payment['amount']);
+                    $payment_data = [
+                        'transaction_id' => $transaction->id,
+                        'amount' => $amount,
+                        'method' => $payment['method'],
+                        'paid_on' => $transaction->transaction_date,
+                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                        'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
+                        'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
+                        'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                        'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                        'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
+                        'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
+                        'gift_card_number' => $request->gift_card_number,
+                        'amount_to_be_used' => $request->amount_to_be_used,
+                        'payment_note' => $request->payment_note,
+                    ];
+                    if ($amount > 0) {
+                        $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                    }
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                }
+
 
                 if (!empty($transaction->coupon_id)) {
                     Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
@@ -255,8 +273,6 @@ class SellPosController extends Controller
                     GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
                 }
             }
-
-
             DB::commit();
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
@@ -268,6 +284,21 @@ class SellPosController extends Controller
                     'msg' => __('lang.success')
                 ];
 
+                if ($request->action == 'send') {
+                    $this->notificationUtil->sendSellInvoiceToCustomer($transaction->id, $request->emails);
+                }
+                if ($request->action == 'print') {
+                    $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+
+                    $output = [
+                        'success' => true,
+                        'html_content' => $html_content,
+                        'msg' => __('lang.success')
+                    ];
+
+                    return $output;
+                }
+
                 return redirect()->back()->with('status', $output);
             }
 
@@ -275,10 +306,9 @@ class SellPosController extends Controller
                 $this->notificationUtil->sendQuotationToCustomer($transaction->id);
             }
 
-            $html_content = view('sale_pos.partials.invoice')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
+
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+
 
             $output = [
                 'success' => true,
@@ -292,7 +322,9 @@ class SellPosController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-
+        if ($request->action == 'send') {
+            return redirect()->back()->with('status', $output);
+        }
         return $output;
     }
 

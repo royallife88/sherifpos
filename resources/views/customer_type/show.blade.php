@@ -74,7 +74,7 @@
                                         <td>{{$customer->mobile_number}}</td>
                                         <td>{{$customer->address}}</td>
                                         <td>{{@format_date($customer->created_at)}}</td>
-                                        <td>{{$customer->created_by_user->name}}</td>
+                                        <td>{{$customer->created_by_user->name ?? ''}}</td>
                                         <td>
                                             <div class="btn-group">
                                                 <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -142,7 +142,7 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
                                         <th>@lang('lang.status')</th>
                                         <th>@lang('lang.action')</th>
                                     </tr>
@@ -217,7 +217,7 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($discounts->sum('final_total'))}}</th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>

@@ -174,3 +174,127 @@ $("#method").change(function () {
         $(".not_cash").attr("required", true);
     }
 });
+var datatable_params = {
+    lengthChange: true,
+    paging: true,
+    info: false,
+    bAutoWidth: false,
+    lengthMenu: [
+        [10, 25, 50, 75, 100, 200, 500, -1],
+        [10, 25, 50, 75, 100, 200, 500, "All"],
+    ],
+    dom: "lBfrtip",
+    buttons: [
+        {
+            extend: "print",
+            exportOptions: {
+                columns: ":visible:not(.notexport)",
+            },
+        },
+        {
+            extend: "excel",
+            exportOptions: {
+                columns: ":visible:not(.notexport)",
+            },
+        },
+        {
+            extend: "csvHtml5",
+            exportOptions: {
+                columns: ":visible:not(.notexport)",
+            },
+        },
+        {
+            extend: "pdfHtml5",
+            exportOptions: {
+                columns: ":visible:not(.notexport)",
+            },
+        },
+        {
+            extend: "copyHtml5",
+            exportOptions: {
+                columns: ":visible:not(.notexport)",
+            },
+        },
+        {
+            extend: "colvis",
+            columns: ":gt(0)",
+        },
+    ],
+    footerCallback: function (row, data, start, end, display) {
+        var intVal = function (i) {
+            return typeof i === "string"
+                ? i.replace(/[\$,]/g, "") * 1
+                : typeof i === "number"
+                ? i
+                : 0;
+        };
+
+        this.api()
+            .columns(".sum", { page: "current" })
+            .every(function () {
+                var column = this;
+                if (column.data().count()) {
+                    var sum = column.data().reduce(function (a, b) {
+                        a = intVal(a);
+                        if (isNaN(a)) {
+                            a = 0;
+                        }
+
+                        b = intVal(b);
+                        if (isNaN(b)) {
+                            b = 0;
+                        }
+
+                        return a + b;
+                    });
+                    $(column.footer()).html(
+                        __currency_trans_from_en(sum, false)
+                    );
+                }
+            });
+    },
+};
+var table = $(".dataTable").DataTable(datatable_params);
+
+function sum_table_col(table, class_name) {
+    var sum = 0;
+    table
+        .find("tbody")
+        .find("tr")
+        .each(function () {
+            if (
+                parseFloat(
+                    $(this)
+                        .find("." + class_name)
+                        .data("orig-value")
+                )
+            ) {
+                sum += parseFloat(
+                    $(this)
+                        .find("." + class_name)
+                        .data("orig-value")
+                );
+            }
+        });
+
+    return sum;
+}
+
+$(document).ready(function () {
+    $("#terms_and_condition_id").change();
+});
+
+$(document).on("change", "#terms_and_condition_id", function () {
+    let terms_and_condition_id = $(this).val();
+
+    if (terms_and_condition_id) {
+        $.ajax({
+            method: "get",
+            url: "/terms-and-conditions/get-details/" + terms_and_condition_id,
+            data: {},
+            success: function (result) {
+                $(".tac_description_div span").html(result.description);
+            },
+        });
+    }
+});

@@ -45,7 +45,7 @@ class EarningOfPointController extends Controller
     public function index()
     {
         $earning_of_points = EarningOfPoint::get();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('earning_of_point.index')->with(compact(
             'earning_of_points',
@@ -60,7 +60,7 @@ class EarningOfPointController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
         $product_classes = ProductClass::get();
@@ -140,7 +140,7 @@ class EarningOfPointController extends Controller
     public function edit($id)
     {
         $earning_of_point = EarningOfPoint::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
         $product_classes = ProductClass::get();

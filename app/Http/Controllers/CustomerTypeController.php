@@ -49,7 +49,7 @@ class CustomerTypeController extends Controller
                 DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
                 DB::raw('SUM(IF(transactions.type="sell", rp_earned, 0)) as total_rp_earned'),
             )->groupBy('customer_types.id')->get();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('customer_type.index')->with(compact(
             'customer_types',
@@ -67,7 +67,7 @@ class CustomerTypeController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $customer_types = CustomerType::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
 
         return view('customer_type.create')->with(compact(
@@ -195,7 +195,7 @@ class CustomerTypeController extends Controller
     public function edit($id)
     {
         $customer_type = CustomerType::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
 
         return view('customer_type.edit')->with(compact(

@@ -8,7 +8,6 @@
             <div class="card-body">
                 <form action="">
                     <div class="row">
-                        @if(session('user.is_superadmin'))
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('store_id', __('lang.store'), []) !!}
@@ -16,7 +15,6 @@
                                 'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
-                        @endif
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
@@ -58,7 +56,7 @@
                     <th>@lang('lang.date')</th>
                     <th>@lang('lang.created_by')</th>
                     <th>@lang('lang.supplier')</th>
-                    <th>@lang('lang.value')</th>
+                    <th class="sum">@lang('lang.value')</th>
                     <th>@lang('lang.status')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
@@ -70,7 +68,7 @@
                     <td>{{$purchase_order->po_no}}</td>
                     <td> {{@format_date($purchase_order->transaction_date)}}</td>
                     <td>
-                        {{ucfirst($purchase_order->created_by_user->name)}}
+                        {{ucfirst($purchase_order->created_by_user->name ?? '')}}
                     </td>
                     <td>
                         @if(!empty($purchase_order->supplier)){{$purchase_order->supplier->name}}@endif
@@ -93,7 +91,7 @@
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                                 @can('purchase_order.purchase_order.view')
                                 <li>
-                                    <a href="{{action('PurchaseOrderController@show', $purchase_order->id)}}"
+                                    <a href="{{action('PurchaseOrderController@show', $purchase_order->id)}}" target="_blank"
                                         class=""><i class="fa fa-eye btn"></i> @lang('lang.view')</a>
                                 </li>
                                 <li class="divider"></li>
@@ -122,7 +120,7 @@
                 <tfoot>
                     <tr>
                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                        <td>{{@num_format($purchase_orders->sum('final_total'))}}</td>
+                        <td></td>
                     </tr>
                 </tfoot>
             </tbody>

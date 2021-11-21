@@ -44,7 +44,7 @@
                                     {{@num_format($add_stock->final_total)}}
                                 </td>
                                 <td>
-                                    {{ucfirst($add_stock->created_by_user->name)}}
+                                    {{ucfirst($add_stock->created_by_user->name ?? '')}}
                                 </td>
                                 <td>
                                     {{@num_format($add_stock->transaction_payments->sum('amount'))}}

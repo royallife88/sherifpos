@@ -33,5 +33,16 @@
     </div>
 </div>
 <script>
-     ed1 = CKEDITOR.replace( 'description' );
+     tinymce.init({
+        selector: "#description",
+        height: 130,
+        plugins: [
+            "advlist autolink lists link charmap print preview anchor textcolor",
+            "searchreplace visualblocks code fullscreen",
+            "insertdatetime table contextmenu paste code wordcount",
+        ],
+        toolbar:
+            "insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat",
+        branding: false,
+    });
 </script>

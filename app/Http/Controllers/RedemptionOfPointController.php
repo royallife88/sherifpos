@@ -45,7 +45,7 @@ class RedemptionOfPointController extends Controller
     public function index()
     {
         $redemption_of_points = RedemptionOfPoint::get();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('redemption_of_point.index')->with(compact(
             'redemption_of_points',
@@ -60,7 +60,7 @@ class RedemptionOfPointController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $product_classes = ProductClass::get();
         $customer_types  = CustomerType::pluck('name', 'id');
@@ -140,7 +140,7 @@ class RedemptionOfPointController extends Controller
     public function edit($id)
     {
         $redemption_of_point = RedemptionOfPoint::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
         $product_classes = ProductClass::get();

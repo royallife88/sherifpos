@@ -143,7 +143,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
-                                    <select name="terms_and_condition_id" id="terms_and_condition_id" required
+                                    <select name="terms_and_condition_id" id="terms_and_condition_id"
                                         class="form-control selectpicker" data-live-searcg="true">
                                         <option value="">@lang('lang.please_select')</option>
                                         @foreach ($tac as $key => $item)
@@ -151,6 +151,7 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="tac_description_div"><span></span></div>
                             </div>
                         </div>
                     </div>

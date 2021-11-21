@@ -25,7 +25,8 @@
                                 <div class="form-group">
                                     {!! Form::label('store_ids', __( 'lang.store' ) . ':*') !!}
                                     {!! Form::select('store_ids[]', $stores, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', 'required', 'id' =>
+                                    'store_ids']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -34,6 +35,16 @@
                                     {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' =>
                                     'selectpicker
                                     form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
+                                    {!! Form::select('type',['item_discount' => __('lang.item_discount'),
+                                    'package_promotion' => __('lang.package_promotion')], false, ['class' =>
+                                    'selectpicker
+                                    form-control', 'data-live-search' => "true", 'placeholder' =>
+                                    __('lang.please_select'),'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -52,7 +63,25 @@
                                         @include('product_classification_tree.partials.product_selection_tree')
                                     </div>
                                 </div>
-
+                            </div>
+                            <div class="col-md-12 product_details_div mt-5 mb-5">
+                                <table class="table" id="sale_promotion_table">
+                                    <thead class="bg-success" style="color: white">
+                                        <tr>
+                                            <th>@lang('lang.image')</th>
+                                            <th>@lang('lang.name')</th>
+                                            <th>@lang('lang.sku')</th>
+                                            <th>@lang('lang.purchase_price')</th>
+                                            <th>@lang('lang.sell_price')</th>
+                                            <th>@lang('lang.stock')</th>
+                                            <th>@lang('lang.expiry_date')</th>
+                                            <th>@lang('lang.date_of_purchase')</th>
+                                            <th class="qty_hide hide">@lang('lang.qty')</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -89,6 +118,16 @@
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
                                     {!! Form::date('end_date', 1, ['class' => 'form-control', 'required']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4 mt-5">
+                                <div class="form-group">
+                                    <div class="i-checks">
+                                        <input id="generate_barcode" name="generate_barcode" type="checkbox" value="1"
+                                            class="form-control-custom">
+                                        <label
+                                            for="generate_barcode"><strong>@lang('lang.generate_barcode')</strong></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

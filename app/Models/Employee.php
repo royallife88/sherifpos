@@ -26,6 +26,7 @@ class Employee extends Model implements HasMedia
      */
     protected $casts = [
         'working_day_per_week' => 'array',
+        'store_id' => 'array',
         'check_in' => 'array',
         'check_out' => 'array',
         'upload_files' => 'array',
@@ -211,19 +212,23 @@ class Employee extends Model implements HasMedia
         return $employees;
     }
 
-    public function store(){
-        return $this->belongsTo(Store::class);
+    public function store()
+    {
+        return $this->belongsToJson(Store::class, 'store_id');
     }
 
-    public function commission_customer_type(){
+    public function commission_customer_type()
+    {
         return $this->belongsToJson(CustomerType::class, 'commission_customer_types');
     }
 
-    public function commission_store(){
+    public function commission_store()
+    {
         return $this->belongsToJson(Store::class, 'commission_stores');
     }
 
-    public function commission_cashier(){
+    public function commission_cashier()
+    {
         return $this->belongsToJson(User::class, 'commission_cashiers');
     }
 }

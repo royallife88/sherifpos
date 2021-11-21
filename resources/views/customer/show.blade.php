@@ -100,10 +100,10 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.discount')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.paid')</th>
-                                        <th>@lang('lang.due')</th>
+                                        <th class="sum">@lang('lang.discount')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.paid')</th>
+                                        <th class="sum">@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
                                         <th>@lang('lang.points_earned')</th>
                                         <th>@lang('lang.action')</th>
@@ -183,9 +183,10 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($sales->sum('final_total'))}}</th>
-                                        <th>{{@num_format($total_purchase_payments)}}</th>
-                                        <th>{{@num_format($total_purchase_due)}}</th>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -202,7 +203,7 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
                                         <th>@lang('lang.status')</th>
                                         <th>@lang('lang.action')</th>
                                     </tr>
@@ -277,7 +278,7 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($discounts->sum('final_total'))}}</th>
+                                        <td></td>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -294,7 +295,7 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
                                         <th>@lang('lang.status')</th>
                                         <th>@lang('lang.points_earned')</th>
                                         <th>@lang('lang.action')</th>
@@ -371,7 +372,7 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($points->sum('final_total'))}}</th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>

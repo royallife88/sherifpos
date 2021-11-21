@@ -32,7 +32,7 @@
                                 {{$terms_and_condition->name}}
                             </td>
                             <td>
-                                {{$terms_and_condition->description}}
+                                {!! $terms_and_condition->description !!}
                             </td>
                             <td>
                                 {{$terms_and_condition->created_by}}
@@ -71,6 +71,8 @@
 
 @section('javascript')
 <script>
-
+    $('.view_modal').on('hidden.bs.modal', function () {
+        tinymce.remove();
+    });
 </script>
 @endsection

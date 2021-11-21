@@ -17,7 +17,7 @@
                 <th>@lang('lang.photo')</th>
                 <th>@lang('lang.mobile_number')</th>
                 <th>@lang('lang.address')</th>
-                <th>@lang('lang.balance')</th>
+                <th class="sum">@lang('lang.balance')</th>
                 <th>@lang('lang.purchases')</th>
                 <th>@lang('lang.discount')</th>
                 <th>@lang('lang.points')</th>
@@ -27,17 +27,13 @@
             </tr>
         </thead>
         <tbody>
-            @php
-                $total_balances = 0;
-                $total_discounts = 0;
-            @endphp
             @foreach($customers as $customer)
             <tr>
                 <td>@if(!empty($customer->customer_type)){{$customer->customer_type->name}}@endif</td>
                 <td>{{$customer->name}}</td>
-                <td>@if(!empty($customer->getFirstMediaUrl('customer_photo')))<img
-                        src="{{$customer->getFirstMediaUrl('customer_photo')}}" alt="photo" width="50"
-                        height="50">@endif</td>
+                <td><img src="@if(!empty($customer->getFirstMediaUrl('customer_photo'))){{$customer->getFirstMediaUrl('customer_photo')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                    alt="photo" width="50" height="50">
+                </td>
                 <td>{{$customer->mobile_number}}</td>
                 <td>{{$customer->address}}</td>
                 <td>{{@num_format($balances[$customer->id])}}</td>
@@ -45,7 +41,7 @@
                 <td><a href="{{action('CustomerController@show', $customer->id)}}?show=discounts" class="btn">{{@num_format($customer->total_sp_discount + $customer->total_product_discount +$customer->total_coupon_discount)}}</a></td>
                 <td><a href="{{action('CustomerController@show', $customer->id)}}?show=points" class="btn">{{@num_format($customer->total_rp)}}</a></td>
                 <td>{{@format_date($customer->created_at)}}</td>
-                <td>{{$customer->created_by_user->name}}</td>
+                <td>{{$customer->created_by_user->name ?? ''}}</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -105,19 +101,15 @@
                     </div>
                 </td>
             </tr>
-            @php
-                $total_balances += $balances[$customer->id];
-                $total_discounts += $customer->total_sp_discount + $customer->total_product_discount +$customer->total_coupon_discount;
-            @endphp
             @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                <td>{{@num_format($total_balances)}}</td>
-                <td>{{@num_format($customers->sum('total_purchase'))}}</td>
-                <td>{{@num_format($total_discounts)}}</td>
-                <td>{{@num_format($customers->sum('total_rp'))}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

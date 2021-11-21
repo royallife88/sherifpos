@@ -22,6 +22,21 @@
                             {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
                         </div>
                     </div>
+
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('store_id', __('lang.store'), []) !!}
+                            {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('store_pos_id', __('lang.pos'), []) !!}
+                            {!! Form::select('store_pos_id', $store_pos, request()->store_pos_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
                     <div class="col-md-3">
                         <br>
                         <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
@@ -41,10 +56,10 @@
                             <th>@lang('lang.cashier')</th>
                             <th>@lang('lang.notes')</th>
                             <th>@lang('lang.status')</th>
-                            <th>@lang('lang.cash_sales')</th>
-                            <th>@lang('lang.cash_in')</th>
-                            <th>@lang('lang.cash_out')</th>
-                            <th>@lang('lang.closing_cash')</th>
+                            <th class="sum">@lang('lang.cash_sales')</th>
+                            <th class="sum">@lang('lang.cash_in')</th>
+                            <th class="sum">@lang('lang.cash_out')</th>
+                            <th class="sum">@lang('lang.closing_cash')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
                     </thead>
@@ -52,7 +67,7 @@
                         @foreach($cash_registers as $cash_register)
                         <tr>
                             <td>{{@format_datetime($cash_register->created_at)}}</td>
-                            <td>{{ucfirst($cash_register->cashier->name)}}</td>
+                            <td>{{ucfirst($cash_register->cashier->name ?? '')}}</td>
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales)}}</td>
@@ -113,10 +128,10 @@
                     <tfoot>
                         <tr>
                             <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                            <td>{{@num_format($cash_registers->sum('total_cash_sales'))}}</td>
-                            <td>{{@num_format($cash_registers->sum('total_cash_in'))}}</td>
-                            <td>{{@num_format($cash_registers->sum('total_cash_out'))}}</td>
-                            <td>{{@num_format($cash_registers->sum('closing_amount'))}}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
                     </tfoot>
                 </table>

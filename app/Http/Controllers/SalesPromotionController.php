@@ -44,11 +44,11 @@ class SalesPromotionController extends Controller
     public function index()
     {
         $sales_promotions = SalesPromotion::get();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('sales_promotion.index')->with(compact(
             'sales_promotions',
-            'stores',
+            'stores'
         ));
     }
 
@@ -59,7 +59,7 @@ class SalesPromotionController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
         $product_classes = ProductClass::get();
@@ -94,13 +94,15 @@ class SalesPromotionController extends Controller
 
         try {
             $data = $request->except('_token');
+            $data['code'] = uniqid('SP');
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
+            $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
             $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
-            $data['pct_data'] = $request->pct;
+            $data['pct_data'] = $request->pct ?? [];
 
             DB::beginTransaction();
 
@@ -147,11 +149,13 @@ class SalesPromotionController extends Controller
     public function edit($id)
     {
         $sales_promotion = SalesPromotion::find($id);
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $products = Product::pluck('name', 'id');
         $customer_types  = CustomerType::pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $sales_promotion->pct_data;
+
+        $product_details = $this->productUtil->getProductDetailsUsingArrayIds($sales_promotion->product_ids, $sales_promotion->store_ids);
 
         return view('sales_promotion.edit')->with(compact(
             'sales_promotion',
@@ -159,6 +163,7 @@ class SalesPromotionController extends Controller
             'products',
             'customer_types',
             'product_classes',
+            'product_details',
             'pct_data'
         ));
     }
@@ -175,6 +180,7 @@ class SalesPromotionController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
+            ['type' => ['required', 'max:255']],
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
             ['discount_type' => ['required', 'max:255']],
@@ -184,14 +190,15 @@ class SalesPromotionController extends Controller
         );
 
         try {
-            $data = $request->except('_token', '_method', 'pct');
+            $data = $request->except('_token', '_method', 'pct', 'search_product');
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
+            $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
             $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
-            $data['pct_data'] = $request->pct;
+            $data['pct_data'] = $request->pct ?? [];
 
             DB::beginTransaction();
 
@@ -211,7 +218,8 @@ class SalesPromotionController extends Controller
             ];
         }
 
-        return redirect()->to('sales-promotion')->with('status', $output);
+        return redirect()->back()->with('status', $output);
+        // return redirect()->to('sales-promotion')->with('status', $output);
     }
 
     /**

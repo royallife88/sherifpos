@@ -1330,10 +1330,7 @@ button {
 
 .login-page .copyrights,
 .register-page .copyrights {
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    width: 100%;
+  margin-top: 65px;
 }
 
 .login-page .copyrights p,
@@ -1349,8 +1346,10 @@ button {
     padding: 40px 30px;
     background: #fff;
     box-shadow: 0 0 35px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
     margin-bottom: 20px;
     width: 100%;
+    height: 50%;
 }
 
 .login-page .logo,
@@ -2853,4 +2852,20 @@ a>code {
     font-family: 'FontAwesome';
     font-size: 20px;
     color: #fff;
+}
+.top-bar{
+    position: absolute;
+    top: 0;
+    background-color: #f8f9fa;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e9e8ef;
+}
+.top-email{
+    width: 100%;
+    display: inline-block;
+    text-align: right;
+    padding-right: 10%;
+    font-size: large;
+    color: #959595;
+    text-shadow: 1px 1px 1px #000;
 }

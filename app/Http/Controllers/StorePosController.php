@@ -51,7 +51,7 @@ class StorePosController extends Controller
             DB::raw('SUM(IF(method="cash", amount, 0)) as total_cash'),
             DB::raw('SUM(IF(method="card", amount, 0)) as total_card'),
             DB::raw('COUNT(CASE WHEN transactions.status!="final" THEN 1 END) as pending_orders'),
-            DB::raw('SUM(IF(transactions.type="sell" AND transactions.payment_status="pending", final_total, 0)) as pay_later_sales'),
+            DB::raw('SUM(IF(transactions.type="sell" AND transactions.payment_status="pending", final_total, 0)) as pay_later_sales')
 
         );
 
@@ -71,7 +71,7 @@ class StorePosController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::pluck('name', 'id');
 
         return view('store_pos.create')->with(compact(
@@ -149,7 +149,7 @@ class StorePosController extends Controller
     {
         $store_pos = StorePos::find($id);
 
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::pluck('name', 'id');
 
         return view('store_pos.edit')->with(compact(
@@ -220,5 +220,17 @@ class StorePosController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get store pos details by store id
+     *
+     * @param int $store_id
+     * @return void
+     */
+    public function getPosDetailsByStore($store_id)
+    {
+        $store_pos = StorePos::where('store_id', $store_id)->first();
+        return $store_pos;
     }
 }

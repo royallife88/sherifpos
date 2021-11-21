@@ -96,7 +96,7 @@ class ExpenseController extends Controller
     {
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('expense.create')->with(compact(
             'expense_categories',
@@ -130,7 +130,7 @@ class ExpenseController extends Controller
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'notify_me' => !empty($data['notify_me']) ? 1 : 0,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0
             ];
             $expense_data['created_by'] = Auth::user()->id;
 
@@ -197,7 +197,7 @@ class ExpenseController extends Controller
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::where('expense_category_id', $expense->expense_category_id)->pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         return view('expense.edit')->with(compact(
             'expense',
@@ -233,7 +233,7 @@ class ExpenseController extends Controller
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'notify_me' => !empty($data['notify_me']) ? 1 : 0,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : null
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0
             ];
             $expense_data['created_by'] = Auth::user()->id;
             DB::beginTransaction();

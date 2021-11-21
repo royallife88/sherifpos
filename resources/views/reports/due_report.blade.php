@@ -58,9 +58,9 @@
                                 <th>@lang('lang.date')</th>
                                 <th>@lang('lang.reference')</th>
                                 <th>@lang('lang.customer')</th>
-                                <th>@lang('lang.amount')</th>
-                                <th>@lang('lang.paid')</th>
-                                <th>@lang('lang.due')</th>
+                                <th class="sum">@lang('lang.amount')</th>
+                                <th class="sum">@lang('lang.paid')</th>
+                                <th class="sum">@lang('lang.due')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -74,7 +74,7 @@
                             <tr>
                                 <td>{{@format_date($due->transaction_date)}}</td>
                                 <td> {{$due->invoice_no}}</td>
-                                <td> {{$due->customer->name}}</td>
+                                <td> {{$due->customer->name ?? ''}}</td>
                                 <td> {{@num_format($due->final_total)}}</td>
                                 <td> {{@num_format($due->transaction_payments->sum('amount'))}}</td>
                                 <td> {{@num_format($due->final_total - $due->transaction_payments->sum('amount'))}}</td>
@@ -162,9 +162,9 @@
                         <tfoot>
                             <tr>
                                 <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                                <td>{{@num_format($dues->sum('final_total'))}}</td>
-                                <td>{{@num_format($total_paid)}}</td>
-                                <td>{{@num_format($total_due)}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

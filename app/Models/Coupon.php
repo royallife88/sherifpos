@@ -25,6 +25,7 @@ class Coupon extends Model
         'product_ids' => 'array',
         'pct_data' => 'array',
         'customer_type_ids' => 'array',
+        'store_ids' => 'array'
     ];
 
     public function created_by_user()

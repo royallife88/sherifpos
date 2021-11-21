@@ -9,6 +9,8 @@ use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Notifications\AddSaleNotification;
+use App\Notifications\ContactUsNotification;
 use App\Notifications\PurchaseOrderToSupplierNotification;
 use App\Notifications\QuotationToCustomerNotification;
 use App\Utils\Util;
@@ -56,7 +58,6 @@ class NotificationUtil extends Util
         $data['attachment'] =  $file;
         $data['attachment_name'] =  'purchase-order-' . $purchase_order->po_no . '.pdf';
 
-
         $email = $supplier->email;
         Notification::route('mail', $email)
             ->notify(new PurchaseOrderToSupplierNotification($data));
@@ -72,15 +73,85 @@ class NotificationUtil extends Util
      * @param [int] $transaction_id
      * @return void
      */
+    public function sendSellInvoiceToCustomer($transaction_id, $emails)
+    {
+        $transaction = Transaction::find($transaction_id);
+
+        $payment_types = $this->getPaymentTypeArrayForPos();
+
+
+        $invoice_lang = System::getProperty('invoice_lang');
+        if (empty($invoice_lang)) {
+            $invoice_lang = request()->session()->get('language');
+        }
+        if ($invoice_lang == 'ar_and_en') {
+            $html = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
+                'transaction',
+                'payment_types'
+            ))->render();
+        } else {
+            $html = view('sale_pos.partials.invoice')
+                ->with(compact(
+                    'transaction',
+                    'payment_types',
+                    'invoice_lang'
+                ))->render();
+        }
+
+        $mpdf = $this->getMpdf();
+        $mpdf->WriteHTML($html);
+        $file = config('constants.mpdf_temp_path') . '/' . time() . '_sell-' . $transaction->invoice_no . '.pdf';
+        $mpdf->Output($file, 'F');
+
+        $data['email_body'] =  'New invoice ' . $transaction->invoice_no . ' please check the attachment.';
+        $data['attachment'] =  $file;
+        $data['attachment_name'] =  'sell-' . $transaction->invoice_no . '.pdf';
+
+
+        $emails = explode(',', $emails);
+
+        foreach ($emails as $email) {
+            Notification::route('mail', $email)
+                ->notify(new AddSaleNotification($data));
+        }
+
+        if (file_exists($file)) {
+            unlink($file);
+        }
+    }
+
+
+    /**
+     * sendPurchaseOrderToSupplier
+     *
+     * @param [int] $transaction_id
+     * @return void
+     */
     public function sendQuotationToCustomer($transaction_id)
     {
         $transaction = Transaction::find($transaction_id);
 
         $customer = Customer::find($transaction->customer_id);
         $payment_types = $this->getPaymentTypeArrayForPos();
-        $html = view('sale_pos.partials.invoice')
-            ->with(compact('transaction', 'payment_types'))->render();
 
+
+        $invoice_lang = System::getProperty('invoice_lang');
+        if (empty($invoice_lang)) {
+            $invoice_lang = request()->session()->get('language');
+        }
+        if ($invoice_lang == 'ar_and_en') {
+            $html = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
+                'transaction',
+                'payment_types'
+            ))->render();
+        } else {
+            $html = view('sale_pos.partials.invoice')
+                ->with(compact(
+                    'transaction',
+                    'payment_types',
+                    'invoice_lang'
+                ))->render();
+        }
         $mpdf = $this->getMpdf();
 
         $mpdf->WriteHTML($html);
@@ -149,5 +220,24 @@ class NotificationUtil extends Util
                 ->subject('Welcome')
                 ->from($from, $app_name);
         });
+    }
+
+    /**
+     * send contact us details
+     *
+     * @param array $data
+     * @return void
+     */
+    public function sendContactUs($data)
+    {
+        $email_data = array(
+            'email' => env('COMPANY_EMAIL'),
+            'subject' => 'Contact Us',
+            'email_body' => $data['email_body'],
+            'from' => $data['email'],
+        );
+
+        Notification::route('mail', $email_data['email'])
+            ->notify(new ContactUsNotification($email_data));
     }
 }

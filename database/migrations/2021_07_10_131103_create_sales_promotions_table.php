@@ -16,6 +16,8 @@ class CreateSalesPromotionsTable extends Migration
         Schema::create('sales_promotions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('type');
+            $table->string('code');
             $table->text('store_ids');
             $table->text('customer_type_ids');
             $table->text('product_ids');
@@ -27,6 +29,7 @@ class CreateSalesPromotionsTable extends Migration
             $table->boolean('product_condition')->default(0);
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
+            $table->boolean('generate_barcode')->default(0);
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

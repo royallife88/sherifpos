@@ -26,10 +26,10 @@
     </td>
     <td>{!! Form::text('variations['.$row_id.'][default_purchase_price]', !empty($item) ?
         $item->default_purchase_price:
-        null, ['class' => 'form-control selectpicker', 'required']) !!}</td>
+        null, ['class' => 'form-control default_purchase_price', 'required']) !!}</td>
     <td>{!! Form::text('variations['.$row_id.'][default_sell_price]', !empty($item) ? $item->default_sell_price:
         null,
-        ['class' => 'form-control', 'required']) !!}</td>
+        ['class' => 'form-control default_sell_price', 'required']) !!}</td>
     <td> <button type="button" class="btn btn-danger btn-xs remove_row mt-2"><i class="dripicons-cross"></i></button>
     </td>
 </tr>

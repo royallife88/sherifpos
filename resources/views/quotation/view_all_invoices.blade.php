@@ -66,9 +66,9 @@
             <tr>
                 <td>{{@format_date($sale->transaction_date)}}</td>
                 <td>{{$sale->invoice_no}}</td>
-                <td>{{ucfirst($sale->created_by_user->name)}}</td>
+                <td>{{ucfirst($sale->created_by_user->name ?? '')}}</td>
                 <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
-                <td>{{ucfirst($sale->store->name)}}</td>
+                <td>{{ucfirst($sale->store->name ?? '')}}</td>
                 <td>{{ucfirst($sale->payment_status)}}</td>
                 <td>
                     <div class="btn-group">

@@ -81,7 +81,7 @@ class RemoveStockController extends Controller
     public function create()
     {
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $invoice_nos = Transaction::where('type', 'add_stock')->where('status', 'received')->pluck('invoice_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
@@ -185,7 +185,7 @@ class RemoveStockController extends Controller
     {
         $remove_stock = Transaction::find($id);
         $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
 
         $invoice_nos = Transaction::where('type', 'add_stock')->where('status', 'received')->pluck('invoice_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();

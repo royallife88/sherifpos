@@ -3,9 +3,12 @@
 
 @section('content')
 <div class="container-fluid">
+    @can('product_module.product.create_and_edit')
     <a style="color: white" href="{{action('ProductController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.add_product')</a>
+
+    @endcan
     <a style="color: white" href="{{action('ProductController@getImport')}}" class="btn btn-primary"><i
             class="fa fa-arrow-down"></i>
         @lang('lang.import')</a>
@@ -80,7 +83,6 @@
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
-                    @if(session('user.is_superadmin'))
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('store_id', __('lang.store'), []) !!}
@@ -88,7 +90,6 @@
                             'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                         </div>
                     </div>
-                    @endif
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
@@ -137,8 +138,10 @@
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
             <button type="button" value="15"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
+            @if(empty($page))
             <button type="button" value="16"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
+            @endif
             <button type="button" value="17"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
             <button type="button" value="18"
@@ -147,8 +150,10 @@
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
             <button type="button" value="20"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
+            @can('product_module.purchase_price.view')
             <button type="button" value="21"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
+            @endcan
         </div>
     </div>
 
@@ -174,12 +179,14 @@
                 <th>@lang('lang.color')</th>
                 <th>@lang('lang.size')</th>
                 <th>@lang('lang.grade')</th>
-                <th>@lang('lang.current_stock')</th>
+                <th class="sum">@lang('lang.current_stock')</th>
                 <th>@lang('lang.customer_type')</th>
                 <th>@lang('lang.expiry_date')</th>
                 <th>@lang('lang.manufacturing_date')</th>
                 <th>@lang('lang.discount')</th>
+                @can('product_module.purchase_price.view')
                 <th>@lang('lang.purchase_price')</th>
+                @endcan
 
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -187,7 +194,7 @@
         <tbody>
             @foreach($products as $product)
             <tr>
-                <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                         alt="photo" width="50" height="50"></td>
                 <td>{{$product->name}}</td>
                 <td>@if(!empty($product->variations))
@@ -215,7 +222,9 @@
                 <td>@if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif
                 </td>
                 <td>{{@num_format($product->discount)}}</td>
+                @can('product_module.purchase_price.view')
                 <td>{{@num_format($product->purchase_price)}}</td>
+                @endcan
 
                 <td>
                     <div class="btn-group">
@@ -236,8 +245,8 @@
                             @can('product_module.product.create_and_edit')
                             <li>
 
-                                <a href="{{action('ProductController@edit', $product->id)}}" class="btn"><i
-                                        class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                <a href="{{action('ProductController@edit', $product->id)}}" class="btn"
+                                    target="_blank"><i class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
@@ -259,7 +268,7 @@
         <tfoot>
             <tr>
                 <th colspan="16" style="text-align: right">@lang('lang.total')</th>
-                <td>{{@num_format($products->sum('current_stock'))}}</td>
+                <td></td>
             </tr>
         </tfoot>
     </table>
@@ -268,21 +277,48 @@
 
 @section('javascript')
 <script>
+    var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
+    $(document).ready(function(){
+
+        $.each( hidden_column_array, function( index, value ) {
+            $('.column-toggle').each(function(){
+                if($(this).val() == value){
+                    toggleColumnVisibility(value, $(this));
+                }
+            });
+
+        });
+    });
+
     $(document).on('click', '.column-toggle', function(){
         let column_index = parseInt($(this).val());
+        toggleColumnVisibility(column_index, $(this));
+        if(hidden_column_array.includes(column_index)){
+            hidden_column_array.splice(hidden_column_array.indexOf(column_index), 1);
+        }else{
+            hidden_column_array.push(column_index);
+        }
+
+        //unique array javascript
+        hidden_column_array = $.grep(hidden_column_array, function(v, i) {
+            return $.inArray(v, hidden_column_array) === i;
+        });
+
+        $.cookie('column_visibility', JSON.stringify(hidden_column_array));
+    })
+
+    function toggleColumnVisibility(column_index, this_btn){
         column = table.column(column_index);
         column.visible(! column.visible());
 
         if(column.visible()){
-            console.log('tryuu');
-            $(this).addClass('badge-primary')
-            $(this).removeClass('badge-warning')
+            $(this_btn).addClass('badge-primary')
+            $(this_btn).removeClass('badge-warning')
         }else{
-            console.log('afaassfd');
-            $(this).removeClass('badge-primary')
-            $(this).addClass('badge-warning')
+            $(this_btn).removeClass('badge-primary')
+            $(this_btn).addClass('badge-warning')
 
         }
-    })
+    }
 </script>
 @endsection

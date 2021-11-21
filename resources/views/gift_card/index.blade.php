@@ -64,7 +64,7 @@
             <thead>
                 <tr>
                     <th>@lang('lang.card_number')</th>
-                    <th>@lang('lang.amount')</th>
+                    <th class="sum">@lang('lang.amount')</th>
                     <th>@lang('lang.date_and_time')</th>
                     <th>@lang('lang.expiry_date')</th>
                     <th>@lang('lang.created_by')</th>
@@ -81,7 +81,7 @@
                     <td>{{@num_format($gift_card->amount)}}</td>
                     <td>{{@format_datetime($gift_card->created_at)}}</td>
                     <td>@if(!empty($gift_card->expiry_date)){{@format_date($gift_card->expiry_date)}}@else @lang('lang.unlimited') @endif</td>
-                    <td>{{ucfirst($gift_card->created_by_user->name)}}</td>
+                    <td>{{ucfirst($gift_card->created_by_user->name ?? '')}}</td>
                     <td>{{@num_format($gift_card->balance)}}</td>
                     <td>
                         @if($gift_card->used)
@@ -142,7 +142,7 @@
             <tfoot>
                 <tr>
                     <th colspan="1" style="text-align: right">@lang('lang.total')</th>
-                    <td>{{@num_format($gift_cards->sum('amount'))}}</td>
+                    <td></td>
                 </tr>
             </tfoot>
         </table>

@@ -28,7 +28,7 @@
             @foreach($redemption_of_points as $redemption_of_point)
             <tr>
                 <td>{{$redemption_of_point->created_at}}</td>
-                <td>{{ucfirst($redemption_of_point->created_by_user->name)}}</td>
+                <td>{{ucfirst($redemption_of_point->created_by_user->name ?? '')}}</td>
                 <td>{{$redemption_of_point->number}}</td>
                 <td>{{implode(', ', $redemption_of_point->stores->pluck('name')->toArray())}}</td>
                 <td>{{implode(', ', $redemption_of_point->customer_types->pluck('name')->toArray())}}</td>

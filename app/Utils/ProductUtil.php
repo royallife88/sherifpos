@@ -128,6 +128,11 @@ class ProductUtil extends Util
 
             $number = 'LPR' . $year . $month . $day .  $count;
         }
+        if ($type == 'internal_stock_request') {
+            $count = Transaction::where('type', $type)->count() + 1;
+
+            $number = 'ISRQ' . $year . $month . $day .  $count;
+        }
 
 
         return $number;
@@ -345,26 +350,30 @@ class ProductUtil extends Util
     /**
      * Gives list of products based on products id and variation id
      *
-     * @param int $business_id
      * @param int $product_id
      * @param int $variation_id = null
+     * @param int $store_id = null
      *
      * @return Obj
      */
-    public function getDetailsFromProduct($product_id, $variation_id = null)
+    public function getDetailsFromProduct($product_id, $variation_id = null, $store_id = null)
     {
         $product = Product::leftjoin('variations as v', 'products.id', '=', 'v.product_id')
+            ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
             ->whereNull('v.deleted_at');
 
         if (!is_null($variation_id) && $variation_id !== '0') {
             $product->where('v.id', $variation_id);
         }
-
-        $product->where('products.id', $product_id);
+        if (!is_null($store_id) && $store_id !== '0') {
+            $product->where('product_stores.store_id', $store_id);
+        }
+        $product->where('products.id', $product_id)->groupBy('v.id');
 
         $products = $product->select(
             'products.id as product_id',
             'products.name as product_name',
+            'product_stores.qty_available',
             'v.id as variation_id',
             'v.name as variation_name',
             'v.default_purchase_price',
@@ -379,9 +388,49 @@ class ProductUtil extends Util
     /**
      * Gives list of products based on products id and variation id
      *
-     * @param int $business_id
+     * @param int $sender_store_id
      * @param int $product_id
      * @param int $variation_id = null
+     *
+     * @return Obj
+     */
+    public function getDetailsFromProductTransfer($sender_store_id, $product_id, $variation_id = null)
+    {
+        $product = Product::leftjoin('variations as v', 'products.id', '=', 'v.product_id')
+            ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
+            ->whereNull('v.deleted_at');
+
+        if (!is_null($sender_store_id) && $sender_store_id !== '0') {
+            $product->where('product_stores.store_id', $sender_store_id);
+        }
+
+        if (!is_null($variation_id) && $variation_id !== '0') {
+            $product->where('v.id', $variation_id);
+        }
+
+        $product->where('products.id', $product_id);
+
+        $products = $product->select(
+            'products.id as product_id',
+            'products.name as product_name',
+            'product_stores.qty_available',
+            'v.id as variation_id',
+            'v.name as variation_name',
+            'v.default_purchase_price',
+            'v.default_sell_price',
+            'v.sub_sku'
+        )
+            ->get();
+
+        return $products;
+    }
+
+    /**
+     * Gives list of products based on products id and variation id
+     *
+     * @param int $product_id
+     * @param int $variation_id = null
+     * @param int $store_id = null
      *
      * @return Obj
      */
@@ -405,6 +454,7 @@ class ProductUtil extends Util
             'products.name as product_name',
             'products.alert_quantity',
             'product_stores.qty_available',
+            'products.sell_price',
             'v.id as variation_id',
             'v.name as variation_name',
             'v.default_purchase_price',
@@ -657,8 +707,8 @@ class ProductUtil extends Util
         $keep_lines_ids = [];
 
         foreach ($add_stocks as $line) {
-            if (!empty($line['add_stock_id'])) {
-                $add_stock = AddStockLine::find($line['add_stock_id']);
+            if (!empty($line['add_stock_line_id'])) {
+                $add_stock = AddStockLine::find($line['add_stock_line_id']);
 
                 $add_stock->product_id = $line['product_id'];
                 $add_stock->variation_id = $line['variation_id'];
@@ -672,7 +722,7 @@ class ProductUtil extends Util
                 $add_stock->expiry_warning = $line['expiry_warning'];
                 $add_stock->convert_status_expire = $line['convert_status_expire'];
                 $add_stock->save();
-                $keep_lines_ids[] = $line['add_stock_id'];
+                $keep_lines_ids[] = $line['add_stock_line_id'];
                 $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], $old_qty);
             } else {
                 $add_stock_data = [
@@ -699,7 +749,97 @@ class ProductUtil extends Util
         if (!empty($keep_lines_ids)) {
             $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
             foreach ($deleted_lines as $deleted_line) {
+                if ($deleted_line->quantity_sold != 0) {
+                    $product_name = Product::find($deleted_line->product_id)->name ?? '';
+                    return ['mismatch' => true, 'product_name' => $product_name, 'quantity' => 0];
+                }
                 $this->decreaseProductQuantity($deleted_line['product_id'], $deleted_line['variation_id'], $transaction->store_id, $deleted_line['quantity'], 0);
+                $deleted_line->delete();
+            }
+        }
+        return true;
+    }
+
+    /**
+     * check if there is any quantity mismatch in sold and purchase quantity
+     *
+     * @param array $add_stock_lines
+     * @return mixed
+     */
+    public function checkSoldAndPurchaseQtyMismatch($add_stock_lines, $transaction)
+    {
+        $keep_lines_ids = [];
+
+        foreach ($add_stock_lines as $line) {
+            if (!empty($line['add_stock_line_id'])) {
+                $add_stock_line = AddStockLine::find($line['add_stock_line_id']);
+                $keep_lines_ids[] = $add_stock_line->id;
+                if (!empty($add_stock_line)) {
+                    if ($line['quantity'] < $add_stock_line->quantity_sold) {
+                        $product_name = Product::find($add_stock_line->product_id)->name ?? '';
+                        return ['mismatch' => true, 'product_name' => $product_name, 'quantity' => $line['quantity']];
+                    }
+                }
+            }
+        }
+
+        $deleted_lines = AddStockLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+        foreach ($deleted_lines as $deleted_line) {
+            if ($deleted_line->quantity_sold != 0) {
+                $product_name = Product::find($deleted_line->product_id)->name ?? '';
+                return ['mismatch' => true, 'product_name' => $product_name, 'quantity' => 0];
+            }
+        }
+
+
+        return false;
+    }
+
+    public function sendQunatityMismacthResponse($product_name, $qty)
+    {
+        return redirect()->back()->with('status', ['success' => false, 'msg' => __('lang.sold_qty_mismatch_purchase_qty') . '\n Porduct: ' . $product_name . '\n Quantity: ' . $qty]);
+    }
+
+    /**
+     * createOrUpdateInternalStockRequestLines
+     *
+     * @param [mix] $transfer_lines
+     * @param [mix] $transaction
+     * @return void
+     */
+    public function createOrUpdateInternalStockRequestLines($transfer_lines, $transaction)
+    {
+        $keep_lines_ids = [];
+
+        foreach ($transfer_lines as $line) {
+            if (!empty($line['transfer_line_id'])) {
+                $transfer_line = TransferLine::find($line['transfer_line_id']);
+
+                $transfer_line->product_id = $line['product_id'];
+                $transfer_line->variation_id = $line['variation_id'];
+                $transfer_line->quantity = $this->num_uf($line['quantity']);
+                $transfer_line->purchase_price = $this->num_uf($line['purchase_price']);
+                $transfer_line->sub_total = $this->num_uf($line['sub_total']);
+                $transfer_line->save();
+                $keep_lines_ids[] = $line['transfer_line_id'];
+            } else {
+                $transfer_line_data = [
+                    'transaction_id' => $transaction->id,
+                    'product_id' => $line['product_id'],
+                    'variation_id' => $line['variation_id'],
+                    'quantity' => $this->num_uf($line['quantity']),
+                    'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'sub_total' => $this->num_uf($line['sub_total']),
+                ];
+
+                $transfer_line = TransferLine::create($transfer_line_data);
+                $keep_lines_ids[] = $transfer_line->id;
+            }
+        }
+
+        if (!empty($keep_lines_ids)) {
+            $deleted_lines = TransferLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_lines_ids)->get();
+            foreach ($deleted_lines as $deleted_line) {
                 $deleted_line->delete();
             }
         }
@@ -929,22 +1069,22 @@ class ProductUtil extends Util
     {
         $product_ids = [];
 
-        if (!empty($data_selected['product_class_selected'])) {
-            $pcp = Product::whereIn('product_class_id', $data_selected['product_class_selected'])->select('id')->pluck('id')->toArray();
-            $product_ids = array_merge($product_ids, $pcp);
-        }
-        if (!empty($data_selected['category_selected'])) {
-            $cp = array_values(Product::whereIn('category_id', $data_selected['category_selected'])->select('id')->pluck('id')->toArray());
-            $product_ids = array_merge($product_ids, $cp);
-        }
-        if (!empty($data_selected['sub_category_selected'])) {
-            $scp = array_values(Product::whereIn('sub_category_id', $data_selected['sub_category_selected'])->select('id')->pluck('id')->toArray());
-            $product_ids = array_merge($product_ids, $scp);
-        }
-        if (!empty($data_selected['brand_selected'])) {
-            $bp = array_values(Product::whereIn('brand_id', $data_selected['brand_selected'])->select('id')->pluck('id')->toArray());
-            $product_ids = array_merge($product_ids, $bp);
-        }
+        // if (!empty($data_selected['product_class_selected'])) {
+        //     $pcp = Product::whereIn('product_class_id', $data_selected['product_class_selected'])->select('id')->pluck('id')->toArray();
+        //     $product_ids = array_merge($product_ids, $pcp);
+        // }
+        // if (!empty($data_selected['category_selected'])) {
+        //     $cp = array_values(Product::whereIn('category_id', $data_selected['category_selected'])->select('id')->pluck('id')->toArray());
+        //     $product_ids = array_merge($product_ids, $cp);
+        // }
+        // if (!empty($data_selected['sub_category_selected'])) {
+        //     $scp = array_values(Product::whereIn('sub_category_id', $data_selected['sub_category_selected'])->select('id')->pluck('id')->toArray());
+        //     $product_ids = array_merge($product_ids, $scp);
+        // }
+        // if (!empty($data_selected['brand_selected'])) {
+        //     $bp = array_values(Product::whereIn('brand_id', $data_selected['brand_selected'])->select('id')->pluck('id')->toArray());
+        //     $product_ids = array_merge($product_ids, $bp);
+        // }
         if (!empty($data_selected['product_selected'])) {
             $p = array_values(Product::whereIn('id', $data_selected['product_selected'])->select('id')->pluck('id')->toArray());
             $product_ids = array_merge($product_ids, $p);
@@ -953,5 +1093,130 @@ class ProductUtil extends Util
         $product_ids  = array_unique($product_ids);
 
         return $product_ids;
+    }
+
+    public function getProductDetailsUsingArrayIds($array, $store_ids = null)
+    {
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+
+        if (!empty($store_ids)) {
+            $query->whereIn('product_stores.store_id', $store_ids);
+        }
+        $query->whereIn('products.id', $array)
+            ->select(
+                'products.*',
+                DB::raw('SUM(product_stores.qty_available) as current_stock'),
+                DB::raw("(SELECT transaction_date FROM transactions LEFT JOIN add_stock_lines ON transactions.id=add_stock_lines.transaction_id WHERE add_stock_lines.product_id=products.id ORDER BY transaction_date DESC LIMIT 1) as date_of_purchase")
+            )
+            ->groupBy('products.id');
+
+        $products = $query->get();
+
+        return $products;
+    }
+
+    /**
+     * get the stock value by store id
+     *
+     * @param int $store_id
+     * @return void
+     */
+    public function getCurrentStockValueByStore($store_id = null)
+    {
+        $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+        if (!empty($store_id)) {
+            $query->where('product_stores.store_id', $store_id);
+        }
+        $query->select(
+            DB::raw('SUM(product_stores.qty_available * products.purchase_price) as current_stock_value'),
+        );
+
+        $current_stock_value = $query->first();
+
+        return $current_stock_value ? $current_stock_value->current_stock_value : 0;
+    }
+
+
+    /**
+     * get product list for product tree
+     *
+     * @return void
+     */
+    public function getProductList($store_array = [])
+    {
+        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->leftjoin('stores', 'product_stores.store_id', 'stores.id');
+
+        if (!empty($store_array)) {
+            $products->whereIn('product_stores.store_id', $store_array);
+        }
+        if (!empty(request()->store_id)) {
+            $products->where('product_stores.store_id', request()->store_id);
+        }
+
+        if (!empty(request()->product_id)) {
+            $products->where('products.id', request()->product_id);
+        }
+
+        if (!empty(request()->product_class_id)) {
+            $products->where('product_class_id', request()->product_class_id);
+        }
+
+        if (!empty(request()->category_id)) {
+            $products->where('category_id', request()->category_id);
+        }
+
+        if (!empty(request()->sub_category_id)) {
+            $products->where('sub_category_id', request()->sub_category_id);
+        }
+
+        if (!empty(request()->tax_id)) {
+            $products->where('tax_id', request()->tax_id);
+        }
+
+        if (!empty(request()->brand_id)) {
+            $products->where('brand_id', request()->brand_id);
+        }
+
+        if (!empty(request()->unit_id)) {
+            $products->whereJsonContains('multiple_units', request()->unit_id);
+        }
+
+        if (!empty(request()->color_id)) {
+            $products->whereJsonContains('multiple_colors', request()->color_id);
+        }
+
+        if (!empty(request()->size_id)) {
+            $products->whereJsonContains('multiple_sizes', request()->size_id);
+        }
+
+        if (!empty(request()->grade_id)) {
+            $products->whereJsonContains('multiple_grades', request()->grade_id);
+        }
+
+        if (!empty(request()->customer_type_id)) {
+            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+        }
+
+        if (!empty(request()->customer_type_id)) {
+            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+        }
+
+        $products->where('active', 1);
+        $products->where('is_service', 0);
+        $products = $products->select(
+            'products.*',
+            'variations.id as variation_id',
+            'stores.name as store_name',
+            'stores.id as store_id',
+            DB::raw('SUM(product_stores.qty_available) as current_stock'),
+        )->having('current_stock', '>', 0)
+            ->groupBy('products.id', 'product_stores.id')
+            ->get();
+
+        return $products;
     }
 }

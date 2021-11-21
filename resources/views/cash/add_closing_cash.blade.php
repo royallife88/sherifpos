@@ -19,7 +19,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('current_cash', __( 'lang.current_cash' ) . ':*') !!}
-                            {!! Form::text('current_cash', $total_cash, ['class' => 'form-control', 'placeholder' =>
+                            {!! Form::text('current_cash', @num_format($total_cash), ['class' => 'form-control', 'placeholder' =>
                             __(
                             'lang.current_cash' ), 'readonly' ]);
                             !!}
@@ -59,7 +59,7 @@
         <div class="modal-footer">
             <button type="submit" name="submit" class="btn btn-primary hide" value="adjustment" id="adjust-btn">@lang( 'lang.adjustment' )</button>
             <button type="submit" name="submit" class="btn btn-primary" value="save" id="closing-save-btn">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default close-btn-add-closing-cash">@lang( 'lang.close' )</button>
+            <button type="button" class="btn btn-default @if($type == 'logout') close-btn-add-closing-cash @endif" @if($type != 'logout') data-dismiss="modal" @endif>@lang( 'lang.close' )</button>
         </div>
 
         {!! Form::close() !!}

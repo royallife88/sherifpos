@@ -18,7 +18,6 @@
         <div class="card-body">
             <form action="">
                 <div class="row">
-                    @if(session('user.is_superadmin'))
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('store_id', __('lang.store'), []) !!}
@@ -26,7 +25,6 @@
                             'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                         </div>
                     </div>
-                    @endif
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('customer_id', __('lang.customer'), []) !!}
@@ -84,9 +82,9 @@
             <tr>
                 <td>{{@format_date($sale->transaction_date)}}</td>
                 <td>{{$sale->invoice_no}}</td>
-                <td>{{ucfirst($sale->created_by_user->name)}}</td>
+                <td>{{ucfirst($sale->created_by_user->name ?? '')}}</td>
                 <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
-                <td>{{ucfirst($sale->store->name)}}</td>
+                <td>{{ucfirst($sale->store->name ?? '')}}</td>
                 <td>@if(!empty($sale->block_qty)) @lang('lang.blocked') @else @lang('lang.not_blocked')@endif</td>
                 <td>{{ucfirst($sale->status)}}</td>
                 <td>

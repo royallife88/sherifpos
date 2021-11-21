@@ -70,9 +70,9 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.paid')</th>
-                                        <th>@lang('lang.due')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.paid')</th>
+                                        <th class="sum">@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
@@ -186,9 +186,9 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="4" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($sales->sum('final_total'))}}</th>
-                                        <th>{{@num_format($total_purchase_payments)}}</th>
-                                        <th>{{@num_format($total_purchase_due)}}</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -204,7 +204,7 @@
                                         <th>@lang('lang.payment_ref')</th>
                                         <th>@lang('lang.sale_ref')</th>
                                         <th>@lang('lang.paid_by')</th>
-                                        <th>@lang('lang.amount')</th>
+                                        <th class="sum">@lang('lang.amount')</th>
                                         <th>@lang('lang.created_by')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
@@ -301,7 +301,7 @@
                                 <tfoot>
                                     <tr>
                                         <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($payments->sum('amount'))}}</th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -317,9 +317,9 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.paid')</th>
-                                        <th>@lang('lang.due')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.paid')</th>
+                                        <th class="sum">@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
@@ -401,8 +401,10 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($quotations->sum('amount'))}}</th>
+                                        <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>
@@ -418,9 +420,9 @@
                                         <th>@lang('lang.reference_no')</th>
                                         <th>@lang('lang.customer')</th>
                                         <th>@lang('lang.product')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.paid')</th>
-                                        <th>@lang('lang.due')</th>
+                                        <th class="sum">@lang('lang.grand_total')</th>
+                                        <th class="sum">@lang('lang.paid')</th>
+                                        <th class="sum">@lang('lang.due')</th>
                                         <th>@lang('lang.status')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
@@ -517,8 +519,10 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                                        <th>{{@num_format($sell_returns->sum('amount'))}}</th>
+                                        <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
                                     </tr>
                                 </tfoot>
                             </table>

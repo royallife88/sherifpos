@@ -22,10 +22,10 @@
                                 <th>@lang('lang.customer')</th>
                                 <th>@lang('lang.invoice_no')</th>
                                 <th>@lang('lang.product_purchased_with_points')</th>
-                                <th>@lang('lang.value')</th>
-                                <th>@lang('lang.paid_amount')</th>
-                                <th>@lang('lang.point_earned')</th>
-                                <th>@lang('lang.balance')</th>
+                                <th class="sum">@lang('lang.value')</th>
+                                <th class="sum">@lang('lang.paid_amount')</th>
+                                <th class="sum">@lang('lang.point_earned')</th>
+                                <th class="sum">@lang('lang.balance')</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -38,9 +38,9 @@
                             <tr>
                                 <td>{{@format_datetime($transaction->transaction_date)}}
                                 </td>
-                                <td>{{$transaction->store->name}}</td>
-                                <td>{{ucfirst($transaction->created_by_user->name)}}</td>
-                                <td>{{$transaction->customer->name}}</td>
+                                <td>{{$transaction->store->name ?? ''}}</td>
+                                <td>{{ucfirst($transaction->created_by_user->name ?? '')}}</td>
+                                <td>{{$transaction->customer->name ?? ''}}</td>
                                 <td style="color: rgb(85, 85, 231)"><a
                                         data-href="{{action('SellController@show', $transaction->id)}}"
                                         data-container=".view_modal"
@@ -70,10 +70,10 @@
                         <tfoot>
                             <tr>
                                 <th colspan="6" style="text-align: right">@lang('lang.total')</th>
-                                <td>{{@num_format($transactions->sum('final_total'))}}</td>
-                                <td>{{@num_format($total_paid)}}</td>
-                                <td>{{@num_format($total_point_earned)}}</td>
-                                <td>{{@num_format($total_balance)}}</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

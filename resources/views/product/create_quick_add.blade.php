@@ -129,6 +129,7 @@
                         __('lang.alert_quantity')]) !!}
                     </div>
                 </div>
+                @can('product_module.purchase_price.create_and_edit')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('purchase_price', __('lang.purchase_price') . ' *', []) !!}
@@ -136,6 +137,7 @@
                         __('lang.purchase_price'), 'required']) !!}
                     </div>
                 </div>
+                @endcan
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}

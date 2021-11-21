@@ -15,13 +15,14 @@
                 <th>@lang('lang.name')</th>
                 <th>@lang('lang.stores')</th>
                 <th>@lang('lang.discount_type')</th>
-                <th>@lang('lang.discount_value')</th>
+                <th class="sum">@lang('lang.discount_value')</th>
                 <th>@lang('lang.start_date')</th>
                 <th>@lang('lang.expiry_date')</th>
                 <th>@lang('lang.purchase_condition')</th>
                 <th>@lang('lang.product_condition')</th>
                 <th>@lang('lang.created_by')</th>
                 <th>@lang('lang.date_and_time')</th>
+                <th>@lang('lang.barcode')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -36,8 +37,10 @@
                 <td>@if(!empty($sales_promotion->end_date)){{@format_date($sales_promotion->end_date)}}@endif</td>
                 <td>@if($sales_promotion->purchase_condition){{@num_format($sales_promotion->purchase_condition_amount)}}@endif</td>
                 <td>@if($sales_promotion->product_condition) @if(!empty($sales_promotion->products)){{implode(', ', $sales_promotion->products->pluck('name')->toArray())}}@endif @endif</td>
-                <td>{{ucfirst($sales_promotion->created_by_user->name)}}</td>
+                <td>{{ucfirst($sales_promotion->created_by_user->name ?? '')}}</td>
                 <td>{{$sales_promotion->created_at}}</td>
+                <td>@if(!empty($sales_promotion->generate_barcode)) <img class="center-block" style="width:50px; !important;height: 50px !important;"
+                    src="data:image/png;base64,{{DNS2D::getBarcodePNG($sales_promotion->code, 'QRCODE')}}"> @endif</td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -80,7 +83,7 @@
         <tfoot>
             <tr>
                 <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                <td>{{@num_format($sales_promotions->sum('discount_value'))}}</td>
+                <td></td>
             </tr>
         </tfoot>
     </table>

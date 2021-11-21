@@ -17,7 +17,7 @@
                         @lang('lang.date'): <b>{{@format_date($purchase_return->transaction_date)}}</b>
                     </div>
                     <div class="col-md-12">
-                        @lang('lang.store'): <b>{{$purchase_return->store->name}}</b>
+                        @lang('lang.store'): <b>{{$purchase_return->store->name ?? ''}}</b>
                     </div>
                 </div>
                 <br>
@@ -49,7 +49,7 @@
                                 <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                 <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                 <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
-                                <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                <th class="sum" style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,7 +91,7 @@
                         <tfoot>
                             <tr>
                                 <th colspan="4" style="text-align: right"> @lang('lang.total')</th>
-                                <td>{{@num_format($total)}}</td>
+                                <td></td>
                             </tr>
                         </tfoot>
                     </table>

@@ -14,7 +14,7 @@
                     'add_stock_form', 'enctype' => 'multipart/form-data' ]) !!}
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3 @if(!session('user.is_superadmin')) hide @endif">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,
@@ -82,8 +82,9 @@
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
-                                            <th style="width: 20%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
-                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.action' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
+                                            <th style="width: 10%" class="col-sm-4">@lang( 'lang.action' )</th>
                                         </tr>
                                     </thead>
                                     <tbody>

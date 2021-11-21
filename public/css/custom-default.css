@@ -755,7 +755,7 @@ nav.navbar .nav-item li.notifications a i {
 
 .dt-buttons {
     display: inline-block;
-    text-align: right;
+    text-align: center;
     width: 40%;
 }
 
@@ -1246,4 +1246,8 @@ table.dataTable tbody td.dt-checkboxes-cell {
 .modal-content {
     -webkit-box-shadow: 0 0 20px #8b8b8b;
     box-shadow: 0 0 20px #8b8b8b;
+}
+.tac_description_div span{
+    font-size: 12px;
+    color: #6c757d!important;
 }

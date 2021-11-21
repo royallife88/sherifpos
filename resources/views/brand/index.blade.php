@@ -26,8 +26,9 @@
                         <tbody>
                             @foreach($brands as $brand)
                             <tr>
-                                <td><img src="@if(!empty($brand->getFirstMediaUrl('brand'))){{$brand->getFirstMediaUrl('brand')}}@else{{asset('images/default.jpg')}}@endif"
-                                    alt="photo" width="50" height="50"></td>
+                                <td><img src="@if(!empty($brand->getFirstMediaUrl('brand'))){{$brand->getFirstMediaUrl('brand')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                    alt="photo" width="50" height="50">
+                                </td>
                                 <td>{{$brand->name}}</td>
 
                                 <td>

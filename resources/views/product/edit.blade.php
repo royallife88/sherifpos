@@ -181,6 +181,11 @@
                                 </div>
                             </div>
 
+                            <div class="col-md-12">
+                                <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                        alt="photo" style="width: 120px;">
+                            </div>
+
                             <div class="col-md-12 " style="margin-top: 10px;">
                                 <div class="dropzone" id="my-dropzone">
                                 </div>
@@ -211,6 +216,7 @@
                                     __('lang.alert_quantity')]) !!}
                                 </div>
                             </div>
+                            @can('product_module.purchase_price.create_and_edit')
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('purchase_price', __('lang.purchase_price') . ' *', []) !!}
@@ -219,6 +225,7 @@
                                     __('lang.purchase_price'), 'required']) !!}
                                 </div>
                             </div>
+                            @endcan
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
@@ -352,6 +359,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($product->product_stores as $product_store)
+                                        @if(!empty($product_store->store))
                                         <tr>
                                             <td>{{$product_store->store->name}}</td>
                                             <td><input type="text" class="form-control store_prices"
@@ -359,7 +367,7 @@
                                                     name="product_stores[{{$product_store->store_id}}][price]"
                                                     value="{{$product_store->price}}"></td>
                                         </tr>
-
+                                        @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -407,7 +415,7 @@
                         <div class="row">
                             <div class="col-md-4 mt-5">
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('lang.submit')}}" class="btn btn-primary">
+                                    <input type="submit" id="submit-btn" value="{{trans('lang.submit')}}" class="btn btn-primary">
                                 </div>
                             </div>
                         </div>
@@ -421,7 +429,7 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/product.js')}}"></script>
+<script src="{{asset('js/product_edit.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(){
         $('#different_prices_for_stores').change();

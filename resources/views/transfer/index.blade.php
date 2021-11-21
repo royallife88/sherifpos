@@ -61,7 +61,7 @@
                 <th>@lang('lang.created_by')</th>
                 <th>@lang('lang.sender_store')</th>
                 <th>@lang('lang.receiver_store')</th>
-                <th>@lang('lang.value_of_transaction')</th>
+                <th class="sum">@lang('lang.value_of_transaction')</th>
                 <th>@lang('lang.notes')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -71,9 +71,9 @@
             <tr>
                 <td>{{@format_date($transfer->transaction_date)}}</td>
                 <td>{{$transfer->invoice_no}}</td>
-                <td>{{ucfirst($transfer->created_by_user->name)}}</td>
-                <td>{{ucfirst($transfer->sender_store->name)}}</td>
-                <td>{{ucfirst($transfer->receiver_store->name)}}</td>
+                <td>{{ucfirst($transfer->created_by_user->name ?? '')}}</td>
+                <td>{{ucfirst($transfer->sender_store->name ?? '')}}</td>
+                <td>{{ucfirst($transfer->receiver_store->name ?? '')}}</td>
                 <td>{{@num_format($transfer->final_total)}}</td>
                 <td>{{$transfer->notes}}</td>
                 <td>
@@ -84,20 +84,27 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                            @if($transfer->is_internal_stock_transfer == 1 && $transfer->status != 'approved')
+                            <li>
+                                <a data-href="{{action('InternalStockRequestController@getUpdateStatus', $transfer->id)}}"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-arrow-up"></i>
+                                    @lang('lang.update_status')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endif
                             @can('stock.transfer.view')
                             <li>
 
                                 <a data-href="{{action('TransferController@show', $transfer->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i
-                                        class="fa fa-eye"></i> @lang('lang.view')</a>
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                    @lang('lang.view')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
                             @can('stock.transfer.create_and_edit')
                             <li>
 
-                                <a href="{{action('TransferController@edit', $transfer->id)}}"
-                                     class="btn"><i
+                                <a href="{{action('TransferController@edit', $transfer->id)}}" class="btn"><i
                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
@@ -115,16 +122,13 @@
                     </div>
                 </td>
             </tr>
-            <tfoot>
-                <tr>
-                    <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                    <td colspan="3">{{@num_format($transfers->sum('final_total'))}}</td>
-                </tr>
-            </tfoot>
             @endforeach
         </tbody>
         <tfoot>
-
+            <tr>
+                <th colspan="5" style="text-align: right">@lang('lang.total')</th>
+                <td></td>
+            </tr>
         </tfoot>
     </table>
 </div>

@@ -113,7 +113,7 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/add_stock.js')}}"></script>
+<script src="{{asset('js/transfer.js')}}"></script>
 <script type="text/javascript">
 
 </script>

@@ -59,6 +59,110 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getProductStocks(Request $request)
+    {
+        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+
+        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
+        if (!empty($store_id)) {
+            $products->where('product_stores.store_id', $store_id);
+        }
+
+        if (!empty(request()->product_id)) {
+            $products->where('products.id', request()->product_id);
+        }
+
+        if (!empty(request()->product_class_id)) {
+            $products->where('product_class_id', request()->product_class_id);
+        }
+
+        if (!empty(request()->category_id)) {
+            $products->where('category_id', request()->category_id);
+        }
+
+        if (!empty(request()->sub_category_id)) {
+            $products->where('sub_category_id', request()->sub_category_id);
+        }
+
+        if (!empty(request()->tax_id)) {
+            $products->where('tax_id', request()->tax_id);
+        }
+
+        if (!empty(request()->brand_id)) {
+            $products->where('brand_id', request()->brand_id);
+        }
+
+        if (!empty(request()->unit_id)) {
+            $products->whereJsonContains('multiple_units', request()->unit_id);
+        }
+
+        if (!empty(request()->color_id)) {
+            $products->whereJsonContains('multiple_colors', request()->color_id);
+        }
+
+        if (!empty(request()->size_id)) {
+            $products->whereJsonContains('multiple_sizes', request()->size_id);
+        }
+
+        if (!empty(request()->grade_id)) {
+            $products->whereJsonContains('multiple_grades', request()->grade_id);
+        }
+
+        if (!empty(request()->customer_type_id)) {
+            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+        }
+
+        if (!empty(request()->customer_type_id)) {
+            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+        }
+
+        $products->where('active', 1);
+        $products = $products->select(
+            'products.*',
+            DB::raw('SUM(product_stores.qty_available) as current_stock'),
+        )
+            ->groupBy('products.id')
+            ->get();
+        $product_classes = ProductClass::pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
+        $brands = Brand::pluck('name', 'id');
+        $units = Unit::pluck('name', 'id');
+        $colors = Color::pluck('name', 'id');
+        $sizes = Size::pluck('name', 'id');
+        $grades = Grade::pluck('name', 'id');
+        $taxes = Tax::pluck('name', 'id');
+        $customers = Customer::pluck('name', 'id');
+        $customer_types = CustomerType::pluck('name', 'id');
+        $customers_tree_arry = Customer::getCustomerTreeArray();
+        $stores  = Store::getDropdown();
+        $page = 'product_stock';
+
+        return view('product.index')->with(compact(
+            'products',
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes',
+            'customers',
+            'customer_types',
+            'customers_tree_arry',
+            'stores',
+            'page'
+        ));
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
     public function index(Request $request)
     {
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
@@ -137,7 +241,7 @@ class ProductController extends Controller
         $customers = Customer::pluck('name', 'id');
         $customer_types = CustomerType::pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
-        $stores  = Store::pluck('name', 'id');
+        $stores  = Store::getDropdown();
 
         return view('product.index')->with(compact(
             'products',
@@ -164,6 +268,10 @@ class ProductController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('product_module.product.create_and_edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $product_classes = ProductClass::pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
@@ -223,7 +331,9 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-
+        if (!auth()->user()->can('product_module.product.create_and_edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
@@ -308,6 +418,10 @@ class ProductController extends Controller
      */
     public function show($id)
     {
+        if (!auth()->user()->can('product_module.product.view')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $product = Product::find($id);
 
         $stock_detials = ProductStore::where('product_id', $id)->get();
@@ -326,6 +440,9 @@ class ProductController extends Controller
      */
     public function edit($id)
     {
+        if (!auth()->user()->can('product_module.product.create_and_edit')) {
+            abort(403, 'Unauthorized action.');
+        }
         $product = Product::find($id);
 
         $product_classes = ProductClass::pluck('name', 'id');
@@ -370,6 +487,10 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->can('product_module.product.create_and_edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
@@ -421,9 +542,9 @@ class ProductController extends Controller
 
             $this->productUtil->createOrUpdateVariations($product, $request);
 
-
             if ($request->images) {
-                foreach ($request->file('images', []) as $key => $image) {
+                $product->clearMediaCollection('product');
+                foreach ($request->images as $image) {
                     $product->addMedia($image)->toMediaCollection('product');
                 }
             }
@@ -442,7 +563,11 @@ class ProductController extends Controller
             ];
         }
 
-        return redirect()->back()->with('status', $output);
+        if ($request->ajax()) {
+            return $output;
+        } else {
+            return redirect()->back()->with('status', $output);
+        }
     }
 
     /**
@@ -453,6 +578,9 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
+        if (!auth()->user()->can('product_module.product.delete')) {
+            abort(403, 'Unauthorized action.');
+        }
         try {
             $sell_lines = TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
                 ->join('products', 'transaction_sell_lines.product_id', 'products.id')->groupBy('transaction_sell_lines.product_id')

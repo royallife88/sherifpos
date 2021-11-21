@@ -8,7 +8,6 @@
             <div class="card-body">
                 <form action="">
                     <div class="row">
-                        @if(session('user.is_superadmin'))
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('store_id', __('lang.store'), []) !!}
@@ -16,7 +15,6 @@
                                 'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
-                        @endif
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
@@ -58,20 +56,16 @@
                     <th>@lang('lang.date_and_time')</th>
                     <th>@lang('lang.invoice_date')</th>
                     <th>@lang('lang.supplier')</th>
-                    <th>@lang('lang.value')</th>
+                    <th class="sum">@lang('lang.value')</th>
                     <th>@lang('lang.created_by')</th>
-                    <th>@lang('lang.paid_amount')</th>
-                    <th>@lang('lang.pending_amount')</th>
+                    <th class="sum">@lang('lang.paid_amount')</th>
+                    <th class="sum">@lang('lang.pending_amount')</th>
                     <th>@lang('lang.due_date')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
 
             <tbody>
-                @php
-                    $total_payments = 0;
-                    $total_pending_amount = 0;
-                @endphp
                 @foreach ($add_stocks as $add_stock)
                 <tr>
                     <td>@if(!empty($add_stock->po_no)&& !empty($add_stock->purchase_order_id))<a
@@ -87,7 +81,7 @@
                         {{@num_format($add_stock->final_total)}}
                     </td>
                     <td>
-                        {{ucfirst($add_stock->created_by_user->name)}}
+                        {{ucfirst($add_stock->created_by_user->name ?? '')}}
                     </td>
                     <td>
                         {{@num_format($add_stock->transaction_payments->sum('amount'))}}
@@ -141,23 +135,17 @@
                         </div>
                     </td>
                 </tr>
-                @php
-                    $total_payments += $add_stock->transaction_payments->sum('amount');
-                    $total_pending_amount += $add_stock->final_total - $add_stock->transaction_payments->sum('amount');
-                @endphp
+
                 @endforeach
             </tbody>
             <tfoot>
                 <tr>
                     <th colspan="5" style="text-align: right">@lang('lang.total')</th>
-                    <td>{{@num_format($add_stocks->sum('final_total'))}}</td>
                     <td></td>
-                    <td>{{@num_format($total_payments)}}</td>
-                    <td>{{@num_format($total_pending_amount)}}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
                 </tr>
-            </tfoot>
-            <tfoot>
-
             </tfoot>
         </table>
 

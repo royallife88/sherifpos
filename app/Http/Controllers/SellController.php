@@ -10,6 +10,7 @@ use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
@@ -115,6 +116,8 @@ class SellController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $stores = Store::getDropdown();
+        $store_poses = [];
 
         return view('sale.create')->with(compact(
             'walk_in_customer',
@@ -124,6 +127,8 @@ class SellController extends Controller
             'tac',
             'taxes',
             'payment_types',
+            'stores',
+            'store_poses',
             'payment_status_array'
         ));
     }
@@ -265,10 +270,23 @@ class SellController extends Controller
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
-            $html_content = view('sale_pos.partials.invoice')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
+            $invoice_lang = System::getProperty('invoice_lang');
+            if (empty($invoice_lang)) {
+                $invoice_lang = request()->session()->get('language');
+            }
+
+            if ($invoice_lang == 'ar_and_en') {
+                $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
+                    'transaction',
+                    'payment_types'
+                ))->render();
+            } else {
+                $html_content = view('sale_pos.partials.invoice')->with(compact(
+                    'transaction',
+                    'payment_types',
+                    'invoice_lang'
+                ))->render();
+            }
 
             $output = [
                 'success' => true,

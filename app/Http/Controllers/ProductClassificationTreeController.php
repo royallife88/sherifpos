@@ -7,10 +7,11 @@ use App\Models\ProductClass;
 use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductClassificationTreeController extends Controller
 {
-     /**
+    /**
      * All Utils instance.
      *
      */
@@ -23,7 +24,7 @@ class ProductClassificationTreeController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil,ProductUtil $productUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
@@ -108,5 +109,25 @@ class ProductClassificationTreeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * get product details
+     *
+     * @param int $id
+     * @return void
+     */
+    public function getProductDetailsRows(Request $request)
+    {
+        $store_ids = $request->store_ids;
+        $type = $request->type;
+        $array = $request->array;
+
+        $products = $this->productUtil->getProductDetailsUsingArrayIds($array, $store_ids);
+
+        return view('product_classification_tree.partials.product_details_row')->with(compact(
+            'products',
+            'type'
+        ));
     }
 }

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Leave;
+use App\Models\Store;
 use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\WagesAndCompensation;
+use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -17,15 +19,17 @@ use Illuminate\Support\Facades\DB;
 class HomeController extends Controller
 {
     protected $commonUtil;
+    protected $productUtil;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil)
     {
         $this->middleware('auth');
         $this->commonUtil = $commonUtil;
+        $this->productUtil = $productUtil;
     }
 
     /**
@@ -111,6 +115,7 @@ class HomeController extends Controller
 
 
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $stores = Store::getDropdown();
 
 
         return view('home.index')->with(compact(
@@ -127,6 +132,7 @@ class HomeController extends Controller
             'best_sellings',
             'yearly_best_sellings_qty',
             'yearly_best_sellings_price',
+            'stores',
             'month'
         ));
     }
@@ -146,7 +152,7 @@ class HomeController extends Controller
             ->orderBy($order_by, 'desc')
             ->take(5)->get();
     }
-    public function getSaleAmount($start_date, $end_date)
+    public function getSaleAmount($start_date, $end_date, $store_id = null)
     {
         $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
         if (!empty($start_date)) {
@@ -155,10 +161,13 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $sell_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $sell_query->where('store_id', $store_id);
+        }
         return $sell_query->sum('final_total');
     }
 
-    public function getPurchaseAmount($start_date, $end_date)
+    public function getPurchaseAmount($start_date, $end_date, $store_id = null)
     {
         $purchase_query = Transaction::where('type', 'add_stock')->where('status', 'received');
         if (!empty($start_date)) {
@@ -167,12 +176,16 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $purchase_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $purchase_query->where('store_id', $store_id);
+        }
         return $purchase_query->sum('final_total');
     }
 
     public function getDashboardData($start_date, $end_date)
     {
-        $revenue = $this->getSaleAmount($start_date, $end_date);
+        $store_id = request()->get('store_id', null);
+        $revenue = $this->getSaleAmount($start_date, $end_date, $store_id);
 
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
         if (!empty($start_date)) {
@@ -180,6 +193,9 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $sell_return_query->where('store_id', $store_id);
         }
         $sell_return = $sell_return_query->sum('final_total');
 
@@ -190,9 +206,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $purchase_return_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $purchase_return_query->where('store_id', $store_id);
+        }
         $purchase_return = $purchase_return_query->sum('final_total');
 
-        $purchase =  $this->getPurchaseAmount($start_date, $end_date);
+        $purchase =  $this->getPurchaseAmount($start_date, $end_date, $store_id);
 
         $revenue -= $sell_return;
         $profit = $revenue + $purchase_return - $purchase;
@@ -203,6 +222,9 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $expense_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $expense_query->where('store_id', $store_id);
         }
         $expense = $expense_query->sum('final_total');
 
@@ -215,6 +237,9 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $payment_received_query->whereDate('paid_on', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $payment_received_query->where('store_id', $store_id);
+        }
         $payment_received = $payment_received_query->sum('amount');
 
         $payment_purchase_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -224,6 +249,9 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $payment_purchase_return_query->whereDate('paid_on', '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $payment_purchase_return_query->where('store_id', $store_id);
         }
         $payment_purchase_return = $payment_purchase_return_query->sum('amount');
         $payment_received_total = $payment_received - $payment_purchase_return;
@@ -237,6 +265,9 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $payment_purchase_query->whereDate('paid_on', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $payment_purchase_query->where('store_id', $store_id);
+        }
         $payment_purchase = $payment_purchase_query->sum('amount');
 
         $payment_expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -246,6 +277,9 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $payment_expense_query->whereDate('paid_on', '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $payment_expense_query->where('store_id', $store_id);
         }
         $payment_expense = $payment_expense_query->sum('amount');
 
@@ -265,6 +299,9 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty($store_id)) {
+            $sell_return_query->where('store_id', $store_id);
+        }
         $sell_return_payment =  $sell_return_query->sum('amount');
 
         $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
@@ -277,6 +314,7 @@ class HomeController extends Controller
         $data['purchase_return'] = $purchase_return;
         $data['payment_received'] = $payment_received_total;
         $data['payment_sent'] = $payment_sent;
+        $data['current_stock_value'] = $this->productUtil->getCurrentStockValueByStore($store_id);
 
         return $data;
     }

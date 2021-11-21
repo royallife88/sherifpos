@@ -54,7 +54,7 @@ class CashInAdjustmentController extends Controller
      */
     public function create()
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
 
         return view('cash_in_adjustment.create')->with(compact(
@@ -115,7 +115,7 @@ class CashInAdjustmentController extends Controller
      */
     public function edit($id)
     {
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
         $cash_in_adjustment = CashInAdjustment::find($id);
 

@@ -45,9 +45,8 @@ class PurchaseOrderToSupplierNotification extends Notification
     {
          $data = $this->data;
 
-        $from = System::getProperty('email');
+        $from = System::getProperty('sender_email');
         $app_name = env('APP_NAME');
-
         return (new MailMessage)
             ->from($from, $app_name)
             ->subject('Purchase Order')

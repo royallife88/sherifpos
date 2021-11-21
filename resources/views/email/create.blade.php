@@ -16,7 +16,7 @@
                                 <div class="form-group">
                                     {!! Form::label('employee_id', __('lang.employee'), []) !!}
                                     {!! Form::select('employee_id[]', $employees, !empty($email) ? $email : false, ['class' => 'form-control
-                                    selectpicker', 'multiple', 'id' => 'employee_id', 'placeholder' =>
+                                    selectpicker', 'multiple', 'data-live-search' =>'true', 'id' => 'employee_id', 'placeholder' =>
                                     __('lang.please_select')]) !!}
                                 </div>
                             </div>

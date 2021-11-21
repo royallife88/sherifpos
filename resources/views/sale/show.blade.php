@@ -1,4 +1,4 @@
-<div class="modal-dialog" role="document" style="max-width: 55%">
+<div class="modal-dialog no-print" role="document" style="max-width: 55%">
     <div class="modal-content">
         <div class="modal-header">
 
@@ -14,27 +14,27 @@
                         <h5>@lang('lang.invoice_no'): {{$sale->invoice_no}}</h5>
                     </div>
                     <div class="col-md-12">
-                        <h5>@lang('lang.date'): {{@format_date($sale->transaction_date)}}</h5>
+                        <h5>@lang('lang.date'): {{@format_datetime($sale->transaction_date)}}</h5>
                     </div>
                     <div class="col-md-12">
-                        <h5>@lang('lang.store'): {{$sale->store->name}}</h5>
+                        <h5>@lang('lang.store'): {{$sale->store->name ?? ''}}</h5>
                     </div>
                 </div>
                 <br>
                 <div class="col-md-6">
                     <div class="col-md-12">
                         {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
-                        <b>{{$sale->customer->name}}</b>
+                        <b>{{$sale->customer->name  ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
-                        {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email}}</b>
+                        {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
                         {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                        <b>{{$sale->customer->mobile_number}}</b>
+                        <b>{{$sale->customer->mobile_number ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
-                        {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address}}</b>
+                        {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ?? ''}}</b>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                         <tbody>
                             @foreach ($sale->transaction_sell_lines as $line)
                             <tr>
-                                <td><img src="@if(!empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('images/default.jpg')}}@endif"
+                                <td><img src="@if(!empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                     alt="photo" width="50" height="50"></td>
                                 <td>
                                     {{$line->product->name}}
@@ -159,13 +159,16 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    @lang('lang.terms_and_conditions'): @if(!empty($sale->terms_and_conditions)){{$sale->terms_and_conditions->description}} @endif
+                    <b>@lang('lang.terms_and_conditions'):</b> @if(!empty($sale->terms_and_conditions)){!!$sale->terms_and_conditions->description!!} @endif
                 </div>
             </div>
 
         </div>
 
         <div class="modal-footer">
+            <a data-href="{{action('SellController@print', $sale->id)}}"
+                class="btn btn-primary text-white print-invoice"><i
+                   class="dripicons-print"></i> @lang('lang.print')</a>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 

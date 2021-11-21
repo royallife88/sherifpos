@@ -70,7 +70,7 @@
                                         <th>@lang('lang.expense_category')</th>
                                         <th>@lang('lang.beneficiary')</th>
                                         <th>@lang('lang.store')</th>
-                                        <th>@lang('lang.amount_paid')</th>
+                                        <th class="sum">@lang('lang.amount_paid')</th>
                                         <th>@lang('lang.created_by')</th>
                                         <th>@lang('lang.creation_date')</th>
                                         <th>@lang('lang.payment_date')</th>
@@ -84,10 +84,10 @@
                                     @foreach ($expenses as $expense)
                                     <tr>
                                         <td>
-                                            {{$expense->expense_category->name}}
+                                            {{$expense->expense_category->name ?? ''}}
                                         </td>
                                         <td>
-                                            {{$expense->expense_beneficiary->name}}
+                                            {{$expense->expense_beneficiary->name ?? ''}}
                                         </td>
                                         <td>
                                            @if(!empty($expense->store)) {{$expense->store->name}} @endif
@@ -122,8 +122,8 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="2" class="text-right"><strong>@lang('lang.total')</strong></td>
-                                        <td colspan="2">{{@num_format($expenses->sum('final_total'))}}</td>
+                                        <td colspan="3" class="text-right"><strong>@lang('lang.total')</strong></td>
+                                        <td>{{@num_format($expenses->sum('final_total'))}}</td>
                                     </tr>
                                 </tfoot>
                             </table>
