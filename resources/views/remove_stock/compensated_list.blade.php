@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.remove_stock'))
+@section('title', __('lang.compensated'))
 
 @section('content')
 <section class="">
@@ -19,14 +19,6 @@
                             <div class="form-group">
                                 {!! Form::label('store_id', __('lang.store'), []) !!}
                                 {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
-                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {!! Form::label('status', __('lang.status'), []) !!}
-                                {!! Form::select('status', ['pendign' => __('lang.pending'), 'compensated' =>
-                                __('lang.compensated')], request()->status, ['class' =>
                                 'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
@@ -52,7 +44,7 @@
                         <div class="col-md-3">
                             <br>
                             <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                            <a href="{{action('RemoveStockController@index')}}"
+                            <a href="{{action('RemoveStockController@getCompensated')}}"
                                 class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
                         </div>
                     </div>
@@ -68,11 +60,11 @@
                     <th>@lang('lang.date_and_time')</th>
                     <th>@lang('lang.removal_transaction_no')</th>
                     <th>@lang('lang.status')</th>
+                    <th>@lang('lang.invoice_no')</th>
                     <th>@lang('lang.store')</th>
                     <th>@lang('lang.reason')</th>
                     <th>@lang('lang.value')</th>
                     <th>@lang('lang.files')</th>
-                    <th>@lang('lang.invoice_no')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -80,9 +72,12 @@
             <tbody>
                 @foreach ($remove_stocks as $remove_stock)
                 <tr>
-                    <td> {{@format_date($remove_stock->transaction_date)}}</td>
-                    <td>{{$remove_stock->invoice_no}}</td>
+                    <td> {{@format_date($remove_stock->compensated_at)}}</td>
+                    <td><a href="{{action('RemoveStockController@show', $remove_stock->id)}}">{{$remove_stock->invoice_no}}
+                        </a>
+                    </td>
                     <td>{{ucfirst($remove_stock->status)}}</td>
+                    <td>{{$remove_stock->compensated_invoice_no}}</td>
                     <td>
                         {{$remove_stock->store->name ?? ''}}
                     </td>
@@ -90,15 +85,11 @@
                         {{$remove_stock->reason}}
                     </td>
                     <td>
-                        {{@num_format($remove_stock->final_total)}}
+                        {{@num_format($remove_stock->compensated_value)}}
                     </td>
                     <td><a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $remove_stock->id, 'collection_name' => 'remove_stock'])}}"
                             data-container=".view_modal"
                             class="btn btn-modal">@lang('lang.view')</a></td>
-                    <td>
-                        @if(!empty($remove_stock->add_stock_id)){{App\Models\Transaction::find($remove_stock->add_stock_id)->invoice_no
-                        }}@endif
-                    </td>
                     <td>
 
                         <div class="btn-group">

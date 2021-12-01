@@ -49,6 +49,7 @@ class TransferController extends Controller
      */
     public function index()
     {
+        $stores = Store::getDropdown();
         $query = Transaction::where('type', 'transfer');
 
         if (!empty(request()->sender_store)) {
@@ -57,15 +58,27 @@ class TransferController extends Controller
         if (!empty(request()->receiver_store)) {
             $query->where('receiver_store', request()->receiver_store);
         }
+        if (!empty(request()->invoice_no)) {
+            $query->where('invoice_no', request()->invoice_no);
+        }
         if (!empty(request()->start_date)) {
-            $query->where('transaction_date', '>=', request()->start_date);
+            $query->whereDate('transaction_date', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
+        if (!auth()->user()->can('stock.internal_stock_request.view')) {
+            $query->where('is_internal_stock_transfer', 0);
+        }
+
+        $permitted_stores = array_keys($stores);
+        if(!session('is_superadmin')){
+            $query->where(function($q) use ($permitted_stores){
+                $q->whereIn('receiver_store_id', $permitted_stores)->orWhereIn('sender_store_id', $permitted_stores);
+            });
+        }
 
         $transfers = $query->orderBy('invoice_no', 'desc')->get();
-        $stores = Store::getDropdown();
 
 
         return view('transfer.index')->with(compact(
@@ -159,6 +172,23 @@ class TransferController extends Controller
     }
 
     /**
+     * print the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function print($id)
+    {
+        $transfer = Transaction::find($id);
+        $stores = Store::getDropdown();
+
+        return view('transfer.print')->with(compact(
+            'stores',
+            'transfer'
+        ));
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -242,11 +272,15 @@ class TransferController extends Controller
         try {
             $transfer = Transaction::find($id);
 
-            $transfer_lines = TransferLine::where('transaction_id', $id)->get();
-            foreach ($transfer_lines as $line) {
-                $this->productUtil->decreaseProductQuantity($line->product_id, $line->variation_id, $transfer->receiver_store_id, $line->quantity, 0);
-                $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $transfer->sender_store_id,  $line->quantity, 0);
-                $line->delete();
+            if ($transfer->is_internal_stock_transfer == 1 && !in_array($transfer->status, ['final', 'received', 'approved'])) {
+                TransferLine::where('transaction_id', $id)->delete();
+            } else {
+                $transfer_lines = TransferLine::where('transaction_id', $id)->get();
+                foreach ($transfer_lines as $line) {
+                    $this->productUtil->decreaseProductQuantity($line->product_id, $line->variation_id, $transfer->receiver_store_id, $line->quantity, 0);
+                    $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $transfer->sender_store_id,  $line->quantity, 0);
+                    $line->delete();
+                }
             }
             $transfer->delete();
 

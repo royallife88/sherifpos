@@ -1,7 +1,7 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('InternalStockRequestController@postUpdateStatus', $transaction->id), 'method'
+        {!! Form::open(['url' => action('InternalStockReturnController@postUpdateStatus', $transaction->id), 'method'
         => 'post', 'id' =>
         'update_status_form' ]) !!}
 
@@ -25,7 +25,8 @@
                 <div class="form-group">
                     {!! Form::label('status', __('lang.status'). ':*', []) !!}
                     {!! Form::select('status', ['received' => __('lang.received'), 'approved' =>
-                    __('lang.approved'), 'pending' => __('lang.pending'), 'declined' => __('lang.declined')],
+                    __('lang.approved'), 'pending' => __('lang.pending'), 'declined' => __('lang.declined'),
+                    'send_the_goods' => __('lang.send_the_goods')],
                     $transaction->status, ['class' => 'selectpicker form-control',
                     'data-live-search'=>"true", 'required',
                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
@@ -63,8 +64,7 @@
                                     {{$product->variation->sub_sku}}
                                 </td>
                                 <td>
-                                    <input type="text" class="form-control quantity" min=1
-                                        max="{{$product->quantity}}"
+                                    <input type="text" class="form-control quantity" min=1 max="{{$product->quantity}}"
                                         name="transfer_lines[{{$loop->index}}][quantity]" required
                                         value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
                                 </td>

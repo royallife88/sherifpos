@@ -27,6 +27,17 @@
                     {!! Form::label('receiver_store', __('lang.receiver_store'), []) !!}:
                     <b>{{$transfer->receiver_store->name}}</b>
                 </div>
+                <div class="col-md-6">
+                    {!! Form::label('approved', __('lang.approved'), []) !!}:
+                    <b>@if(!empty($transfer->approved_at)) {{@format_date($transfer->approved_at)}} @endif -
+                        {{$transfer->approved_by_user->name}}</b>
+                </div>
+
+                <div class="col-md-6">
+                    {!! Form::label('receiver_store', __('lang.received'), []) !!}:
+                    <b>@if(!empty($transfer->received_at)) {{@format_date($transfer->received_at)}} @endif -
+                        {{$transfer->received_by_user->name}}</b>
+                </div>
 
             </div>
             <br>

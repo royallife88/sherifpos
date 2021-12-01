@@ -4,8 +4,8 @@
         <!-- Sidebar Navigation Menus-->
         <div class="main-menu">
             <ul id="side-main-menu" class="side-menu list-unstyled">
-                <li><a href="{{url('/home')}}"> <i
-                            class="dripicons-meter"></i><span>{{ __('lang.dashboard') }}</span></a></li>
+                <li><a href="{{url('/home')}}"> <i class="dripicons-meter"></i><span>{{ __('lang.dashboard')
+                            }}</span></a></li>
 
                 @if(auth()->user()->can('product_module.product.create_and_edit') ||
                 auth()->user()->can('product_module.product.view') ||
@@ -18,12 +18,14 @@
                         @can('product_module.product.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'product' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('ProductController@create')}}">{{__('lang.add_new_product')}}</a></li>
+                            <a href="{{action('ProductController@create')}}">{{__('lang.add_new_product')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.product.view')
                         <li
                             class="@if(request()->segment(1) == 'product' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ProductController@index')}}">{{__('lang.product_list')}}</a></li>
+                            <a href="{{action('ProductController@index')}}">{{__('lang.product_list')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.product_classification_tree.view')
                         <li
@@ -35,7 +37,8 @@
                         @can('product_module.barcode.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
-                            <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a></li>
+                            <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -87,16 +90,18 @@
                 <li><a href="#stock" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-basket"></i><span>{{__('lang.stock')}}</span><span></a>
                     <ul id="stock"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['add-stock', 'remove-stock', 'transfer'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['add-stock', 'remove-stock', 'transfer', 'internal-stock-request', 'internal-stock-return'])) show @endif">
                         @can('stock.add_stock.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'product-stocks' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ProductController@getProductStocks')}}">{{__('lang.product_stocks')}}</a></li>
+                            <a href="{{action('ProductController@getProductStocks')}}">{{__('lang.product_stocks')}}</a>
+                        </li>
                         @endcan
                         @can('stock.add_stock.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'add-stock' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('AddStockController@create')}}">{{__('lang.add_new_stock')}}</a></li>
+                            <a href="{{action('AddStockController@create')}}">{{__('lang.add_new_stock')}}</a>
+                        </li>
                         @endcan
                         @can('stock.add_stock.view')
                         <li
@@ -107,12 +112,20 @@
                         @can('stock.remove_stock.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('RemoveStockController@create')}}">{{__('lang.remove_stock')}}</a></li>
+                            <a href="{{action('RemoveStockController@create')}}">{{__('lang.remove_stock')}}</a>
+                        </li>
                         @endcan
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
+                        </li>
+                        @endcan
+                        @can('stock.remove_stock.view')
+                        <li
+                            class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
+                            <a
+                                href="{{action('RemoveStockController@getCompensated')}}">{{__('lang.compensated_from_supplier')}}</a>
                         </li>
                         @endcan
                         @can('stock.transfer.create_and_edit')
@@ -124,7 +137,29 @@
                         @can('stock.transfer.view')
                         <li
                             class="@if(request()->segment(1) == 'transfer' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('TransferController@index')}}">{{__('lang.view_transfers')}}</a>
+                            <a
+                                href="{{action('TransferController@index')}}">{{__('lang.all_internal_stock_requests_and_transfers')}}</a>
+                        </li>
+                        @endcan
+                        @can('stock.internal_stock_request.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'internal-stock-request' && request()->segment(2) == 'create') active @endif">
+                            <a
+                                href="{{action('InternalStockRequestController@create')}}">{{__('lang.internal_stock_request')}}</a>
+                        </li>
+                        @endcan
+                        @can('stock.internal_stock_return.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'internal-stock-return' && request()->segment(2) == 'create') active @endif">
+                            <a
+                                href="{{action('InternalStockReturnController@create')}}">{{__('lang.internal_stock_return')}}</a>
+                        </li>
+                        @endcan
+                        @can('stock.internal_stock_return.view')
+                        <li
+                            class="@if(request()->segment(1) == 'internal-stock-return' && empty(request()->segment(2))) active @endif">
+                            <a
+                                href="{{action('InternalStockReturnController@index')}}">{{__('lang.return_requests_report')}}</a>
                         </li>
                         @endcan
                         @can('stock.import.create_and_edit')
@@ -132,11 +167,6 @@
                             class="@if(request()->segment(1) == 'add-stock' && request()->segment(2) == 'get-import') active @endif">
                             <a href="{{action('AddStockController@getImport')}}">{{__('lang.import_add_stock')}}</a>
                         </li>
-                        @endcan
-                        @can('stock.internal_stock_request.create_and_edit')
-                        <li
-                            class="@if(request()->segment(1) == 'internal-stock-request' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('InternalStockRequestController@create')}}">{{__('lang.internal_stock_request')}}</a></li>
                         @endcan
                     </ul>
                 </li>
@@ -151,7 +181,8 @@
                         @can('quotation_for_customers.quotation.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'quotation' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('QuotationController@create')}}">{{__('lang.create_quotation')}}</a></li>
+                            <a href="{{action('QuotationController@create')}}">{{__('lang.create_quotation')}}</a>
+                        </li>
                         @endcan
                         @can('quotation_for_customers.quotation.view')
                         <li
@@ -162,7 +193,8 @@
                         @can('quotation_for_customers.quotation.view')
                         <li
                             class="@if(request()->segment(1) == 'quotation' && request()->segment(2) == 'view-all-invoices') active @endif">
-                            <a href="{{action('QuotationController@viewAllInvoices')}}">{{__('lang.view_all_invoices')}}</a>
+                            <a
+                                href="{{action('QuotationController@viewAllInvoices')}}">{{__('lang.view_all_invoices')}}</a>
                         </li>
                         @endcan
 
@@ -177,27 +209,32 @@
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['pos', 'sale'])) show @endif">
                         @can('sale.pos.view')
                         <li class="@if(request()->segment(1) == 'sale' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SellController@index')}}">{{__('lang.sales_list')}}</a></li>
+                            <a href="{{action('SellController@index')}}">{{__('lang.sales_list')}}</a>
+                        </li>
                         @endcan
                         @can('sale.pos.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'pos' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SellPosController@create')}}">{{__('lang.pos')}}</a></li>
+                            <a href="{{action('SellPosController@create')}}">{{__('lang.pos')}}</a>
+                        </li>
                         @endcan
                         @can('sale.sale.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SellController@create')}}">{{__('lang.add_sales')}}</a></li>
+                            <a href="{{action('SellController@create')}}">{{__('lang.add_sales')}}</a>
+                        </li>
                         @endcan
                         @can('sale.delivery_list.view')
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'get-delivery-list') active @endif">
-                            <a href="{{action('SellController@getDeliveryList')}}">{{__('lang.delivery_list')}}</a></li>
+                            <a href="{{action('SellController@getDeliveryList')}}">{{__('lang.delivery_list')}}</a>
+                        </li>
                         @endcan
                         @can('sale.import.view')
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'get-import') active @endif">
-                            <a href="{{action('SellController@getImport')}}">{{__('lang.import_sale')}}</a></li>
+                            <a href="{{action('SellController@getImport')}}">{{__('lang.import_sale')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -221,7 +258,8 @@
                         @can('return.purchase_return.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'purchase-return' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('PurchaseReturnController@create')}}">{{__('lang.return_purchase')}}</a></li>
+                            <a href="{{action('PurchaseReturnController@create')}}">{{__('lang.return_purchase')}}</a>
+                        </li>
                         @endcan
                         @can('return.purchase_return.create_and_edit')
                         <li
@@ -278,12 +316,14 @@
                         @can('expense.expense_beneficiaries.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'expense' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('ExpenseController@create')}}">{{__('lang.add_new_expense')}}</a></li>
+                            <a href="{{action('ExpenseController@create')}}">{{__('lang.add_new_expense')}}</a>
+                        </li>
                         @endcan
                         @can('expense.expense_beneficiaries.view')
                         <li
                             class="@if(request()->segment(1) == 'expense' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ExpenseController@index')}}">{{__('lang.view_all_expenses')}}</a></li>
+                            <a href="{{action('ExpenseController@index')}}">{{__('lang.view_all_expenses')}}</a>
+                        </li>
                         @endcan
 
                     </ul>
@@ -305,14 +345,15 @@
                     <ul id="cash"
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash', 'cash-out'])) show @endif">
                         @can('cash.view_details.view')
-                        <li
-                            class="@if(request()->segment(1) == 'cash' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CashController@index')}}">{{__('lang.cash')}}</a></li>
+                        <li class="@if(request()->segment(1) == 'cash' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashController@index')}}">{{__('lang.cash')}}</a>
+                        </li>
                         @endcan
                         @can('cash.add_cash_out.view')
                         <li
                             class="@if(request()->segment(1) == 'cash-out' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CashOutController@index')}}">{{__('lang.cash_out')}}</a></li>
+                            <a href="{{action('CashOutController@index')}}">{{__('lang.cash_out')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -329,42 +370,58 @@
                         @can('adjustment.cash_in_adjustment.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'cash-in-adjustment' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CashInAdjustmentController@create')}}">{{__('lang.add_cash_in_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CashInAdjustmentController@create')}}">{{__('lang.add_cash_in_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.cash_in_adjustment.view')
                         <li
                             class="@if(request()->segment(1) == 'cash-in-adjustment' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CashInAdjustmentController@index')}}">{{__('lang.view_cash_in_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CashInAdjustmentController@index')}}">{{__('lang.view_cash_in_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.cash_out_adjustment.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'cash-out-adjustment' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CashOutAdjustmentController@create')}}">{{__('lang.add_cash_out_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CashOutAdjustmentController@create')}}">{{__('lang.add_cash_out_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.cash_out_adjustment.view')
                         <li
                             class="@if(request()->segment(1) == 'cash-out-adjustment' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CashOutAdjustmentController@index')}}">{{__('lang.view_cash_out_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CashOutAdjustmentController@index')}}">{{__('lang.view_cash_out_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.customer_balance_adjustment.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'customer-balance-adjustment' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CustomerBalanceAdjustmentController@create')}}">{{__('lang.add_customer_balance_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CustomerBalanceAdjustmentController@create')}}">{{__('lang.add_customer_balance_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.customer_balance_adjustment.view')
                         <li
                             class="@if(request()->segment(1) == 'customer-balance-adjustment' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CustomerBalanceAdjustmentController@index')}}">{{__('lang.view_customer_balance_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CustomerBalanceAdjustmentController@index')}}">{{__('lang.view_customer_balance_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.customer_point_adjustment.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'customer-point-adjustment' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CustomerPointAdjustmentController@create')}}">{{__('lang.add_customer_point_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CustomerPointAdjustmentController@create')}}">{{__('lang.add_customer_point_adjustment')}}</a>
+                        </li>
                         @endcan
                         @can('adjustment.customer_point_adjustment.view')
                         <li
                             class="@if(request()->segment(1) == 'customer-point-adjustment' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CustomerPointAdjustmentController@index')}}">{{__('lang.view_customer_point_adjustment')}}</a></li>
+                            <a
+                                href="{{action('CustomerPointAdjustmentController@index')}}">{{__('lang.view_customer_point_adjustment')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -380,112 +437,147 @@
                         @can('reports.profit_loss.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-profit-loss') active @endif">
-                            <a href="{{action('ReportController@getProfitLoss')}}">{{__('lang.profit_loss_report')}}</a></li>
+                            <a href="{{action('ReportController@getProfitLoss')}}">{{__('lang.profit_loss_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.receivable_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-receivable-report') active @endif">
-                            <a href="{{action('ReportController@getReceivableReport')}}">{{__('lang.receivable_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getReceivableReport')}}">{{__('lang.receivable_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.payable_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-payable-report') active @endif">
-                            <a href="{{action('ReportController@getPayableReport')}}">{{__('lang.payable_report')}}</a></li>
+                            <a href="{{action('ReportController@getPayableReport')}}">{{__('lang.payable_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.expected_receivable_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-expected-receivable-report') active @endif">
-                            <a href="{{action('ReportController@getExpectedReceivableReport')}}">{{__('lang.expected_receivable_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getExpectedReceivableReport')}}">{{__('lang.expected_receivable_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.expected_payable_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-expected-payable-report') active @endif">
-                            <a href="{{action('ReportController@getExpectedPayableReport')}}">{{__('lang.expected_payable_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getExpectedPayableReport')}}">{{__('lang.expected_payable_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.summary_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-summary-report') active @endif">
-                            <a href="{{action('ReportController@getSummaryReport')}}">{{__('lang.summary_report')}}</a></li>
+                            <a href="{{action('ReportController@getSummaryReport')}}">{{__('lang.summary_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.best_seller_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-best-seller-report') active @endif">
-                            <a href="{{action('ReportController@getBestSellerReport')}}">{{__('lang.best_seller_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getBestSellerReport')}}">{{__('lang.best_seller_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.product_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-product-report') active @endif">
-                            <a href="{{action('ReportController@getProductReport')}}">{{__('lang.product_report')}}</a></li>
+                            <a href="{{action('ReportController@getProductReport')}}">{{__('lang.product_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.daily_sale_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-daily-sale-report') active @endif">
-                            <a href="{{action('ReportController@getDailySaleReport')}}">{{__('lang.daily_sale_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getDailySaleReport')}}">{{__('lang.daily_sale_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.monthly_sale_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-sale-report') active @endif">
-                            <a href="{{action('ReportController@getMonthlySaleReport')}}">{{__('lang.monthly_sale_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getMonthlySaleReport')}}">{{__('lang.monthly_sale_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.daily_purchase_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-daily-purchase-report') active @endif">
-                            <a href="{{action('ReportController@getDailyPurchaseReport')}}">{{__('lang.daily_purchase_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getDailyPurchaseReport')}}">{{__('lang.daily_purchase_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.monthly_purchase_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-monthly-purchase-report') active @endif">
-                            <a href="{{action('ReportController@getMonthlyPurchaseReport')}}">{{__('lang.monthly_purchase_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getMonthlyPurchaseReport')}}">{{__('lang.monthly_purchase_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.sale_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-sale-report') active @endif">
-                            <a href="{{action('ReportController@getSaleReport')}}">{{__('lang.sale_report')}}</a></li>
+                            <a href="{{action('ReportController@getSaleReport')}}">{{__('lang.sale_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.payment_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-payment-report') active @endif">
-                            <a href="{{action('ReportController@getPaymentReport')}}">{{__('lang.payment_report')}}</a></li>
+                            <a href="{{action('ReportController@getPaymentReport')}}">{{__('lang.payment_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.purchase_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-purchase-report') active @endif">
-                            <a href="{{action('ReportController@getPurchaseReport')}}">{{__('lang.purchase_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getPurchaseReport')}}">{{__('lang.purchase_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.store_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-store-report') active @endif">
-                            <a href="{{action('ReportController@getStoreReport')}}">{{__('lang.store_report')}}</a></li>
+                            <a href="{{action('ReportController@getStoreReport')}}">{{__('lang.store_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.store_stock_chart.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-store-stock-chart') active @endif">
-                            <a href="{{action('ReportController@getStoreStockChart')}}">{{__('lang.store_stock_chart')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getStoreStockChart')}}">{{__('lang.store_stock_chart')}}</a>
+                        </li>
                         @endcan
                         @can('reports.product_quantity_alert_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-product-quantity-alert-report') active @endif">
-                            <a href="{{action('ReportController@getProductQuantityAlertReport')}}">{{__('lang.product_quantity_alert_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getProductQuantityAlertReport')}}">{{__('lang.product_quantity_alert_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.user_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-user-report') active @endif">
-                            <a href="{{action('ReportController@getUserReport')}}">{{__('lang.user_report')}}</a></li>
+                            <a href="{{action('ReportController@getUserReport')}}">{{__('lang.user_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.customer_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-customer-report') active @endif">
-                            <a href="{{action('ReportController@getCustomerReport')}}">{{__('lang.customer_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getCustomerReport')}}">{{__('lang.customer_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.supplier_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-supplier-report') active @endif">
-                            <a href="{{action('ReportController@getSupplierReport')}}">{{__('lang.supplier_report')}}</a></li>
+                            <a
+                                href="{{action('ReportController@getSupplierReport')}}">{{__('lang.supplier_report')}}</a>
+                        </li>
                         @endcan
                         @can('reports.due_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-due-report') active @endif">
-                            <a href="{{action('ReportController@getDueReport')}}">{{__('lang.due_report')}}</a></li>
+                            <a href="{{action('ReportController@getDueReport')}}">{{__('lang.due_report')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -502,12 +594,14 @@
                         @can('coupons_and_gift_cards.coupon.view')
                         <li
                             class="@if(request()->segment(1) == 'coupon' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CouponController@index')}}">{{__('lang.coupon')}}</a></li>
+                            <a href="{{action('CouponController@index')}}">{{__('lang.coupon')}}</a>
+                        </li>
                         @endcan
                         @can('coupons_and_gift_cards.gift_card.view')
                         <li
                             class="@if(request()->segment(1) == 'gift-card' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('GiftCardController@index')}}">{{__('lang.gift_card')}}</a></li>
+                            <a href="{{action('GiftCardController@index')}}">{{__('lang.gift_card')}}</a>
+                        </li>
                         @endcan
 
                     </ul>
@@ -525,12 +619,14 @@
                         @can('customer_module.customer.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'customer' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('CustomerController@create')}}">{{__('lang.add_new_customer')}}</a></li>
+                            <a href="{{action('CustomerController@create')}}">{{__('lang.add_new_customer')}}</a>
+                        </li>
                         @endcan
                         @can('customer_module.customer.view')
                         <li
                             class="@if(request()->segment(1) == 'customer' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CustomerController@index')}}">{{__('lang.view_all_customer')}}</a></li>
+                            <a href="{{action('CustomerController@index')}}">{{__('lang.view_all_customer')}}</a>
+                        </li>
                         @endcan
                         @can('customer_module.customer_type.create_and_edit')
                         <li
@@ -559,12 +655,14 @@
                         @can('supplier_module.supplier.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'supplier' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SupplierController@create')}}">{{__('lang.add_new_supplier')}}</a></li>
+                            <a href="{{action('SupplierController@create')}}">{{__('lang.add_new_supplier')}}</a>
+                        </li>
                         @endcan
                         @can('supplier_module.supplier.view')
                         <li
                             class="@if(request()->segment(1) == 'supplier' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SupplierController@index')}}">{{__('lang.view_all_supplier')}}</a></li>
+                            <a href="{{action('SupplierController@index')}}">{{__('lang.view_all_supplier')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -578,12 +676,16 @@
                         @can('sp_module.sales_promotion.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sales-promotion' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SalesPromotionController@create')}}">{{__('lang.add_new_sales_promotion')}}</a></li>
+                            <a
+                                href="{{action('SalesPromotionController@create')}}">{{__('lang.add_new_sales_promotion')}}</a>
+                        </li>
                         @endcan
                         @can('sp_module.sales_promotion.view')
                         <li
                             class="@if(request()->segment(1) == 'sales-promotion' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SalesPromotionController@index')}}">{{__('lang.view_all_sales_promotion')}}</a></li>
+                            <a
+                                href="{{action('SalesPromotionController@index')}}">{{__('lang.view_all_sales_promotion')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -608,22 +710,26 @@
                         id="hrm">
                         @can('hr_management.jobs.view')
                         <li class="@if(request()->segment(2) == 'job') active @endif">
-                            <a href="{{action('JobController@index')}}">@lang('lang.jobs')</a></li>
+                            <a href="{{action('JobController@index')}}">@lang('lang.jobs')</a>
+                        </li>
                         @endcan
                         @can('hr_management.employee.create_and_edit')
                         <li
                             class="@if(request()->segment(2) == 'employee' && request()->segment(3) == 'create') active @endif">
-                            <a href="{{action('EmployeeController@create')}}">@lang('lang.add_new_employee')</a></li>
+                            <a href="{{action('EmployeeController@create')}}">@lang('lang.add_new_employee')</a>
+                        </li>
                         @endcan
                         @can('hr_management.employee.view')
                         <li
                             class="@if(request()->segment(2) == 'employee' && empty(request()->segment(3))) active @endif">
-                            <a href="{{action('EmployeeController@index')}}">@lang('lang.employee_list')</a></li>
+                            <a href="{{action('EmployeeController@index')}}">@lang('lang.employee_list')</a>
+                        </li>
                         @endcan
                         @can('hr_management.leave_types.view')
                         <li
                             class="@if(request()->segment(2) == 'leave-type' && empty(request()->segment(3))) active @endif">
-                            <a href="{{action('LeaveTypeController@index')}}">@lang('lang.leave_type')</a></li>
+                            <a href="{{action('LeaveTypeController@index')}}">@lang('lang.leave_type')</a>
+                        </li>
                         @endcan
 
 
@@ -682,12 +788,16 @@
                         @can('loyalty_points.earning_of_points.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'earning-of-points' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('EarningOfPointController@create')}}">{{__('lang.earning_of_point_system')}}</a></li>
+                            <a
+                                href="{{action('EarningOfPointController@create')}}">{{__('lang.earning_of_point_system')}}</a>
+                        </li>
                         @endcan
                         @can('loyalty_points.earning_of_points.view')
                         <li
                             class="@if(request()->segment(1) == 'earning-of-points' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('EarningOfPointController@index')}}">{{__('lang.list_earning_of_points_system')}}</a></li>
+                            <a
+                                href="{{action('EarningOfPointController@index')}}">{{__('lang.list_earning_of_points_system')}}</a>
+                        </li>
                         @endcan
                         @can('loyalty_points.redemption_of_points.create_and_edit')
                         <li
@@ -730,17 +840,19 @@
                         @can('sms_module.sms.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sms' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('SmsController@create')}}">{{__('lang.send_sms')}}</a></li>
+                            <a href="{{action('SmsController@create')}}">{{__('lang.send_sms')}}</a>
+                        </li>
                         @endcan
                         @can('sms_module.sms.view')
-                        <li
-                            class="@if(request()->segment(1) == 'sms' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SmsController@index')}}">{{__('lang.view_all_sms')}}</a></li>
+                        <li class="@if(request()->segment(1) == 'sms' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SmsController@index')}}">{{__('lang.view_all_sms')}}</a>
+                        </li>
                         @endcan
                         @can('sms_module.setting.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sms' &&  request()->segment(2) == 'setting' ) active @endif">
-                            <a href="{{action('SmsController@getSetting')}}">{{__('lang.settings')}}</a></li>
+                            <a href="{{action('SmsController@getSetting')}}">{{__('lang.settings')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -755,17 +867,19 @@
                         @can('email_module.email.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'email' && request()->segment(2) == 'create') active @endif">
-                            <a href="{{action('EmailController@create')}}">{{__('lang.send_email')}}</a></li>
+                            <a href="{{action('EmailController@create')}}">{{__('lang.send_email')}}</a>
+                        </li>
                         @endcan
                         @can('email_module.email.view')
-                        <li
-                            class="@if(request()->segment(1) == 'email' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('EmailController@index')}}">{{__('lang.view_all_emails')}}</a></li>
+                        <li class="@if(request()->segment(1) == 'email' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('EmailController@index')}}">{{__('lang.view_all_emails')}}</a>
+                        </li>
                         @endcan
                         @can('email_module.setting.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'email' &&  request()->segment(2) == 'setting' ) active @endif">
-                            <a href="{{action('EmailController@getSetting')}}">{{__('lang.settings')}}</a></li>
+                            <a href="{{action('EmailController@getSetting')}}">{{__('lang.settings')}}</a>
+                        </li>
                         @endcan
                     </ul>
                 </li>
@@ -777,61 +891,80 @@
                     <ul id="setting"
                         class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'get-general-setting', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade'])) show @endif">
                         @can('product_module.product_class.view')
-                        <li class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ProductClassController@index')}}">{{__('lang.product_class')}}</a></li>
+                        <li
+                            class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ProductClassController@index')}}">{{__('lang.product_class')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.category.view')
-                        <li class="@if(request()->segment(1) == 'category' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CategoryController@index')}}">{{__('lang.category')}}</a></li>
+                        <li
+                            class="@if(request()->segment(1) == 'category' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CategoryController@index')}}">{{__('lang.category')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.sub_category.view')
-                        <li class="@if(request()->segment(1) == 'sub-category' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('CategoryController@getSubCategories')}}">{{__('lang.sub_category')}}</a></li>
+                        <li
+                            class="@if(request()->segment(1) == 'sub-category' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CategoryController@getSubCategories')}}">{{__('lang.sub_category')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.brand.view')
                         <li class="@if(request()->segment(1) == 'brand' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('BrandController@index')}}">{{__('lang.brand')}}</a></li>
+                            <a href="{{action('BrandController@index')}}">{{__('lang.brand')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.unit.view')
                         <li class="@if(request()->segment(1) == 'unit' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('UnitController@index')}}">{{__('lang.unit')}}</a></li>
+                            <a href="{{action('UnitController@index')}}">{{__('lang.unit')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.color.view')
                         <li class="@if(request()->segment(1) == 'color' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ColorController@index')}}">{{__('lang.color')}}</a></li>
+                            <a href="{{action('ColorController@index')}}">{{__('lang.color')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.size.view')
                         <li class="@if(request()->segment(1) == 'size' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a></li>
+                            <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
+                        </li>
                         @endcan
                         @can('product_module.grade.view')
                         <li class="@if(request()->segment(1) == 'grade' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('GradeController@index')}}">{{__('lang.grade')}}</a></li>
+                            <a href="{{action('GradeController@index')}}">{{__('lang.grade')}}</a>
+                        </li>
                         @endcan
                         @can('settings.store.view')
                         <li class="@if(request()->segment(1) == 'store' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('StoreController@index')}}">{{__('lang.stores')}}</a></li>
+                            <a href="{{action('StoreController@index')}}">{{__('lang.stores')}}</a>
+                        </li>
                         @endcan
                         @can('settings.store_pos.view')
                         <li
                             class="@if(request()->segment(1) == 'store-pos' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('StorePosController@index')}}">{{__('lang.pos_for_the_stores')}}</a></li>
+                            <a href="{{action('StorePosController@index')}}">{{__('lang.pos_for_the_stores')}}</a>
+                        </li>
                         @endcan
                         @can('settings.terms_and_conditions.view')
                         <li
                             class="@if(request()->segment(1) == 'terms-and-conditions' && request()->type == 'invoice')) active @endif">
-                            <a href="{{action('TermsAndConditionsController@index')}}?type=invoice">{{__('lang.list_invoice_terms_and_condition')}}</a></li>
+                            <a
+                                href="{{action('TermsAndConditionsController@index')}}?type=invoice">{{__('lang.list_invoice_terms_and_condition')}}</a>
+                        </li>
                         @endcan
 
                         @can('settings.terms_and_conditions.view')
                         <li
                             class="@if(request()->segment(1) == 'terms-and-conditions' && request()->type == 'quotation')) active @endif">
-                            <a href="{{action('TermsAndConditionsController@index')}}?type=quotation">{{__('lang.list_quotation_terms_and_condition')}}</a></li>
+                            <a
+                                href="{{action('TermsAndConditionsController@index')}}?type=quotation">{{__('lang.list_quotation_terms_and_condition')}}</a>
+                        </li>
                         @endcan
                         @can('settings.general_settings.view')
                         <li
                             class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-general-setting') active @endif">
-                            <a href="{{action('SettingController@getGeneralSetting')}}">{{__('lang.general_settings')}}</a></li>
+                            <a
+                                href="{{action('SettingController@getGeneralSetting')}}">{{__('lang.general_settings')}}</a>
+                        </li>
                         @endcan
 
 

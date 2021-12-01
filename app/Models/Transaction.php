@@ -37,6 +37,22 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
     }
+    public function approved_by_user()
+    {
+        return $this->belongsTo(User::class, 'approved_by', 'id')->withDefault(['name' => '']);
+    }
+    public function requested_by_user()
+    {
+        return $this->belongsTo(User::class, 'requested_by', 'id')->withDefault(['name' => '']);
+    }
+    public function received_by_user()
+    {
+        return $this->belongsTo(User::class, 'received_by', 'id')->withDefault(['name' => '']);
+    }
+    public function declined_by_user()
+    {
+        return $this->belongsTo(User::class, 'declined_by', 'id')->withDefault(['name' => '']);
+    }
 
     public function supplier()
     {

@@ -99,6 +99,15 @@ class SellPosController extends Controller
         $stores = Store::getDropdown();
         $store_poses = [];
 
+        if(empty($store_pos)){
+            $output = [
+                'success' => false,
+                'msg' => __('lang.kindly_assign_pos_for_that_user_to_able_to_use_it')
+            ];
+
+            return redirect()->to('/home')->with('status', $output);
+        }
+
         return view('sale_pos.pos')->with(compact(
             'categories',
             'walk_in_customer',

@@ -106,7 +106,7 @@ class ProductUtil extends Util
         if ($type == 'remove_stock') {
             $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
 
-            $number = 'Rev' . $year . $month . $count;
+            $number = 'RST' . $year . $month . $count;
         }
         if ($type == 'transfer') {
             $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
@@ -129,9 +129,14 @@ class ProductUtil extends Util
             $number = 'LPR' . $year . $month . $day .  $count;
         }
         if ($type == 'internal_stock_request') {
-            $count = Transaction::where('type', $type)->count() + 1;
+            $count = Transaction::where('type', 'transfer')->where('is_internal_stock_transfer', 1)->distinct('invoice_no')->count() + 1;
 
             $number = 'ISRQ' . $year . $month . $day .  $count;
+        }
+        if ($type == 'internal_stock_return') {
+            $count = Transaction::where('type', 'internal_stock_return')->where('is_internal_stock_transfer', 1)->where('is_return', 1)->distinct('invoice_no')->count() + 1;
+
+            $number = 'ISRT' . $year . $month . $day .  $count;
         }
 
 
@@ -147,7 +152,9 @@ class ProductUtil extends Util
             $name = explode(" ", $store->name);
 
             foreach ($name as $w) {
-                $string .= $w[0];
+                if (!preg_match('/[^A-Za-z0-9]/', $w)) {
+                    $string .= $w[0];
+                }
             }
         }
 
@@ -452,6 +459,7 @@ class ProductUtil extends Util
         $products = $product->select(
             'products.id as product_id',
             'products.name as product_name',
+            'products.is_service',
             'products.alert_quantity',
             'product_stores.qty_available',
             'products.sell_price',
@@ -633,7 +641,7 @@ class ProductUtil extends Util
     }
 
     /**
-     * createOrUpdateRemoveStockLines
+     * create or update remove stock lines
      *
      * @param [mix] $remove_stock_lines
      * @param [mix] $transaction
@@ -653,13 +661,13 @@ class ProductUtil extends Util
                 $remove_stock_line->quantity = $this->num_uf($line['quantity']);
                 $remove_stock_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $remove_stock_line->sub_total = $this->num_uf($line['sub_total']);
+                $remove_stock_line->notes = !empty($line['notes']) ? $line['notes'] : null;
 
                 $remove_stock_line->save();
-                if ($transaction->status != 'pending') {
-                    if ($line['quantity'] > 0) {
-                        $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $remove_stock_line->quantity);
-                    }
+                if ($line['quantity'] > 0) {
+                    $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $remove_stock_line->quantity);
                 }
+
                 $keep_lines_ids[] = $line['remove_stock_line_id'];
             } else {
                 $remove_stock_line_data = [
@@ -669,13 +677,13 @@ class ProductUtil extends Util
                     'quantity' => $this->num_uf($line['quantity']),
                     'purchase_price' => $this->num_uf($line['purchase_price']),
                     'sub_total' => $this->num_uf($line['sub_total']),
+                    'notes' => !empty($line['notes']) ? $line['notes'] : null,
                 ];
 
-                if ($transaction->status != 'pending') {
-                    if ($line['quantity'] > 0) {
-                        $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
-                    }
+                if ($line['quantity'] > 0) {
+                    $this->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], 0);
                 }
+
                 $remove_stock_line = RemoveStockLine::create($remove_stock_line_data);
 
                 $keep_lines_ids[] = $remove_stock_line->id;
@@ -805,12 +813,12 @@ class ProductUtil extends Util
      *
      * @param [mix] $transfer_lines
      * @param [mix] $transaction
-     * @return void
+     * @return float
      */
     public function createOrUpdateInternalStockRequestLines($transfer_lines, $transaction)
     {
         $keep_lines_ids = [];
-
+        $final_total = 0;
         foreach ($transfer_lines as $line) {
             if (!empty($line['transfer_line_id'])) {
                 $transfer_line = TransferLine::find($line['transfer_line_id']);
@@ -821,6 +829,7 @@ class ProductUtil extends Util
                 $transfer_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transfer_line->sub_total = $this->num_uf($line['sub_total']);
                 $transfer_line->save();
+                $final_total += $line['sub_total'];
                 $keep_lines_ids[] = $line['transfer_line_id'];
             } else {
                 $transfer_line_data = [
@@ -831,7 +840,7 @@ class ProductUtil extends Util
                     'purchase_price' => $this->num_uf($line['purchase_price']),
                     'sub_total' => $this->num_uf($line['sub_total']),
                 ];
-
+                $final_total += $line['sub_total'];
                 $transfer_line = TransferLine::create($transfer_line_data);
                 $keep_lines_ids[] = $transfer_line->id;
             }
@@ -845,7 +854,7 @@ class ProductUtil extends Util
         }
 
 
-        return true;
+        return $final_total;
     }
     /**
      * createOrUpdateAddStockLines
@@ -1144,7 +1153,7 @@ class ProductUtil extends Util
      *
      * @return void
      */
-    public function getProductList($store_array = [])
+    public function getProductList($store_array = [], $sender_store_id = null)
     {
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
@@ -1207,15 +1216,29 @@ class ProductUtil extends Util
 
         $products->where('active', 1);
         $products->where('is_service', 0);
-        $products = $products->select(
-            'products.*',
-            'variations.id as variation_id',
-            'stores.name as store_name',
-            'stores.id as store_id',
-            DB::raw('SUM(product_stores.qty_available) as current_stock'),
-        )->having('current_stock', '>', 0)
-            ->groupBy('products.id', 'product_stores.id')
-            ->get();
+
+        if (empty($sender_store_id)) {
+            $products = $products->select(
+                'products.*',
+                'variations.id as variation_id',
+                'stores.name as store_name',
+                'stores.id as store_id',
+                DB::raw('SUM(product_stores.qty_available) as current_stock'),
+            )->having('current_stock', '>', 0)
+                ->groupBy('products.id', 'product_stores.id')
+                ->get();
+        } else {
+            $products = $products->select(
+                'products.*',
+                'variations.id as variation_id',
+                'stores.name as store_name',
+                'stores.id as store_id',
+                // DB::raw('SUM(product_stores.qty_available) as current_stock'),
+                DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores WHERE product_stores.product_id=products.id AND product_stores.store_id=' . $sender_store_id . ') as current_stock')
+            )->having('current_stock', '>', 0)
+                ->groupBy('products.id', 'product_stores.id')
+                ->get();
+        }
 
         return $products;
     }

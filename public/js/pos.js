@@ -90,22 +90,24 @@ $(document).on("click", ".filter-by", function () {
 $(document).on("change", "#store_id", function () {
     getFilterProductRightSide();
 
-    if($("#store_id").val()){
+    if ($("#store_id").val()) {
         $.ajax({
             method: "get",
             url: "/store-pos/get-pos-details-by-store/" + $("#store_id").val(),
             data: {},
             success: function (result) {
-                $("#store_pos_id").html(`<option value="${result.id}">${result.name}</option>`)
+                $("#store_pos_id").html(
+                    `<option value="${result.id}">${result.name}</option>`
+                );
                 $("#store_pos_id").selectpicker("refresh");
                 $("#store_pos_id").selectpicker("val", result.id);
             },
         });
     }
 });
-$(document).ready(function(){
-    $('#store_id').change()
-})
+$(document).ready(function () {
+    $("#store_id").change();
+});
 getFilterProductRightSide();
 function getFilterProductRightSide(
     category_id = null,
@@ -194,9 +196,9 @@ $(document).ready(function () {
                     }
                 },
                 messages: {
-                    noResults: '',
-                    results: function() {}
-                }
+                    noResults: "",
+                    results: function () {},
+                },
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
             return $("<li>")
@@ -498,10 +500,13 @@ $(document).on("click", ".plus", function () {
     let tr = $(this).closest("tr");
     let qty = parseFloat($(tr).find(".quantity").val());
     let max = parseFloat($(tr).find(".quantity").attr("max"));
+    let is_service = parseInt($(tr).find(".is_service").val());
 
     let new_qty = qty + 1;
-    if (new_qty < 0.1 || new_qty > max) {
-        return;
+    if (!is_service) {
+        if (new_qty < 0.1 || new_qty > max) {
+            return;
+        }
     }
     $(tr).find(".quantity").val(new_qty);
     $(tr).find(".quantity").trigger("change");

@@ -120,6 +120,8 @@
                             value="sent_admin" class="btn btn-primary pull-right btn-flat submit">@lang(
                             'lang.send_to_admin' )</button>
                         @endcan
+                        <a href="{{action('PurchaseOrderController@create')}}" style="margin: 10px" value="cancel"
+                        class="btn btn-danger pull-right btn-flat">@lang( 'lang.cancel' )</a>
                         <div class="modal fade supplier_modal" id="supplier_modal" role="dialog" aria-hidden="true">
                         </div>
 

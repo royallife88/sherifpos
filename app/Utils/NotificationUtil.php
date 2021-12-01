@@ -2,6 +2,7 @@
 
 namespace App\Utils;
 
+use App\Jobs\InternalStockRequestJob;
 use App\Models\Customer;
 use App\Models\Employee;
 use App\Models\Notification as ModelsNotification;
@@ -13,7 +14,9 @@ use App\Notifications\AddSaleNotification;
 use App\Notifications\ContactUsNotification;
 use App\Notifications\PurchaseOrderToSupplierNotification;
 use App\Notifications\QuotationToCustomerNotification;
+use App\Notifications\RemoveStockToSupplierNotification;
 use App\Utils\Util;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Notification;
 use Illuminate\Support\Facades\Mail;
@@ -34,7 +37,7 @@ class NotificationUtil extends Util
     }
 
     /**
-     * sendPurchaseOrderToSupplier
+     * send purchase order notification to supplier
      *
      * @param [int] $transaction_id
      * @return void
@@ -54,7 +57,7 @@ class NotificationUtil extends Util
         $file = config('constants.mpdf_temp_path') . '/' . time() . '_purchase-order-' . $purchase_order->po_no . '.pdf';
         $mpdf->Output($file, 'F');
 
-        $data['email_body'] =  'this is email body';
+        $data['email_body'] =  'You received purchase order';
         $data['attachment'] =  $file;
         $data['attachment_name'] =  'purchase-order-' . $purchase_order->po_no . '.pdf';
 
@@ -65,6 +68,38 @@ class NotificationUtil extends Util
         if (file_exists($file)) {
             unlink($file);
         }
+    }
+    /**
+     * send remove stock notification to supplier
+     *
+     * @param [int] $transaction_id
+     * @return void
+     */
+    public function sendRemoveStockToSupplier($transaction_id, $email)
+    {
+        if (!empty($email)) {
+            $remove_stock = Transaction::find($transaction_id);
+
+            $supplier = Supplier::find($remove_stock->supplier_id);
+            $html = view('remove_stock.pdf')
+                ->with(compact('remove_stock', 'supplier'))->render();
+
+            $mpdf = $this->getMpdf();
+
+            $mpdf->WriteHTML($html);
+            $file = config('constants.mpdf_temp_path') . '/' . time() . '_remove-stock-' . $remove_stock->invoice_no . '.pdf';
+            $mpdf->Output($file, 'F');
+
+            $data['email_body'] =  'You received remove stock';
+            $data['attachment'] =  $file;
+            $data['attachment_name'] =  'remove-stock-' . $remove_stock->invoice_no . '.pdf';
+
+
+            Notification::route('mail', $email)
+                ->notify(new RemoveStockToSupplierNotification($data));
+        }
+
+        return true;
     }
 
     /**
@@ -172,6 +207,142 @@ class NotificationUtil extends Util
         }
     }
 
+    public function notifyInternalStockRequest($transaction)
+    {
+        if ($transaction->status == 'approved' || $transaction->status == 'declined') {
+            $user_ids = Employee::whereJsonContains('store_id', (string)$transaction->receiver_store_id)->pluck('user_id')->toArray();
+            $superadmins = User::where('is_superadmin', 1)->select('id as user_id')->pluck('user_id')->toArray();
+            $user_ids = array_merge($user_ids, $superadmins);
+            foreach ($user_ids as $user_id) {
+                $user = User::find($user_id);
+                if ($transaction->status  == 'approved') {
+                    $data['subject'] = 'Internal Stock Request ' . $transaction->invoice_no . ' approved';
+                    $data['content'] =  'Your internal stock request no <b>' . $transaction->invoice_no . '</b> has been approved by <b>' . $transaction->approved_by_user->name . '</b> from <b>' . $transaction->sender_store->name . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                    $from = $transaction->approved_by_user->email;
+                }
+                if ($transaction->status  == 'declined') {
+                    $data['subject'] = 'Internal Stock Request ' . $transaction->invoice_no . ' declined';
+                    $data['content'] =  'Your internal stock request no <b>' . $transaction->invoice_no . '</b> has been declined by <b>' . $transaction->declined_by_user->name . '</b> from <b>' . $transaction->sender_store->name . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                    $from = $transaction->declined_by_user->email;
+                }
+                $user = User::find($user_id);
+                $email = $user->email;
+                $data['email'] = $email;
+                dispatch(new InternalStockRequestJob($data, $from));
+
+                $this->createNotification([
+                    'user_id' => $user_id,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'internal_stock_request',
+                    'status' => $transaction->status,
+                    'created_by' => Auth::user()->id,
+                ]);
+            }
+        }
+        if ($transaction->status == 'pending' || $transaction->status == 'received') {
+            $user_ids = Employee::whereJsonContains('store_id', (string)$transaction->sender_store_id)->pluck('user_id')->toArray();
+            $superadmins = User::where('is_superadmin', 1)->select('id as user_id')->pluck('user_id')->toArray();
+            $user_ids = array_merge($user_ids, $superadmins);
+            foreach ($user_ids as $user_id) {
+                $user = User::find($user_id);
+                if ($transaction->status  == 'pending') {
+                    $data['subject'] = 'Internal Stock Request ' . $transaction->invoice_no . ' requested';
+                    $data['content'] =  ucfirst($transaction->created_by_user->name) . ' requested for stock from ' . $transaction->receiver_store->name . '. Internal stock request no <b>' . $transaction->invoice_no . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                }
+                if ($transaction->status  == 'received') {
+                    $data['subject'] = 'Internal Stock Request ' . $transaction->invoice_no . ' received';
+                    $data['content'] =  ucfirst($transaction->created_by_user->name) . ' received requested stock from ' . $transaction->sender_store->name . '. Internal stock request no <b>' . $transaction->invoice_no . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                }
+                $from = $transaction->created_by_user->email;
+                $user = User::find($user_id);
+                $email = $user->email;
+                $data['email'] = $email;
+                dispatch(new InternalStockRequestJob($data, $from));
+
+                $this->createNotification([
+                    'user_id' => $user_id,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'internal_stock_request',
+                    'status' => $transaction->status,
+                    'created_by' => Auth::user()->id,
+                ]);
+            }
+        }
+
+        return true;
+    }
+    public function notifyInternalStockReturn($transaction)
+    {
+        if ($transaction->status == 'approved' || $transaction->status == 'declined') {
+            $user_ids = Employee::whereJsonContains('store_id', (string)$transaction->sender_store_id)->pluck('user_id')->toArray();
+            $superadmins = User::where('is_superadmin', 1)->select('id as user_id')->pluck('user_id')->toArray();
+            $user_ids = array_merge($user_ids, $superadmins);
+            foreach ($user_ids as $user_id) {
+                $user = User::find($user_id);
+                if ($transaction->status  == 'approved') {
+                    $data['subject'] = 'Internal Stock return Request ' . $transaction->invoice_no . ' approved';
+                    $data['content'] =  'Your internal stock return request no <b>' . $transaction->invoice_no . '</b> has been approved by <b>' . $transaction->approved_by_user->name . '</b> from <b>' . $transaction->sender_store->name . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                    $from = $transaction->approved_by_user->email;
+                }
+                if ($transaction->status  == 'declined') {
+                    $data['subject'] = 'Internal Stock return Request ' . $transaction->invoice_no . ' declined';
+                    $data['content'] =  'Your internal stock return request no <b>' . $transaction->invoice_no . '</b> has been declined by <b>' . $transaction->declined_by_user->name . '</b> from <b>' . $transaction->sender_store->name . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                    $from = $transaction->declined_by_user->email;
+                }
+                $user = User::find($user_id);
+                $email = $user->email;
+                $data['email'] = $email;
+                dispatch(new InternalStockRequestJob($data, $from));
+
+                $this->createNotification([
+                    'user_id' => $user_id,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'internal_stock_return',
+                    'status' => $transaction->status,
+                    'created_by' => Auth::user()->id,
+                ]);
+            }
+        }
+        if ($transaction->status == 'pending' || $transaction->status == 'received') {
+            $user_ids = Employee::whereJsonContains('store_id', (string)$transaction->receiver_store_id)->pluck('user_id')->toArray();
+            $superadmins = User::where('is_superadmin', 1)->select('id as user_id')->pluck('user_id')->toArray();
+            $user_ids = array_merge($user_ids, $superadmins);
+            foreach ($user_ids as $user_id) {
+                $user = User::find($user_id);
+                if ($transaction->status  == 'pending') {
+                    $data['subject'] = 'Internal Stock Return Request ' . $transaction->invoice_no . ' requested';
+                    $data['content'] =  ucfirst($transaction->created_by_user->name) . ' requested for stock return from ' . $transaction->receiver_store->name . '. Internal stock return request no <b>' . $transaction->invoice_no . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                }
+                if ($transaction->status  == 'received') {
+                    $data['subject'] = 'Internal Stock Return Request ' . $transaction->invoice_no . ' received';
+                    $data['content'] =  ucfirst($transaction->created_by_user->name) . ' received requested stock return from ' . $transaction->sender_store->name . '. Internal stock return request no <b>' . $transaction->invoice_no . '</b>';
+                    $data['content'] .= view('internal_stock_return.partials.transfer_line_table')->with('transaction', $transaction)->render();
+                }
+                $from = $transaction->created_by_user->email;
+                $user = User::find($user_id);
+                $email = $user->email;
+                $data['email'] = $email;
+                dispatch(new InternalStockRequestJob($data, $from));
+
+                $this->createNotification([
+                    'user_id' => $user_id,
+                    'transaction_id' => $transaction->id,
+                    'type' => 'internal_stock_request',
+                    'status' => $transaction->status,
+                    'created_by' => Auth::user()->id,
+                ]);
+            }
+        }
+
+        return true;
+    }
     /**
      * add notification to system
      *

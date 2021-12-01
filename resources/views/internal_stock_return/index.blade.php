@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('lang.all_transfers'))
+@section('title', __('lang.internal_stock_return'))
 
 @section('content')
 <div class="col-md-12 no-print">
     <div class="card">
         <div class="card-header d-flex align-items-center">
-            <h4>@lang('lang.all_transfers')</h4>
+            <h4>@lang('lang.internal_stock_return')</h4>
         </div>
         <div class="card-body">
             <form action="">
@@ -44,7 +44,7 @@
                     <div class="col-md-3">
                         <br>
                         <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                        <a href="{{action('TransferController@index')}}"
+                        <a href="{{action('InternalStockReturnController@index')}}"
                             class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
                     </div>
                 </div>
@@ -66,6 +66,7 @@
                 <th class="sum">@lang('lang.value_of_transaction')</th>
                 <th>@lang('lang.status')</th>
                 <th>@lang('lang.notes')</th>
+                {{-- <th>@lang('lang.files')</th> --}}
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -82,6 +83,11 @@
                 <td>{{@num_format($transfer->final_total)}}</td>
                 <td>@if($transfer->status == 'received'){{__('lang.received')}}@else{{ucfirst($transfer->status)}}@endif</td>
                 <td>{{$transfer->notes}}</td>
+                {{-- <td>
+                    <a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $transfer->id, 'collection_name' => 'internal_stock_return'])}}"
+                        data-container=".view_modal"
+                        class="btn-modal">@lang('lang.view')</a> --}}
+                </td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
@@ -92,42 +98,53 @@
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                             @if($transfer->is_internal_stock_transfer == 1 && $transfer->status != 'final')
                             <li>
-                                <a data-href="{{action('InternalStockRequestController@getUpdateStatus', $transfer->id)}}"
+                                <a data-href="{{action('InternalStockReturnController@getUpdateStatus', $transfer->id)}}"
                                     data-container=".view_modal" class="btn btn-modal"><i class="fa fa-arrow-up"></i>
                                     @lang('lang.update_status')</a>
                             </li>
                             <li class="divider"></li>
                             @endif
-                            @can('stock.transfer.view')
+                            @can('stock.internal_stock_return.view')
                             <li>
 
-                                <a data-href="{{action('TransferController@show', $transfer->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                <a href="{{action('InternalStockReturnController@show', $transfer->id)}}"
+                                    class="btn"><i class="fa fa-eye"></i>
                                     @lang('lang.view')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            @can('stock.transfer.view')
+                            @can('stock.internal_stock_return.view')
                             <li>
 
-                                <a href="{{action('TransferController@print', $transfer->id)}}?print=true"
+                                <a href="{{action('InternalStockReturnController@show', $transfer->id)}}?print=true"
                                     class="btn"><i class="dripicons-print"></i>
                                     @lang('lang.print')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            @can('stock.transfer.create_and_edit')
+                            @can('stock.internal_stock_return.create_and_edit')
                             <li>
 
-                                <a href="{{action('TransferController@edit', $transfer->id)}}" class="btn"><i
-                                        class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                <a data-href="{{action('InternalStockReturnController@getUpdateStatus', $transfer->id)}}"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-arrow-up"></i>
+                                    @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
-
-                            @can('stock.transfer.delete')
+                            @can('stock.internal_stock_return.create_and_edit')
+                            @if($transfer->status == 'approved')
                             <li>
-                                <a data-href="{{action('TransferController@destroy', $transfer->id)}}"
+
+                                <a href="{{action('InternalStockReturnController@sendTheGoods', $transfer->id)}}" class="btn"><i
+                                        class="dripicons-document-edit"></i> @lang('lang.send_the_goods')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endif
+                            @endcan
+
+                            @can('stock.internal_stock_return.delete')
+                            <li>
+                                <a data-href="{{action('InternalStockReturnController@destroy', $transfer->id)}}"
                                     data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                     class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                     @lang('lang.delete')</a>

@@ -12,19 +12,21 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="store_id"><b>@lang('lang.store')</b></label>
-                        {!! Form::select('store_id', $stores, false, ['class' => 'form-control filter', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+                        {!! Form::select('store_id', $stores, (session('user.is_superadmin')) ? null : key($stores), ['class' => 'form-control filter',
+                        'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')])
+                        !!}
 
                     </div>
                     <div class="col-md-4">
                         <label for="from_date"><b>@lang('lang.from_date')</b></label>
-                        <input type="date" class="form-control filter" name="from_date" id="from_date" value="{{date('Y-m-d')}}"
-                            placeholder="{{__('lang.from_date')}}">
+                        <input type="date" class="form-control filter" name="from_date" id="from_date"
+                            value="{{date('Y-m-01')}}" placeholder="{{__('lang.from_date')}}">
 
                     </div>
                     <div class="col-md-4">
                         <label for="to_date"><b>@lang('lang.to_date')</b></label>
-                        <input type="date" class="form-control filter" name="to_date" id="to_date" value="{{date('Y-m-t')}}"
-                            placeholder="{{__('lang.to_date')}}">
+                        <input type="date" class="form-control filter" name="to_date" id="to_date"
+                            value="{{date('Y-m-t')}}" placeholder="{{__('lang.to_date')}}">
                     </div>
                 </div>
             </div>
@@ -40,8 +42,10 @@
                 <div class="col-sm-2">
                     <div class="wrapper count-title text-center">
                         <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i></div>
-                        <div class="name"><strong style="color: #498636">@lang('lang.current_stock_value')</strong></div>
-                        <div class="count-number current_stock_value-data">{{@num_format($dashboard_data['current_stock_value'])}}</div>
+                        <div class="name"><strong style="color: #498636">@lang('lang.current_stock_value')</strong>
+                        </div>
+                        <div class="count-number current_stock_value-data">
+                            {{@num_format($dashboard_data['current_stock_value'])}}</div>
                     </div>
                 </div>
                 <!-- Count item widget-->
@@ -370,6 +374,9 @@
 
 @section('javascript')
 <script>
+    $(document).ready(function() {
+        $('#store_id').change();
+    });
     $(document).on("change", '.filter', function() {
         var store_id = $('#store_id').val();
         var start_date = $('#from_date').val();

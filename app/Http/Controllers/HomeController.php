@@ -137,6 +137,14 @@ class HomeController extends Controller
         ));
     }
 
+    /**
+     * get best selling oroduct data
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param string $order_by
+     * @return void
+     */
     public function getBestSellings($start_date, $end_date, $order_by)
     {
         return TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
@@ -152,6 +160,15 @@ class HomeController extends Controller
             ->orderBy($order_by, 'desc')
             ->take(5)->get();
     }
+
+    /**
+     * get sales amount
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param string $store_id
+     * @return void
+     */
     public function getSaleAmount($start_date, $end_date, $store_id = null)
     {
         $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
@@ -167,6 +184,14 @@ class HomeController extends Controller
         return $sell_query->sum('final_total');
     }
 
+    /**
+     * get purchase amount
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $store_id
+     * @return void
+     */
     public function getPurchaseAmount($start_date, $end_date, $store_id = null)
     {
         $purchase_query = Transaction::where('type', 'add_stock')->where('status', 'received');
@@ -182,6 +207,13 @@ class HomeController extends Controller
         return $purchase_query->sum('final_total');
     }
 
+    /**
+     * get dashboard data for pos
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @return void
+     */
     public function getDashboardData($start_date, $end_date)
     {
         $store_id = request()->get('store_id', null);

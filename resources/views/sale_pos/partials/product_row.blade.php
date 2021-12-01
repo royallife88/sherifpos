@@ -6,6 +6,8 @@
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
         @endif
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
+            value="{{$product->is_service}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][product_id]" class="product_id"
             value="{{$product->product_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
@@ -40,7 +42,7 @@
                 </button>
             </span>
             <input type="text" class="form-control quantity  qty numkey input-number" min=1
-                max="{{$product->qty_available}}" name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
+                @if(!$product->is_service)max="{{$product->qty_available}}"@endif name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
                 required
                 value="@if(!empty($edit_quantity)){{$edit_quantity}}@else @if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif @endif">
             <span class="input-group-btn">

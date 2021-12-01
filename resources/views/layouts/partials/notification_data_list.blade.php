@@ -85,4 +85,48 @@
         </a>
     </li>
     @endif
+    @elseif($notification->type == 'internal_stock_request')
+    @if(!empty($notification->transaction))
+    <li>
+        <a class="{{$notification->status}} notification_item" data-mark-read-action="{{action('NotificationController@markAsRead', $notification->id)}}" data-href="{{action('TransferController@index')}}?invoice_no={{$notification->transaction->invoice_no}}">
+            <p style="margin:0px"><i class="fa fa-money " style="color: rgb(255, 19, 19)"></i>
+                @lang('lang.internal_stock_request') {{$notification->transaction->status}}</p>
+            <br>
+            <span class="text-muted">@lang('lang.invoice_no'):
+                {{$notification->transaction->invoice_no}}
+                </span> <br>
+            <span class="text-muted">
+                @if($notification->transaction->status == 'approved')
+                @lang('lang.approved_at'): {{@format_date($notification->transaction->approved_at)}} @lang('lang.by') {{$notification->transaction->approved_by_user->name}}
+                @elseif($notification->transaction->status == 'received')
+                @lang('lang.received_at'): {{@format_date($notification->transaction->received_at)}} @lang('lang.by') {{$notification->transaction->received_by_user->name}}
+                @elseif($notification->transaction->status == 'declined')
+                @lang('lang.declined_at'): {{@format_date($notification->transaction->declined_at)}} @lang('lang.by') {{$notification->transaction->declined_by_user->name}}
+                @endif
+            </span>
+        </a>
+    </li>
+    @endif
+    @elseif($notification->type == 'internal_stock_return')
+    @if(!empty($notification->transaction))
+    <li>
+        <a class="{{$notification->status}} notification_item" data-mark-read-action="{{action('NotificationController@markAsRead', $notification->id)}}" data-href="{{action('InternalStockReturnController@index')}}?invoice_no={{$notification->transaction->invoice_no}}">
+            <p style="margin:0px"><i class="fa fa-money " style="color: rgb(255, 19, 19)"></i>
+                @lang('lang.internal_stock_return') {{$notification->transaction->status}}</p>
+            <br>
+            <span class="text-muted">@lang('lang.invoice_no'):
+                {{$notification->transaction->invoice_no}}
+                </span> <br>
+            <span class="text-muted">
+                @if($notification->transaction->status == 'approved')
+                @lang('lang.approved_at'): {{@format_date($notification->transaction->approved_at)}} @lang('lang.by') {{$notification->transaction->approved_by_user->name}}
+                @elseif($notification->transaction->status == 'received')
+                @lang('lang.received_at'): {{@format_date($notification->transaction->received_at)}} @lang('lang.by') {{$notification->transaction->received_by_user->name}}
+                @elseif($notification->transaction->status == 'declined')
+                @lang('lang.declined_at'): {{@format_date($notification->transaction->declined_at)}} @lang('lang.by') {{$notification->transaction->declined_by_user->name}}
+                @endif
+            </span>
+        </a>
+    </li>
+    @endif
 @endif

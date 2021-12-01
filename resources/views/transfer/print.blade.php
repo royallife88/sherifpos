@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.remove_stock'))
+@section('title', __('lang.transfer'))
 
 @section('content')
 <section class="forms">
@@ -11,24 +11,36 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center no-print">
-                        <h4>@lang('lang.remove_stock'): {{$remove_stock->invoice_no}}</h4>
+                        <h4>@lang('lang.transfer'): {{$transfer->invoice_no}}</h4>
                     </div>
 
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
-                                {!! Form::label('supplier_name', __('lang.supplier_name'), []) !!}:
-                                <b>{{$supplier->name}}</b>
+                            <div class="col-md-6">
+                                {!! Form::label('reference', __('lang.reference'), []) !!}:
+                                <b>{{$transfer->invoice_no}}</b>
                             </div>
-                            <div class="col-md-4">
-                                {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$supplier->email}}</b>
+                            <div class="col-md-6">
+                                {!! Form::label('date', __('lang.date'), []) !!}:
+                                <b>{{@format_date($transfer->transaction_date)}}</b>
                             </div>
-                            <div class="col-md-4">
-                                {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                                <b>{{$supplier->mobile_number}}</b>
+                            <div class="col-md-6">
+                                {!! Form::label('sender_store', __('lang.sender_store'), []) !!}:
+                                <b>{{$transfer->sender_store->name}}</b>
                             </div>
-                            <div class="col-md-4">
-                                {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address}}</b>
+
+                            <div class="col-md-6">
+                                {!! Form::label('receiver_store', __('lang.receiver_store'), []) !!}:
+                                <b>{{$transfer->receiver_store->name}}</b>
+                            </div>
+                            <div class="col-md-6">
+                                {!! Form::label('approved', __('lang.approved'), []) !!}:
+                                <b>@if(!empty($transfer->approved_at)) {{@format_date($transfer->approved_at)}} @endif - {{$transfer->approved_by_user->name}}</b>
+                            </div>
+
+                            <div class="col-md-6">
+                                {!! Form::label('receiver_store', __('lang.received'), []) !!}:
+                                <b>@if(!empty($transfer->received_at)) {{@format_date($transfer->received_at)}} @endif - {{$transfer->received_by_user->name}}</b>
                             </div>
                         </div>
                         <br>
@@ -39,16 +51,16 @@
                                         <tr>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
-                                            <th style="width: 25%" class="col-sm-4">@lang( 'lang.removed_quantity' )</th>
+                                            <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($remove_stock->remove_stock_lines as $line)
+                                        @foreach ($transfer->transfer_lines as $line)
                                         <tr>
                                             <td>
                                                 {{$line->product->name}}
-
                                                 @if($line->variation->name != "Default")
                                                 <b>{{$line->variation->name}}</b>
                                                 @endif
@@ -63,6 +75,9 @@
                                             <td>
                                                 @if(isset($line->purchase_price)){{@num_format($line->purchase_price)}}@else{{0}}@endif
                                             </td>
+                                            <td>
+                                                {{@num_format($line->sub_total)}}
+                                            </td>
                                         </tr>
                                         @endforeach
                                     </tbody>
@@ -73,7 +88,7 @@
                         <div class="col-md-12">
                             <div class="col-md-3 offset-md-8 text-right">
                                 <h3> @lang('lang.total'): <span
-                                        class="final_total_span">{{@num_format($remove_stock->final_total)}}</span>
+                                        class="final_total_span">{{@num_format($transfer->final_total)}}</span>
                                 </h3>
 
                             </div>
@@ -84,7 +99,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     {!! Form::label('notes', __('lang.notes'), []) !!}: <br>
-                                    {{$remove_stock->notes}}
+                                    {{$transfer->notes}}
 
                                 </div>
                             </div>

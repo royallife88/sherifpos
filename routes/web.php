@@ -100,13 +100,23 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
     Route::post('add-stock/save-import', 'AddStockController@saveImport');
     Route::get('add-stock/get-import', 'AddStockController@getImport');
     Route::resource('add-stock', AddStockController::class);
-    Route::get('remove-stock/get-invoice-details/{id}', 'RemoveStockController@getInvoiceDetails');
+    Route::get('remove-stock/get-supplier-invoices-dropdown/{id}', 'RemoveStockController@getSupplierInvoicesDropdown');
+    Route::get('remove-stock/get-invoice-details', 'RemoveStockController@getInvoiceDetails');
+    Route::get('remove-stock/update-status-as-compensated/{id}', 'RemoveStockController@getUpdateStatusAsCompensated');
+    Route::post('remove-stock/update-status-as-compensated/{id}', 'RemoveStockController@postUpdateStatusAsCompensated');
+    Route::get('remove-stock/get-compensated', 'RemoveStockController@getCompensated');
     Route::resource('remove-stock', RemoveStockController::class);
     Route::get('internal-stock-request/get-product-table', 'InternalStockRequestController@getProductTable');
     Route::get('internal-stock-request/update-status/{id}', 'InternalStockRequestController@getUpdateStatus');
     Route::post('internal-stock-request/update-status/{id}', 'InternalStockRequestController@postUpdateStatus');
     Route::resource('internal-stock-request', InternalStockRequestController::class);
+    Route::get('internal-stock-return/get-product-table', 'InternalStockReturnController@getProductTable');
+    Route::get('internal-stock-return/update-status/{id}', 'InternalStockReturnController@getUpdateStatus');
+    Route::post('internal-stock-return/update-status/{id}', 'InternalStockReturnController@postUpdateStatus');
+    Route::get('internal-stock-return/send-the-goods/{id}', 'InternalStockReturnController@sendTheGoods');
+    Route::resource('internal-stock-return', InternalStockReturnController::class);
 
+    Route::get('transfer/get-print/{id}', 'TransferController@print');
     Route::get('transfer/add-product-row', 'TransferController@addProductRow');
     Route::resource('transfer', TransferController::class);
 

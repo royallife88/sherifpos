@@ -59,41 +59,7 @@ class InternalStockRequestController extends Controller
      */
     public function index(Request $request)
     {
-        if (!auth()->user()->can('stock.internal_stock_request.view')) {
-            abort(403, 'Unauthorized action.');
-        }
-
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
-        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
-
-        $query = Transaction::where('type', 'add_stock')->where('status', '!=', 'draft');
-
-        if (!empty($store_id)) {
-            $query->where('transactions.store_id', $store_id);
-        }
-
-        if (!empty(request()->supplier_id)) {
-            $query->where('supplier_id', request()->supplier_id);
-        }
-        if (!empty(request()->start_date)) {
-            $query->where('transaction_date', '>=', request()->start_date);
-        }
-        if (!empty(request()->end_date)) {
-            $query->where('transaction_date', '<=', request()->end_date);
-        }
-
-        $add_stocks = $query->orderBy('transaction_date', 'desc')->get();
-
-        $suppliers = Supplier::pluck('name', 'id');
-        $stores = Store::getDropdown();
-        $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
-
-        return view('internal_stock_request.index')->with(compact(
-            'add_stocks',
-            'suppliers',
-            'stores',
-            'status_array'
-        ));
+        //
     }
 
     /**
@@ -160,78 +126,80 @@ class InternalStockRequestController extends Controller
         if (!auth()->user()->can('stock.internal_stock_request.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
-        // try {
-        $data = $request->except('_token');
-        $invoice_no = $this->productUtil->getNumberByType('internal_stock_request');
+        try {
+            $data = $request->except('_token');
+            $invoice_no = $this->productUtil->getNumberByType('internal_stock_request');
 
-        $product_data = json_decode($data['product_data'], true);
-        $store_array = json_decode($data['store_array'], true);
-        DB::beginTransaction();
+            $product_data = json_decode($data['product_data'], true);
+            $store_array = json_decode($data['store_array'], true);
+            DB::beginTransaction();
 
-        foreach ($store_array as  $store) {
-            $product_array = $this->getStoreRealtedProductData($product_data, $store);
+            foreach ($store_array as  $store) {
+                $product_array = $this->getStoreRealtedProductData($product_data, $store);
 
-            if (!empty($product_array)) {
-                $transaction_data = [
-                    'sender_store_id' => $store,
-                    'receiver_store_id' => $data['receiver_store_id'],
-                    'type' => 'transfer',
-                    'status' => $data['status'],
-                    'transaction_date' => Carbon::now(),
-                    'is_internal_stock_transfer' => 1,
-                    'final_total' => 0,
-                    'notes' => !empty($data['notes']) ? $data['notes'] : null,
-                    'details' => !empty($data['details']) ? $data['details'] : null,
-                    'invoice_no' => $invoice_no,
-                    'created_by' => Auth::user()->id
-                ];
-
-                $transaction = Transaction::create($transaction_data);
-
-                $line_data = [];
-                $final_total = 0;
-                foreach ($product_array as $value) {
-
-                    $product = Product::find($value['product_id']);
-                    $line_data[] = [
-                        'product_id' => $value['product_id'],
-                        'variation_id' => $value['variation_id'],
-                        'quantity' => $value['qty'],
-                        'purchase_price' => $product->purchase_price,
-                        'sub_total' => $product->purchase_price * $value['qty'],
+                if (!empty($product_array)) {
+                    $transaction_data = [
+                        'sender_store_id' => $store,
+                        'receiver_store_id' => $data['receiver_store_id'],
+                        'type' => 'transfer',
+                        'status' => $data['status'],
+                        'transaction_date' => Carbon::now(),
+                        'is_internal_stock_transfer' => 1,
+                        'final_total' => 0,
+                        'notes' => !empty($data['notes']) ? $data['notes'] : null,
+                        'details' => !empty($data['details']) ? $data['details'] : null,
+                        'invoice_no' => $invoice_no,
+                        'created_by' => Auth::user()->id,
+                        'requested_by' => Auth::user()->id
                     ];
-                    $final_total += $product->purchase_price * $value['qty'];
-                }
-                $transaction->final_total = $final_total;
-                $transaction->save();
 
-                $this->productUtil->createOrUpdateInternalStockRequestLines($line_data, $transaction);
-                if ($transaction->status == 'approved') {
-                    $this->updateStockInStores($transaction);
+                    $transaction = Transaction::create($transaction_data);
+
+                    $line_data = [];
+                    $final_total = 0;
+                    foreach ($product_array as $value) {
+
+                        $product = Product::find($value['product_id']);
+                        $line_data[] = [
+                            'product_id' => $value['product_id'],
+                            'variation_id' => $value['variation_id'],
+                            'quantity' => $value['qty'],
+                            'purchase_price' => $product->purchase_price,
+                            'sub_total' => $product->purchase_price * $value['qty'],
+                        ];
+                        $final_total += $product->purchase_price * $value['qty'];
+                    }
+                    $transaction->final_total = $final_total;
+                    $transaction->save();
+
+                    $this->productUtil->createOrUpdateInternalStockRequestLines($line_data, $transaction);
+                    if ($transaction->status == 'approved' || $transaction->status == 'received') {
+                        $this->updateStockInStores($transaction);
+                    }
+                    $this->notificationUtil->notifyInternalStockRequest($transaction);
                 }
             }
+
+            DB::commit();
+
+            // if ($data['submit'] == 'print') {
+            //     $print = 'print';
+            //     $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
+
+            //     return Redirect::to($url);
+            // }
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
-
-        DB::commit();
-
-        if ($data['submit'] == 'print') {
-            $print = 'print';
-            $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
-
-            return Redirect::to($url);
-        }
-
-        $output = [
-            'success' => true,
-            'msg' => __('lang.success')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -240,8 +208,12 @@ class InternalStockRequestController extends Controller
     {
         $transfer_lines = TransferLine::where('transaction_id', $transaction->id)->get();
         foreach ($transfer_lines as $line) {
-            $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->sender_store_id, $line['quantity'], 0);
-            $this->productUtil->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], 0);
+            if ($transaction->status == 'approved') {
+                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->sender_store_id, $line['quantity'], 0);
+            }
+            if ($transaction->status == 'received') {
+                $this->productUtil->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->receiver_store_id,  $line['quantity'], 0);
+            }
         }
     }
     /**
@@ -304,7 +276,12 @@ class InternalStockRequestController extends Controller
         ));
     }
 
-
+    /**
+     * change the status of transaction
+     *
+     * @param int $id
+     * @return void
+     */
     public function getUpdateStatus($id)
     {
         $transaction = Transaction::find($id);
@@ -313,32 +290,57 @@ class InternalStockRequestController extends Controller
             'transaction'
         ));
     }
-
+    /**
+     * update the transaction status and send notification based on status
+     *
+     * @param Request $request
+     * @param int $id
+     * @return void
+     */
     public function postUpdateStatus(Request $request, $id)
     {
-        // try {
-        $transaction = Transaction::find($id);
+        try {
+            $transaction = Transaction::find($id);
 
-        DB::beginTransaction();
-        $transaction->status = $request->status;
-        $transaction->save();
+            DB::beginTransaction();
+            $final_total = $this->productUtil->createOrUpdateInternalStockRequestLines($request->transfer_lines, $transaction);
+            $transaction->final_total = $final_total;
 
-        if ($transaction->status == 'approved') {
-            $this->updateStockInStores($transaction);
+            $transaction->status = $request->status;
+            if ($transaction->status == 'approved') {
+                $transaction->approved_at = Carbon::now();
+                $transaction->approved_by = Auth::user()->id;
+                $transaction->save();
+            }
+            if ($transaction->status == 'received') {
+                $transaction->received_at = Carbon::now();
+                $transaction->received_by = Auth::user()->id;
+                $transaction->save();
+            }
+            if ($transaction->status == 'declined') {
+                $transaction->declined_at = Carbon::now();
+                $transaction->declined_by = Auth::user()->id;
+                $transaction->save();
+            }
+            $transaction->save();
+            $this->notificationUtil->notifyInternalStockRequest($transaction);
+
+            if ($transaction->status == 'approved' || $transaction->status == 'received') {
+                $this->updateStockInStores($transaction);
+            }
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
-        DB::commit();
-
-        $output = [
-            'success' => true,
-            'msg' => __('lang.success')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
 
         return redirect()->back()->with('status', $output);
     }

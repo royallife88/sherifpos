@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.internal_stock_request'))
+@section('title', __('lang.internal_stock_return'))
 
 @section('content')
 <section class="forms">
@@ -8,16 +8,16 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>@lang('lang.internal_stock_request')</h4>
+                        <h4>@lang('lang.internal_stock_return')</h4>
                     </div>
-                    {!! Form::open(['url' => action('InternalStockRequestController@store'), 'method' => 'post', 'id' =>
-                    'internal_stock_request_form', 'enctype' => 'multipart/form-data' ]) !!}
+                    {!! Form::open(['url' => action('InternalStockReturnController@store'), 'method' => 'post', 'id' =>
+                    'internal_stock_return_form', 'enctype' => 'multipart/form-data' ]) !!}
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('receiver_store_id', __('lang.receiver_store'). ':*', []) !!}
-                                    {!! Form::select('receiver_store_id', $stores,
+                                    {!! Form::label('sender_store_id', __('lang.sender_store'). ':*', []) !!}
+                                    {!! Form::select('sender_store_id', $stores,
                                     session('user.store_id'), ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
                                     'required',
@@ -30,7 +30,7 @@
                                     {!! Form::label('status', __('lang.status'). ':*', []) !!}
                                     {!! Form::select('status', ['received' => __('lang.received'), 'approved' =>
                                     __('lang.approved'), 'pending' => __('lang.pending'), 'declined' =>
-                                    __('lang.declined')],
+                                    __('lang.declined'), 'send_the_goods' => __('lang.send_the_goods')],
                                     'pending', ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
@@ -140,7 +140,7 @@
 
                                         <div class="col-md-3">
                                             <a class="btn btn-danger mt-4"
-                                                href="{{action('InternalStockRequestController@create')}}">@lang('lang.clear_filters')</a>
+                                                href="{{action('InternalStockReturnController@create')}}">@lang('lang.clear_filters')</a>
 
                                         </div>
                                     </div>
@@ -241,21 +241,28 @@
                             </div>
                         </div>
                         <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('files', __('lang.files'), []) !!} <br>
+                                    {!! Form::file('files[]', null, ['class' => '']) !!}
+                                </div>
+                            </div>
+
                             <div class="col-md-12">
                                 <div class="form-group">
                                     {!! Form::label('notes', __('lang.notes'). ':', []) !!} <br>
                                     {!! Form::textarea('notes', null, ['class' => 'form-control', 'rows' => 3]) !!}
                                 </div>
                             </div>
-
                         </div>
 
 
                     </div>
 
                     <div class="col-sm-12">
-                        <button type="submit" name="submit" id="save" style="margin: 10px" value="save"
-                            class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.send' )</button>
+                        <button type="submit" name="submit" id="save" value="save"
+                        class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.request_a_return' )</button>
+                        <a href="{{action('InternalStockReturnController@create')}}" class="btn btn-danger pull-right btn-flat mr-2">@lang('lang.cancel')</a>
 
                     </div>
                     {!! Form::close() !!}
@@ -318,7 +325,7 @@
     function getProductTableAjax(){
         return $.ajax({
             method: 'get',
-            url: '/internal-stock-request/get-product-table',
+            url: '/internal-stock-return/get-product-table',
             data: {
                 'product_class_id': $('#product_class_id').val(),
                 'category_id': $('#category_id').val(),
@@ -330,6 +337,7 @@
                 'grade_id': $('#grade_id').val(),
                 'tax_id': $('#tax_id').val(),
                 'store_id': $('#store_id').val(),
+                'sender_store_id': $('#sender_store_id').val(),
             },
             dataType: 'html',
             success: function(result) {
@@ -348,7 +356,13 @@
         })
 
     }
+    $(document).ready(function() {
+        $('#sender_store_id').change()
+    });
     $(document).on('change', '.filter', function(){
+        getProducts()
+    })
+    $(document).on('change', '#sender_store_id', function(){
         getProducts()
     })
     var data_array = [];

@@ -154,6 +154,8 @@ class User extends Authenticatable
                 'add_stock' => 'Add Stock',
                 'pay' => 'Pay',
                 'remove_stock' => 'Remove Stock',
+                'internal_stock_request' => 'Internal Stock Request',
+                'internal_stock_return' => 'Internal Stock Return',
                 'transfer' => 'Transfer',
                 'import' => 'Import',
             ],
