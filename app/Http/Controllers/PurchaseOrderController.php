@@ -478,7 +478,7 @@ class PurchaseOrderController extends Controller
             $query->where('transaction_date', '<=', request()->end_date);
         }
 
-        $purchase_orders = $query->get();
+        $purchase_orders = $query->orderBy('created_at', 'desc')->get();
 
         $suppliers = Supplier::pluck('name', 'id');
         $stores = Store::getDropdown();

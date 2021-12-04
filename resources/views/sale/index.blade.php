@@ -138,6 +138,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan --}}
+                            @if(empty($sale->return_parent))
                             @can('return.sell_return.create_and_edit')
                             <li>
                                 <a href="{{action('SellReturnController@add', $sale->id)}}" class="btn"><i
@@ -145,6 +146,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @endif
                             @can('sale.pay.create_and_edit')
                             @if($sale->payment_status != 'paid')
                             <li>

@@ -19,7 +19,7 @@
         <div class="input-group">
             <input type="text" class="form-control quantity" min=1 max="{{$product->quantity}}"
                 name="transaction_sell_line[{{$loop->index}}][quantity]" required
-                value="@if(isset($product->quantity_returned)){{$product->quantity_returned}}@else{{0}}@endif">
+                value="@if(isset($product->quantity_returned)){{@num_format($product->quantity_returned)}}@else{{0}}@endif">
         </div>
 
     </td>

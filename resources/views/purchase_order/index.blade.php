@@ -91,6 +91,13 @@
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                                 @can('purchase_order.purchase_order.view')
                                 <li>
+                                    <a href="{{action('PurchaseOrderController@show', $purchase_order->id)}}?print=true" target="_blank"
+                                        class=""><i class="dripicons-print btn"></i> @lang('lang.print')</a>
+                                </li>
+                                <li class="divider"></li>
+                                @endcan
+                                @can('purchase_order.purchase_order.view')
+                                <li>
                                     <a href="{{action('PurchaseOrderController@show', $purchase_order->id)}}" target="_blank"
                                         class=""><i class="fa fa-eye btn"></i> @lang('lang.view')</a>
                                 </li>

@@ -32,7 +32,10 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->hasMany(TransactionSellLine::class);
     }
-
+    public function sell_return()
+    {
+        return $this->belongsTo(Transaction::class, 'return_parent_id', 'id');
+    }
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');

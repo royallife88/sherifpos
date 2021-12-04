@@ -200,6 +200,7 @@ $(document).on("click", ".plus", function () {
 $(document).on("change", "#final_total", function (e) {
     let final_total = __read_number($("#final_total"));
     __write_number($("#amount"), final_total);
+    $("#amount").change();
     __write_number($("#paying_amount"), final_total);
 });
 
@@ -262,6 +263,10 @@ $(document).on("change", "#amount", function () {
 
     let change = paying_amount - amount;
     $("#change").text(__currency_trans_from_en(change, false));
+
+    if (amount > 0) {
+        $("#paid_on").attr("required", true);
+    }
 });
 
 pos_form_validator = pos_form_obj.validate({
@@ -349,7 +354,7 @@ function confirmCancel() {
     var audio = $("#mysoundclip2")[0];
     audio.play();
     if (confirm("Are you sure want to reset?")) {
-        window.location = $('#cancel-btn').data("href");
+        window.location = $("#cancel-btn").data("href");
     }
     return false;
 }

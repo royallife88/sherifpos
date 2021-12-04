@@ -179,6 +179,7 @@ var datatable_params = {
     paging: true,
     info: false,
     bAutoWidth: false,
+    order: [],
     lengthMenu: [
         [10, 25, 50, 75, 100, 200, 500, -1],
         [10, 25, 50, 75, 100, 200, 500, "All"],

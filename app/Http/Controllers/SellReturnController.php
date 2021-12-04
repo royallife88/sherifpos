@@ -158,7 +158,6 @@ class SellReturnController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             if (!empty($request->transaction_sell_line)) {
                 $sell_return = Transaction::where('type', 'sell_return')

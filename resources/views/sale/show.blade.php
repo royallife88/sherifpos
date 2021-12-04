@@ -62,14 +62,15 @@
                                     alt="photo" width="50" height="50"></td>
                                 <td>
                                     {{$line->product->name}}
-
+                                    @if(!empty($line->variation))
                                     @if($line->variation->name != "Default")
                                     <b>{{$line->variation->name}}</b>
+                                    @endif
                                     @endif
 
                                 </td>
                                 <td>
-                                    {{$line->variation->sub_sku}}
+                                    {{$line->product->sku}}
                                 </td>
                                 <td>
                                     {{$line->product->batch_number}}

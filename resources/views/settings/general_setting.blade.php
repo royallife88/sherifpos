@@ -68,7 +68,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                {!! Form::label('letter_header', __('lang.letter_header'), []) !!} <br>
+                                {!! Form::label('letter_header', __('lang.letter_header'), []) !!} @if(!empty($settings['letter_header']))<button class="btn btn-xs btn-danger remove_image" data-type="letter_header"><i class="fa fa-times"></i></button>@endif <br>
                                 {!! Form::file('letter_header', null, ['class' =>
                                 'form-control'])
                                 !!}
@@ -86,7 +86,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                {!! Form::label('letter_footer', __('lang.letter_footer'), []) !!} <br>
+                                {!! Form::label('letter_footer', __('lang.letter_footer'), []) !!} @if(!empty($settings['letter_footer']))<button class="btn btn-xs btn-danger remove_image" data-type="letter_footer"><i class="fa fa-times"></i></button>@endif<br>
                                 {!! Form::file('letter_footer', null, ['class' =>
                                 'form-control'])
                                 !!}
@@ -105,7 +105,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                {!! Form::label('logo', __('lang.logo'), []) !!} <br>
+                                {!! Form::label('logo', __('lang.logo'), []) !!} @if(!empty($settings['logo']))<button class="btn btn-xs btn-danger remove_image" data-type="logo"><i class="fa fa-times"></i></button>@endif<br>
                                 {!! Form::file('logo', null, ['class' =>
                                 'form-control'])
                                 !!}
@@ -144,8 +144,8 @@
 
 @section('javascript')
 <script>
-    $('.selectpicker').selectpicker();
-    $(document).ready(function () {
+$('.selectpicker').selectpicker();
+$(document).ready(function () {
     tinymce.init({
         selector: "#help_page_content",
         height: 130,
@@ -157,6 +157,18 @@
         toolbar:
             "insert | undo redo |  formatselect | bold italic backcolor  | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat",
         branding: false,
+    });
+});
+$(document).on('click', '.remove_image', function(){
+    var type = $(this).data('type');
+    $.ajax({
+        url: "/settings/remove-image/"+type,
+        type: "POST",
+        success: function(response){
+            if(response.status == 'success'){
+                location.reload();
+            }
+        }
     });
 });
 </script>

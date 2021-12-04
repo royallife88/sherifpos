@@ -61,8 +61,10 @@
                                         <tr>
                                             <td>
                                                 {{$line->product->name}}
+                                                @if(!empty($line->variation))
                                                 @if($line->variation->name != "Default")
                                                 <b>{{$line->variation->name}}</b>
+                                                @endif
                                                 @endif
 
                                             </td>

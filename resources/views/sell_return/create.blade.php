@@ -119,5 +119,6 @@
     $(document).ready(function(){
         calculate_sub_totals()
     })
+
 </script>
 @endsection

@@ -1142,7 +1142,7 @@ class ProductUtil extends Util
             DB::raw('SUM(product_stores.qty_available * products.purchase_price) as current_stock_value'),
         );
 
-        $current_stock_value = $query->first();
+        $current_stock_value = $query->where('is_service', 0)->first();
 
         return $current_stock_value ? $current_stock_value->current_stock_value : 0;
     }

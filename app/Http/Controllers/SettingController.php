@@ -218,6 +218,26 @@ class SettingController extends Controller
     public function callTesting()
     {
         Artisan::call('migrate:reset', ['--force' => true]);
-        print_r('done'); die();
+        print_r('done');
+        die();
+    }
+
+    public function removeImage($type)
+    {
+        try {
+            System::where('key', $type)->update(['value' => null]);
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

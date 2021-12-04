@@ -47,11 +47,13 @@
                             title="@lang('lang.delete')" data-toggle="tooltip" data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                             class="btn btn-danger delete_item" style="color: white"><i class="fa fa-trash"></i></a>
                         @endcan --}}
+                        @if(empty($transaction->return_parent))
                         @can('return.sell_return.create_and_edit')
                         <a href="{{action('SellReturnController@add', $transaction->id)}}"
                             title="@lang('lang.sell_return')" data-toggle="tooltip" class="btn btn-secondary"
                             style="color: white"><i class="fa fa-undo"></i></a>
                         @endcan
+                        @endif
                         @if($transaction->status != 'draft' && $transaction->payment_status != 'paid')
                         <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $transaction->id])}}"
                             title="@lang('lang.pay_now')" data-toggle="tooltip" data-container=".view_modal" class="btn btn-modal btn-success" style="color: white"><i

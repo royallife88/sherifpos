@@ -127,8 +127,10 @@
                             {{@num_format($line->sell_price)}}</td>
                         <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
                             {{$line->product->name}}
+                            @if(!empty($line->variation))
                             @if($line->variation->name != "Default")
                             <b>{{$line->variation->name}}</b>
+                            @endif
                             @endif
                             {{-- <br>{{@num_format($line->quantity)}} x {{@num_format($line->sell_price)}}
                             @if(!empty((float)$line->product_discount_amount))-{{@num_format($line->product_discount_amount)}}@endif

@@ -249,6 +249,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
     Route::post('settings/update-general-setting', 'SettingController@updateGeneralSetting');
     Route::get('settings/get-general-setting', 'SettingController@getGeneralSetting');
+    Route::post('settings/remove-image/{type}', 'SettingController@removeImage');
 
     Route::resource('settings', SettingController::class);
 

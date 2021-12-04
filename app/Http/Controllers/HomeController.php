@@ -167,7 +167,7 @@ class HomeController extends Controller
      * @param string $start_date
      * @param string $end_date
      * @param string $store_id
-     * @return void
+     * @return double
      */
     public function getSaleAmount($start_date, $end_date, $store_id = null)
     {
@@ -190,7 +190,7 @@ class HomeController extends Controller
      * @param string $start_date
      * @param string $end_date
      * @param int $store_id
-     * @return void
+     * @return double
      */
     public function getPurchaseAmount($start_date, $end_date, $store_id = null)
     {
