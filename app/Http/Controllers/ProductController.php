@@ -816,4 +816,25 @@ class ProductController extends Controller
 
         return $output;
     }
+
+    public function deleteProductImage($id)
+    {
+        try {
+            $product = Product::find($id);
+            $product->clearMediaCollection('product');
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
+    }
 }

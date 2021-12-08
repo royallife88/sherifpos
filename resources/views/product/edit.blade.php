@@ -18,8 +18,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="i-checks">
-                                    <input id="is_service" name="is_service" type="checkbox" @if(!empty($product->is_service)) checked @endif value="1"
-                                        class="form-control-custom">
+                                    <input id="is_service" name="is_service" type="checkbox"
+                                        @if(!empty($product->is_service)) checked @endif value="1"
+                                    class="form-control-custom">
                                     <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
                                 </div>
                             </div>
@@ -181,9 +182,14 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-12">
-                                <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                        alt="photo" style="width: 120px;">
+                            <div class="col-md-12 mt-3">
+                                @if(!empty($product->getFirstMediaUrl('product')))
+                                <div style="width: 120px;" class="images_div">
+                                    <button type="button" class="delete-image btn btn-danger btn-xs" data-href="{{action('ProductController@deleteProductImage', $product->id)}}" style="margin-left: 100px; border-radius: 50%"><i class="fa fa-times"></i></button>
+                                    <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                        alt="photo" style="width: 120px;">
+                                </div>
+                                @endif
                             </div>
 
                             <div class="col-md-12 " style="margin-top: 10px;">
@@ -285,7 +291,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-                                    {!! Form::text('discount_start_date',!empty($product->discount_start_date) ? @format_date($product->discount_start_date) : null, ['class' =>
+                                    {!! Form::text('discount_start_date',!empty($product->discount_start_date) ?
+                                    @format_date($product->discount_start_date) : null, ['class' =>
                                     'form-control datepicker',
                                     'placeholder' => __('lang.discount_start_date')]) !!}
                                 </div>
@@ -293,7 +300,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-                                    {!! Form::text('discount_end_date', !empty($product->discount_end_date) ? @format_date($product->discount_end_date) : null, ['class' =>
+                                    {!! Form::text('discount_end_date', !empty($product->discount_end_date) ?
+                                    @format_date($product->discount_end_date) : null, ['class' =>
                                     'form-control datepicker',
                                     'placeholder' => __('lang.discount_end_date')]) !!}
                                 </div>
@@ -415,7 +423,8 @@
                         <div class="row">
                             <div class="col-md-4 mt-5">
                                 <div class="form-group">
-                                    <input type="submit" id="submit-btn" value="{{trans('lang.submit')}}" class="btn btn-primary">
+                                    <input type="submit" id="submit-btn" value="{{trans('lang.submit')}}"
+                                        class="btn btn-primary">
                                 </div>
                             </div>
                         </div>

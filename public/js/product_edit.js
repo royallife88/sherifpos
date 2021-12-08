@@ -536,3 +536,23 @@ $(document).on("change", "#purchase_price", function () {
 $(document).on("change", "#sell_price", function () {
     $(".default_sell_price").val($(this).val());
 });
+$(document).on("click", ".delete-image", function () {
+    let url = $(this).attr("data-href");
+    let images_div = $(this).parent('.images_div');
+    console.log(url);
+    $.ajax({
+        method: "get",
+        url: url,
+        data: {},
+        success: function (result) {
+            if (result.success) {
+                swal("Success", result.msg, "success");
+                console.log();
+                $(images_div).remove();
+            }
+            if (!result.success) {
+                swal("Error", result.msg, "error");
+            }
+        },
+    });
+});

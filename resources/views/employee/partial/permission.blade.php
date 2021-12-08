@@ -57,8 +57,10 @@
                     'check_box']) !!}
                 </td>
                 <td class="">
+                    @if($delete_permission != 'sale.pos.delete' && $delete_permission != 'sale.sale.delete')
                     {!! Form::checkbox('permissions['.$delete_permission.']', 1, !empty($user) &&
                     !empty($user->hasPermissionTo($delete_permission)) ? true : false, ['class' => 'check_box']) !!}
+                    @endif
                 </td>
             </tr>
 

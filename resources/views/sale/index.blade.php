@@ -130,14 +130,14 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            {{-- @can('sale.pos.create_and_edit')
+                            @can('superadmin')
                             <li>
 
                                 <a href="{{action('SellController@edit', $sale->id)}}" class="btn"><i
                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>
-                            @endcan --}}
+                            @endcan
                             @if(empty($sale->return_parent))
                             @can('return.sell_return.create_and_edit')
                             <li>
@@ -165,14 +165,14 @@
                             </li>
                             @endif
                             @endcan
-                            {{-- @can('sale.pos.delete')
+                            @can('superadmin')
                             <li>
                                 <a data-href="{{action('SellController@destroy', $sale->id)}}"
                                     data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                     class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                     @lang('lang.delete')</a>
                             </li>
-                            @endcan --}}
+                            @endcan
                         </ul>
                     </div>
                 </td>

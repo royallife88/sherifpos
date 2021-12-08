@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\ProductClass;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class ProductClassController extends Controller
         $product_classes = ProductClass::get();
 
         return view('product_class.index')->with(compact(
-             'product_classes'
+            'product_classes'
         ));
     }
 
@@ -171,7 +172,26 @@ class ProductClassController extends Controller
     public function destroy($id)
     {
         try {
-            ProductClass::find($id)->delete();
+            if (request()->source == 'pct') {
+                ProductClass::find($id)->delete();
+                Category::where('product_class_id', $id)->delete();
+            } else {
+                $category = Category::where('product_class_id', $id)->first();
+
+                if (!empty($category)) {
+                    $output = [
+                        'success' => false,
+                        'msg' => __('lang.product_class_has_category')
+                    ];
+
+                    return $output;
+                } else {
+                    ProductClass::find($id)->delete();
+                }
+            }
+
+
+
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')

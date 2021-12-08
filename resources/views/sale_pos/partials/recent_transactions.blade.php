@@ -29,7 +29,7 @@
                 <td></td>
                 <td>
                     <div class="btn-group">
-                        @can('sale.pos.create_and_edit')
+                        @can('sale.pos.view')
                         <a data-href="{{action('SellController@print', $transaction->id)}}"
                             class="btn btn-danger text-white print-invoice"><i
                             title="@lang('lang.print')" data-toggle="tooltip"   class="dripicons-print"></i></a>
@@ -38,15 +38,15 @@
                         <a data-href="{{action('SellController@show', $transaction->id)}}" class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
                             title="@lang('lang.view')" data-toggle="tooltip"  class="fa fa-eye"></i></a>
                         @endcan
-                        {{-- @can('sale.pos.create_and_edit')
+                        @can('superadmin')
                         <a href="{{action('SellController@edit', $transaction->id)}}" class="btn btn-success"><i
                             title="@lang('lang.edit')" data-toggle="tooltip"  class="dripicons-document-edit"></i></a>
                         @endcan
-                        @can('sale.pos.delete')
+                        @can('superadmin')
                         <a data-href="{{action('SellController@destroy', $transaction->id)}}"
                             title="@lang('lang.delete')" data-toggle="tooltip" data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                             class="btn btn-danger delete_item" style="color: white"><i class="fa fa-trash"></i></a>
-                        @endcan --}}
+                        @endcan
                         @if(empty($transaction->return_parent))
                         @can('return.sell_return.create_and_edit')
                         <a href="{{action('SellReturnController@add', $transaction->id)}}"

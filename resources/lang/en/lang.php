@@ -955,6 +955,8 @@ return [
     'compensated' => 'Compensated',
     'compensated_at' => 'Compensated at',
     'compensated_from_supplier' => 'Compensations from Suppliers',
+    'product_class_has_category' => 'Product class has category. delete category first',
+    'sub_category_exsist' => 'Category has sub category. delete sub category first',
 
 
 ];

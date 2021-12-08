@@ -46,7 +46,7 @@
                                             data-href="{{action('ProductClassController@edit', $class->id)}}"
                                             class="pull-right btn btn-modal btn-primary btn-xs"><i
                                                 class="dripicons-document-edit"></i> </button>
-                                        <button data-href="{{action('ProductClassController@destroy', $class->id)}}"
+                                        <button data-href="{{action('ProductClassController@destroy', $class->id)}}?source=pct"
                                             data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                             class="pull-right btn delete_item btn-danger btn-xs"><i
                                                 class="dripicons-trash"></i></button>
@@ -80,7 +80,7 @@
                                                             class="pull-right btn btn-modal btn-primary btn-xs"><i
                                                                 class="dripicons-document-edit"></i> </button>
                                                         <button
-                                                            data-href="{{action('CategoryController@destroy', $category->id)}}"
+                                                            data-href="{{action('CategoryController@destroy', $category->id)}}?source=pct"
                                                             data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                             class="pull-right btn delete_item btn-danger btn-xs"><i
                                                                 class="dripicons-trash"></i></button>
@@ -123,7 +123,7 @@
                                                                                 class="dripicons-document-edit"></i>
                                                                         </button>
                                                                         <button
-                                                                            data-href="{{action('CategoryController@destroy', $sub_category->id)}}"
+                                                                            data-href="{{action('CategoryController@destroy', $sub_category->id)}}?source=pct"
                                                                             data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                                             class="btn delete_item btn-danger btn-xs"><i
                                                                                 class="dripicons-trash"></i></button>

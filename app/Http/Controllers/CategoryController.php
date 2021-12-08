@@ -224,7 +224,22 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         try {
-            Category::find($id)->delete();
+            if (request()->source == 'pct') {
+                Category::find($id)->delete();
+                Category::where('parent_id', $id)->delete();
+            } else {
+                $sub_category_exsist = Category::where('parent_id', $id)->exists();
+                if ($sub_category_exsist) {
+                    $output = [
+                        'success' => false,
+                        'msg' => __('lang.sub_category_exsist')
+                    ];
+
+                    return $output;
+                } else {
+                    Category::find($id)->delete();
+                }
+            }
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
