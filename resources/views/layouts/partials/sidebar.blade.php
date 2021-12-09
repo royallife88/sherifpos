@@ -84,8 +84,14 @@
 
                 @if(auth()->user()->can('stock.add_stock.view')
                 ||auth()->user()->can('stock.add_stock.create_and_edit')
+                ||auth()->user()->can('stock.internal_stock_request.view')
+                ||auth()->user()->can('stock.internal_stock_request.create_and_edit')
+                ||auth()->user()->can('stock.internal_stock_return.create_and_edit')
+                ||auth()->user()->can('stock.internal_stock_return.view')
                 ||auth()->user()->can('stock.remove_stock.create_and_edit')
                 ||auth()->user()->can('stock.remove_stock.view')
+                ||auth()->user()->can('stock.transfer.view')
+                ||auth()->user()->can('stock.import.view')
                 )
                 <li><a href="#stock" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-basket"></i><span>{{__('lang.stock')}}</span><span></a>

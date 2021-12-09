@@ -3,6 +3,7 @@
         * {
             font-size: 12px;
             line-height: 20px;
+            font-family: 'Times New Roman';
         }
 
         td,
@@ -92,7 +93,7 @@ if(empty($invoice_lang)){
 $invoice_lang = request()->session()->get('language');
 }
 @endphp
-<div style="max-width:400px;margin:0 auto" style="color: black !important;">
+<div style="max-width:350px;margin:0 15px; color: black !important;">
 
     <div id="receipt-data">
         <div class="centered">

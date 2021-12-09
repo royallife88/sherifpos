@@ -3,6 +3,7 @@
         * {
             font-size: 12px;
             line-height: 20px;
+            font-family: 'Times New Roman';
         }
 
         td,
@@ -88,7 +89,7 @@
     }
 </style>
 
-<div style="max-width:350px;margin:0 auto" style="color: black !important;">
+<div style="max-width:350px;margin:0 15px; color: black !important;">
 
     <div id="receipt-data">
         <div class="centered">
@@ -231,6 +232,7 @@
             </tbody>
         </table>
         @include('layouts.partials.print_footer')
+        @include('layouts.partials.footer')
 
     </div>
 </div>
