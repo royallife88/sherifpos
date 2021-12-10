@@ -599,8 +599,9 @@ $(document).on("click", ".payment-btn", function (e) {
     audio.play();
 
     let method = $(this).data("method");
+    console.log(method, 'method inside btn');
     $(".method").val(method);
-    $(".method").selectpicker("refresh");
+    // $(".method").selectpicker("refresh");
     $(".method").change();
     if (method === "deposit") {
         $(".deposit-fields").removeClass("hide");
@@ -651,6 +652,7 @@ $(document).on("change", ".method", function (e) {
 });
 
 function changeMethodFields(method, row) {
+    console.log(method, 'method');
     $(".card_bank_field").addClass("hide");
     if (method === "cheque") {
         $(row).find(".cheque_field").removeClass("hide");
@@ -728,9 +730,9 @@ $(document).on("change", ".received_amount", function () {
             success: function (result) {
                 $("#payment_rows").append(result);
                 $("#payment_rows .payment_row")
-                    .last()
-                    .find(".received_amount")
-                    .val(change);
+                .last()
+                .find(".received_amount")
+                .val(change);
             },
         });
     }
@@ -870,7 +872,7 @@ $(document).ready(function () {
             data =
                 data +
                 "&method=" +
-                $("#method").val() +
+                $("#payment_method").val() +
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
             var url = $(form).attr("action");
@@ -1311,6 +1313,25 @@ $(document).on("shown.bs.modal", "#recentTransaction", function () {
                         __currency_trans_from_en(sum, false)
                     );
                 });
+        },
+    });
+});
+
+
+$(document).on("click", ".remove_draft", function () {
+    let href = $(this).data("href");
+
+    $.ajax({
+        method: "delete",
+        url: href,
+        data: {  },
+        success: function (result) {
+            if (result.success) {
+                swal("Success", result.msg, "success");
+                get_draft_transactions();
+            } else {
+                swal("Error", result.msg, "error");
+            }
         },
     });
 });

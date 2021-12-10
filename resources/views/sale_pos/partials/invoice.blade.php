@@ -93,7 +93,7 @@ if(empty($invoice_lang)){
 $invoice_lang = request()->session()->get('language');
 }
 @endphp
-<div style="max-width:350px;margin:0 15px; color: black !important;">
+<div style="max-width:350px;margin:0 auto; padding: 0 15x; color: black !important;">
 
     <div id="receipt-data">
         <div class="centered">
@@ -109,7 +109,7 @@ $invoice_lang = request()->session()->get('language');
             @lang('lang.customer', [], $invoice_lang):
             @if(!empty($transaction->customer)){{$transaction->customer->name}}@endif
         </p>
-        <div class="table_div" style=" width:100%; height:100%;">
+        <div class="table_div" style=" padding: 0 7px; width:100%; height:100%;">
             <table style="margin: 0 auto;">
                 <tbody>
 
@@ -177,41 +177,46 @@ $invoice_lang = request()->session()->get('language');
                 </tfoot>
             </table>
         </div>
-        <table>
-            <tbody>
-                <tr>
-                    <td colspan="2">@lang('lang.paid_by', [], $invoice_lang):</td>
-                </tr>
-                @foreach($transaction->transaction_payments as $payment_data)
-                <tr style="background-color:#ddd;">
-                    <td style="padding: 5px;width:30%">
-                        @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
-                    <td style="padding: 5px;width:40%">{{@num_format($payment_data->amount)}}</td>
-                </tr>
-                @endforeach
-                <tr>
-                    <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again', [], $invoice_lang)
-                    </td>
-                </tr>
-                @if(!empty($transaction->terms_and_conditions))
-                <tr>
-                    <td>{{$transaction->terms_and_conditions->description}}</td>
-                </tr>
-                @endif
-                <tr>
-                    <td class="centered" colspan="3">
-                        <img style="margin-top:10px;"
-                            src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
-                            width="300" alt="barcode" />
-                        <br>
-                        <img style="margin-top:10px;"
-                            src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
-                            alt="barcode" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="padding: 0 7px;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2">@lang('lang.paid_by', [], $invoice_lang):</td>
+                    </tr>
+                    @foreach($transaction->transaction_payments as $payment_data)
+                    <tr style="background-color:#ddd;">
+                        <td style="padding: 5px;width:30%">
+                            @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
+                        <td style="padding: 5px;width:40%">{{@num_format($payment_data->amount)}}</td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again', [], $invoice_lang)
+                        </td>
+                    </tr>
+                    @if(!empty($transaction->terms_and_conditions))
+                    <tr>
+                        <td>{{$transaction->terms_and_conditions->description}}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="centered" colspan="3">
+                            <img style="margin-top:10px;"
+                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
+                                width="300" alt="barcode" />
+                            <br>
+                            <img style="margin-top:10px;"
+                                src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
+                                alt="barcode" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         @include('layouts.partials.print_footer')
-
+        <div style="width: 100%; text-align: center;">
+            <p><span class="">Proudly Developed at <a style="text-decoration: none;" target="_blank"
+                        href="http://sherifshalaby.tech">sherifshalaby.tech</a></span></p>
+        </div>
     </div>
 </div>

@@ -25,7 +25,7 @@ class DatabaseSeeder extends Seeder
     {
         $user_data = [
             'name' => 'superadmin',
-            'email' => 'superadmin@gmail.com',
+            'email' => 'admin@sherifshalaby.tech',
             'password' => Hash::make('123456'),
             'is_superadmin' => 1,
             'is_detault' => 1,

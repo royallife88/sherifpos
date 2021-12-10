@@ -15,6 +15,9 @@
                 <th>@lang('lang.bank_name')</th>
                 <th>@lang('lang.ref_number')</th>
                 <th>@lang('lang.bank_deposit_date')</th>
+                <th>@lang('lang.card_number')</th>
+                <th>@lang('lang.year')</th>
+                <th>@lang('lang.month')</th>
                 @if(!empty($show_action))
                 <th>@lang('lang.action')</th>
                 @endif
@@ -30,6 +33,9 @@
             <td>{{$payment->bank_name}}</td>
             <td>{{$payment->ref_number}}</td>
             <td>@if(!empty($payment->bank_deposit_date)){{@format_date($payment->bank_deposit_date)}} @endif</td>
+            <td>{{$payment->card_number}}</td>
+            <td>{{$payment->card_year}}</td>
+            <td>{{$payment->card_month}}</td>
             @if(!empty($show_action))
             <td>
                 <div class="btn-group">

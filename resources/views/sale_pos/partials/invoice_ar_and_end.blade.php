@@ -89,7 +89,7 @@
     }
 </style>
 
-<div style="max-width:350px;margin:0 15px; color: black !important;">
+<div style="max-width:350px;margin:0 auto;color: black !important;">
 
     <div id="receipt-data">
         <div class="centered">
@@ -101,12 +101,13 @@
                 {{$transaction->store->phone_number}} </p>
 
         </div>
-        <p>@lang('lang.date',[], 'en'): {{$transaction->created_at}} {{__('lang.date',[], 'ar')}}<br>
+        <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{$transaction->created_at}} {{__('lang.date',[],
+            'ar')}}<br>
             @lang('lang.reference',[], 'en'): {{$transaction->invoice_no}} {{__('lang.reference',[], 'ar')}}<br>
             @lang('lang.customer',[], 'en'): @if(!empty($transaction->customer)){{$transaction->customer->name}}@endif
             {{__('lang.customer',[], 'ar')}}
         </p>
-        <div class="table_div" style=" width:100%; height:100%;">
+        <div class="table_div" style=" width:100%; height:100%; padding: 0 7px;">
             <table style="margin: 0 auto; width: 100%">
                 <thead>
                     <tr>
@@ -194,45 +195,52 @@
                 </tfoot>
             </table>
         </div>
-        <table>
-            <tbody>
-                <tr>
-                    <td colspan="2">@lang('lang.paid_by',[], 'en'): {{__('lang.paid_by',[], 'ar')}}</td>
-                </tr>
-                @foreach($transaction->transaction_payments as $payment_data)
-                <tr style="background-color:#ddd;">
-                    <td style="padding: 5px;width:30%">
-                        @if(!empty($payment_data->method)){{__('lang.'. $payment_data->method, [], 'ar')}} <br>
-                        {{__('lang.'. $payment_data->method, [], 'en')}}@endif</td>
-                    <td style="padding: 5px;width:40%">
-                        {{@num_format($payment_data->amount)}}</td>
-                </tr>
-                @endforeach
-                <tr>
-                    <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again',[], 'en')
-                        {{__('lang.thank_you_and_come_again',[], 'ar')}}
-                    </td>
-                </tr>
-                @if(!empty($transaction->terms_and_conditions))
-                <tr>
-                    <td>{{$transaction->terms_and_conditions->description}}</td>
-                </tr>
-                @endif
-                <tr>
-                    <td class="centered" colspan="3">
-                        <img style="margin-top:10px;"
-                            src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
-                            width="300" alt="barcode" />
-                        <br>
-                        <img style="margin-top:10px;"
-                            src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
-                            alt="barcode" />
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div style="padding: 0 7px;">
+            <table>
+                <tbody>
+                    <tr>
+                        <td colspan="2">@lang('lang.paid_by',[], 'en'): {{__('lang.paid_by',[], 'ar')}}</td>
+                    </tr>
+                    @foreach($transaction->transaction_payments as $payment_data)
+                    <tr style="background-color:#ddd;">
+                        <td style="padding: 7px;width:30%">
+                            @if(!empty($payment_data->method)){{__('lang.'. $payment_data->method, [], 'ar')}} <br>
+                            {{__('lang.'. $payment_data->method, [], 'en')}}@endif</td>
+                        <td style="padding: 7px;width:40%">
+                            {{@num_format($payment_data->amount)}}</td>
+                    </tr>
+                    @endforeach
+                    <tr>
+                        <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again',[], 'en')
+                            {{__('lang.thank_you_and_come_again',[], 'ar')}}
+                        </td>
+                    </tr>
+                    @if(!empty($transaction->terms_and_conditions))
+                    <tr>
+                        <td>{{$transaction->terms_and_conditions->description}}</td>
+                    </tr>
+                    @endif
+                    <tr>
+                        <td class="centered" colspan="3">
+                            <img style="margin-top:10px;"
+                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
+                                width="300" alt="barcode" />
+                            <br>
+                            <img style="margin-top:10px;"
+                                src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
+                                alt="barcode" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
         @include('layouts.partials.print_footer')
-        @include('layouts.partials.footer')
+
+        <div style="width: 100%; text-align: center;">
+            <p><span class="">Proudly Developed at <a style="text-decoration: none;" target="_blank"
+                        href="http://sherifshalaby.tech">sherifshalaby.tech</a></span></p>
+        </div>
 
     </div>
 </div>

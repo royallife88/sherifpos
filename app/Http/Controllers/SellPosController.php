@@ -99,7 +99,7 @@ class SellPosController extends Controller
         $stores = Store::getDropdown();
         $store_poses = [];
 
-        if(empty($store_pos)){
+        if (empty($store_pos)) {
             $output = [
                 'success' => false,
                 'msg' => __('lang.kindly_assign_pos_for_that_user_to_able_to_use_it')
@@ -254,6 +254,7 @@ class SellPosController extends Controller
                         'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
                         'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
                         'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                        'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
                         'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
                         'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
                         'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
@@ -453,10 +454,10 @@ class SellPosController extends Controller
         if (!empty($request->selling_filter)) {
             $query->leftjoin('transaction_sell_lines', 'products.id', 'transaction_sell_lines.product_id');
             if ($request->selling_filter == 'best_selling') {
-                $query->select(DB::raw('SUM(quantity) as sold_qty'))->orderBy('sold_qty', 'desc');
+                $query->select(DB::raw('SUM(transaction_sell_lines.quantity) as sold_qty'))->orderBy('sold_qty', 'desc');
             }
             if ($request->selling_filter == 'slow_moving_items') {
-                $query->select(DB::raw('SUM(quantity) as sold_qty'))->orderBy('sold_qty', 'asc');
+                $query->select(DB::raw('SUM(transaction_sell_lines.quantity) as sold_qty'))->orderBy('sold_qty', 'asc');
             }
             if ($request->selling_filter == 'product_in_last_transactions') {
                 $query->orderBy('transaction_sell_lines.created_at', 'desc');
@@ -479,13 +480,16 @@ class SellPosController extends Controller
             }
         }
         if (!empty($request->expiry_filter)) {
+            $query->leftjoin('add_stock_lines', 'variations.id', 'add_stock_lines.variation_id');
             if ($request->expiry_filter == 'nearest_expiry') {
-                $query->whereDate('products.expiry_date', '>', Carbon::now());
-                $query->orderBy('products.expiry_date', 'asc');
+                $query->where(function ($q) {
+                    $q->whereDate('add_stock_lines.expiry_date', '>', Carbon::now());
+                })->orderBy('add_stock_lines.expiry_date', 'asc');
             }
             if ($request->expiry_filter == 'longest_expiry') {
-                $query->whereDate('products.expiry_date', '>', Carbon::now());
-                $query->orderBy('products.expiry_date', 'desc');
+                $query->where(function ($q) {
+                    $q->whereDate('add_stock_lines.expiry_date', '>', Carbon::now());
+                })->orderBy('add_stock_lines.expiry_date', 'desc');
             }
         }
         if (!empty($request->sale_promo_filter)) {

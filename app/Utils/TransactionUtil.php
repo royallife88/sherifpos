@@ -66,6 +66,7 @@ class TransactionUtil extends Util
             $transaction_payment->card_number = !empty($payment_data['card_number']) ?  $payment_data['card_number'] : null;
             $transaction_payment->card_security = !empty($payment_data['card_security']) ?  $payment_data['card_security'] : null;
             $transaction_payment->card_month = !empty($payment_data['card_month']) ?  $payment_data['card_month'] : null;
+            $transaction_payment->card_year = !empty($payment_data['card_year']) ?  $payment_data['card_year'] : null;
             $transaction_payment->cheque_number = !empty($payment_data['cheque_number']) ?  $payment_data['cheque_number'] : null;
             $transaction_payment->gift_card_number = !empty($payment_data['gift_card_number']) ?  $payment_data['gift_card_number'] : null;
             $transaction_payment->amount_to_be_used = !empty($payment_data['amount_to_be_used']) ?  $this->num_uf($payment_data['amount_to_be_used']) : 0;

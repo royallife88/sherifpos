@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
@@ -28,8 +29,9 @@ class AuthServiceProvider extends ServiceProvider
         // Implicitly grant "Super Admin" role all permissions
         // This works in the app by using gate-related functions like auth()->user->can() and @can()
         Gate::before(function ($user, $ability) {
-            $administrator_list = config('constants.administrator_emails');
-            if (in_array($user->email, explode(',', $administrator_list))) {
+            // $administrator_list = config('constants.administrator_emails');
+            $user = Auth::user();
+            if ($user->is_superadmin) {
                 return true;
             }
             return false;

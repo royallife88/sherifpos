@@ -21,10 +21,10 @@
                 <label>@lang('lang.card_number') *</label>
                 <input type="text" name="payments[{{$index}}][card_number]" class="form-control">
             </div>
-            <div class="col-md-3">
+            {{-- <div class="col-md-3">
                 <label>@lang('lang.card_security')</label>
                 <input type="text" name="payments[{{$index}}][card_security]" class="form-control">
-            </div>
+            </div> --}}
             <div class="col-md-2">
                 <label>@lang('lang.month')</label>
                 <input type="text" name="payments[{{$index}}][card_month]" class="form-control">

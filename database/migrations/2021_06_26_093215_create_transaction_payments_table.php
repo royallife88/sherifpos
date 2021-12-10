@@ -23,6 +23,7 @@ class CreateTransactionPaymentsTable extends Migration
             $table->string('card_number')->nullable();
             $table->string('card_security')->nullable();
             $table->string('card_month')->nullable();
+            $table->string('card_year')->nullable();
             $table->string('cheque_number')->nullable();
             $table->string('gift_card_number')->nullable();
             $table->string('amount_to_be_used')->nullable()->comment('Gift card amount used for this payment');
