@@ -3,7 +3,7 @@
 
 @section('content')
 <div class="container-fluid">
-    {{-- @can('product_module.product.create_and_edit')
+    @can('product_module.product.create_and_edit')
     <a style="color: white" href="{{action('ProductController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.add_product')</a>
@@ -11,7 +11,7 @@
     @endcan
     <a style="color: white" href="{{action('ProductController@getImport')}}" class="btn btn-primary"><i
             class="fa fa-arrow-down"></i>
-        @lang('lang.import')</a> --}}
+        @lang('lang.import')</a>
 
     <div class="card mt-3">
         <div class="col-md-12">
