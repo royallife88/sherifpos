@@ -599,7 +599,7 @@ $(document).on("click", ".payment-btn", function (e) {
     audio.play();
 
     let method = $(this).data("method");
-    console.log(method, 'method inside btn');
+    console.log(method, "method inside btn");
     $(".method").val(method);
     // $(".method").selectpicker("refresh");
     $(".method").change();
@@ -652,7 +652,7 @@ $(document).on("change", ".method", function (e) {
 });
 
 function changeMethodFields(method, row) {
-    console.log(method, 'method');
+    console.log(method, "method");
     $(".card_bank_field").addClass("hide");
     if (method === "cheque") {
         $(row).find(".cheque_field").removeClass("hide");
@@ -730,9 +730,9 @@ $(document).on("change", ".received_amount", function () {
             success: function (result) {
                 $("#payment_rows").append(result);
                 $("#payment_rows .payment_row")
-                .last()
-                .find(".received_amount")
-                .val(change);
+                    .last()
+                    .find(".received_amount")
+                    .val(change);
             },
         });
     }
@@ -1039,6 +1039,8 @@ $(document).on(
 //Get recent transactions
 function get_recent_transactions() {
     let href = $("#recent-transaction-btn").data("href");
+    $('.recent_transaction_div').css('text-align', 'center')
+    $('.recent_transaction_div').html(`<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`);
 
     $.ajax({
         method: "get",
@@ -1053,6 +1055,15 @@ function get_recent_transactions() {
         data: {},
         success: function (result) {
             $(".recent_transaction_div").empty().append(result);
+
+            if(!$(".recent_transaction_div").find("#recent_transaction_table tbody tr").hasClass("no_data_found")){
+                if ($.fn.DataTable.isDataTable("#recent_transaction_table")) {
+                    $("#recent_transaction_table").DataTable().destroy();
+                    $(".recent_transaction_div").empty()
+                }
+                $(".recent_transaction_div").empty().append(result);
+                table = $(".recent_transaction_div").find("#recent_transaction_table").DataTable(datatable_params);
+            }
         },
     });
 }
@@ -1317,14 +1328,13 @@ $(document).on("shown.bs.modal", "#recentTransaction", function () {
     });
 });
 
-
 $(document).on("click", ".remove_draft", function () {
     let href = $(this).data("href");
 
     $.ajax({
         method: "delete",
         url: href,
-        data: {  },
+        data: {},
         success: function (result) {
             if (result.success) {
                 swal("Success", result.msg, "success");

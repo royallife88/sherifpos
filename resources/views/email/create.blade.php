@@ -15,14 +15,16 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('employee_id', __('lang.employee'), []) !!}
-                                    {!! Form::select('employee_id[]', $employees, !empty($email) ? $email : false, ['class' => 'form-control
-                                    selectpicker', 'multiple', 'data-live-search' =>'true', 'id' => 'employee_id', 'placeholder' =>
-                                    __('lang.please_select')]) !!}
+                                    {!! Form::select('employee_id[]', $employees, !empty($email) ? $email : false,
+                                    ['class' => 'form-control
+                                    selectpicker', 'multiple', 'data-live-search' =>'true',
+                                    "data-actions-box"=>"true", 'id' => 'employee_id']) !!}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {!! Form::open(['url' => action('EmailController@store'), 'method' => 'post', 'id' => 'email_form', 'files' => true,
+                    {!! Form::open(['url' => action('EmailController@store'), 'method' => 'post', 'id' => 'email_form',
+                    'files' => true,
                     ]) !!}
                     <div class="col-md-12">
                         <div class=" row">
