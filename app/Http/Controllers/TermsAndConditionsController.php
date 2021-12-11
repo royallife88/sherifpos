@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\System;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -193,7 +194,10 @@ class TermsAndConditionsController extends Controller
     {
         try {
             $data = $request->except('_token');
-            System::where('key', 'invoice_terms_and_conditions')->update(['value' => $data['invoice_terms_and_conditions']]);
+            System::updateOrCreate(
+                ['key' => 'invoice_terms_and_conditions'],
+                ['value' => $request->invoice_terms_and_conditions, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
 
             $output = [
                 'success' => true,
