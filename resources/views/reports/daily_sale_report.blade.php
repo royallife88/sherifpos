@@ -74,6 +74,10 @@
                                     <p><strong>{{$i}}</strong></p>
                                     @endif
 
+                                    @if(!empty($total_surplus[$i]))
+                                    <strong>@lang("lang.total_surplus")</strong><br><span>{{@num_format($total_surplus[$i])}}</span><br><br>
+                                    @endif
+
                                     @if(!empty($total_discount[$i]))
                                     <strong>@lang("lang.product_discount")</strong><br><span>{{@num_format($total_discount[$i])}}</span><br><br>
                                     @endif

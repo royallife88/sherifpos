@@ -94,7 +94,7 @@ class SellPosController extends Controller
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::getDropdown();
         $store_poses = [];
@@ -221,9 +221,9 @@ class SellPosController extends Controller
                     $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
                     $transaction->rp_redeemed = $rp_redeemed;
                 }
-
                 $transaction->total_sp_discount = $transaction->transaction_sell_lines->sum('promotion_discount_amount');
-                $transaction->total_product_discount = $transaction->transaction_sell_lines->sum('product_discount_amount');
+                $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
+                $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
                 $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
 
                 $transaction->save();
@@ -357,6 +357,8 @@ class SellPosController extends Controller
      */
     public function edit($id)
     {
+        $transaction = Transaction::find($id);
+
         $categories = Category::whereNull('parent_id')->get();
         $sub_categories = Category::whereNotNull('parent_id')->get();
         $brands = Brand::all();
@@ -368,7 +370,6 @@ class SellPosController extends Controller
         $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
 
-        $transaction = Transaction::find($id);
 
         return view('sale_pos.edit')->with(compact(
             'transaction',

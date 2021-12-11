@@ -42,7 +42,7 @@
         <div class="error-msg text-red"></div>
     </div>
     <div class="col-md-4">
-        {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
+        {!! Form::label('sub_category_id', __('lang.sub_category'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('sub_category_id', [],
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
@@ -59,7 +59,7 @@
         <div class="error-msg text-red"></div>
     </div>
     <div class="col-md-4">
-        {!! Form::label('brand_id', __('lang.brand') . ' *', []) !!}
+        {!! Form::label('brand_id', __('lang.brand'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('brand_id', $brands,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
@@ -166,7 +166,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
+            {!! Form::label('barcode_type', __('lang.barcode_type'), []) !!}
             {!! Form::select('barcode_type', ['C128' => 'Code 128' , 'C39' => 'Code 39', 'UPCA'
             => 'UPC-A', 'UPCE' => 'UPC-E', 'EAN8' => 'EAN-8', 'EAN13' => 'EAN-13'], false,
             ['class' => 'form-control', 'required']) !!}
@@ -174,7 +174,7 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('alert_quantity', __('lang.alert_quantity') . ' *', []) !!}
+            {!! Form::label('alert_quantity', __('lang.alert_quantity'), []) !!}
             {!! Form::text('alert_quantity', null, ['class' => 'form-control', 'placeholder' =>
             __('lang.alert_quantity')]) !!}
         </div>

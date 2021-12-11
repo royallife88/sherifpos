@@ -38,6 +38,14 @@
                                         {!! Form::select('payments[0][method]', $payment_types, null, ['class' =>
                                         'form-control selectpicker method', 'required', 'data-live-search' => 'true']) !!}
                                     </div>
+                                    <div class="col-md-6 mt-1 text-red">
+                                        <label class="discount_lable">@lang('lang.discount'):</label>
+                                        <span class="payment_modal_discount_text" style="font-weight: bold"></span>
+                                    </div>
+                                    <div class="col-md-6 mt-1 text-red">
+                                        <label class="surplus_lable">@lang('lang.surplus'):</label>
+                                        <span class="payment_modal_surplus_text" style="font-weight: bold"></span>
+                                    </div>
                                     <div class="form-group col-md-12 mt-3 hide card_field">
                                         <div class="row">
                                             <div class="col-md-4">

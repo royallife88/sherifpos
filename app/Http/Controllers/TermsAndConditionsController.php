@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\System;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
@@ -25,11 +26,15 @@ class TermsAndConditionsController extends Controller
         if (!empty($type)) {
             $query->where('type', $type);
         }
-        $terms_and_conditions =   $query->get();
+        $terms_and_conditions = $query->get();
+        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $invoice_terms_and_conditions = System::getProperty('invoice_terms_and_conditions');
 
         return view('terms_and_conditions.index')->with(compact(
             'terms_and_conditions',
-            'type'
+            'type',
+            'invoice_terms_and_conditions',
+            'tac'
         ));
     }
 
@@ -176,5 +181,32 @@ class TermsAndConditionsController extends Controller
         $terms_and_condition = TermsAndCondition::find($id);
 
         return $terms_and_condition;
+    }
+
+    /**
+     * update the tac setting for invoice
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function updateInvoiceTacSetting(Request $request)
+    {
+        try {
+            $data = $request->except('_token');
+            System::where('key', 'invoice_terms_and_conditions')->update(['value' => $data['invoice_terms_and_conditions']]);
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

@@ -6,10 +6,34 @@
     <div class="card">
         <div class="card-header d-flex align-items-center">
             @can('settings.terms_and_conditions.create_and_edit')
-            <button type="button" class="btn btn-primary btn-modal ml-3" data-href="{{action('TermsAndConditionsController@create')}}?type={{$type}}"
-            data-container=".view_modal">
-            <i class="fa fa-plus"></i> @lang( 'lang.add_terms_and_conditions' )</button>
+            <button type="button" class="btn btn-primary btn-modal ml-3"
+                data-href="{{action('TermsAndConditionsController@create')}}?type={{$type}}"
+                data-container=".view_modal">
+                <i class="fa fa-plus"></i> @lang( 'lang.add_terms_and_conditions' )</button>
             @endcan
+        </div>
+        <div class="col-md-12">
+            {!! Form::open(['url' => action('TermsAndConditionsController@updateInvoiceTacSetting'), 'method' => 'POST'])
+            !!}
+            <div class="row ml-2">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('invoice_terms_and_conditions', __('lang.tac_to_be_printed'), []) !!}
+                        {!! Form::select('invoice_terms_and_conditions',
+                        $tac,!empty($invoice_terms_and_conditions) ?
+                        $invoice_terms_and_conditions : null, ['class' =>
+                        'form-control selectpicker', 'data-live-search' => "true", 'placeholder' =>
+                        __('lang.please_select')])
+                        !!}
+                    </div>
+                </div>
+                <div class="col-md-1" style="margin-top: 32px;">
+                    <button class="btn btn-success" type="submit">@lang('lang.save')</button>
+                </div>
+            </div>
+
+            {!! Form::close() !!}
+
         </div>
 
         <div class="card-body">

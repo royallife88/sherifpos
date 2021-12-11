@@ -12,6 +12,7 @@ class Employee extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
+    protected $attributes = ['store_pos'];
     /**
      * The attributes that aren't mass assignable.
      *
@@ -210,6 +211,15 @@ class Employee extends Model implements HasMedia
             ->pluck('users.name', 'employees.id');
 
         return $employees;
+    }
+
+    public function getStorePosAttribute()
+    {
+        $user_id = $this->user_id;
+
+        $store_pos = StorePos::where('user_id', $user_id)->first();
+
+        return $store_pos->name ?? null;
     }
 
     public function store()

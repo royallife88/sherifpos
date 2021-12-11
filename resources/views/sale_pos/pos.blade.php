@@ -173,10 +173,10 @@
                                 <div class="form-group">
                                     {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
                                     <select name="terms_and_condition_id" id="terms_and_condition_id"
-                                        class="form-control selectpicker" data-live-searcg="true">
+                                        class="form-control selectpicker" data-live-search="true">
                                         <option value="">@lang('lang.please_select')</option>
                                         @foreach ($tac as $key => $item)
-                                        <option value="{{$key}}">{{$item}}</option>
+                                        <option selected value="{{$key}}">{{$item}}</option>
                                         @endforeach
                                     </select>
                                 </div>

@@ -270,14 +270,35 @@ function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
     var total = 0;
     var item_count = 0;
+    var product_discount_total = 0;
+    var product_surplus_total = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
-        let sub_total = sell_price * quantity;
+        let price_hidden = __read_number($(tr).find(".price_hidden"));
+        let sub_total = 0;
 
+        if (sell_price > price_hidden) {
+            let price_discount = (sell_price - price_hidden) * quantity;
+            $(tr).find(".product_discount_type").val("surplus");
+            $(tr).find(".product_discount_value").val(price_discount);
+            $(tr).find(".product_discount_amount").val(price_discount);
+            $(tr).find(".plus_sign_text").text("+");
+            sub_total = sell_price * quantity;
+        } else if (sell_price < price_hidden) {
+            let price_discount = (price_hidden - sell_price) * quantity;
+            $(tr).find(".product_discount_type").val("fixed");
+            $(tr).find(".product_discount_value").val(price_discount);
+            $(tr).find(".product_discount_amount").val(price_discount);
+            $(tr).find(".plus_sign_text").text("-");
+            sub_total = price_hidden * quantity;
+        } else {
+            sub_total = price_hidden * quantity;
+        }
         __write_number($(tr).find(".sub_total"), sub_total);
-
         let product_discount = calculate_product_discount(tr);
+
+        product_discount_total += product_discount;
         sub_total -= product_discount;
 
         grand_total += sub_total;
@@ -298,9 +319,16 @@ function calculate_sub_totals() {
         item_count++;
 
         calculate_promotion_discount(tr);
+        product_surplus_total += calculate_product_surplus(tr);
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
+    $(".payment_modal_discount_text").text(
+        __currency_trans_from_en(product_discount_total, false)
+    );
+    $(".payment_modal_surplus_text").text(
+        __currency_trans_from_en(product_surplus_total, false)
+    );
 
     let tax_amount = get_tax_amount(total);
     __write_number($("#total_tax"), tax_amount);
@@ -348,13 +376,24 @@ function calculate_sub_totals() {
     $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
 
+function calculate_product_surplus(tr) {
+    let surplus = 0;
+
+    let value = __read_number($(tr).find(".product_discount_value"));
+    let type = $(tr).find(".product_discount_type").val();
+    if (type == "surplus") {
+        surplus = value;
+    }
+
+    return surplus;
+}
 function calculate_product_discount(tr) {
     let discount = 0;
 
     let value = __read_number($(tr).find(".product_discount_value"));
     let type = $(tr).find(".product_discount_type").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
-    if (type == "fixed") {
+    if (type == "fixed" || type == "surplus") {
         discount = value;
     }
     if (type == "percentage") {
@@ -362,6 +401,9 @@ function calculate_product_discount(tr) {
     }
 
     $(tr).find(".product_discount_amount").val(discount);
+    if (type == "surplus") {
+        discount = 0;
+    }
     return discount;
 }
 function calculate_promotion_discount(tr) {
@@ -1039,8 +1081,10 @@ $(document).on(
 //Get recent transactions
 function get_recent_transactions() {
     let href = $("#recent-transaction-btn").data("href");
-    $('.recent_transaction_div').css('text-align', 'center')
-    $('.recent_transaction_div').html(`<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`);
+    $(".recent_transaction_div").css("text-align", "center");
+    $(".recent_transaction_div").html(
+        `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
+    );
 
     $.ajax({
         method: "get",
@@ -1056,13 +1100,19 @@ function get_recent_transactions() {
         success: function (result) {
             $(".recent_transaction_div").empty().append(result);
 
-            if(!$(".recent_transaction_div").find("#recent_transaction_table tbody tr").hasClass("no_data_found")){
+            if (
+                !$(".recent_transaction_div")
+                    .find("#recent_transaction_table tbody tr")
+                    .hasClass("no_data_found")
+            ) {
                 if ($.fn.DataTable.isDataTable("#recent_transaction_table")) {
                     $("#recent_transaction_table").DataTable().destroy();
-                    $(".recent_transaction_div").empty()
+                    $(".recent_transaction_div").empty();
                 }
                 $(".recent_transaction_div").empty().append(result);
-                table = $(".recent_transaction_div").find("#recent_transaction_table").DataTable(datatable_params);
+                table = $(".recent_transaction_div")
+                    .find("#recent_transaction_table")
+                    .DataTable(datatable_params);
             }
         },
     });

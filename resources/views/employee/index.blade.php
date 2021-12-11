@@ -26,6 +26,8 @@
                                             <th>@lang('lang.age')</th>
                                             <th>@lang('lang.start_working_date')</th>
                                             <th>@lang('lang.current_status')</th>
+                                            <th>@lang('lang.store')</th>
+                                            <th>@lang('lang.pos')</th>
                                             <th class="notexport">@lang('lang.action')</th>
                                         </tr>
                                     </thead>
@@ -93,6 +95,8 @@
                                                     @endif
                                                     @endif
                                             </td>
+                                            <td>{{implode(', ', $employee->store->pluck('name')->toArray())}}</td>
+                                            <td>{{$employee->store_pos}}</td>
                                             <td>
                                                 <div class="btn-group">
                                                     <button type="button" class="btn btn-default btn-sm dropdown-toggle"

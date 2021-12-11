@@ -46,6 +46,7 @@ class CreateTransactionsTable extends Migration
             $table->decimal('discount_value', 15, 4)->nullable()->comment('discount value applied by user');
             $table->decimal('discount_amount', 15, 4)->nullable()->comment('amount calculated based on type and value');
             $table->decimal('total_sp_discount', 15, 4)->default(0)->comment('total of sale promotion discount');
+            $table->decimal('total_product_surplus', 15, 4)->default(0)->comment('total of product surplus');
             $table->decimal('total_product_discount', 15, 4)->default(0)->comment('total of product discount');
             $table->decimal('total_coupon_discount', 15, 4)->default(0)->comment('total of coupon discount');
             $table->string('ref_no')->nullable();

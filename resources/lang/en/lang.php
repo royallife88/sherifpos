@@ -959,4 +959,9 @@ return [
     'sub_category_exsist' => 'Category has sub category. delete sub category first',
 
 
+
+    'tac_to_be_printed' => 'Terms and condition to be printed',
+    'surplus' => 'Surplus',
+    'total_surplus' => 'Total Surplus',
+
 ];

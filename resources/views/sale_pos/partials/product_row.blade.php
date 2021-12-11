@@ -12,6 +12,8 @@
             value="{{$product->product_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
             value="{{$product->variation_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
+            value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount]"
             class="coupon_discount_value" value="0"> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_type]"
@@ -42,9 +44,11 @@
                 </button>
             </span>
             <input type="text" class="form-control quantity  qty numkey input-number" min=1
-                @if(!$product->is_service)max="{{$product->qty_available}}"@endif name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
-                required
-                value="@if(!empty($edit_quantity)){{$edit_quantity}}@else @if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif @endif">
+                @if(!$product->is_service)max="{{$product->qty_available}}"@endif
+            name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
+            required
+            value="@if(!empty($edit_quantity)){{$edit_quantity}}@else
+            @if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif @endif">
             <span class="input-group-btn">
                 <button type="button" class="btn btn-success plus">
                     <span class="dripicons-plus"></span>
@@ -65,9 +69,12 @@
         <input type="hidden" class="form-control product_discount_value"
             name="transaction_sell_line[{{$loop->index + $index}}][product_discount_value]"
             value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
-        <input type="text" class="form-control product_discount_amount"
-            name="transaction_sell_line[{{$loop->index + $index}}][product_discount_amount]" readonly
-            value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
+        <div class="input-group">
+            <button type="button" class="btn btn-lg" id="search_button"><span class="plus_sign_text"></span></button>
+            <input type="text" class="form-control product_discount_amount"
+                name="transaction_sell_line[{{$loop->index + $index}}][product_discount_amount]" readonly
+                value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
+        </div>
     </td>
     <td style="width: 10%">
         <span class="sub_total_span"></span>

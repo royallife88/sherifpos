@@ -107,14 +107,14 @@
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('stock.add_stock.create_and_edit')
+                                @can('superadmin')
                                 <li>
                                     <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
                                             class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('stock.add_stock.delete')
+                                @can('superadmin')
                                 <li>
                                     <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"

@@ -217,7 +217,7 @@ class ReportController extends Controller
         }
 
         $sales = $sale_query->select('transactions.*')
-        ->groupBy('transactions.id')->get();
+            ->groupBy('transactions.id')->get();
 
 
         $stores = Store::getDropdown();
@@ -900,23 +900,26 @@ class ReportController extends Controller
         $start = 1;
         $number_of_day = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         while ($start <= $number_of_day) {
-            if ($start < 10)
+            if ($start < 10) {
                 $date = $year . '-' . $month . '-0' . $start;
-            else
+            } else {
                 $date = $year . '-' . $month . '-' . $start;
-            $query1 = array(
-                'SUM(discount_amount) AS total_discount',
-                'SUM(total_tax) AS total_tax',
-                'SUM(delivery_cost) AS shipping_cost',
-                'SUM(final_total) AS grand_total'
-            );
+            }
             $query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', $date);
 
             if (!empty($store_id)) {
                 $query->where('store_id', $store_id);
             }
-            $sale_data = $query->selectRaw(implode(',', $query1))->first();
-            $total_discount[$start] = $sale_data->total_discount;
+            $sale_data = $query->select(
+                DB::raw('SUM(discount_amount) AS total_discount'),
+                DB::raw('SUM(total_product_discount) AS total_product_discount'),
+                DB::raw('SUM(total_tax) AS total_tax'),
+                DB::raw('SUM(delivery_cost) AS shipping_cost'),
+                DB::raw('SUM(final_total) AS grand_total'),
+                DB::raw('SUM(total_product_surplus) AS total_surplus'),
+            )->first();
+            $total_discount[$start] = $sale_data->total_discount + $sale_data->total_product_discount;
+            $total_surplus[$start] = $sale_data->total_surplus;
             $order_discount[$start] = $sale_data->order_discount;
             $total_tax[$start] = $sale_data->total_tax;
             $order_tax[$start] = $sale_data->order_tax;
@@ -934,6 +937,7 @@ class ReportController extends Controller
 
         return view('reports.daily_sale_report', compact(
             'total_discount',
+            'total_surplus',
             'order_discount',
             'total_tax',
             'order_tax',

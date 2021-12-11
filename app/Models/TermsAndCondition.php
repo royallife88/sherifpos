@@ -16,4 +16,13 @@ class TermsAndCondition extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    static public function getDropdownInvoice()
+    {
+        $invoice_terms_and_conditions =  System::getProperty('invoice_terms_and_conditions');
+
+        $tac = TermsAndCondition::where('type', 'invoice')->where('id', $invoice_terms_and_conditions)->pluck('name', 'id');
+
+        return $tac;
+    }
 }

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Currency;
 use App\Models\System;
+use App\Models\Tax;
+use App\Models\TermsAndCondition;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -117,11 +119,13 @@ class SettingController extends Controller
         $currencies  = $this->commonUtil->allCurrencies();
 
         $timezone_list = $this->commonUtil->allTimeZones();
+        $terms_and_conditions = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
 
         return view('settings.general_setting')->with(compact(
             'settings',
             'currencies',
             'timezone_list',
+            'terms_and_conditions',
             'languages'
         ));
     }
@@ -143,6 +147,10 @@ class SettingController extends Controller
             System::updateOrCreate(
                 ['key' => 'timezone'],
                 ['value' => $request->timezone, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
+                ['key' => 'invoice_terms_and_conditions'],
+                ['value' => $request->invoice_terms_and_conditions, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             System::updateOrCreate(
                 ['key' => 'language'],

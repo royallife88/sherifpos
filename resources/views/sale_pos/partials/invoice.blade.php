@@ -196,7 +196,7 @@ $invoice_lang = request()->session()->get('language');
                     </tr>
                     @if(!empty($transaction->terms_and_conditions))
                     <tr>
-                        <td>{{$transaction->terms_and_conditions->description}}</td>
+                        <td>{!!$transaction->terms_and_conditions->description!!}</td>
                     </tr>
                     @endif
                     <tr>

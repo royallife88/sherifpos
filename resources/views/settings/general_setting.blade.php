@@ -60,6 +60,13 @@
                     'form-control selectpicker', 'data-live-search' => "true"])
                     !!}
                 </div>
+                <div class="col-md-3">
+                    {!! Form::label('invoice_terms_and_conditions', __('lang.tac_to_be_printed'), []) !!}
+                    {!! Form::select('invoice_terms_and_conditions', $terms_and_conditions,!empty($settings['invoice_terms_and_conditions']) ?
+                    $settings['invoice_terms_and_conditions'] : null, ['class' =>
+                    'form-control selectpicker', 'data-live-search' => "true", 'placeholder' => __('lang.please_select')])
+                    !!}
+                </div>
             </div>
             <br>
             <hr>

@@ -256,6 +256,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function 
 
 
 
+    Route::post('terms-and-conditions/update-invoice-tac-setting', 'TermsAndConditionsController@updateInvoiceTacSetting');
     Route::get('terms-and-conditions/get-details/{id}', 'TermsAndConditionsController@getDetails');
     Route::resource('terms-and-conditions', TermsAndConditionsController::class);
 
