@@ -58,6 +58,7 @@ class Kernel extends HttpKernel
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'language' => \App\Http\Middleware\Language::class,
+        'timezone' => \App\Http\Middleware\Timezone::class,
         'SetSessionData' => \App\Http\Middleware\SetSessionData::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,

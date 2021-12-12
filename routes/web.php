@@ -26,7 +26,7 @@ Route::group(['middleware' => ['language']], function () {
 });
 
 Route::get('general/switch-language/{lang}', 'GeneralController@switchLanguage');
-Route::group(['middleware' => ['auth', 'SetSessionData', 'language']], function () {
+Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']], function () {
 
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('get-dashboard-data/{start_date}/{end_date}', 'HomeController@getDashboardData');
