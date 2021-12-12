@@ -137,6 +137,137 @@ class HomeController extends Controller
         ));
     }
 
+    public function getChartAndTableSection()
+    {
+        $start_date = !empty(request()->start_date) ? request()->start_date : new Carbon('first day of this month');;
+        $end_date = !empty(request()->end_date) ? request()->end_date : new Carbon('last day of this month');;
+        $store_id = request()->store_id;
+
+        $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_id);
+        $yearly_best_sellings_qty = $this->getBestSellings($start_date, $end_date, 'qty', $store_id);
+        $yearly_best_sellings_price = $this->getBestSellings($start_date, $end_date, 'total_price', $store_id);
+
+        $dashboard_data = $this->getDashboardData($start_date, $end_date);
+
+        //cash flow of last 6 months
+        $start = strtotime($start_date);
+        $end = strtotime($end_date);
+
+        while ($start < $end) {
+            $start_date = date("Y-m", $start) . '-' . '01';
+            $end_date = date("Y-m", $start) . '-' . '31';
+
+            $cash_flow_data  = $this->getDashboardData($start_date, $end_date, $store_id);
+
+            $payment_received[] = $cash_flow_data['payment_received'];
+            $payment_sent[] = $cash_flow_data['payment_sent'];
+            $month[] = date("F", strtotime($start_date));
+            $start = strtotime("+1 month", $start);
+        }
+
+        // yearly report
+        $start = strtotime(date("Y") . '-01-01');
+        $end = strtotime(date("Y") . '-12-31');
+        while ($start < $end) {
+            $start_date = date("Y") . '-' . date('m', $start) . '-' . '01';
+            $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
+
+            $sale_amount =  $this->getSaleAmount($start_date, $end_date, $store_id);
+            $purchase_amount = $this->getPurchaseAmount($start_date, $end_date, $store_id);
+            $yearly_sale_amount[] = $sale_amount;
+            $yearly_purchase_amount[] = $purchase_amount;
+            $start = strtotime("+1 month", $start);
+        }
+
+        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->whereIn('transactions.status', ['final']);
+        if (!empty($store_id)) {
+            $sale_query->where('transactions.store_id', '=', $store_id);
+        }
+        if (!empty($start_date)) {
+            $sale_query->whereDate('transactions.transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sale_query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        $sales = $sale_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->leftjoin('users', 'transactions.created_by', 'users.id')
+            ->whereIn('transactions.type', ['sell'])
+            ->where('transactions.payment_status', 'paid')
+            ->whereIn('transactions.status', ['final']);
+        if (!empty($store_id)) {
+            $payment_query->where('transactions.store_id', '=', $store_id);
+        }
+        if (!empty($start_date)) {
+            $payment_query->whereDate('transactions.transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $payment_query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        $payments = $payment_query->select(
+            'transactions.*',
+            'transaction_payments.method',
+            'transaction_payments.amount',
+            'transaction_payments.ref_number',
+            'transaction_payments.paid_on',
+            'users.name as created_by_name',
+        )->groupBy('transaction_payments.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
+            ->where('is_quotation', 1);
+        if (!empty($store_id)) {
+            $quotation_query->where('transactions.store_id', '=', $store_id);
+        }
+        if (!empty($start_date)) {
+            $quotation_query->whereDate('transactions.transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $quotation_query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        $quotations = $quotation_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+        $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock'])
+            ->whereIn('transactions.status', ['received']);
+        if (!empty($store_id)) {
+            $add_stock_query->where('transactions.store_id', '=', $store_id);
+        }
+        if (!empty($start_date)) {
+            $add_stock_query->whereDate('transactions.transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $add_stock_query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        $add_stocks = $add_stock_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
+
+
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+        return view('home.partials.chart_and_table')->with(compact(
+            'dashboard_data',
+            'payment_received',
+            'payment_sent',
+            'yearly_sale_amount',
+            'yearly_purchase_amount',
+            'sales',
+            'payments',
+            'quotations',
+            'add_stocks',
+            'payment_types',
+            'best_sellings',
+            'yearly_best_sellings_qty',
+            'yearly_best_sellings_price',
+            'month'
+        ));
+    }
+
     /**
      * get best selling oroduct data
      *
@@ -145,20 +276,26 @@ class HomeController extends Controller
      * @param string $order_by
      * @return void
      */
-    public function getBestSellings($start_date, $end_date, $order_by)
+    public function getBestSellings($start_date, $end_date, $order_by, $store_id = null)
     {
-        return TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
+        $query =  TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
             ->join('products', 'transaction_sell_lines.product_id', 'products.id')
             ->where('transaction_date', '>=', $start_date)
-            ->where('transaction_date', '<=', $end_date)
-            ->select(
-                DB::raw('SUM(quantity) as qty'),
-                DB::raw('SUM(sub_total) as total_price'),
-                'transaction_sell_lines.*'
-            )
+            ->where('transaction_date', '<=', $end_date);
+        if (!empty($store_id)) {
+            $query->where('transactions.store_id', '=', $store_id);
+        }
+
+        $result = $query->select(
+            DB::raw('SUM(quantity) as qty'),
+            DB::raw('SUM(sub_total) as total_price'),
+            'transaction_sell_lines.*'
+        )
             ->groupBy('transaction_sell_lines.product_id')
             ->orderBy($order_by, 'desc')
             ->take(5)->get();
+
+        return $result;
     }
 
     /**
@@ -214,9 +351,14 @@ class HomeController extends Controller
      * @param string $end_date
      * @return void
      */
-    public function getDashboardData($start_date, $end_date)
+    public function getDashboardData($start_date, $end_date, $store_id = null)
     {
-        $store_id = request()->get('store_id', null);
+        if (!empty($store_id)) {
+            $store_id = $store_id;
+        } else {
+            $store_id = request()->get('store_id', null);
+        }
+
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id);
 
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');

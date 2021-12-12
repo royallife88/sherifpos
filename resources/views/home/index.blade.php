@@ -12,7 +12,8 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="store_id"><b>@lang('lang.store')</b></label>
-                        {!! Form::select('store_id', $stores, (session('user.is_superadmin')) ? null : key($stores), ['class' => 'form-control filter',
+                        {!! Form::select('store_id', $stores, (session('user.is_superadmin')) ? null : key($stores),
+                        ['class' => 'form-control',
                         'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')])
                         !!}
 
@@ -83,292 +84,11 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-7 mt-4">
-            <div class="card line-chart-example">
-                <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.cash_flow')</h4>
-                </div>
-                <div class="card-body">
-                    @php
-                    $color = '#733686';
-                    $color_rgba = 'rgba(115, 54, 134, 0.8)';
-
-                    @endphp
-                    <canvas id="cashFlow" data-color="{{$color}}" data-color_rgba="{{$color_rgba}}"
-                        data-recieved="{{json_encode($payment_received)}}" data-sent="{{json_encode($payment_sent)}}"
-                        data-month="{{json_encode($month)}}" data-label1="@lang('lang.payment_received')"
-                        data-label2="@lang('lang.payment_sent')"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5 mt-4">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>{{date('F')}} {{date('Y')}}</h4>
-                </div>
-                <div class="pie-chart mb-2">
-                    <canvas id="transactionChart" data-color="{{$color}}" data-color_rgba="{{$color_rgba}}"
-                        data-revenue={{$dashboard_data['revenue']}} data-purchase={{$dashboard_data['purchase']}}
-                        data-expense={{$dashboard_data['expense']}} data-label1="@lang('lang.purchase')"
-                        data-label2="@lang('lang.revenue')" data-label3="@lang('lang.expense')" width="100" height="95">
-                    </canvas>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.yearly_report')</h4>
-                </div>
-                <div class="card-body">
-                    <canvas id="saleChart" data-sale_chart_value="{{json_encode($yearly_sale_amount)}}"
-                        data-purchase_chart_value="{{json_encode($yearly_purchase_amount)}}"
-                        data-label1="@lang('lang.purchased_amount')" data-label2="@lang('lang.sold_amount')"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>@lang('lang.recent_transactions')</h4>
-                    <div class="right-column">
-                        <div class="badge badge-primary">@lang('lang.latest') 5</div>
-                    </div>
-                </div>
-                <ul class="nav nav-tabs" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#sale-latest" role="tab"
-                            data-toggle="tab">@lang('lang.sale')</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#purchase-latest" role="tab"
-                            data-toggle="tab">@lang('lang.purchase')</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#quotation-latest" role="tab"
-                            data-toggle="tab">@lang('lang.quotation')</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#payment-latest" role="tab"
-                            data-toggle="tab">@lang('lang.payments')</a>
-                    </li>
-                </ul>
-
-                <div class="tab-content">
-                    <div role="tabpanel" class="tab-pane fade show active" id="sale-latest">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('lang.date')</th>
-                                        <th>@lang('lang.reference_no')</th>
-                                        <th>@lang('lang.customer')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.status')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($sales as $sale)
-                                    <tr>
-                                        <td>{{@format_date($sale->transaction_date)}}</td>
-                                        <td>{{$sale->invoice_no}}</td>
-                                        <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
-                                        <td>{{@num_format($sale->final_total)}}</td>
-                                        <td>@if($sale->status == 'final')<span
-                                                class="badge badge-success">@lang('lang.completed')</span>@else
-                                            {{ucfirst($sale->status)}} @endif</td>
-                                    </tr>
-
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="purchase-latest">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('lang.date')</th>
-                                        <th>@lang('lang.reference_no')</th>
-                                        <th>@lang('lang.supplier')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.status')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($add_stocks as $add_stock)
-                                    <tr>
-                                        <td>{{@format_date($add_stock->transaction_date)}}</td>
-                                        <td>{{$add_stock->invoice_no}}</td>
-                                        <td>@if(!empty($add_stock->supplier)){{$add_stock->supplier->name}}@endif</td>
-                                        <td>{{@num_format($add_stock->final_total)}}</td>
-                                        <td>@if($add_stock->status == 'received')<span
-                                                class="badge badge-success">@lang('lang.completed')</span>@else
-                                            {{ucfirst($add_stock->status)}} @endif</td>
-                                    </tr>
-
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="quotation-latest">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('lang.date')</th>
-                                        <th>@lang('lang.reference_no')</th>
-                                        <th>@lang('lang.customer')</th>
-                                        <th>@lang('lang.grand_total')</th>
-                                        <th>@lang('lang.status')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($quotations as $quotation)
-                                    <tr>
-                                        <td>{{@format_date($quotation->transaction_date)}}</td>
-                                        <td>{{$quotation->invoice_no}}</td>
-                                        <td>@if(!empty($quotation->customer)){{$quotation->customer->name}}@endif
-                                        </td>
-                                        <td>{{@num_format($quotation->final_total)}}</td>
-                                        <td>@if($quotation->status == 'final')<span
-                                                class="badge badge-success">@lang('lang.completed')</span>@else
-                                            {{ucfirst($quotation->status)}} @endif</td>
-                                    </tr>
-
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="payment-latest">
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>@lang('lang.date')</th>
-                                        <th>@lang('lang.payment_ref')</th>
-                                        <th>@lang('lang.paid_by')</th>
-                                        <th>@lang('lang.amount')</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($payments as $payment)
-                                    <tr>
-                                        <td>{{@format_date($payment->paid_on)}}</td>
-                                        <td>{{$payment->invoice_no}}</td>
-                                        <td>@if(!empty($payment_types[$payment->method])){{$payment_types[$payment->method]}}
-                                            @endif</td>
-                                        <td>{{@num_format($payment->amount)}}</td>
-                                    </tr>
-
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>@lang('lang.best_seller') {{date('F')}}</h4>
-                    <div class="right-column">
-                        <div class="badge badge-primary">@lang('lang.top') 5</div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>@lang('lang.product_details')</th>
-                                <th>@lang('lang.qty')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($best_sellings as $best_selling)
-                            <tr>
-                                <td>{{$loop->iteration}}</td>
-                                <td>{{$best_selling->product->name}} [{{$best_selling->product->sku}}]</td>
-                                <td>{{@num_format($best_selling->qty)}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>@lang('lang.best_seller') {{date('Y')}} (@lang('lang.qty'))</h4>
-                    <div class="right-column">
-                        <div class="badge badge-primary">@lang('lang.top') 5</div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>@lang('lang.product_details')</th>
-                                <th>@lang('lang.qty')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($yearly_best_sellings_qty as $best_sellings_qty)
-                            <tr>
-                                <td>{{$loop->iteration}}</td>
-                                <td>{{$best_sellings_qty->product->name}} [{{$best_sellings_qty->product->sku}}]</td>
-                                <td>{{@num_format($best_sellings_qty->qty)}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>@lang('lang.best_seller') {{date('Y')}} (@lang('lang.price'))</h4>
-                    <div class="right-column">
-                        <div class="badge badge-primary">@lang('lang.top') 5</div>
-                    </div>
-                </div>
-                <div class="table-responsive">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>SL No</th>
-                                <th>@lang('lang.product_details')</th>
-                                <th>@lang('lang.qty')</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($yearly_best_sellings_price as $best_sellings_price)
-                            <tr>
-                                <td>{{$loop->iteration}}</td>
-                                <td>{{$best_sellings_price->product->name}} [{{$best_sellings_price->product->sku}}]
-                                </td>
-                                <td>{{@num_format($best_sellings_price->total_price)}}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="container-fluid" id="chart_and_table_section">
+    @include('home.partials.chart_and_table')
 </div>
 @endsection
 
@@ -377,7 +97,7 @@
     $(document).ready(function() {
         $('#store_id').change();
     });
-    $(document).on("change", '.filter', function() {
+    $(document).on("change", '.filter, #store_id', function() {
         var store_id = $('#store_id').val();
         var start_date = $('#from_date').val();
         if(!start_date) {
@@ -413,6 +133,366 @@
                 $('.profit-data').show(500);
             },
         });
+        getChartAndTableSection(start_date, end_date, store_id);
     });
+
+    function getChartAndTableSection(start_date, end_date, store_id){
+        $("#chart_and_table_section").css("text-align", "center");
+        $("#chart_and_table_section").html(
+            `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
+        );
+        $.ajax({
+            method: 'get',
+            url: '/get-chart-and-table-section',
+            data: { start_date, end_date, store_id },
+            success: function(result) {
+                if(result){
+                    $('#chart_and_table_section').html(result);
+                    initializeChart()
+                }
+            },
+        });
+    }
+
+    function initializeChart() {
+        var brandPrimary;
+        var brandPrimaryRgba;
+
+        // ------------------------------------------------------- //
+        // Line Chart
+        // ------------------------------------------------------ //
+        var CASHFLOW = $("#cashFlow");
+        if (CASHFLOW.length > 0) {
+            var recieved = CASHFLOW.data("recieved");
+            brandPrimary = CASHFLOW.data("color");
+            brandPrimaryRgba = CASHFLOW.data("color_rgba");
+            var sent = CASHFLOW.data("sent");
+            var month = CASHFLOW.data("month");
+            var label1 = CASHFLOW.data("label1");
+            var label2 = CASHFLOW.data("label2");
+            var cashFlow_chart = new Chart(CASHFLOW, {
+                type: "line",
+                data: {
+                    labels: [
+                        month[0]??'',
+                        month[1]??'',
+                        month[2]??'',
+                        month[3]??'',
+                        month[4]??'',
+                        month[5]??'',
+                        month[6]??'',
+                    ],
+                    datasets: [
+                        {
+                            label: label1,
+                            fill: true,
+                            lineTension: 0.3,
+                            backgroundColor: "transparent",
+                            borderColor: brandPrimary,
+                            borderCapStyle: "butt",
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: "miter",
+                            borderWidth: 3,
+                            pointBorderColor: brandPrimary,
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 5,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: brandPrimary,
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: [
+                                recieved[0]??0,
+                                recieved[1]??0,
+                                recieved[2]??0,
+                                recieved[3]??0,
+                                recieved[4]??0,
+                                recieved[5]??0,
+                                recieved[6]??0,
+                            ],
+                            spanGaps: false,
+                        },
+                        {
+                            label: label2,
+                            fill: true,
+                            lineTension: 0.3,
+                            backgroundColor: "transparent",
+                            borderColor: "rgba(255, 137, 82, 1)",
+                            borderCapStyle: "butt",
+                            borderDash: [],
+                            borderDashOffset: 0.0,
+                            borderJoinStyle: "miter",
+                            borderWidth: 3,
+                            pointBorderColor: "#ff8952",
+                            pointBackgroundColor: "#fff",
+                            pointBorderWidth: 5,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: "#ff8952",
+                            pointHoverBorderColor: "rgba(220,220,220,1)",
+                            pointHoverBorderWidth: 2,
+                            pointRadius: 1,
+                            pointHitRadius: 10,
+                            data: [
+                                sent[0],
+                                sent[1],
+                                sent[2],
+                                sent[3],
+                                sent[4],
+                                sent[5],
+                                sent[6],
+                            ],
+                            spanGaps: false,
+                        },
+                    ],
+                },
+            });
+        }
+
+        var SALECHART = $("#saleChart");
+
+        if (SALECHART.length > 0) {
+            var yearly_sale_amount = SALECHART.data("sale_chart_value");
+            var yearly_purchase_amount = SALECHART.data("purchase_chart_value");
+            var label1 = SALECHART.data("label1");
+            var label2 = SALECHART.data("label2");
+            var saleChart = new Chart(SALECHART, {
+                type: "bar",
+                data: {
+                    labels: [
+                        "January",
+                        "February",
+                        "March",
+                        "April",
+                        "May",
+                        "June",
+                        "July",
+                        "August",
+                        "September",
+                        "October",
+                        "November",
+                        "December",
+                    ],
+                    datasets: [
+                        {
+                            label: label1,
+                            backgroundColor: [
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                            ],
+                            borderColor: [
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                            ],
+                            borderWidth: 1,
+                            data: [
+                                yearly_purchase_amount[0],
+                                yearly_purchase_amount[1],
+                                yearly_purchase_amount[2],
+                                yearly_purchase_amount[3],
+                                yearly_purchase_amount[4],
+                                yearly_purchase_amount[5],
+                                yearly_purchase_amount[6],
+                                yearly_purchase_amount[7],
+                                yearly_purchase_amount[8],
+                                yearly_purchase_amount[9],
+                                yearly_purchase_amount[10],
+                                yearly_purchase_amount[11],
+                                0,
+                            ],
+                        },
+                        {
+                            label: label2,
+                            backgroundColor: [
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                            ],
+                            borderColor: [
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                                "rgba(255, 137, 82, 1)",
+                            ],
+                            borderWidth: 1,
+                            data: [
+                                yearly_sale_amount[0],
+                                yearly_sale_amount[1],
+                                yearly_sale_amount[2],
+                                yearly_sale_amount[3],
+                                yearly_sale_amount[4],
+                                yearly_sale_amount[5],
+                                yearly_sale_amount[6],
+                                yearly_sale_amount[7],
+                                yearly_sale_amount[8],
+                                yearly_sale_amount[9],
+                                yearly_sale_amount[10],
+                                yearly_sale_amount[11],
+                                0,
+                            ],
+                        },
+                    ],
+                },
+            });
+        }
+
+        var BESTSELLER = $("#bestSeller");
+
+        if (BESTSELLER.length > 0) {
+            var sold_qty = BESTSELLER.data("sold_qty");
+            brandPrimary = BESTSELLER.data("color");
+            brandPrimaryRgba = BESTSELLER.data("color_rgba");
+            var product_info = BESTSELLER.data("product");
+            var bestSeller = new Chart(BESTSELLER, {
+                type: "bar",
+                data: {
+                    labels: [product_info[0], product_info[1], product_info[2]],
+                    datasets: [
+                        {
+                            label: "Sale Qty",
+                            backgroundColor: [
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                                brandPrimaryRgba,
+                            ],
+                            borderColor: [
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                                brandPrimary,
+                            ],
+                            borderWidth: 1,
+                            data: [sold_qty[0], sold_qty[1], sold_qty[2], 0],
+                        },
+                    ],
+                },
+            });
+        }
+
+        var PIECHART = $("#pieChart");
+        if (PIECHART.length > 0) {
+            var brandPrimary = PIECHART.data("color");
+            var brandPrimaryRgba = PIECHART.data("color_rgba");
+            var price = PIECHART.data("price");
+            var cost = PIECHART.data("cost");
+            var label1 = PIECHART.data("label1");
+            var label2 = PIECHART.data("label2");
+            var label3 = PIECHART.data("label3");
+            var myPieChart = new Chart(PIECHART, {
+                type: "pie",
+                data: {
+                    labels: [label1, label2, label3],
+                    datasets: [
+                        {
+                            data: [price, cost, price - cost],
+                            borderWidth: [1, 1, 1],
+                            backgroundColor: [
+                                brandPrimary,
+                                "#ff8952",
+                                "#858c85",
+                            ],
+                            hoverBackgroundColor: [
+                                brandPrimaryRgba,
+                                "rgba(255, 137, 82, 0.8)",
+                                "rgb(133, 140, 133, 0.8)",
+                            ],
+                            hoverBorderWidth: [4, 4, 4],
+                            hoverBorderColor: [
+                                brandPrimaryRgba,
+                                "rgba(255, 137, 82, 0.8)",
+                                "rgb(133, 140, 133, 0.8)",
+                            ],
+                        },
+                    ],
+                },
+                options: {
+                    //rotation: -0.7*Math.PI
+                },
+            });
+        }
+
+        var TRANSACTIONCHART = $("#transactionChart");
+        if (TRANSACTIONCHART.length > 0) {
+            brandPrimary = TRANSACTIONCHART.data("color");
+            brandPrimaryRgba = TRANSACTIONCHART.data("color_rgba");
+            var revenue = TRANSACTIONCHART.data("revenue");
+            var purchase = TRANSACTIONCHART.data("purchase");
+            var expense = TRANSACTIONCHART.data("expense");
+            var label1 = TRANSACTIONCHART.data("label1");
+            var label2 = TRANSACTIONCHART.data("label2");
+            var label3 = TRANSACTIONCHART.data("label3");
+            var myTransactionChart = new Chart(TRANSACTIONCHART, {
+                type: "doughnut",
+                data: {
+                    labels: [label1, label2, label3],
+                    datasets: [
+                        {
+                            data: [purchase, revenue, expense],
+                            borderWidth: [1, 1, 1],
+                            backgroundColor: [
+                                brandPrimary,
+                                "#ff8952",
+                                "#858c85",
+                            ],
+                            hoverBackgroundColor: [
+                                brandPrimaryRgba,
+                                "rgba(255, 137, 82, 0.8)",
+                                "rgb(133, 140, 133, 0.8)",
+                            ],
+                            hoverBorderWidth: [4, 4, 4],
+                            hoverBorderColor: [
+                                brandPrimaryRgba,
+                                "rgba(255, 137, 82, 0.8)",
+                                "rgb(133, 140, 133, 0.8)",
+                            ],
+                        },
+                    ],
+                },
+            });
+        }
+    }
 </script>
 @endsection

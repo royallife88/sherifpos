@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('get-dashboard-data/{start_date}/{end_date}', 'HomeController@getDashboardData');
     Route::get('get-help', 'HomeController@getHelp');
+    Route::get('get-chart-and-table-section', 'HomeController@getChartAndTableSection');
     Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
