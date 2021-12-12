@@ -12,7 +12,7 @@ class Employee extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia, \Staudenmeir\EloquentJsonRelations\HasJsonRelationships;
 
-    protected $attributes = ['store_pos'];
+    protected $appends = ['store_pos'];
     /**
      * The attributes that aren't mass assignable.
      *
