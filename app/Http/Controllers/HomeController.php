@@ -139,8 +139,8 @@ class HomeController extends Controller
 
     public function getChartAndTableSection()
     {
-        $start_date = !empty(request()->start_date) ? request()->start_date : new Carbon('first day of this month');;
-        $end_date = !empty(request()->end_date) ? request()->end_date : new Carbon('last day of this month');;
+        $start_date = !empty(request()->start_date) ? request()->start_date : new Carbon('first day of this month');
+        $end_date = !empty(request()->end_date) ? request()->end_date : new Carbon('last day of this month');
         $store_id = request()->store_id;
 
         $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_id);
@@ -152,7 +152,8 @@ class HomeController extends Controller
         //cash flow of last 6 months
         $start = strtotime($start_date);
         $end = strtotime($end_date);
-
+        $payment_received = [];
+        $payment_sent = [];
         while ($start < $end) {
             $start_date = date("Y-m", $start) . '-' . '01';
             $end_date = date("Y-m", $start) . '-' . '31';
@@ -178,12 +179,15 @@ class HomeController extends Controller
             $yearly_purchase_amount[] = $purchase_amount;
             $start = strtotime("+1 month", $start);
         }
+        $start_date = !empty(request()->start_date) ? request()->start_date : new Carbon('first day of this month');
+        $end_date = !empty(request()->end_date) ? request()->end_date : new Carbon('last day of this month');
 
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final']);
         if (!empty($store_id)) {
             $sale_query->where('transactions.store_id', '=', $store_id);
         }
+
         if (!empty($start_date)) {
             $sale_query->whereDate('transactions.transaction_date', '>=', $start_date);
         }
