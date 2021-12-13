@@ -1080,6 +1080,15 @@ $(document).on(
 
 //Get recent transactions
 function get_recent_transactions() {
+    if (
+        typeof recent_transaction_table !== "undefined" &&
+        recent_transaction_table !== null
+    ) {
+        if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
+            $("#recent_transaction_table").DataTable().destroy();
+            $(".recent_transaction_div").empty();
+        }
+    }
     let href = $("#recent-transaction-btn").data("href");
     $(".recent_transaction_div").css("text-align", "center");
     $(".recent_transaction_div").html(
@@ -1105,16 +1114,10 @@ function get_recent_transactions() {
                     .find("#recent_transaction_table tbody tr")
                     .hasClass("no_data_found")
             ) {
-                if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
-                    $("#recent_transaction_table").DataTable().destroy();
-                    if(table){
-                        table.destroy();
-                    }
-                    $(".recent_transaction_div").empty();
-                }
                 $(".recent_transaction_div").empty().append(result);
-                table = $("#recent_transaction_table")
-                    .DataTable(datatable_params);
+                recent_transaction_table = $(
+                    "#recent_transaction_table"
+                ).DataTable(datatable_params);
             }
         },
     });
