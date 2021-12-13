@@ -21,7 +21,7 @@
         <div class="col-md-5 mt-4">
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h4>{{date('F')}} {{date('Y')}}</h4>
+                    <h4>{{@format_date($start_date)}} - {{@format_date($end_date)}}</h4>
                 </div>
                 <div class="pie-chart mb-2">
                     <canvas id="transactionChart" data-color="{{$color}}" data-color_rgba="{{$color_rgba}}"

@@ -133,6 +133,8 @@ class HomeController extends Controller
             'yearly_best_sellings_qty',
             'yearly_best_sellings_price',
             'stores',
+            'start_date',
+            'end_date',
             'month'
         ));
     }
@@ -268,7 +270,9 @@ class HomeController extends Controller
             'best_sellings',
             'yearly_best_sellings_qty',
             'yearly_best_sellings_price',
-            'month'
+            'month',
+            'start_date',
+            'end_date'
         ));
     }
 
