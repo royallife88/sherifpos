@@ -1107,6 +1107,9 @@ function get_recent_transactions() {
             ) {
                 if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
                     $("#recent_transaction_table").DataTable().destroy();
+                    if(table){
+                        table.destroy();
+                    }
                     $(".recent_transaction_div").empty();
                 }
                 $(".recent_transaction_div").empty().append(result);
