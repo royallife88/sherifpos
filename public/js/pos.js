@@ -1110,8 +1110,7 @@ function get_recent_transactions() {
                     $(".recent_transaction_div").empty();
                 }
                 $(".recent_transaction_div").empty().append(result);
-                table = $(".recent_transaction_div")
-                    .find("#recent_transaction_table")
+                table = $("#recent_transaction_table")
                     .DataTable(datatable_params);
             }
         },
