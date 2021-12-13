@@ -381,7 +381,7 @@
             </div>
 
             <!-- recent transaction modal -->
-            <div id="recentTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true" class="modal fade text-left">
 
                 <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
@@ -431,7 +431,7 @@
                 </div><!-- /.modal-dialog -->
             </div>
             <!-- draft transaction modal -->
-            <div id="draftTransaction" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel"
                 aria-hidden="true" class="modal fade text-left">
 
                 <div class="modal-dialog" role="document" style="width: 65%">
