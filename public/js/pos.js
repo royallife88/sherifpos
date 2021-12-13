@@ -1105,7 +1105,7 @@ function get_recent_transactions() {
                     .find("#recent_transaction_table tbody tr")
                     .hasClass("no_data_found")
             ) {
-                if ($.fn.DataTable.isDataTable("#recent_transaction_table")) {
+                if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
                     $("#recent_transaction_table").DataTable().destroy();
                     $(".recent_transaction_div").empty();
                 }
