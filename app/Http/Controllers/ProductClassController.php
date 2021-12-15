@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductClass;
+use App\Models\ProductStore;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -178,7 +179,11 @@ class ProductClassController extends Controller
                 $categories =  Category::where('product_class_id', $id)->get();
                 foreach ($categories as $category) {
                     Category::where('parent_id', $category->id)->delete();
-                    Product::where('category_id', $category->id)->orWhere('sub_category_id', $category->id)->delete();
+                    $products = Product::where('category_id', $category->id)->orWhere('sub_category_id', $category->id)->get();
+                    foreach ($products as $product) {
+                        ProductStore::where('product_id', $product->id)->delete();
+                        $product->delete();
+                    }
                     $category->delete();
                 }
             } else {

@@ -31,7 +31,8 @@
                                 {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address}}</b>
                             </div>
                             <div class="col-md-4">
-                                {!! Form::label('store', __('lang.store'), []) !!}: <b>{{$add_stock->store->name ?? ''}}</b>
+                                {!! Form::label('store', __('lang.store'), []) !!}: <b>{{$add_stock->store->name ??
+                                    ''}}</b>
                             </div>
                         </div>
                         <br>
@@ -46,17 +47,20 @@
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.batch_number' )</th>
-                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.manufacturing_date' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.manufacturing_date' )
+                                            </th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.expiry_date' )</th>
-                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.days_before_the_expiry_date' )</th>
-                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.convert_status_expire' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang(
+                                                'lang.days_before_the_expiry_date' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.convert_status_expire'
+                                                )</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($add_stock->add_stock_lines as $line)
                                         <tr>
                                             <td>
-                                                {{$line->product->name}}
+                                                {{$line->product->name ?? ''}}
 
                                                 @if(!empty($line->variation))
                                                 @if($line->variation->name != "Default")
@@ -80,8 +84,10 @@
                                                 {{@num_format($line->sub_total)}}
                                             </td>
                                             <td>{{$line->batch_number}}</td>
-                                            <td>@if(!empty($line->manufacturing_date)){{@format_date($line->manufacturing_date)}}@endif</td>
-                                            <td>@if(!empty($line->expiry_date)){{@format_date($line->expiry_date)}}@endif</td>
+                                            <td>@if(!empty($line->manufacturing_date)){{@format_date($line->manufacturing_date)}}@endif
+                                            </td>
+                                            <td>@if(!empty($line->expiry_date)){{@format_date($line->expiry_date)}}@endif
+                                            </td>
                                             <td>{{$line->expiry_warning}}</td>
                                             <td>{{$line->convert_status_expire}}</td>
                                         </tr>
@@ -101,7 +107,8 @@
                         </div>
                         <br>
                         <br>
-                        @include('transaction_payment.partials.payment_table', ['payments' => $add_stock->transaction_payments])
+                        @include('transaction_payment.partials.payment_table', ['payments' =>
+                        $add_stock->transaction_payments])
 
                         <div class="row">
                             <div class="col-md-12">

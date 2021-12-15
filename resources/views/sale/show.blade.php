@@ -24,7 +24,7 @@
                 <div class="col-md-6">
                     <div class="col-md-12">
                         {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
-                        <b>{{$sale->customer->name  ?? ''}}</b>
+                        <b>{{$sale->customer->name ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
                         {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
@@ -34,7 +34,8 @@
                         <b>{{$sale->customer->mobile_number ?? ''}}</b>
                     </div>
                     <div class="col-md-12">
-                        {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ?? ''}}</b>
+                        {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ??
+                            ''}}</b>
                     </div>
                 </div>
             </div>
@@ -43,7 +44,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <table class="table table-bordered table-striped table-condensed" id="product_table">
-                        <thead class="bg-success"  style="color: white">
+                        <thead class="bg-success" style="color: white">
                             <tr>
                                 <th style="width: 25%" class="col-sm-8">@lang( 'lang.image' )</th>
                                 <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
@@ -58,10 +59,10 @@
                         <tbody>
                             @foreach ($sale->transaction_sell_lines as $line)
                             <tr>
-                                <td><img src="@if(!empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                    alt="photo" width="50" height="50"></td>
+                                <td><img src="@if(!empty($line->product) && !empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                        alt="photo" width="50" height="50"></td>
                                 <td>
-                                    {{$line->product->name}}
+                                    {{$line->product->name ?? ''}}
                                     @if(!empty($line->variation))
                                     @if($line->variation->name != "Default")
                                     <b>{{$line->variation->name}}</b>
@@ -70,10 +71,10 @@
 
                                 </td>
                                 <td>
-                                    {{$line->product->sku}}
+                                    {{$line->product->sku ?? ''}}
                                 </td>
                                 <td>
-                                    {{$line->product->batch_number}}
+                                    {{$line->product->batch_number ?? ''}}
                                 </td>
                                 <td>
                                     @if(isset($line->quantity)){{@num_format($line->quantity)}}@else{{1}}@endif
@@ -160,7 +161,8 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    <b>@lang('lang.terms_and_conditions'):</b> @if(!empty($sale->terms_and_conditions)){!!$sale->terms_and_conditions->description!!} @endif
+                    <b>@lang('lang.terms_and_conditions'):</b>
+                    @if(!empty($sale->terms_and_conditions)){!!$sale->terms_and_conditions->description!!} @endif
                 </div>
             </div>
 
@@ -168,8 +170,7 @@
 
         <div class="modal-footer">
             <a data-href="{{action('SellController@print', $sale->id)}}"
-                class="btn btn-primary text-white print-invoice"><i
-                   class="dripicons-print"></i> @lang('lang.print')</a>
+                class="btn btn-primary text-white print-invoice"><i class="dripicons-print"></i> @lang('lang.print')</a>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 
