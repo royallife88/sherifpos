@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\ProductClass;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -174,7 +175,12 @@ class ProductClassController extends Controller
         try {
             if (request()->source == 'pct') {
                 ProductClass::find($id)->delete();
-                Category::where('product_class_id', $id)->delete();
+                $categories =  Category::where('product_class_id', $id)->get();
+                foreach ($categories as $category) {
+                    Category::where('parent_id', $category->id)->delete();
+                    Product::where('category_id', $category->id)->orWhere('sub_category_id', $category->id)->delete();
+                    $category->delete();
+                }
             } else {
                 $category = Category::where('product_class_id', $id)->first();
 

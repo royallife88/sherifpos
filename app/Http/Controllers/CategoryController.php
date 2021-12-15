@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\ProductClass;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -227,6 +228,7 @@ class CategoryController extends Controller
             if (request()->source == 'pct') {
                 Category::find($id)->delete();
                 Category::where('parent_id', $id)->delete();
+                Product::where('category_id', $id)->delete();
             } else {
                 $sub_category_exsist = Category::where('parent_id', $id)->exists();
                 if ($sub_category_exsist) {
