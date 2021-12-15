@@ -30,8 +30,10 @@ $i = $index;
         <input type="hidden" class="form-control sub_total" name="add_stock_lines[{{$i}}][sub_total]" value="">
     </td>
     <td>
-        <input type="hidden" name="current_stock" class="current_stock" value="@if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif">
-        <span class="current_stock_text">@if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif</span>
+        <input type="hidden" name="current_stock" class="current_stock"
+            value="@if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif">
+        <span
+            class="current_stock_text">@if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif</span>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i
@@ -39,25 +41,21 @@ $i = $index;
     </td>
 </tr>
 <tr class="row_details_{{$i}}">
-    <td> {!! Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control', 'placeholder' =>
-        __('lang.batch_number')]) !!}</td>
-    <td>
+    <td> {!! Form::label('', __('lang.batch_number'), []) !!} <br> {!!
+        Form::text('add_stock_lines['.$i.'][batch_number]', null, ['class' => 'form-control']) !!}</td>
+    <td> {!! Form::label('', __('lang.manufacturing_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][manufacturing_date]', null, ['class' => 'form-control datepicker',
-        'placeholder'
-        => __('lang.manufacturing_date'), 'readonly']) !!}
+        'readonly']) !!}
     </td>
-    <td>
+    <td> {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][expiry_date]', null, ['class' => 'form-control datepicker',
-        'placeholder' =>
-        __('lang.expiry_date'), 'readonly']) !!}
+        'readonly']) !!}
     </td>
-    <td>
-        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control', 'placeholder' =>
-        __('lang.days_before_the_expiry_date')]) !!}
+    <td> {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
+        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control']) !!}
     </td>
-    <td>
-        {!! Form::text('add_stock_lines['.$i.'][convert_status_expire]', null, ['class' => 'form-control',
-        'placeholder' => __('lang.convert_status_expire')]) !!}
+    <td> {!! Form::label('', __('lang.convert_status_expire'), []) !!}<br>
+        {!! Form::text('add_stock_lines['.$i.'][convert_status_expire]', null, ['class' => 'form-control']) !!}
     </td>
 </tr>
 @empty
