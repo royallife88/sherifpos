@@ -30,6 +30,7 @@
                         aria-hidden="true">&times;</span></button>{{ $message }}
             </div>
             @endforeach
+            <input type="hidden" id="__language" value="{{session('language')}}">
             <input type="hidden" id="__decimal" value=".">
             <input type="hidden" id="__currency_precision" value="2">
             <input type="hidden" id="__currency_symbol" value="$">

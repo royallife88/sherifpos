@@ -53,7 +53,7 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('address', __( 'lang.address' ) . ':') !!}
-                                    {!! Form::text('address', $customer->address, ['class' => 'form-control', 'placeholder' => __(
+                                    {!! Form::textarea('address', $customer->address, ['class' => 'form-control', 'rows' => 3, 'placeholder' => __(
                                     'lang.address' ) ]);
                                     !!}
                                 </div>

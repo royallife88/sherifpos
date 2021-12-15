@@ -174,12 +174,35 @@ $("#method").change(function () {
         $(".not_cash").attr("required", true);
     }
 });
+var language = $("#__language").val();
+if (language == "en") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json";
+} else if (language == "fr") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/fr_fr.json";
+} else if (language == "ar") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+} else if (language == "hi") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/hi.json";
+} else if (language == "pr") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/fa.json";
+} else if (language == "ur") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ur.json";
+} else if (language == "tr") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/tr.json";
+} else if (language == "du") {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/nl_nl.json";
+} else {
+    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json";
+}
 var datatable_params = {
     lengthChange: true,
     paging: true,
     info: false,
     bAutoWidth: false,
     order: [],
+    language: {
+        url: dt_lang_url,
+    },
     lengthMenu: [
         [10, 25, 50, 75, 100, 200, 500, -1],
         [10, 25, 50, 75, 100, 200, 500, "All"],

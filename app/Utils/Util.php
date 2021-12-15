@@ -385,20 +385,20 @@ class Util
     public function getPurchaseOrderStatusArray()
     {
         return [
-            'draft' => 'Draft',
-            'sent_admin' => 'Sent to Admin',
-            'sent_supplier' => 'Sent to Supplier',
-            'received' => 'Received',
-            'pending' => 'Pending',
-            'partially_received' => 'Partially Received',
+            'draft' => __('lang.draft'),
+            'sent_admin' => __('lang.sent_to_admin'),
+            'sent_supplier' => __('lang.sent_to_supplier'),
+            'received' => __('lang.received'),
+            'pending' => __('lang.pending'),
+            'partially_received' => __('lang.partially_received'),
         ];
     }
     public function getPaymentStatusArray()
     {
         return [
-            'partial' => 'Partially Paid',
-            'paid' => 'Paid',
-            'pending' => 'Pending',
+            'partial' => __('lang.partially_paid'),
+            'paid' => __('lang.paid'),
+            'pending' => __('lang.pending'),
         ];
     }
 

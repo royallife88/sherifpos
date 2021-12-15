@@ -954,4 +954,12 @@ return [
     'compensated' => 'معاوضہ',
     'compensated_at' => 'پر معاوضہ دیا گیا۔',
     'compensated_from_supplier' => 'سپلائرز سے معاوضہ',
+
+    'tac_to_be_printed' => 'شرائط و ضوابط پرنٹ کیے جائیں گے۔',
+    'surplus' => 'سرپلس',
+    'total_surplus' => 'کل سرپلس',
+    'partially_paid' => 'جزوی طور پر ادا شدہ',
+    'sent_to_admin' => 'ایڈمن کو بھیج دیا۔',
+    'sent_to_supplier' => 'سپلائر کو بھیجا گیا۔',
+    'partially_received' => 'جزوی طور پر موصول ہوا۔',
 ];

@@ -953,4 +953,13 @@ return [
     'compensated' => 'تعويض',
     'compensated_at' => 'تعويض في',
     'compensated_from_supplier' => 'التعويضات من الموردين',
+
+    'tac_to_be_printed' => 'الشروط والاحكام ليتم طباعتها',
+    'surplus' => 'فائض',
+    'total_surplus' => 'إجمالي الفائض',
+    'partially_paid' => 'المدفوعة جزئيا',
+    'sent_to_admin' => 'أرسلت إلى المسؤول',
+    'sent_to_supplier' => 'أرسل إلى المورد',
+    'partially_received' => 'تم الاستلام جزئيًا',
+
 ];

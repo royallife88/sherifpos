@@ -954,4 +954,12 @@ return [
     'compensated' => 'आपूर्ति की',
     'compensated_at' => 'पर मुआवजा',
     'compensated_from_supplier' => 'आपूर्तिकर्ताओं से मुआवजा',
+
+    'tac_to_be_printed' => 'नियम और शर्तें मुद्रित करने के लिए',
+    'surplus' => 'आधिक्य',
+    'total_surplus' => 'कुल अधिशेष',
+    'partially_paid' => 'आंशिक रूप से भुगतान किया',
+    'sent_to_admin' => 'व्यवस्थापक को भेजा गया',
+    'sent_to_supplier' => 'आपूर्तिकर्ता को भेजा गया',
+    'partially_received' => 'आंशिक रूप से प्राप्त',
 ];

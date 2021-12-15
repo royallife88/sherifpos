@@ -954,4 +954,12 @@ return [
     'compensated_at' => 'Rémunéré à',
     'compensated_from_supplier' => 'Rémunérations des fournisseurs',
 
+    'tac_to_be_printed' => 'Termes et conditions à imprimer',
+    'surplus' => 'Surplus',
+    'total_surplus' => 'Surplus total',
+    'partially_paid' => 'Partiellement payé',
+    'sent_to_admin' => 'Envoyé à l\'administrateur',
+    'sent_to_supplier' => 'Envoyé au fournisseur',
+    'partially_received' => 'Partiellement reçu',
+
 ];

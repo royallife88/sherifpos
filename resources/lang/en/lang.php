@@ -963,5 +963,9 @@ return [
     'tac_to_be_printed' => 'Terms and condition to be printed',
     'surplus' => 'Surplus',
     'total_surplus' => 'Total Surplus',
+    'partially_paid' => 'Partially Paid',
+    'sent_to_admin' => 'Sent to Admin',
+    'sent_to_supplier' => 'Sent to Supplier',
+    'partially_received' => 'Partially Received',
 
 ];

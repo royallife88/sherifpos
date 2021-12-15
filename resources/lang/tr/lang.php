@@ -956,4 +956,12 @@ return [
     'compensated_at' => 'telafi edildi',
     'compensated_from_supplier' => 'Tedarikçilerden Gelen Tazminatlar',
 
+    'tac_to_be_printed' => 'Yazdırılacak şartlar ve koşullar',
+    'surplus' => 'fazlalık',
+    'total_surplus' => 'Toplam Fazla',
+    'partially_paid' => 'Kısmen ödenmiş',
+    'sent_to_admin' => 'Yöneticiye gönderildi',
+    'sent_to_supplier' => 'Tedarikçiye Gönderildi',
+    'partially_received' => 'Kısmen Alındı',
+
 ];

@@ -953,4 +953,12 @@ return [
     'compensated' => 'جبران شد',
     'compensated_at' => 'جبران شده در',
     'compensated_from_supplier' => 'غرامت از تامین کنندگان',
+
+    'tac_to_be_printed' => 'شرایط و ضوابط برای چاپ',
+    'surplus' => 'مازاد',
+    'total_surplus' => 'کل مازاد',
+    'partially_paid' => 'تا حدی پرداخت شده است',
+    'sent_to_admin' => 'برای ادمین ارسال شد',
+    'sent_to_supplier' => 'برای تامین کننده ارسال شد',
+    'partially_received' => 'تا حدی دریافت شد',
 ];
