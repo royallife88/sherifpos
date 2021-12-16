@@ -85,7 +85,7 @@ class SellController extends Controller
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
 
-        $sales = $query->orderBy('invoice_no', 'desc')->get();
+        $sales = $query->orderBy('created_at', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $stores = Store::getDropdown();

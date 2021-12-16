@@ -25,8 +25,7 @@
                 <td>@if(!empty($transaction->customer)){{$transaction->customer->name}}@endif</td>
                 <td>@if(!empty($transaction->transaction_payments->first()->method)){{$payment_types[$transaction->transaction_payments->first()->method]}}@endif
                 </td>
-                <td>@if($transaction->status == 'final' && $transaction->payment_status == 'pending')
-                    @lang('lang.pending') @else {{ucfirst($transaction->status)}} @endif</td>
+                <td>{{ucfirst($transaction->status)}}</td>
                 <td></td>
                 <td>
                     <div class="btn-group">

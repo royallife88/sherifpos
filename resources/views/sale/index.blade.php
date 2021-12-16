@@ -215,10 +215,5 @@
         __currency_convert_recursively($("#receipt_section"));
         __print_receipt("receipt_section");
     }
-
-    table
-    .column( '0:visible' )
-    .order( 'desc' )
-    .draw();
 </script>
 @endsection
