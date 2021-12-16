@@ -13,12 +13,13 @@
 
         <div class="modal-body">
             <div class="row">
+                @if(session('system_type') == 'pos')
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
+                        {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
                         {!! Form::select('product_class_id', $product_classes,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select'), 'required',
+                        'placeholder' => __('lang.please_select'), 'required',
                         'required']) !!}
 
                     </div>
@@ -26,34 +27,35 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
+                        {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                         {!! Form::select('category_id', $categories,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select'), 'required']) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
+                        {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
                         {!! Form::select('sub_category_id', [],
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select'), 'required']) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('brand_id', __('lang.brand') . ' *', []) !!}
+                        {!! Form::label('brand_id', __('lang.brand') . ' *', []) !!}
                         {!! Form::select('brand_id', $brands,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select'), 'required']) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
                 </div>
+                @endif
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('name', __('lang.name') . ' *', []) !!}
@@ -61,45 +63,53 @@
                         => __('lang.name')]) !!}
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4  @if(session('system_type') == 'restaurant') hide @endif">
                     <div class="form-group">
                         {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
                         {!! Form::text('sku', null, ['class' => 'form-control', 'required', 'placeholder'
                         => __('lang.sku')]) !!}
                     </div>
                 </div>
+                @if(session('system_type') == 'pos')
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('multiple_units', __('lang.unit'), []) !!}
+                        {!! Form::label('multiple_units', __('lang.unit'), []) !!}
                         {!! Form::select('multiple_units[]', $units,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
+                        __('lang.please_select'), 'id' => 'multiple_units']) !!}
 
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('multiple_colors', __('lang.color'), []) !!}
+                        {!! Form::label('multiple_colors', __('lang.color'), []) !!}
                         {!! Form::select('multiple_colors[]', $colors,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
+                        __('lang.please_select'), 'id' => 'multiple_colors']) !!}
 
                     </div>
                 </div>
+                @endif
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
+                        {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
                         {!! Form::select('multiple_sizes[]', $sizes,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
+                        __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
 
                     </div>
                 </div>
+                @if(session('system_type') == 'pos')
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
+                        {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
                         {!! Form::select('multiple_grades[]', $grades,
-                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
+                        false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true", 'placeholder' =>
+                        __('lang.please_select'), 'id' => 'multiple_grades']) !!}
 
                     </div>
                 </div>
+                @endif
                 <div class="col-md-12 " style="margin-top: 10px;">
                     <div class="form-group">
                         {!! Form::label('image', __('lang.image'), []) !!} <br>
@@ -113,7 +123,7 @@
                         <textarea name="product_details" id="product_details" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
-
+                @if(session('system_type') == 'pos')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
@@ -129,12 +139,14 @@
                         __('lang.alert_quantity')]) !!}
                     </div>
                 </div>
+                @endif
                 @can('product_module.purchase_price.create_and_edit')
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('purchase_price', __('lang.purchase_price') . ' *', []) !!}
+                        {!! Form::label('purchase_price', session('system_type') == 'pos' ? __('lang.purchase_price') :
+                        __('lang.cost') . ' *', []) !!}
                         {!! Form::text('purchase_price', null, ['class' => 'form-control', 'placeholder' =>
-                        __('lang.purchase_price'), 'required']) !!}
+                        session('system_type') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
                     </div>
                 </div>
                 @endcan
@@ -147,10 +159,10 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                    {!! Form::label('tax_id', __('lang.tax') , []) !!}
+                        {!! Form::label('tax_id', __('lang.tax') , []) !!}
                         {!! Form::select('tax_id', $taxes,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select')]) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
@@ -161,7 +173,7 @@
                         {!! Form::select('tax_method', ['inclusive' => __('lang.inclusive'), 'exclusive' =>
                         __('lang.exclusive')],
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select')]) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
                     </div>
                 </div>
                 <br>
@@ -172,7 +184,7 @@
                         {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' =>
                         __('lang.percentage')],
                         'fixed', ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                         'placeholder' => __('lang.please_select')]) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -229,8 +241,8 @@
 
                 <div class="col-md-12" style="margin-top: 10px; display:none">
                     <div class="i-checks">
-                        <input id="different_prices_for_stores" name="different_prices_for_stores" type="checkbox" value="1"
-                            class="form-control-custom">
+                        <input id="different_prices_for_stores" name="different_prices_for_stores" type="checkbox"
+                            value="1" class="form-control-custom">
                         <label
                             for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
                     </div>
@@ -261,7 +273,7 @@
                     </table>
                 </div>
 
-                <div class="col-md-12" style="margin-top: 10px; display:none" >
+                <div class="col-md-12" style="margin-top: 10px; display:none">
                     <div class="i-checks">
                         <input id="this_product_have_variant" name="this_product_have_variant" type="checkbox" value="1"
                             class="form-control-custom">
@@ -282,7 +294,8 @@
                                 <th>@lang('lang.unit')</th>
                                 <th>@lang('lang.purchase_price')</th>
                                 <th>@lang('lang.sell_price')</th>
-                                <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i class="dripicons-plus"></i></button></th>
+                                <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
+                                            class="dripicons-plus"></i></button></th>
                             </tr>
                         </thead>
                         <tbody>

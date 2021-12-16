@@ -34,12 +34,14 @@
                                 href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_type') == 'pos')
                         @can('product_module.barcode.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
                             <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
                         </li>
                         @endcan
+                        @endif
                     </ul>
                 </li>
                 @endif
@@ -71,6 +73,7 @@
                                 href="{{action('PurchaseOrderController@index')}}">{{__('lang.view_all_purchase_orders')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_type') == 'pos')
                         @can('purchase_order.import.view')
                         <li
                             class="@if(request()->segment(1) == 'purchase-order' && request()->segment(2) == 'import') active @endif">
@@ -78,6 +81,7 @@
                                 href="{{action('PurchaseOrderController@getImport')}}">{{__('lang.import_purchase_order')}}</a>
                         </li>
                         @endcan
+                        @endif
                     </ul>
                 </li>
                 @endif
@@ -127,6 +131,7 @@
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_type') == 'pos')
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
@@ -174,10 +179,12 @@
                             <a href="{{action('AddStockController@getImport')}}">{{__('lang.import_add_stock')}}</a>
                         </li>
                         @endcan
+                        @endif
                     </ul>
                 </li>
                 @endif
 
+                @if(session('system_type') == 'pos')
                 @if(auth()->user()->can('quotation_for_customers.quotation.view') ||
                 auth()->user()->can('quotation_for_customers.quotation.create_and_edit') )
                 <li><a href="#quotation_for_customers" aria-expanded="false" data-toggle="collapse"> <i
@@ -206,6 +213,7 @@
 
                     </ul>
                 </li>
+                @endif
                 @endif
 
                 @if(auth()->user()->can('sale.pos.create_and_edit') || auth()->user()->can('sale.pos.view') )

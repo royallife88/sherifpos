@@ -34,10 +34,12 @@ class Product extends Model implements HasMedia
 
     ];
 
-    public function scopeActive($query){
+    public function scopeActive($query)
+    {
         $query->where('active', 1);
     }
-    public function scopeNotActive($query){
+    public function scopeNotActive($query)
+    {
         $query->where('active', 0);
     }
     public function product_class()
@@ -61,24 +63,33 @@ class Product extends Model implements HasMedia
         return $this->belongsTo(Tax::class);
     }
 
-    public function variations(){
+    public function variations()
+    {
         return $this->hasMany(Variation::class);
     }
-    public function product_stores(){
+    public function product_stores()
+    {
         return $this->hasMany(ProductStore::class);
     }
 
-    public function units(){
+    public function units()
+    {
         return $this->belongsToJson(Unit::class, 'multiple_units');
     }
-    public function colors(){
+    public function colors()
+    {
         return $this->belongsToJson(Color::class, 'multiple_colors');
     }
-    public function sizes(){
+    public function sizes()
+    {
         return $this->belongsToJson(Size::class, 'multiple_sizes');
     }
-    public function grades(){
+    public function grades()
+    {
         return $this->belongsToJson(Grade::class, 'multiple_grades');
     }
-
+    public function created_by_user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);
+    }
 }

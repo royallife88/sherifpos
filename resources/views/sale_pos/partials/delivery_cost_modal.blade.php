@@ -31,7 +31,8 @@
                     <div class="col-md-6">
                         <label for="deliveryman_id">@lang('lang.deliveryman'):</label>
                         <div class="form-group">
-                            <select class="form-control selectpicker" name="deliveryman_id" id="deliveryman_id" data-live-search="true">
+                            <select class="form-control selectpicker" name="deliveryman_id" id="deliveryman_id"
+                                data-live-search="true">
                                 <option value="" selected>@lang('lang.please_select')</option>
                                 @foreach ($deliverymen as $key => $name)
                                 <option value="{{$key}}">{{$name}}</option>
@@ -42,22 +43,26 @@
                     </div>
                     <div class="col-md-6">
                         <label for="delivery_cost">@lang('lang.delivery_cost'):</label>
-                        {!! Form::text('delivery_cost', null, ['class' => 'form-control']) !!}
+                        {!! Form::text('delivery_cost', null, ['class' => 'form-control', 'id' => 'delivery_cost']) !!}
                     </div>
                     <div class="col-md-6">
                         <label class="checkbox-inline">
-                            <input type="checkbox" class="delivery_cost_paid_by_customer" name="delivery_cost_paid_by_customer" checked
-                                value="1">
+                            <input type="checkbox" class="delivery_cost_paid_by_customer"
+                                name="delivery_cost_paid_by_customer" checked value="1"
+                                id="delivery_cost_paid_by_customer">
                             @lang('lang.delivery_cost_paid_by_customer')
                         </label>
                     </div>
                     <div class="col-md-12">
                         <label for="delivery_address">@lang('lang.delivery_address'):</label>
-                        {!! Form::textarea('delivery_address', null, ['class' => 'form-control delivery_address', 'rows' => 2]) !!}
+                        {!! Form::textarea('delivery_address', null, ['class' => 'form-control delivery_address', 'rows'
+                        => 2]) !!}
                     </div>
                 </div>
-                <button type="button" name="delivery_cost_btn" class="btn btn-primary"
-                    data-dismiss="modal">{{__('lang.submit')}}</button>
+                <div class="modal-footer">
+                    <button type="button" name="delivery_cost_btn" class="btn btn-primary"
+                        data-dismiss="modal">{{__('lang.submit')}}</button>
+                </div>
             </div>
         </div>
     </div>

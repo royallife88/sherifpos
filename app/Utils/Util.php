@@ -406,6 +406,7 @@ class Util
     {
         return [
             'cash' => __('lang.cash'),
+            'card' => __('lang.credit_card'),
             'bank_transfer' => __('lang.bank_transfer'),
             'cheque' => __('lang.cheque'),
             'money_transfer' => 'Money Transfer',

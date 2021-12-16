@@ -167,7 +167,7 @@
                             value="send_to_supplier" class="btn btn-warning pull-right btn-flat submit">@lang(
                             'lang.send_to_supplier' )</button>
                         <button type="submit" name="submit" id="save" style="margin: 10px" value="save"
-                            class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.save' )</button>
+                            class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.delete' )</button>
 
                     </div>
                     {!! Form::close() !!}

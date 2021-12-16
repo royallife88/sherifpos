@@ -370,6 +370,13 @@ function calculate_sub_totals() {
         __write_number($("#discount_amount"), promo_discount);
     }
     total -= promo_discount;
+
+    let delivery_cost = 0;
+    if ($("#delivery_cost_paid_by_customer").prop("checked")) {
+        delivery_cost = __read_number($("#delivery_cost"));
+    }
+    total += delivery_cost;
+
     __write_number($("#final_total"), total);
     $("#final_total").change();
 
@@ -1399,4 +1406,15 @@ $(document).on("click", ".remove_draft", function () {
             }
         },
     });
+});
+
+$(document).on("change", "#delivery_cost_paid_by_customer", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", "#delivery_cost", function () {
+    let delivery_cost = __read_number($(this));
+    $("span#delivery-cost").text(
+        __currency_trans_from_en(delivery_cost, false)
+    );
+    calculate_sub_totals();
 });

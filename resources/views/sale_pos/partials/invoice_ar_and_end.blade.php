@@ -170,14 +170,13 @@
                         </th>
                     </tr>
                     @endif
-                    {{-- @if($transaction->shipping_cost)
+                    @if(!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
                     <tr>
-                        <th colspan="2" style="text-align:left">{{number_format((float)$transaction->shipping_cost, 2,
-                            '.', '')}}
-                        <th colspan="2">@lang('lang.shipping ,[], 'en'Cost') {{__('lang.shipping',[], 'ar')}}</th>
+                        <th colspan="2" style="text-align:left">{{@num_format($transaction->delivery_cost)}}
                         </th>
+                        <th colspan="2">{{__('lang.delivery_cost',[], 'ar')}} <br> @lang('lang.delivery_cost' , [], 'en')</th>
                     </tr>
-                    @endif --}}
+                    @endif
                     @if(!empty($transaction->rp_redeemed_value))
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->rp_redeemed_value)}}</th>

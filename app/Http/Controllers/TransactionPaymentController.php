@@ -90,6 +90,10 @@ class TransactionPaymentController extends Controller
                 'ref_number' => $request->ref_number,
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
                 'bank_name' => $request->bank_name,
+                'card_number' => $request->card_number,
+                // 'card_security' => $request->card_security,
+                'card_month' => $request->card_month,
+                'card_year' => $request->card_year,
             ];
             $transaction = Transaction::find($request->transaction_id);
 

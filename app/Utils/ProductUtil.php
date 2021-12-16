@@ -143,6 +143,24 @@ class ProductUtil extends Util
         return $number;
     }
 
+    public function generateSku($name, $number = 1)
+    {
+        $name_array = explode(" ", $name);
+        $sku = '';
+        foreach ($name_array as $w) {
+            if (!preg_match('/[^A-Za-z0-9]/', $w)) {
+                $sku .= $w[0];
+            }
+        }
+        $sku = $sku . '-' . $number;
+        $sku_exist = Product::where('sku', $sku)->exists();
+
+        if ($sku_exist) {
+            return $this->generateSku($name, $number + 1);
+        } else {
+            return $sku;
+        }
+    }
     public function getStoreNameFirstLetters($store_id)
     {
         $string = '';
@@ -202,17 +220,25 @@ class ProductUtil extends Util
         }
     }
 
-    //create or update product variation data
+    /**
+     * create or update product variation data
+     *
+     * @param object $product
+     * @param object $request
+     * @return boolean
+     */
     public function createOrUpdateVariations($product, $request)
     {
         $variations = $request->variations;
         $keey_variations = [];
         if (!empty($variations)) {
             foreach ($variations as $v) {
+                $c = Variation::where('product_id', $product->id)
+                    ->count() + 1;
                 if ($v['name'] == 'Default') {
                     $sub_sku = $product->sku;
                 } else {
-                    $sub_sku = $v['sub_sku'];
+                    $sub_sku = !empty($v['sub_sku']) ? $v['sub_sku'] : $this->generateSubSku($product->sku, $c, $product->barcode_type);
                 }
                 if (!empty($v['id'])) {
                     $variation = Variation::find($v['id']);
@@ -228,8 +254,6 @@ class ProductUtil extends Util
                     $variation_array[] = ['variation' => $variation, 'variant_stores' => $v['variant_stores']];
                     $keey_variations[] = $v['id'];
                 } else {
-                    $c = Variation::where('product_id', $product->id)
-                        ->count() + 1;
                     $variation_data['name'] = $v['name'];
                     $variation_data['product_id'] = $product->id;
                     $variation_data['sub_sku'] = !empty($v['sub_sku']) ? $v['sub_sku'] : $this->generateSubSku($product->sku, $c, $product->barcode_type);
@@ -271,6 +295,8 @@ class ProductUtil extends Util
         foreach ($variation_array as $array) {
             $this->createOrUpdateProductStore($product, $array['variation'], $request, $array['variant_stores']);
         }
+
+        return true;
     }
 
     public function getProductClassificationTreeObject()

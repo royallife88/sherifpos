@@ -68,6 +68,13 @@ class SetSessionData
             $request->session()->put('user', $user);
         }
 
+        $system_type = System::getProperty('system_type');
+        if (empty($system_type)) {
+            $system_type = 'pos';
+        }
+        $request->session()->put('system_type', $system_type);
+
+
         $logo = System::getProperty('logo');
         if (empty($logo)) {
             $logo = 'sharifshalaby.png';

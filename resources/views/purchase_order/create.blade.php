@@ -18,7 +18,8 @@
                                 <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,
-                                    session('user.store_id'), ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                                    session('user.store_id'), ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true",
                                     'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
@@ -61,8 +62,9 @@
                                     <input type="text" name="search_product" id="search_product"
                                         placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                         class="form-control ui-autocomplete-input" autocomplete="off">
-                                        <button type="button" class="btn btn-success btn-lg btn-modal" data-href="{{action('ProductController@create')}}?quick_add=1" data-container=".view_modal"><i
-                                            class="fa fa-plus"></i></button>
+                                    <button type="button" class="btn btn-success btn-lg btn-modal"
+                                        data-href="{{action('ProductController@create')}}?quick_add=1"
+                                        data-container=".view_modal"><i class="fa fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -73,7 +75,9 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                            @if(session('system_type') == 'pos')
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                            @endif
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
@@ -116,12 +120,12 @@
                             'lang.send_to_supplier' )</button>
                         @endcan
                         @can('purchase_order.send_to_admin.create_and_edit')
-                        <button type="submit" name="submit" id="send_to_admin" style="margin: 10px"
-                            value="sent_admin" class="btn btn-primary pull-right btn-flat submit">@lang(
+                        <button type="submit" name="submit" id="send_to_admin" style="margin: 10px" value="sent_admin"
+                            class="btn btn-primary pull-right btn-flat submit">@lang(
                             'lang.send_to_admin' )</button>
                         @endcan
                         <a href="{{action('PurchaseOrderController@create')}}" style="margin: 10px" value="cancel"
-                        class="btn btn-danger pull-right btn-flat">@lang( 'lang.cancel' )</a>
+                            class="btn btn-danger pull-right btn-flat">@lang( 'lang.cancel' )</a>
                         <div class="modal fade supplier_modal" id="supplier_modal" role="dialog" aria-hidden="true">
                         </div>
 

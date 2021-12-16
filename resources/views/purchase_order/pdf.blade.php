@@ -111,7 +111,9 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
+                                            @if(session('system_type') == 'pos')
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
+                                            @endif
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
@@ -129,9 +131,11 @@
                                                 @endif
 
                                             </td>
+                                            @if(session('system_type') == 'pos')
                                             <td>
                                                 {{$line->product->sku}}
                                             </td>
+                                            @endif
                                             <td>
                                                 @if(isset($line->quantity)){{$line->quantity}}@else{{1}}@endif
                                             </td>

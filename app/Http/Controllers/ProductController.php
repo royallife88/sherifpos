@@ -19,6 +19,7 @@ use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\Unit;
+use App\Models\User;
 use App\Models\Variation;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -222,6 +223,10 @@ class ProductController extends Controller
             $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
         }
 
+        if (!empty(request()->created_by)) {
+            $products->where('created_by', request()->created_by);
+        }
+
         $products->where('active', 1);
         $products = $products->select(
             'products.*',
@@ -242,6 +247,7 @@ class ProductController extends Controller
         $customer_types = CustomerType::pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('product.index')->with(compact(
             'products',
@@ -257,6 +263,7 @@ class ProductController extends Controller
             'customers',
             'customer_types',
             'customers_tree_arry',
+            'users',
             'stores'
         ));
     }
@@ -284,6 +291,7 @@ class ProductController extends Controller
         $customers = Customer::pluck('name', 'id');
         $customer_types = CustomerType::pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
+        $users = User::pluck('name', 'id');
         $stores  = Store::all();
         $quick_add = request()->quick_add;
 
@@ -337,10 +345,6 @@ class ProductController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['product_class_id' => ['required', 'max:20']],
-            ['category_id' => ['required', 'max:20']],
-            ['brand_id' => ['required', 'max:20']],
-            ['barcode_type' => ['required', 'max:20']],
             ['purchase_price' => ['required', 'max:25', 'decimal']],
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
@@ -352,14 +356,14 @@ class ProductController extends Controller
                 'category_id' => $request->category_id,
                 'sub_category_id' => $request->sub_category_id,
                 'brand_id' => $request->brand_id,
-                'sku' => $request->sku,
+                'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
                 'multiple_units' => $request->multiple_units,
                 'multiple_colors' => $request->multiple_colors,
                 'multiple_sizes' => $request->multiple_sizes,
                 'multiple_grades' => $request->multiple_grades,
                 'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
-                'barcode_type' => $request->barcode_type,
+                'barcode_type' => $request->barcode_type ?? 'C128',
                 'alert_quantity' => $request->alert_quantity,
                 'purchase_price' => $request->purchase_price,
                 'sell_price' => $request->sell_price,
@@ -494,10 +498,6 @@ class ProductController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['product_class_id' => ['required', 'max:20']],
-            ['category_id' => ['required', 'max:20']],
-            ['brand_id' => ['required', 'max:20']],
-            ['barcode_type' => ['required', 'max:20']],
             ['purchase_price' => ['required', 'max:25', 'decimal']],
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );

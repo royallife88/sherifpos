@@ -506,7 +506,6 @@ class TransactionUtil extends Util
             'grand_total' => $this->num_uf($request->grand_total),
             'gift_card_id' => $request->gift_card_id,
             'coupon_id' => $request->coupon_id,
-            'invoice_no' => $this->productUtil->getNumberByType('sell'),
             'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
             'status' => $request->status,
             'sale_note' => $request->sale_note,

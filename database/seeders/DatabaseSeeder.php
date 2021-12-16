@@ -60,11 +60,12 @@ class DatabaseSeeder extends Seeder
             ['key' => 'developed_by', 'value' => '<a target="_blank" href="http://www.fiverr.com/derbari">Derbari</a>', 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'help_page_content', 'value' => null, 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'invoice_lang', 'value' => 'system_lang', 'created_by' => 1, 'date_and_time' => Carbon::now()],
+            ['key' => 'system_type', 'value' => 'pos', 'created_by' => 1, 'date_and_time' => Carbon::now()],
 
         );
 
         CustomerType::create([
-            'name' => 'Retailer',
+            'name' => 'Walk-in',
             'created_by' => 1,
         ]);
 
@@ -75,6 +76,11 @@ class DatabaseSeeder extends Seeder
             'address' => '',
             'email' => null,
             'is_default' => 1,
+            'created_by' => 1,
+        ]);
+
+        CustomerType::create([
+            'name' => 'Retailer',
             'created_by' => 1,
         ]);
 

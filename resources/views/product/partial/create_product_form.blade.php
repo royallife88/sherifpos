@@ -1,11 +1,11 @@
 <div class="row">
     <div class="col-md-12">
         <div class="i-checks">
-            <input id="is_service" name="is_service" type="checkbox" value="1"
-                class="form-control-custom">
+            <input id="is_service" name="is_service" type="checkbox" @if(session('system_type') == 'restaurant') checked @endif value="1" class="form-control-custom">
             <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
         </div>
     </div>
+    @if(session('system_type') == 'pos')
     <div class="col-md-4">
         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
         <div class="input-group my-group">
@@ -16,8 +16,7 @@
             <span class="input-group-btn">
                 @can('product_module.product_class.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('ProductClassController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('ProductClassController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
@@ -34,8 +33,7 @@
                 @can('product_module.category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('CategoryController@create')}}?quick_add=1&type=category"
-                    data-container=".view_modal"><i
-                        class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                    data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
@@ -51,8 +49,7 @@
                 @can('product_module.sub_category.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
                     data-href="{{action('CategoryController@create')}}?quick_add=1&type=sub_category"
-                    data-container=".view_modal"><i
-                        class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                    data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
@@ -67,14 +64,14 @@
             <span class="input-group-btn">
                 @can('product_module.brand.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('BrandController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('BrandController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
         <div class="error-msg text-red"></div>
     </div>
+    @endif
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('name', __('lang.name') . ' *', []) !!}
@@ -82,13 +79,14 @@
             => __('lang.name')]) !!}
         </div>
     </div>
-    <div class="col-md-4">
+    <div class="col-md-4 @if(session('system_type') == 'restaurant') hide @endif">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
             {!! Form::text('sku', null, ['class' => 'form-control', 'required', 'placeholder'
             => __('lang.sku')]) !!}
         </div>
     </div>
+    @if(session('system_type') == 'pos')
     <div class="col-md-4">
         {!! Form::label('multiple_units', __('lang.unit'), []) !!}
         <div class="input-group my-group">
@@ -98,8 +96,7 @@
             <span class="input-group-btn">
                 @can('product_module.unit.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('UnitController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('UnitController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
@@ -114,13 +111,13 @@
             <span class="input-group-btn">
                 @can('product_module.color.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('ColorController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('ColorController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
     </div>
+    @endif
     <div class="col-md-4">
         {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
         <div class="input-group my-group">
@@ -130,13 +127,13 @@
             <span class="input-group-btn">
                 @can('product_module.size.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('SizeController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('SizeController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
     </div>
+    @if(session('system_type') == 'pos')
     <div class="col-md-4">
         {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
         <div class="input-group my-group">
@@ -146,13 +143,13 @@
             <span class="input-group-btn">
                 @can('product_module.grade.create_and_edit')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('GradeController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('GradeController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>
     </div>
+    @endif
     <div class="col-md-12 " style="margin-top: 10px;">
         <div class="dropzone" id="my-dropzone">
         </div>
@@ -164,6 +161,7 @@
             <textarea name="product_details" id="product_details" class="form-control" rows="3"></textarea>
         </div>
     </div>
+    @if(session('system_type') == 'pos')
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('barcode_type', __('lang.barcode_type'), []) !!}
@@ -179,12 +177,13 @@
             __('lang.alert_quantity')]) !!}
         </div>
     </div>
+    @endif
     @can('product_module.purchase_price.create_and_edit')
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('purchase_price', __('lang.purchase_price') . ' *', []) !!}
+            {!! Form::label('purchase_price', session('system_type') == 'pos' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
             {!! Form::text('purchase_price', null, ['class' => 'form-control', 'placeholder' =>
-            __('lang.purchase_price'), 'required']) !!}
+            session('system_type') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
         </div>
     </div>
     @endcan
@@ -204,8 +203,7 @@
             <span class="input-group-btn">
                 @can('product_module.tax.create')
                 <button class="btn-modal btn btn-default bg-white btn-flat"
-                    data-href="{{action('TaxController@create')}}?quick_add=1"
-                    data-container=".view_modal"><i
+                    data-href="{{action('TaxController@create')}}?quick_add=1" data-container=".view_modal"><i
                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
@@ -255,9 +253,8 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('discount_customers', __('lang.customers'), []) !!} <i
-                class="dripicons-question" data-toggle="tooltip"
-                title="@lang('lang.discount_customer_info')"></i>
+            {!! Form::label('discount_customers', __('lang.customers'), []) !!} <i class="dripicons-question"
+                data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i>
             {!! Form::select('discount_customers[]', $customers_tree_arry,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%', 'multiple']) !!}
@@ -288,8 +285,7 @@
         <div class="i-checks">
             <input id="different_prices_for_stores" name="different_prices_for_stores" type="checkbox" value="1"
                 class="form-control-custom">
-            <label
-                for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
+            <label for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
         </div>
     </div>
 
@@ -322,8 +318,7 @@
         <div class="i-checks">
             <input id="this_product_have_variant" name="this_product_have_variant" type="checkbox" value="1"
                 class="form-control-custom">
-            <label
-                for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
+            <label for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
         </div>
     </div>
 
@@ -339,7 +334,8 @@
                     <th>@lang('lang.unit')</th>
                     <th>@lang('lang.purchase_price')</th>
                     <th>@lang('lang.sell_price')</th>
-                    <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i class="dripicons-plus"></i></button></th>
+                    <th><button type="button" class="btn btn-success btn-xs add_row mt-2"><i
+                                class="dripicons-plus"></i></button></th>
                 </tr>
             </thead>
             <tbody>

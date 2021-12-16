@@ -18,8 +18,10 @@
                     </select>
                     <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">
                 </div>
-                <button type="button" name="tax_btn" id="tax_btn" class="btn btn-primary"
-                    data-dismiss="modal">@lang('lang.submit')</button>
+                <div class="modal-footer">
+                    <button type="button" name="tax_btn" id="tax_btn" class="btn btn-primary"
+                        data-dismiss="modal">@lang('lang.submit')</button>
+                </div>
             </div>
         </div>
     </div>

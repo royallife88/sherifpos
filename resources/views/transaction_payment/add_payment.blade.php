@@ -1,7 +1,8 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' => 'add_payment_form' ])
+        {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' =>
+        'add_payment_form' ])
         !!}
 
         <div class="modal-header">
@@ -37,7 +38,8 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-                        {!! Form::text('paid_on', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'readonly', 'required',
+                        {!! Form::text('paid_on', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker',
+                        'readonly', 'required',
                         'placeholder' => __('lang.payment_date')]) !!}
                     </div>
                 </div>
@@ -58,7 +60,8 @@
                 <div class="col-md-4 not_cash_fields hide">
                     <div class="form-group">
                         {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':', []) !!} <br>
-                        {!! Form::text('bank_deposit_date', @format_date(date('Y-m-d')), ['class' => 'form-control not_cash datepicker',
+                        {!! Form::text('bank_deposit_date', @format_date(date('Y-m-d')), ['class' => 'form-control
+                        not_cash datepicker',
                         'readonly',
                         'placeholder' => __('lang.bank_deposit_date')]) !!}
                     </div>
@@ -70,6 +73,24 @@
                         'placeholder' => __('lang.bank_name')]) !!}
                     </div>
                 </div>
+
+                <div class="col-md-4 card_field hide">
+                    <label>@lang('lang.card_number') *</label>
+                    <input type="text" name="card_number" class="form-control">
+                </div>
+                {{-- <div class="col-md-3">
+                    <label>@lang('lang.card_security')</label>
+                    <input type="text" name="card_security" class="form-control">
+                </div> --}}
+                <div class="col-md-2 card_field hide">
+                    <label>@lang('lang.month')</label>
+                    <input type="text" name="card_month" class="form-control">
+                </div>
+                <div class="col-md-2 card_field hide">
+                    <label>@lang('lang.year')</label>
+                    <input type="text" name="card_year" class="form-control">
+                </div>
+
             </div>
 
         </div>
@@ -90,11 +111,18 @@
     $('#add_payment_form #method').change(function(){
         var method = $(this).val();
 
-        if(method === 'cash'){
+        if(method === 'card'){
+            $('.card_field').removeClass('hide');
             $('.not_cash_fields').addClass('hide');
+            $('.not_cash').attr('required', false);
+        }
+        else if(method === 'cash'){
+            $('.not_cash_fields').addClass('hide');
+            $('.card_field').addClass('hide');
             $('.not_cash').attr('required', false);
         }else{
             $('.not_cash_fields').removeClass('hide');
+            $('.card_field').addClass('hide');
             $('.not_cash').attr('required', true);
         }
     })

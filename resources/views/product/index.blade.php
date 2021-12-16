@@ -99,6 +99,14 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('created_by', __('lang.created_by') . ':', []) !!}
+                            {!! Form::select('created_by', $users, request()->created_by, ['class'
+                            => 'form-control
+                            selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button>
                         <a class="btn btn-danger mt-4"
                             href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a>
@@ -187,7 +195,7 @@
                 @can('product_module.purchase_price.view')
                 <th>@lang('lang.purchase_price')</th>
                 @endcan
-
+                <th>@lang('lang.created_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -225,6 +233,7 @@
                 @can('product_module.purchase_price.view')
                 <td>{{@num_format($product->purchase_price)}}</td>
                 @endcan
+                <td>{{$product->created_by_user->name}}</td>
 
                 <td>
                     <div class="btn-group">

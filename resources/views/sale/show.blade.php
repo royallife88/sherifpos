@@ -146,6 +146,12 @@
                             <td>{{@num_format($sale->total_coupon_discount)}}</td>
                         </tr>
                         @endif
+                        @if($sale->delivery_cost > 0)
+                        <tr>
+                            <th>@lang('lang.delivery_cost')</th>
+                            <td>{{@num_format($sale->delivery_cost)}}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>@lang('lang.grand_total'):</th>
                             <td>{{@num_format($sale->final_total)}}</td>

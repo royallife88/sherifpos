@@ -154,13 +154,13 @@ $invoice_lang = request()->session()->get('language');
                             {{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
                     </tr>
                     @endif
-                    {{-- @if($transaction->shipping_cost)
+                    @if(!empty($transaction->delivery_cost))
                     <tr>
-                        <th colspan="2">@lang('lang.Shipping , [], $invoice_langCost')</th>
-                        <th style="text-align:right">{{number_format((float)$transaction->shipping_cost, 2, '.', '')}}
+                        <th colspan="2">@lang('lang.delivery_cost' , [], $invoice_lang)</th>
+                        <th style="text-align:right">{{@num_format($transaction->delivery_cost)}}
                         </th>
                     </tr>
-                    @endif --}}
+                    @endif
                     @if(!empty($transaction->rp_redeemed_value))
                     <tr>
                         <th colspan="2">@lang('lang.redeemed_point_value', [], $invoice_lang)</th>
