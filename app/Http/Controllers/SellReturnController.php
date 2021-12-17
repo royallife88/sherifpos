@@ -188,7 +188,6 @@ class SellReturnController extends Controller
                 } else {
                     $sell_return->final_total = $this->commonUtil->num_uf($request->final_total);
                     $sell_return->grand_total = $this->commonUtil->num_uf($request->grand_total);
-                    $sell_return->invoice_no = $this->productUtil->getNumberByType('sell_return');
                     $sell_return->status = 'final';
                     $sell_return->save();
                 }

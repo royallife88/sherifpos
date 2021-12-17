@@ -435,4 +435,5 @@
         @endforeach
     })
 </script>
+
 @endsection

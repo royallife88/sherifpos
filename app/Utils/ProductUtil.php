@@ -68,7 +68,7 @@ class ProductUtil extends Util
      *
      * @return void
      */
-    public function getNumberByType($type, $store_id = null)
+    public function getNumberByType($type, $store_id = null, $i = 1)
     {
         $number = '';
         $store_string = '';
@@ -79,66 +79,72 @@ class ProductUtil extends Util
             $store_string = $this->getStoreNameFirstLetters($store_id);
         }
         if ($type == 'purchase_order') {
-            $po_count = Transaction::where('type', $type)->count() + 1;
+            $po_count = Transaction::where('type', $type)->count() + $i;
 
             $number = 'PO' . $store_string . $po_count;
         }
         if ($type == 'sell') {
-            $inv_count = Transaction::where('type', $type)->count() + 1;
+            $inv_count = Transaction::where('type', $type)->count() + $i;
 
             $number = 'Inv' . $year . $month . $inv_count;
         }
         if ($type == 'expense') {
-            $inv_count = Transaction::where('type', $type)->count() + 1;
+            $inv_count = Transaction::where('type', $type)->count() + $i;
 
             $number = 'Exp' . $year . $month . $inv_count;
         }
         if ($type == 'sell_return') {
-            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + $i;
 
             $number = 'Rets' . $year . $month . $count;
         }
         if ($type == 'purchase_return') {
-            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + $i;
 
             $number = 'RetP' . $year . $month . $count;
         }
         if ($type == 'remove_stock') {
-            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + $i;
 
             $number = 'RST' . $year . $month . $count;
         }
         if ($type == 'transfer') {
-            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + 1;
+            $count = Transaction::where('type', $type)->whereMonth('transaction_date', $month)->count() + $i;
 
             $number = 'tras' . $year . $month . $count;
         }
         if ($type == 'quotation') {
-            $count = Transaction::where('type', 'sell')->where('is_quotation', 1)->whereMonth('transaction_date', $month)->count() + 1;
+            $count = Transaction::where('type', 'sell')->where('is_quotation', 1)->whereMonth('transaction_date', $month)->count() + $i;
 
             $number = 'Qu' . $year . $month . $count;
         }
-        if ($type == 'earning_of_point') {
-            $count = EarningOfPoint::count() + 1;
 
-            $number = 'LPE' . $year . $month . $day .  $count;
+        $number_exists = Transaction::where('type', $type)->where('invoice_no', $number)->exists();
+        if ($number_exists) {
+            return $this->getNumberByType($type, $store_id, $i + 1);
         }
-        if ($type == 'redemption_of_point') {
-            $count = RedemptionOfPoint::count() + 1;
 
-            $number = 'LPR' . $year . $month . $day .  $count;
-        }
         if ($type == 'internal_stock_request') {
-            $count = Transaction::where('type', 'transfer')->where('is_internal_stock_transfer', 1)->distinct('invoice_no')->count() + 1;
+            $count = Transaction::where('type', 'transfer')->where('is_internal_stock_transfer', 1)->distinct('invoice_no')->count() + $i;
 
             $number = 'ISRQ' . $year . $month . $day .  $count;
         }
         if ($type == 'internal_stock_return') {
-            $count = Transaction::where('type', 'internal_stock_return')->where('is_internal_stock_transfer', 1)->where('is_return', 1)->distinct('invoice_no')->count() + 1;
+            $count = Transaction::where('type', 'internal_stock_return')->where('is_internal_stock_transfer', 1)->where('is_return', 1)->distinct('invoice_no')->count() + $i;
 
             $number = 'ISRT' . $year . $month . $day .  $count;
         }
 
+        if ($type == 'earning_of_point') {
+            $count = EarningOfPoint::count() + $i;
+
+            $number = 'LPE' . $year . $month . $day .  $count;
+        }
+        if ($type == 'redemption_of_point') {
+            $count = RedemptionOfPoint::count() + $i;
+
+            $number = 'LPR' . $year . $month . $day .  $count;
+        }
 
         return $number;
     }
