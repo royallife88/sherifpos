@@ -26,7 +26,8 @@ $i = 0;
         @endif
     </td>
     <td>
-        @if(!empty($line->variation)){{$line->variation->sub_sku ? $line->variation->sub_sku : $line->product->sku}}@endif
+        @if(!empty($line->variation)){{$line->variation->sub_sku ? $line->variation->sub_sku :
+        $line->product->sku}}@endif
     </td>
     <td>
         @if(!empty($line->product->product_class)) {{$line->product->product_class->name}} @endif
@@ -56,12 +57,16 @@ $i = 0;
         @if(!empty($line->variation->unit)) {{$line->variation->unit->name}} @endif
     </td>
     @php
-    $query = App\Models\ProductStore::where('store_id', $store_id)->where('product_id',
-    $line->product_id)->where('variation_id', $line->variation_id)->first();
+    $query = App\Models\ProductStore::where('product_id',
+    $line->product_id)->where('variation_id', $line->variation_id);
+    if(!empty($store_id)){
+    $query->where('store_id', $store_id);
+    }
+    $current_stock_query = $query->first();
     $current_stock = 0;
 
-    if(!empty($query)){
-    $current_stock = $query->qty_available;
+    if(!empty($current_stock_query)){
+    $current_stock = $current_stock_query->qty_available;
     }
     @endphp
     <td>

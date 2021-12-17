@@ -1,5 +1,5 @@
 <!-- payment modal -->
-<div id="add-payment" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+<div id="add-payment" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
     class="modal fade text-left">
     <div role="document" class="modal-dialog">
         <div class="modal-content">
@@ -19,24 +19,24 @@
                             <div id="payment_rows" class="col-md-12">
                                 <div class="payment_row row pl-3  pr-3">
                                     <div class="col-md-6 mt-1">
-                                        <label>@lang('lang.received_amount') *</label>
+                                        <label>@lang('lang.received_amount'): *</label>
                                         <input type="text" name="payments[0][amount]"
                                             class="form-control numkey received_amount" required id="amount" step="any">
                                     </div>
                                     <div class="col-md-6 mt-1">
-                                        <label>@lang('lang.paying_amount') *</label>
+                                        <label>@lang('lang.paying_amount'): *</label>
                                         <input type="text" name="payments[0][paying_amount]" class="form-control numkey"
                                             id="paying_amount" step="any">
                                     </div>
                                     <div class="col-md-6 mt-1">
-                                        <label class="change_text">@lang('lang.change') : </label>
+                                        <label class="change_text">@lang('lang.change'): </label>
                                         <spand class="change" class="ml-2">0.00</spand>
                                         <input type="hidden" name="payments[0][change_amount]" class="change_amount">
                                     </div>
                                     <div class="col-md-6 mt-1">
-                                        <label>@lang('lang.payment_method')</label>
+                                        <label>@lang('lang.payment_method'): *</label>
                                         {!! Form::select('payments[0][method]', $payment_types, null, ['class' =>
-                                        'form-control selectpicker method', 'required', 'data-live-search' => 'true']) !!}
+                                        'form-control method', 'required']) !!}
                                     </div>
                                     <div class="col-md-6 mt-1 text-red">
                                         <label class="discount_lable">@lang('lang.discount'):</label>

@@ -131,7 +131,7 @@ class BarcodeController extends Controller
 
     public function printBarcode(Request $request)
     {
-        try {
+        // try {
             $products = $request->get('products');
 
 
@@ -154,11 +154,11 @@ class BarcodeController extends Controller
 
             $output = view('barcode.partials.print_barcode')
                 ->with(compact('print', 'product_details',  'page_height'))->render();
-        } catch (\Exception $e) {
-            \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+        // } catch (\Exception $e) {
+        //     \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
-            $output = __('lang_v1.barcode_label_error');
-        }
+        //     $output = __('lang.something_went_wrong');
+        // }
 
         return $output;
     }

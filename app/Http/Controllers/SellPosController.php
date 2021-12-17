@@ -395,9 +395,57 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // print_r($request->payments); die();
+        // try {
+            DB::beginTransaction();
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
+            if ($transaction->status != 'draft') {
+                foreach ($request->payments as $payment) {
+
+                    $amount = $this->commonUtil->num_uf($payment['amount']);
+                    $payment_data = [
+                        'transaction_id' => $transaction->id,
+                        'amount' => $amount,
+                        'method' => $payment['method'],
+                        'paid_on' => $transaction->transaction_date,
+                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                        'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
+                        'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
+                        'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                        'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
+                        'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                        'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
+                        'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
+                        'gift_card_number' => $request->gift_card_number,
+                        'amount_to_be_used' => $request->amount_to_be_used,
+                        'payment_note' => $request->payment_note,
+                    ];
+                    if ($amount > 0) {
+                        $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                    }
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                }
+
+
+                if (!empty($transaction->coupon_id)) {
+                    Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+                }
+
+                if (!empty($transaction->gift_card_id)) {
+                    $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
+                    $used = 0;
+                    if ($remaining_balance == 0) {
+                        $used = 1;
+                    }
+                    GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
+                }
+                $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+            }
+
+
+            DB::commit();
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
             $html_content = view('sale_pos.partials.invoice')->with(compact(
                 'transaction',
@@ -409,13 +457,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return $output;
     }
@@ -663,7 +711,6 @@ class SellPosController extends Controller
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
-
         $query = Transaction::where('type', 'sell')->where('status', '!=', 'draft');
 
         if (!empty($store_id)) {
@@ -677,6 +724,14 @@ class SellPosController extends Controller
         }
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
+        }
+        if (!empty($pos_id)) {
+            $query->where('store_pos_id', $pos_id);
+        }
+        if (!session('user.is_superadmin')) {
+            $stores = Store::getDropdown();
+            $stores_ids = array_keys($stores);
+            $query->whereIn('transactions.store_id', $stores_ids);
         }
 
         $transactions = $query->orderBy('transaction_date', 'desc')->get();

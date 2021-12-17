@@ -38,7 +38,7 @@ $(document).ready(function () {
     }
 
     //Custom select
-    $('select').selectpicker();
+    // $('select').selectpicker();
 
     // Main Template Color
     var brandPrimary = '#33b35a';
@@ -67,7 +67,7 @@ $(document).ready(function () {
     // ------------------------------------------------------- //
     // Side Navbar Functionality
     // ------------------------------------------------------ //
-    
+
     $('#toggle-btn').on('click', function (e) {
 
         e.preventDefault();

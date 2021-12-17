@@ -650,7 +650,7 @@ $(document).on("click", ".payment-btn", function (e) {
     let method = $(this).data("method");
     console.log(method, "method inside btn");
     $(".method").val(method);
-    // $(".method").selectpicker("refresh");
+    // $(".method").selectpicker("render");
     $(".method").change();
     if (method === "deposit") {
         $(".deposit-fields").removeClass("hide");

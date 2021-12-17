@@ -35,8 +35,7 @@
             @endif
 
             <br>
-            {{-- Barcode --}}
-            <img class="center-block" style="max-width:90%; !important;"
+            <img class="center-block" style="max-width:90% !important; margin: 0; padding: 0"
                 src="data:image/png;base64,{{DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3,30,array(39, 48, 54), true)}}">
 
         </div>

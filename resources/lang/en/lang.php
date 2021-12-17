@@ -968,6 +968,7 @@ return [
     'sent_to_supplier' => 'Sent to Supplier',
     'partially_received' => 'Partially Received',
 
-    'cost' => 'Cost'
+    'cost' => 'Cost',
+    'another_payment_option' => 'Another Payment Option',
 
 ];

@@ -1,14 +1,14 @@
-<h3 class="text-red">Another Payment Option:</h3>
+<h3 class="text-red">@lang('lang.another_payment_option'):</h3>
 <div class="payment_row  row pl-3  pr-3">
     <div class="col-md-6 mt-1">
-        <label>@lang('lang.received_amount') *</label>
+        <label>@lang('lang.received_amount'): *</label>
         <input type="text" name="payments[{{$index}}][amount]" class="form-control numkey received_amount" required
             step="any">
     </div>
     <div class="col-md-6 mt-1">
-        <label>@lang('lang.payment_method')</label>
+        <label>@lang('lang.payment_method'):</label>
         {!! Form::select('payments['.$index.'][method]', $payment_types, null, ['class' => 'form-control method',
-        'required', 'data-live-search' => 'true']) !!}
+        'required']) !!}
     </div>
     <div class="col-md-6 mt-1">
         <label class="change_text">@lang('lang.change') : </label>

@@ -14,7 +14,7 @@
     <td>@if(!empty($product->variations))
         {{implode(', ', $product->variations->pluck('sub_sku')->toArray())}} @else {{$product->sku}} @endif
     </td>
-    <td><img class="center-block" style="width:250px; !important;height: {{2*0.24}}in !important;"
+    <td><p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">{{$product->name}}</p><img class="center-block" style="width:250px; !important;height: {{2*0.24}}in !important;"
             src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type, 3,30,array(39, 48, 54), true)}}">
     </td>
     <td>{{$product->store_name}}</td>

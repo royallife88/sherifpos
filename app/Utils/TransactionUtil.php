@@ -485,7 +485,7 @@ class TransactionUtil extends Util
         }
         if (!session('user.is_superadmin')) {
             $data['store_id'] = session('user.store_id');
-            $data['pos_id'] = session('user.pos_id');
+            // $data['pos_id'] = session('user.pos_id');
         }
 
         return $data;
@@ -496,7 +496,7 @@ class TransactionUtil extends Util
      *
      * @param Request $request
      * @param int $id
-     * @return void
+     * @return object
      */
     public function updateSellTransaction($request, $id)
     {
@@ -526,11 +526,14 @@ class TransactionUtil extends Util
             'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
         ];
 
-        DB::beginTransaction();
+
 
         $transaction = Transaction::find($id);
         if ($transaction->is_quotation && $transaction->status == 'draft') {
             $transaction_data['ref_no'] = $transaction->invoice_no;
+        }
+        if ($transaction->status == 'final' && empty($transaction->invoice_no)) {
+            $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
         }
         $transaction_status = $transaction->status;
         $is_block_qty = $transaction->block_qty;
@@ -605,8 +608,6 @@ class TransactionUtil extends Util
         }
 
         $this->updateTransactionPaymentStatus($transaction->id);
-
-        DB::commit();
 
         return $transaction;
     }

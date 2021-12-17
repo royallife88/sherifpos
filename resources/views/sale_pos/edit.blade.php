@@ -16,7 +16,7 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 0">
-                        {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'put', 'files' =>
+                        {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' =>
                         true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"

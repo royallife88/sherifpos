@@ -438,8 +438,9 @@ class RemoveStockController extends Controller
      */
     public function getInvoiceDetails()
     {
-        $id = request()->input('id');
-        $query = Transaction::where('id', '>', 0);
+        $id = request()->input('invoice_id');
+        $store_id = request()->get('store_id');
+        $query = Transaction::where('type',  'add_stock');
         if (!empty($id)) {
             $query->where('id', $id);
         }
@@ -451,7 +452,7 @@ class RemoveStockController extends Controller
         }
         $add_stocks = $query->get();
 
-        $store_id = request()->get('store_id');
+
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         $html = view('remove_stock.partials.product_rows')->with(compact(
