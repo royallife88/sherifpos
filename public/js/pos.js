@@ -1087,13 +1087,13 @@ $(document).on(
 
 //Get recent transactions
 function get_recent_transactions() {
+    $(".recent_transaction_div").empty();
     if (
         typeof recent_transaction_table !== "undefined" &&
         recent_transaction_table !== null
     ) {
         if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
             $("#recent_transaction_table").DataTable().destroy();
-            $(".recent_transaction_div").empty();
         }
     }
     let href = $("#recent-transaction-btn").data("href");
@@ -1102,32 +1102,34 @@ function get_recent_transactions() {
         `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
     );
 
-    $.ajax({
-        method: "get",
-        url:
-            href +
-            "?start_date=" +
-            $("#rt_start_date").val() +
-            "&end_date=" +
-            $("#rt_end_date").val() +
-            "&customer_id=" +
-            $("#rt_customer_id").val(),
-        data: {},
-        success: function (result) {
-            $(".recent_transaction_div").empty().append(result);
-
-            if (
-                !$(".recent_transaction_div")
-                    .find("#recent_transaction_table tbody tr")
-                    .hasClass("no_data_found")
-            ) {
+    setTimeout(() => {
+        $.ajax({
+            method: "get",
+            url:
+                href +
+                "?start_date=" +
+                $("#rt_start_date").val() +
+                "&end_date=" +
+                $("#rt_end_date").val() +
+                "&customer_id=" +
+                $("#rt_customer_id").val(),
+            data: {},
+            success: function (result) {
                 $(".recent_transaction_div").empty().append(result);
-                recent_transaction_table = $(
-                    "#recent_transaction_table"
-                ).DataTable(datatable_params);
-            }
-        },
-    });
+
+                if (
+                    !$(".recent_transaction_div")
+                        .find("#recent_transaction_table tbody tr")
+                        .hasClass("no_data_found")
+                ) {
+                    $(".recent_transaction_div").empty().append(result);
+                    recent_transaction_table = $(
+                        "#recent_transaction_table"
+                    ).DataTable(datatable_params);
+                }
+            },
+        });
+    }, 3000);
 }
 
 //Get recent transactions
