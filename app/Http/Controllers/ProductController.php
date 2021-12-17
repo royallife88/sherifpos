@@ -167,6 +167,9 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('add_stock_lines', function ($join) {
+                $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
+            })
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
@@ -230,6 +233,7 @@ class ProductController extends Controller
         $products->where('active', 1);
         $products = $products->select(
             'products.*',
+            'add_stock_lines.expiry_date as exp_date',
             DB::raw('SUM(product_stores.qty_available) as current_stock'),
         )
             ->groupBy('products.id')

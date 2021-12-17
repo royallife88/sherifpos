@@ -143,7 +143,7 @@ class SellPosController extends Controller
     public function store(Request $request)
     {
 
-        // try {
+        try {
             $transaction_data = [
                 'store_id' => $request->store_id,
                 'customer_id' => $request->customer_id,
@@ -325,13 +325,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
         if ($request->action == 'send') {
             return redirect()->back()->with('status', $output);
         }
@@ -395,8 +395,7 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // print_r($request->payments); die();
-        // try {
+        try {
             DB::beginTransaction();
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
@@ -457,13 +456,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }
