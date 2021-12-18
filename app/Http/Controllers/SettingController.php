@@ -6,6 +6,7 @@ use App\Models\Currency;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\TermsAndCondition;
+use App\Models\User;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -247,5 +248,50 @@ class SettingController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get module settings
+     *
+     * @return void
+     */
+    public function getModuleSettings()
+    {
+        $modules = User::modulePermissionArray();
+        $module_settings = System::getProperty('module_settings') ? json_decode(System::getProperty('module_settings'), true) : [];
+
+        return view('settings.module')->with(compact(
+            'modules',
+            'module_settings',
+        ));
+    }
+
+    /**
+     * update module settings
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function updateModuleSettings(Request $request)
+    {
+        $module_settings = $request->module_settings;
+        try {
+            System::updateOrCreate(
+                ['key' => 'module_settings'],
+                ['value' => json_encode($module_settings), 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 }

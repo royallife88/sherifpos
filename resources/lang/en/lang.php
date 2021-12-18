@@ -970,5 +970,13 @@ return [
 
     'cost' => 'Cost',
     'another_payment_option' => 'Another Payment Option',
+    'modules' => 'Modules',
+    'module' => 'Module',
+    'product_module' => 'Product Module',
+    'customer_module' => 'Customer Module',
+    'supplier_module' => 'Supplier Module',
+    'sms_module' => 'SMS Module',
+    'sp_module' => 'Sale Promotion Module',
+    'email_module' => 'Email Module',
 
 ];

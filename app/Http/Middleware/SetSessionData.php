@@ -68,7 +68,7 @@ class SetSessionData
             $request->session()->put('user', $user);
         }
 
-        $system_type = System::getProperty('system_type');
+        $system_type = env('SYSTEM_MODE', 'pos');
         if (empty($system_type)) {
             $system_type = 'pos';
         }

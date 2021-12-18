@@ -47,6 +47,12 @@ class DatabaseSeeder extends Seeder
 
         Employee::create($employee_data);
 
+
+        $modules = User::modulePermissionArray();
+        $module_settings = [];
+        foreach ($modules as $key => $value) {
+            $module_settings[$key] = 1;
+        }
         System::create(
             ['key' => 'sender_email', 'value' => 'admin@gmail.com', 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'sms_username', 'value' => null, 'created_by' => 1, 'date_and_time' => Carbon::now()],
@@ -61,6 +67,7 @@ class DatabaseSeeder extends Seeder
             ['key' => 'help_page_content', 'value' => null, 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'invoice_lang', 'value' => 'system_lang', 'created_by' => 1, 'date_and_time' => Carbon::now()],
             ['key' => 'system_type', 'value' => 'pos', 'created_by' => 1, 'date_and_time' => Carbon::now()],
+            ['key' => 'module_settings', 'value' => json_encode($module_settings), 'created_by' => 1, 'date_and_time' => Carbon::now()],
 
         );
 

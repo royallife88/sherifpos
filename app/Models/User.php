@@ -220,6 +220,7 @@ class User extends Authenticatable
                 'store' => 'Store',
                 'store_pos' => 'Pos for the stores',
                 'terms_and_conditions' => 'Terms and Conditions',
+                'modules' => 'Modules',
                 'general_settings' => 'General Settings',
             ],
 

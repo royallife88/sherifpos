@@ -1,3 +1,6 @@
+@php
+    $module_settings = App\Models\System::getProperty('module_settings') ? json_decode(App\Models\System::getProperty('module_settings'), true) : [];
+@endphp
 <!-- Side Navbar -->
 <nav class="side-navbar no-print @if(request()->segment(1) == 'pos') shrink @endif">
     <div class="side-navbar-wrapper">
@@ -7,6 +10,7 @@
                 <li><a href="{{url('/home')}}"> <i class="dripicons-meter"></i><span>{{ __('lang.dashboard')
                             }}</span></a></li>
 
+                @if( !empty($module_settings['product_module']) )
                 @if(auth()->user()->can('product_module.product.create_and_edit') ||
                 auth()->user()->can('product_module.product.view') ||
                 auth()->user()->can('product_classification_tree.create_and_edit')||
@@ -45,7 +49,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['purchase_order']) )
                 @if(auth()->user()->can('purchase_order.draft_purchase_order.view') ||
                 auth()->user()->can('purchase_order.purchase_order.create_and_edit') )
                 <li><a href="#purchase_order" aria-expanded="false" data-toggle="collapse"> <i
@@ -85,7 +91,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['stock']) )
                 @if(auth()->user()->can('stock.add_stock.view')
                 ||auth()->user()->can('stock.add_stock.create_and_edit')
                 ||auth()->user()->can('stock.internal_stock_request.view')
@@ -183,7 +191,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['quotation_for_customers']) )
                 @if(session('system_type') == 'pos')
                 @if(auth()->user()->can('quotation_for_customers.quotation.view') ||
                 auth()->user()->can('quotation_for_customers.quotation.create_and_edit') )
@@ -215,7 +225,9 @@
                 </li>
                 @endif
                 @endif
+                @endif
 
+                @if( !empty($module_settings['sale']) )
                 @if(auth()->user()->can('sale.pos.create_and_edit') || auth()->user()->can('sale.pos.view') )
                 <li><a href="#sale" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-cart"></i><span>{{__('lang.sales')}}</span><span></a>
@@ -253,7 +265,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['quotation_for_customers']) )
                 @if(auth()->user()->can('return.sell_return.view')
                 || auth()->user()->can('return.sell_return.create_and_edit')
                 || auth()->user()->can('return.purchase_return.create_and_edit')
@@ -286,8 +300,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
-
+                @if( !empty($module_settings['expense']) )
                 @if(auth()->user()->can('expense.expenses.create_and_edit') ||
                 auth()->user()->can('expense.expenses.view')||
                 auth()->user()->can('expense.expense_categories.view')||
@@ -343,7 +358,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['cash']) )
                 @if(
                 auth()->user()->can('cash.add_cash.create_and_edit') ||
                 auth()->user()->can('cash.add_cash.view') ||
@@ -372,7 +389,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['adjustment']) )
                 @if(
                 auth()->user()->can('adjustment.cash_in_adjustment.create_and_edit') ||
                 auth()->user()->can('adjustment.cash_in_adjustment.view')
@@ -440,7 +459,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['reports']) )
                 @if(
                 auth()->user()->can('reports.profit_loss.view')
                 )
@@ -596,7 +617,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['coupons_and_gift_cards']) )
                 @if(auth()->user()->can('coupons_and_gift_cards.coupon.create_and_edit') ||
                 auth()->user()->can('coupons_and_gift_cards.coupon.view') ||
                 auth()->user()->can('coupons_and_gift_cards.gift_card.view') ||
@@ -621,7 +644,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['customer_module']) )
                 @if(auth()->user()->can('customer_module.customer.create_and_edit') ||
                 auth()->user()->can('customer_module.customer.view') ||
                 auth()->user()->can('customer_module.customer_type.create_and_edit') ||
@@ -659,7 +684,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['supplier_module']) )
                 @if(auth()->user()->can('supplier_module.supplier.create_and_edit') ||
                 auth()->user()->can('supplier_module.supplier.view') )
                 <li><a href="#supplier" aria-expanded="false" data-toggle="collapse"> <i
@@ -681,6 +708,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
+
+                @if( !empty($module_settings['sp_module']) )
                 @if(auth()->user()->can('sp_module.sales_promotion.create_and_edit') ||
                 auth()->user()->can('sp_module.sales_promotion.view') )
                 <li><a href="#sales_promotion" aria-expanded="false" data-toggle="collapse"> <i
@@ -704,7 +734,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['hr_management']) )
                 <!-- START HR Management -->
                 @if(auth()->user()->can('hr_management.add_new_employee.view')
                 || auth()->user()->can('hr_management.employee.view')
@@ -789,8 +821,10 @@
                     </ul>
                 </li>
                 @endif
+                @endif
                 <!-- END HR Management -->
 
+                @if( !empty($module_settings['loyalty_points']) )
                 @if(auth()->user()->can('loyalty_points.earning_of_points.create_and_edit') ||
                 auth()->user()->can('loyalty_points.earning_of_points.view') ||
                 auth()->user()->can('loyalty_points.redemption_of_points.create_and_edit') ||
@@ -844,7 +878,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['sms_module']) )
                 @if(auth()->user()->can('sms_module.sms.create_and_edit') ||
                 auth()->user()->can('sms_module.sms.view') )
                 <li><a href="#sms" aria-expanded="false" data-toggle="collapse"> <i
@@ -871,7 +907,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
+                @if( !empty($module_settings['email_module']) )
                 @if(auth()->user()->can('email_module.email.create_and_edit') ||
                 auth()->user()->can('email_module.email.view') )
                 <li><a href="#email" aria-expanded="false" data-toggle="collapse"> <i
@@ -898,8 +936,9 @@
                     </ul>
                 </li>
                 @endif
+                @endif
 
-
+                @if( !empty($module_settings['settings']) )
                 <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
                     <ul id="setting"
@@ -973,6 +1012,12 @@
                                 href="{{action('TermsAndConditionsController@index')}}?type=quotation">{{__('lang.list_quotation_terms_and_condition')}}</a>
                         </li>
                         @endcan
+                        @can('settings.modules.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'modules') active @endif">
+                            <a href="{{action('SettingController@getModuleSettings')}}">{{__('lang.modules')}}</a>
+                        </li>
+                        @endcan
                         @can('settings.general_settings.view')
                         <li
                             class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-general-setting') active @endif">
@@ -980,10 +1025,9 @@
                                 href="{{action('SettingController@getGeneralSetting')}}">{{__('lang.general_settings')}}</a>
                         </li>
                         @endcan
-
-
                     </ul>
                 </li>
+                @endif
             </ul>
         </div>
     </div>
