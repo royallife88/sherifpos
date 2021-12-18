@@ -16,7 +16,8 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 0">
-                        {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' =>
+                        {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' =>
+                        'PUT', 'files' =>
                         true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
@@ -48,7 +49,8 @@
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
                                     <div class="col-md-4">
-                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
+                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span
+                                                class="customer_type_name"></span></label>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -69,12 +71,20 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%; font-size: 12px !important;">@lang('lang.product')</th>
-                                                    <th style="width: 22%; font-size: 12px !important;">@lang('lang.quantity')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.price')</th>
-                                                    <th style="width: 13%; font-size: 12px !important;">@lang('lang.discount')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">@lang('lang.sub_total')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">@lang('lang.action')</th>
+                                                    <th style="width: 20%; font-size: 12px !important;">
+                                                        @lang('lang.product')</th>
+                                                    <th style="width: 22%; font-size: 12px !important;">
+                                                        @lang('lang.quantity')</th>
+                                                    <th style="width: 15%; font-size: 12px !important;">
+                                                        @lang('lang.price')</th>
+                                                    <th style="width: 13%; font-size: 12px !important;">
+                                                        @lang('lang.discount')</th>
+                                                    <th style="width: 15%; font-size: 12px !important;">
+                                                        @lang('lang.sub_total')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                        @lang('lang.current_stock')</th>
+                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                        @lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -93,7 +103,8 @@
 
                                             <input type="hidden" id="store_pos_id" name="store_pos_id"
                                                 value="{{$store_pos->id}}" />
-                                            <input type="hidden" id="status" name="status" value="@if(!empty(request()->status)){{request()->status}}@else{{'final'}}@endif" />
+                                            <input type="hidden" id="status" name="status"
+                                                value="@if(!empty(request()->status)){{request()->status}}@else{{'final'}}@endif" />
                                         </div>
                                     </div>
                                 </div>

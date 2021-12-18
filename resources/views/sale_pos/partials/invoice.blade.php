@@ -154,7 +154,7 @@ $invoice_lang = request()->session()->get('language');
                             {{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
                     </tr>
                     @endif
-                    @if(!empty($transaction->delivery_cost))
+                    @if(!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
                     <tr>
                         <th colspan="2">@lang('lang.delivery_cost' , [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->delivery_cost)}}

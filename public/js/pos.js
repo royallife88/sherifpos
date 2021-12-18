@@ -1208,7 +1208,12 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 
 $(document).on("click", ".add_to_deposit", function () {
     let change_amount = __read_number($("#change_amount"));
+    let current_deposit_balance = __read_number($("#current_deposit_balance"));
 
+    total_deposit = current_deposit_balance + change_amount;
+    $(".current_deposit_balance").text(
+        __currency_trans_from_en(total_deposit, false)
+    );
     $("#add_to_deposit").val(change_amount);
     $(this).attr("disabled", true);
 });

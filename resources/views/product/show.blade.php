@@ -84,8 +84,8 @@
                         <tbody>
                             @foreach ($stock_detials as $stock_detial)
                             <tr>
-                                <td>{{$stock_detial->product->name}}@if(!empty($stock_detial->variation->name) &&
-                                    $stock_detial->variation->name != 'Default'){{$stock_detial->variation->name}}@endif
+                                <td>@if(!empty($stock_detial->variation->name) &&
+                                    $stock_detial->variation->name != 'Default'){{$stock_detial->variation->name}} @else {{$stock_detial->product->name}} @endif
                                 </td>
                                 <td>{{$stock_detial->variation->sub_sku ?? ''}}</td>
                                 <td>{{$stock_detial->store->name ?? ''}}</td>

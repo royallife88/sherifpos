@@ -1,10 +1,10 @@
 @forelse ($products as $product)
 <tr class="product_row">
     <td style="width: 18%">
-        {{$product->product_name}}
-
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
+        @else
+        {{$product->product_name}}
         @endif
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
             value="{{$product->is_service}}">

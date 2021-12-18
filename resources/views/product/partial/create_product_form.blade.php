@@ -81,8 +81,8 @@
     </div>
     <div class="col-md-4 @if(session('system_type') == 'restaurant') hide @endif">
         <div class="form-group">
-            {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
-            {!! Form::text('sku', null, ['class' => 'form-control', 'required', 'placeholder'
+            {!! Form::label('sku', __('lang.sku') , []) !!}
+            {!! Form::text('sku', null, ['class' => 'form-control', 'placeholder'
             => __('lang.sku')]) !!}
         </div>
     </div>

@@ -365,7 +365,7 @@ class CustomerController extends Controller
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
 
 
-        $balance = $customer_details->total_invoice - $customer_details->total_paid + $balance_adjustment;
+        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment;
 
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }

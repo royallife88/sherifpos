@@ -36,7 +36,7 @@
                 </td>
                 <td>{{$customer->mobile_number}}</td>
                 <td>{{$customer->address}}</td>
-                <td>{{@num_format($balances[$customer->id])}}</td>
+                <td class="@if($balances[$customer->id] < 0) text-red @endif">{{@num_format($balances[$customer->id])}}</td>
                 <td><a href="{{action('CustomerController@show', $customer->id)}}?show=purchases" class="btn">{{@num_format($customer->total_purchase)}}</a></td>
                 <td><a href="{{action('CustomerController@show', $customer->id)}}?show=discounts" class="btn">{{@num_format($customer->total_sp_discount + $customer->total_product_discount +$customer->total_coupon_discount)}}</a></td>
                 <td><a href="{{action('CustomerController@show', $customer->id)}}?show=points" class="btn">{{@num_format($customer->total_rp)}}</a></td>
