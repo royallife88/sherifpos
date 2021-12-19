@@ -72,7 +72,7 @@ class DatabaseSeeder extends Seeder
         );
 
         CustomerType::create([
-            'name' => 'Walk-in',
+            'name' => 'Walk in',
             'created_by' => 1,
         ]);
 

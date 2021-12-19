@@ -88,10 +88,12 @@
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
         <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>
+        @if(session('system_mode')  != 'restaurant')
         <button type="button" class="btn btn-danger btn-sx quick_add_purchase_order"
             title="@lang('lang.add_draft_purchase_order')"
             data-href="{{action('PurchaseOrderController@quickAddDraft')}}?variation_id={{$product->variation_id}}&product_id={{$product->product_id}}"><i
                 class="fa fa-plus"></i> @lang('lang.po')</button>
+        @endif
     </td>
 </tr>
 @empty
