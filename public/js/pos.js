@@ -662,18 +662,14 @@ function out_of_stock_handle(product_id, variation_id) {
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];
     audio.play();
-
+    $('.btn-add-payment').removeClass('hide');
     let method = $(this).data("method");
-    console.log(method, "method inside btn");
     $(".method").val(method);
-    // $(".method").selectpicker("render");
     $(".method").change();
     if (method === "deposit") {
         $(".deposit-fields").removeClass("hide");
-        $(".method").val("cash");
-        $(".method").selectpicker("refresh");
-        $(".method").change();
         $(".customer_name_div").removeClass("hide");
+        $('.btn-add-payment').addClass('hide');
     } else {
         $(".deposit-fields").addClass("hide");
         $(".customer_name_div").addClass("hide");
@@ -717,7 +713,6 @@ $(document).on("change", ".method", function (e) {
 });
 
 function changeMethodFields(method, row) {
-    console.log(method, "method");
     $(".card_bank_field").addClass("hide");
     if (method === "cheque") {
         $(row).find(".cheque_field").removeClass("hide");
@@ -762,7 +757,6 @@ $(document).on("click", ".qc-btn", function (e) {
 
 $(document).on("change", ".received_amount", function () {
     let this_row = $(this).parents(".payment_row");
-    var row_count = $("#payment_rows .payment_row").length;
 
     $(this_row).nextAll().remove(); //remove all the next row if exist and recalculate the next row total
     let received_amount = 0;
@@ -775,6 +769,7 @@ $(document).on("change", ".received_amount", function () {
 
     let paying_amount = __read_number($("#paying_amount"));
     let change = Math.abs(received_amount - paying_amount);
+
     if (received_amount >= paying_amount) {
         $(this_row).find(".change_text").text("Change :");
         $(this_row)
@@ -783,26 +778,33 @@ $(document).on("change", ".received_amount", function () {
         $(this_row).find(".change_amount").val(change);
     } else {
         $(this_row)
-            .find(".change")
-            .text(__currency_trans_from_en(change, false));
+        .find(".change")
+        .text(__currency_trans_from_en(change, false));
+        $(this_row).find(".pending_amount").val(change);
         $(this_row).find(".change_text").text("Pending Amount :");
-
-        $.ajax({
-            method: "get",
-            url: "/pos/get-payment-row",
-            data: { index: row_count },
-            dataType: "html",
-            success: function (result) {
-                $("#payment_rows").append(result);
-                $("#payment_rows .payment_row")
-                    .last()
-                    .find(".received_amount")
-                    .val(change);
-            },
-        });
     }
 });
 
+$(document).on("click", "#add_payment_row", function () {
+    var row_count = $("#payment_rows .payment_row").length;
+    let pending_amount = $("#payment_rows .payment_row")
+        .last()
+        .find(".pending_amount")
+        .val();
+    $.ajax({
+        method: "get",
+        url: "/pos/get-payment-row",
+        data: { index: row_count },
+        dataType: "html",
+        success: function (result) {
+            $("#payment_rows").append(result);
+            $("#payment_rows .payment_row")
+                .last()
+                .find(".received_amount")
+                .val(pending_amount);
+        },
+    });
+});
 $(document).on("change", "#amount_to_be_used", function () {
     let amount_to_be_used = __read_number($("#amount_to_be_used"));
     let gift_card_current_balance = __read_number(
@@ -1190,7 +1192,11 @@ $(document).on("change", "#customer_id", function () {
             $(".current_deposit_balance").text(
                 __currency_trans_from_en(result.deposit_balance, false)
             );
+            $(".remaining_balance_text").text(
+                __currency_trans_from_en(result.deposit_balance, false)
+            );
             $("#current_deposit_balance").val(result.deposit_balance);
+            $("#remaining_deposit_balance").val(result.deposit_balance);
         },
     });
     getCustomerPointDetails();
@@ -1219,7 +1225,7 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 
     let used_deposit_balance = __read_number($("#used_deposit_balance"));
     let amount = __read_number($("#amount"));
-    __write_number($("#amount"), amount - used_deposit_balance);
+    // __write_number($("#amount"), amount - used_deposit_balance);
 });
 
 $(document).on("click", ".add_to_deposit", function () {

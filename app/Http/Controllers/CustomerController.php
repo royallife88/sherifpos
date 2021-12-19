@@ -357,6 +357,7 @@ class CustomerController extends Controller
 
         $query->select(
             'customers.total_rp',
+            'customers.deposit_balance',
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
         );
@@ -365,7 +366,7 @@ class CustomerController extends Controller
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
 
 
-        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment;
+        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance;
 
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }

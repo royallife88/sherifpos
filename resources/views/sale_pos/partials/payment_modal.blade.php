@@ -32,6 +32,7 @@
                                         <label class="change_text">@lang('lang.change'): </label>
                                         <spand class="change" class="ml-2">0.00</spand>
                                         <input type="hidden" name="payments[0][change_amount]" class="change_amount" id="change_amount">
+                                        <input type="hidden" name="payments[0][pending_amount]" class="pending_amount">
                                     </div>
                                     <div class="col-md-6 mt-1">
                                         <label>@lang('lang.payment_method'): *</label>
@@ -82,6 +83,9 @@
                                     </div>
                                 </div>
                                 <hr>
+                            </div>
+                            <div class="col-md-12 mb-2 btn-add-payment">
+                                <button type="button" id="add_payment_row" class="btn btn-primary btn-block"> @lang('lang.add_payment_row')</button>
                             </div>
                             <div class="col-md-6 deposit-fields hide">
                                 <h6 class="bg-success" style="color: #fff; padding: 10px 15px;">

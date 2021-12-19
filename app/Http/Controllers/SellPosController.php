@@ -247,7 +247,7 @@ class SellPosController extends Controller
             if ($transaction->status != 'draft') {
                 foreach ($request->payments as $payment) {
 
-                    $amount = $this->commonUtil->num_uf($payment['amount']);
+                    $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
                     // if ($amount > $transaction->final_total) {
                     //     if (!empty($transaction->add_to_deposit)) {
                     //         $amount = $amount - $transaction->add_to_deposit;
@@ -255,6 +255,7 @@ class SellPosController extends Controller
                     //         $amount = $transaction->final_total;
                     //     }
                     // }
+
                     $payment_data = [
                         'transaction_id' => $transaction->id,
                         'amount' => $amount,

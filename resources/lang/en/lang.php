@@ -979,5 +979,6 @@ return [
     'sp_module' => 'Sale Promotion Module',
     'email_module' => 'Email Module',
     'promotions' => 'Promotions',
+    'add_payment_row' => 'Add Payment Row',
 
 ];
