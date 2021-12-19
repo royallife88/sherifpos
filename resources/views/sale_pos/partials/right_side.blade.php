@@ -1,12 +1,13 @@
 <div class="row">
     <br>
     <div class="col-md-12">
-        <div class="filter-checkbox card">
+        <div class="filter-checkbox card" style="margin: 0px;">
             <div class="card-header" style="padding: 5px 20px; color: #7c5cc4">
                 <i class="fa fa-filter"></i> @lang('lang.filter')
             </div>
             <div class="card-body" style="padding: 5px 20px">
                 <div class="row">
+                    @if(session('system_mode') != 'restaurant')
                     <div class="col-md-4">
                         <label class="checkbox-inline">
                             <input class="" type="checkbox" id="category-filter" />
@@ -66,12 +67,34 @@
                             @lang('lang.longest_expiry')
                         </label>
                     </div>
-                    <div class="col-md-6">
+                    @endif
+                    <div class="col-md-6 @if(session('system_mode') == 'restaurant') hide @endif">
                         <label class="checkbox-inline">
                             <input type="checkbox" class="sale_promo_filter" value="items_in_sale_promotion">
                             @lang('lang.items_in_sale_promotion')
                         </label>
                     </div>
+                    @if(session('system_mode') == 'restaurant')
+                    <div class="row ml-2 mb-2">
+                        <div class="btn-group btn-group-toggle ml-2" data-toggle="buttons">
+                            <label class="btn btn-primary active">
+                                <input type="radio" checked autocomplete="off" name="restaurant_filter" value="all">
+                                @lang('lang.all')
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="radio" autocomplete="off" name="restaurant_filter" value="promotions">
+                                @lang('lang.promotions')
+                            </label>
+                            @foreach ($product_classes as $product_class)
+                            <label class="btn btn-primary">
+                                <input type="radio" name="restaurant_filter" value="{{$product_class->id}}"
+                                    autocomplete="off" id="{{$product_class->name .'_'. $product_class->id}}">
+                                {{ucfirst($product_class->name)}}
+                            </label>
+                            @endforeach
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -80,7 +103,7 @@
 
     <div class="col-md-12">
         <div class="card">
-            <div class="card-body">
+            <div class="card-body" style="padding: 0;">
                 <div class="col-md-12 mt-1 table-container">
                     <div class="filter-window" style="width: 100% !important; height: 100% !important">
                         <div class="category mt-3">

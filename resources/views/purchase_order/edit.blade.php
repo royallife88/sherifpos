@@ -74,7 +74,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                            @if(session('system_type') == 'pos')
+                                            @if(session('system_mode') == 'pos')
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             @endif
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
@@ -102,7 +102,7 @@
                                                     name="purchase_order_lines[{{$loop->index}}][variation_id]"
                                                     value="{{$product->variation_id}}">
                                             </td>
-                                            @if(session('system_type') == 'pos')
+                                            @if(session('system_mode') == 'pos')
                                             <td>
                                                 {{$product->variation->sub_sku}}
                                             </td>

@@ -68,11 +68,11 @@ class SetSessionData
             $request->session()->put('user', $user);
         }
 
-        $system_type = env('SYSTEM_MODE', 'pos');
-        if (empty($system_type)) {
-            $system_type = 'pos';
+        $system_mode = env('SYSTEM_MODE', 'pos');
+        if (empty($system_mode)) {
+            $system_mode = 'pos';
         }
-        $request->session()->put('system_type', $system_type);
+        $request->session()->put('system_mode', $system_mode);
 
 
         $logo = System::getProperty('logo');

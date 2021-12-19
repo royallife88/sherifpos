@@ -1,6 +1,6 @@
 @forelse ($products as $product)
 <tr class="product_row">
-    <td style="width: 18%">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 18% @else 20% @endif">
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
         @else
@@ -37,7 +37,7 @@
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][promotion_discount_amount]"
             class="promotion_discount_amount" value="0">
     </td>
-    <td style="width: 18%">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 18% @else 20% @endif">
         <div class="input-group"><span class="input-group-btn">
                 <button type="button" class="btn btn-danger minus">
                     <span class="dripicons-minus"></span>
@@ -57,12 +57,12 @@
         </div>
 
     </td>
-    <td style="width: 16%">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 16% @else 15% @endif">
         <input type="text" class="form-control sell_price"
             name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
             value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
     </td>
-    <td style="width: 13%">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 13% @else 15% @endif">
         <input type="hidden" class="form-control product_discount_type"
             name="transaction_sell_line[{{$loop->index + $index}}][product_discount_type]"
             value="@if(!empty($product_discount_details->discount_type)){{$product_discount_details->discount_type}}@else{{0}}@endif">
@@ -76,15 +76,17 @@
                 value="@if(!empty($product_discount_details->discount)){{@num_format($product_discount_details->discount)}}@else{{0}}@endif">
         </div>
     </td>
-    <td style="width: 10%">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
         <span class="sub_total_span"></span>
         <input type="hidden" class="form-control sub_total"
             name="transaction_sell_line[{{$loop->index + $index}}][sub_total]" value="">
     </td>
-    <td style="width: 10%">
+    @if(session('system_mode') != 'restaurant')
+    <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
         @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif
     </td>
-    <td style="width: 10%">
+    @endif
+    <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
         <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>
         <button type="button" class="btn btn-danger btn-sx quick_add_purchase_order"
             title="@lang('lang.add_draft_purchase_order')"

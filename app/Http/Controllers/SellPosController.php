@@ -11,6 +11,7 @@ use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\SalesPromotion;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -97,6 +98,7 @@ class SellPosController extends Controller
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::getDropdown();
+        $product_classes = ProductClass::select('name', 'id')->get();
         $store_poses = [];
 
         if (empty($store_pos)) {
@@ -120,6 +122,7 @@ class SellPosController extends Controller
             'stores',
             'store_poses',
             'taxes',
+            'product_classes',
             'payment_types',
         ));
     }
@@ -497,6 +500,9 @@ class SellPosController extends Controller
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
+        if (!empty($request->product_class_id)) {
+            $query->where('product_class_id', $request->product_class_id);
+        }
         if (!empty($request->category_id)) {
             $query->where('category_id', $request->category_id);
         }
@@ -520,10 +526,10 @@ class SellPosController extends Controller
         }
         if (!empty($request->price_filter)) {
             if ($request->price_filter == 'highest_price') {
-                $query->orderBy('products.sell_price', 'asc');
+                $query->orderBy('products.sell_price', 'desc');
             }
             if ($request->price_filter == 'lowest_price') {
-                $query->orderBy('products.sell_price', 'desc');
+                $query->orderBy('products.sell_price', 'asc');
             }
         }
         if (!empty($request->sorting_filter)) {

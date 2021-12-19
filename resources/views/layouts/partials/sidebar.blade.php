@@ -38,7 +38,7 @@
                                 href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_type') == 'pos')
+                        @if(session('system_mode') == 'pos')
                         @can('product_module.barcode.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
@@ -79,7 +79,7 @@
                                 href="{{action('PurchaseOrderController@index')}}">{{__('lang.view_all_purchase_orders')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_type') == 'pos')
+                        @if(session('system_mode') == 'pos')
                         @can('purchase_order.import.view')
                         <li
                             class="@if(request()->segment(1) == 'purchase-order' && request()->segment(2) == 'import') active @endif">
@@ -139,7 +139,7 @@
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_type') == 'pos')
+                        @if(session('system_mode') == 'pos')
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
@@ -194,7 +194,7 @@
                 @endif
 
                 @if( !empty($module_settings['quotation_for_customers']) )
-                @if(session('system_type') == 'pos')
+                @if(session('system_mode') == 'pos')
                 @if(auth()->user()->can('quotation_for_customers.quotation.view') ||
                 auth()->user()->can('quotation_for_customers.quotation.create_and_edit') )
                 <li><a href="#quotation_for_customers" aria-expanded="false" data-toggle="collapse"> <i

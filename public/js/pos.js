@@ -105,6 +105,20 @@ $(document).on("change", "#store_id", function () {
         });
     }
 });
+
+$(document).on("change", "input[name=restaurant_filter]", function () {
+    console.log($(this).val());
+    let product_class_id = null;
+    if ($(this).val() === "all") {
+        $(".sale_promo_filter").prop("checked", false);
+    } else if ($(this).val() === "promotions") {
+        $(".sale_promo_filter").prop("checked", true);
+    } else {
+        $(".sale_promo_filter").prop("checked", false);
+        product_class_id = $(this).val();
+    }
+    getFilterProductRightSide(null, null, null, product_class_id);
+});
 $(document).ready(function () {
     $("#store_id").change();
 });
@@ -112,7 +126,8 @@ getFilterProductRightSide();
 function getFilterProductRightSide(
     category_id = null,
     sub_category_id = null,
-    brand_id = null
+    brand_id = null,
+    product_class_id = null
 ) {
     var selling_filter = getFilterCheckboxValue("selling_filter");
     var price_filter = getFilterCheckboxValue("price_filter");
@@ -134,6 +149,7 @@ function getFilterProductRightSide(
             category_id,
             sub_category_id,
             brand_id,
+            product_class_id,
         },
         dataType: "html",
         success: function (result) {

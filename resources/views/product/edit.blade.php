@@ -24,7 +24,7 @@
                                     <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
                                 </div>
                             </div>
-                            @if(session('system_type') == 'pos')
+                            @if(session('system_mode') == 'pos')
                             <div class="col-md-4">
                                 {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
                                 <div class="input-group my-group">
@@ -107,7 +107,7 @@
                                     => __('lang.name')]) !!}
                                 </div>
                             </div>
-                            <div class="col-md-4  @if(session('system_type') == 'restaurant') hide @endif">
+                            <div class="col-md-4  @if(session('system_mode') == 'restaurant') hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
                                     {!! Form::text('sku', $product->sku, ['class' => 'form-control', 'required',
@@ -115,7 +115,7 @@
                                     => __('lang.sku')]) !!}
                                 </div>
                             </div>
-                            @if(session('system_type') == 'pos')
+                            @if(session('system_mode') == 'pos')
                             <div class="col-md-4">
                                 {!! Form::label('multiple_units', __('lang.unit'), []) !!}
                                 <div class="input-group my-group">
@@ -168,7 +168,7 @@
                                     </span>
                                 </div>
                             </div>
-                            @if(session('system_type') == 'pos')
+                            @if(session('system_mode') == 'pos')
                             <div class="col-md-4">
                                 {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
                                 <div class="input-group my-group">
@@ -213,7 +213,7 @@
                                         rows="3">{{$product->product_details}}</textarea>
                                 </div>
                             </div>
-                            @if(session('system_type') == 'pos')
+                            @if(session('system_mode') == 'pos')
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
@@ -235,10 +235,10 @@
                             @can('product_module.purchase_price.create_and_edit')
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    {!! Form::label('purchase_price', session('system_type') == 'pos' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
+                                    {!! Form::label('purchase_price', session('system_mode') == 'pos' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
                                     {!! Form::text('purchase_price', @num_format($product->purchase_price), ['class' =>
                                     'form-control', 'placeholder' =>
-                                    session('system_type') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
+                                    session('system_mode') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
                                 </div>
                             </div>
                             @endcan

@@ -11,7 +11,7 @@
         <input type="hidden" name="purchase_order_lines[{{$loop->index + $index}}][variation_id]"
             value="{{$product->variation_id}}">
     </td>
-    @if(session('system_type') == 'pos')
+    @if(session('system_mode') == 'pos')
     <td>
         {{$product->sub_sku}}
     </td>

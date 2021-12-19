@@ -978,5 +978,6 @@ return [
     'sms_module' => 'SMS Module',
     'sp_module' => 'Sale Promotion Module',
     'email_module' => 'Email Module',
+    'promotions' => 'Promotions',
 
 ];

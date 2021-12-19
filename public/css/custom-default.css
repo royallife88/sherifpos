@@ -1193,7 +1193,6 @@ div.has-error > .form-text {
     left: 0;
     padding: 0 10px;
     position: fixed;
-    width: 100%;
     z-index: 999;
 }
 

@@ -14,7 +14,7 @@
                 <source src="{{asset('audio/beep-07.mp3')}}">
                 </source>
             </audio>
-            <div class="col-md-7">
+            <div class="@if(session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
                 {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
                 true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
                 <div class="card">
@@ -94,19 +94,28 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 18%; font-size: 12px !important;">
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
                                                         @lang('lang.product')</th>
-                                                    <th style="width: 18%; font-size: 12px !important;">
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
                                                         @lang('lang.quantity')</th>
-                                                    <th style="width: 16%; font-size: 12px !important;">
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 16% @else 15% @endif; font-size: 12px !important;">
                                                         @lang('lang.price')</th>
-                                                    <th style="width: 13%; font-size: 12px !important;">
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 12px !important;">
                                                         @lang('lang.discount')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
                                                         @lang('lang.sub_total')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                    @if(session('system_mode') != 'restaurant')
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
                                                         @lang('lang.current_stock')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">
+                                                    @endif
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
                                                         @lang('lang.action')</th>
                                                 </tr>
                                             </thead>
@@ -185,7 +194,8 @@
                         </div>
                     </div>
 
-                    <div class="payment-options">
+                    <div class="payment-options"
+                        style=" width: @if(session('system_mode') == 'pos') 100%; @else 50%; @endif">
                         <div class="column-5">
                             <button data-method="card" style="background: #0984e3" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -203,12 +213,14 @@
                                 id="coupon-btn"><i class="fa fa-tag"></i>
                                 @lang('lang.coupon')</button>
                         </div>
+                        @if(session('system_mode') != 'restaurant')
                         <div class="column-5">
                             <button data-method="paypal" style="background-color: #213170" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                 id="paypal-btn"><i class="fa fa-paypal"></i>
                                 @lang('lang.other_online_payments')</button>
                         </div>
+                        @endif
                         <div class="column-5">
                             <button data-method="draft" style="background-color: #e28d02" type="button"
                                 class="btn btn-custom" id="draft-btn"><i class="dripicons-flag"></i>
@@ -221,6 +233,7 @@
                                     class="dripicons-flag"></i>
                                 @lang('lang.view_draft')</button>
                         </div>
+                        @if(session('system_mode') != 'restaurant')
                         <div class="column-5">
                             <button data-method="cheque" style="background-color: #fd7272" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -232,6 +245,7 @@
                                 id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                 @lang('lang.bank_transfer')</button>
                         </div>
+                        @endif
                         <div class="column-5">
                             <button data-method="pay-later" style="background-color: #cf2929" type="button"
                                 class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
@@ -249,14 +263,13 @@
                                 id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.deposit')</button>
                         </div>
                         <div class="column-5">
-                            <button data-method="cash" style="background-color: #ff0000;" type="button"
-                                class="btn btn-custom" id="cancel-btn" onclick="return confirmCancel()"><i
-                                    class="fa fa-close"></i>
+                            <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
+                                id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
                                 @lang('lang.cancel')</button>
                         </div>
                         <div class="column-5">
-                            <button data-method="cash" style="background-color: #ffc107;" type="button"
-                                class="btn btn-custom" id="recent-transaction-btn"
+                            <button style="background-color: #ffc107;" type="button" class="btn btn-custom"
+                                id="recent-transaction-btn"
                                 data-href="{{action('SellPosController@getRecentTransactions')}}"><i
                                     class="dripicons-clock"></i>
                                 @lang('lang.recent_transactions')</button>
@@ -277,7 +290,7 @@
             </div>
 
             <!-- product list -->
-            <div class="col-md-5">
+            <div class="@if(session('system_mode') == 'pos') col-md-5 @else col-md-6 @endif">
                 <!-- navbar-->
                 <header class="header">
                     <nav class="navbar">
@@ -287,8 +300,8 @@
                                 <div class="navbar-header">
 
                                     <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-                                        <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"><i
-                                                    class="fa fa-power-off"></i></button></li>
+                                        <li class="nav-item"><button class="btn-danger btn-sm hide"
+                                                id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
                                         <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                     class="dripicons-expand"></i></a></li>
                                         @include('layouts.partials.notification_list')
@@ -381,8 +394,8 @@
             </div>
 
             <!-- recent transaction modal -->
-            <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true" class="modal fade text-left">
+            <div id="recentTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                class="modal fade text-left">
 
                 <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
                     <div class="modal-content">
@@ -431,8 +444,8 @@
                 </div><!-- /.modal-dialog -->
             </div>
             <!-- draft transaction modal -->
-            <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel"
-                aria-hidden="true" class="modal fade text-left">
+            <div id="draftTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                class="modal fade text-left">
 
                 <div class="modal-dialog" role="document" style="width: 65%">
                     <div class="modal-content">
