@@ -21,7 +21,7 @@ class SetSessionData
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->session()->has('user') || empty(session('user.store_id'))) {
+        if (!$request->session()->has('user') || empty(session('user.store_id')) || empty(session('user.job_title')) || empty(session('user.pos_id'))) {
 
             $currency_id = System::getProperty('currency');
             if (empty($currency_id)) {
@@ -63,6 +63,13 @@ class SetSessionData
             if (!empty($user_pos)) {
                 $user->pos_id = $user_pos->id;
                 $user->store_id = $user_pos->store_id;
+            }
+
+            $employee = $user->employee;
+            if ($employee) {
+                if (!empty($employee->job_type)) {
+                    $user->job_title = $employee->job_type->job_title;
+                }
             }
 
             $request->session()->put('user', $user);

@@ -42,7 +42,7 @@
                                             </td>
                                             <td>
 
-
+                                                @if(!in_array($job->job_title, ['Cashier', 'Deliveryman']) )
                                                 @can('hr_management.jobs.create_and_edit')
                                                 <a data-href="{{action('JobController@edit', $job->id)}}"
                                                     data-container=".view_modal"
@@ -55,6 +55,7 @@
                                                     class="btn btn-danger text-white delete_item"><i
                                                         class="fa fa-trash"></i></a>
                                                 @endcan
+                                                @endif
                                             </td>
                                         </tr>
                                         @endforeach

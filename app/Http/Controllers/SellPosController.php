@@ -380,13 +380,14 @@ class SellPosController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-
+        $product_classes = ProductClass::select('name', 'id')->get();
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
             'categories',
             'walk_in_customer',
             'deliverymen',
+            'product_classes',
             'sub_categories',
             'tac',
             'brands',

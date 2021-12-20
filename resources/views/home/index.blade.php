@@ -8,6 +8,7 @@
             <div class="brand-text float-left mt-4">
                 <h3>@lang('lang.welcome') <span>{{Auth::user()->name}}</span> </h3>
             </div>
+            @if(strtolower(session('user.job_title')) != 'deliveryman')
             <div class="filter-toggle btn-group">
                 <div class="row">
                     <div class="col-md-4">
@@ -31,10 +32,11 @@
                     </div>
                 </div>
             </div>
+            @endif
         </div>
     </div>
 </div>
-
+@if(strtolower(session('user.job_title')) != 'deliveryman')
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 form-group">
@@ -90,6 +92,7 @@
 <div class="container-fluid" id="chart_and_table_section">
     @include('home.partials.chart_and_table')
 </div>
+@endif
 @endsection
 
 @section('javascript')
