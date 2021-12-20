@@ -101,7 +101,7 @@
                                                     @endphp
                                                     @if (!empty($brands) && $brands->count() > 0)
                                                     @include('product_classification_tree.partials.brand_inner_part',
-                                                    ['brands' => $brands])
+                                                    ['brands' => $brands, 'product_class_id' => $class->id, 'category_id' => $category->id])
                                                     @endif
                                                     @foreach ($sub_categories as $sub_category)
                                                     <div class="accordion"
@@ -141,7 +141,7 @@
                                                                     'brands.name')->groupBy('brands.id')->get();
                                                                     @endphp
                                                                     @include('product_classification_tree.partials.brand_inner_part',
-                                                                    ['brands' => $brands])
+                                                                    ['brands' => $brands, 'product_class_id' => $class->id, 'sub_category_id' => $sub_category->id])
                                                                 </div>
                                                             </div>
                                                         </div>

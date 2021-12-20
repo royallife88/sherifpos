@@ -25,7 +25,7 @@
                                 <div class="form-group">
                                     {!! Form::label('store_ids', __( 'lang.store' ) . ':*') !!}
                                     {!! Form::select('store_ids[]', $stores, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required', 'id' =>
+                                    form-control', 'data-live-search' => "true", "data-actions-box"=>"true", 'multiple', 'required', 'id' =>
                                     'store_ids']) !!}
                                 </div>
                             </div>
@@ -34,7 +34,7 @@
                                     {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
                                     {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' =>
                                     'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", "data-actions-box"=>"true", 'multiple', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -71,8 +71,8 @@
                                             <th>@lang('lang.image')</th>
                                             <th>@lang('lang.name')</th>
                                             <th>@lang('lang.sku')</th>
-                                            <th>@lang('lang.purchase_price')</th>
-                                            <th>@lang('lang.sell_price')</th>
+                                            <th class="sum">@lang('lang.purchase_price')</th>
+                                            <th class="sum">@lang('lang.sell_price')</th>
                                             <th>@lang('lang.stock')</th>
                                             <th>@lang('lang.expiry_date')</th>
                                             <th>@lang('lang.date_of_purchase')</th>
@@ -81,6 +81,14 @@
                                     </thead>
                                     <tbody>
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                                            <td class="footer_sell_price_total"></td>
+                                            <td class="footer_purchase_price_total"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
                                 </table>
                             </div>
                             <div class="col-md-4">

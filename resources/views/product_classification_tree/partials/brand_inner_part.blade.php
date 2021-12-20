@@ -1,12 +1,12 @@
 @foreach ($brands as $brand)
-<div class="accordion" id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}" style="margin-left: 20px;">
+<div class="accordion" id="{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}" style="margin-left: 20px;">
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle" data-toggle="collapse"
-                data-id="{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                data-parent="#{{@replace_space('brand_'.$brand->name.'_'.$i)}}"
-                href="#collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}">
-                <i class="fa fa-angle-right angle-class-{{@replace_space('brand_'.$brand->name.'_'.$i)}}"></i>
+                data-id="{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
+                data-parent="#{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
+                href="#collapse{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}">
+                <i class="fa fa-angle-right angle-class-{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"></i>
                 {{$brand->name}}
                 <div class="btn-group pull-right">
                     <button data-container=".view_modal" data-href="{{action('BrandController@edit', $brand->id)}}"
@@ -18,12 +18,19 @@
                 </div>
             </a>
         </div>
-        <div id="collapse{{@replace_space('brand_'.$brand->name.'_'.$i)}}" class="accordion-body collapse in">
+        <div id="collapse{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}" class="accordion-body collapse in">
             <div class="accordion-inner">
                 @php
-                $products =
+                $query =
                 App\Models\Product::where('brand_id',
-                $brand->id)->select('products.id',
+                $brand->id);
+                if(!empty($category_id)){
+                    $query->where('category_id', $category_id);
+                }
+                if(!empty($sub_category_id)){
+                    $query->where('sub_category_id', $sub_category_id);
+                }
+                $products = $query->select('products.id',
                 'products.name')->groupBy('products.id')->get();
                 @endphp
                 @foreach ($products as $product)

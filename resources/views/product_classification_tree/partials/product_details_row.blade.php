@@ -16,3 +16,5 @@
 
 </tr>
 @endforeach
+<input type="hidden" name="sell_price_total" id="sell_price_total" value="{{$products->sum('sell_price')}}">
+<input type="hidden" name="purchase_price_total" id="purchase_price_total" value="{{$products->sum('purchase_price')}}">

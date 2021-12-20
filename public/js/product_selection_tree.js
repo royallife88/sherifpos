@@ -36,8 +36,8 @@ $(document).on("change", "#search_pct", function () {
         .parent()
         .find(".product_checkbox");
     $(related_checkbox).prop("checked", true);
-    $(this).val('');
-    $(this).selectpicker('refresh')
+    $(this).val("");
+    $(this).selectpicker("refresh");
     toggleAccordianTillItem($(related_checkbox));
 });
 
@@ -86,6 +86,8 @@ $(document).on("hidden.bs.modal", "#pctModal", function () {
 });
 
 function getProductRows(array) {
+    $(".footer_sell_price_total").text(__currency_trans_from_en(0, false));
+    $(".footer_purchase_price_total").text(__currency_trans_from_en(0, false));
     $.ajax({
         async: false,
         method: "get",
@@ -98,6 +100,21 @@ function getProductRows(array) {
         dataType: "html",
         success: function (result) {
             $("#sale_promotion_table tbody").append(result);
+            let sell_price_total = 0;
+            let purchase_price_total = 0;
+            if ($("#sell_price_total").length > 0) {
+                sell_price_total = $("#sell_price_total").val();
+            }
+            if ($("#purchase_price_total").length > 0) {
+                purchase_price_total = $("#purchase_price_total").val();
+            }
+
+            $(".footer_sell_price_total").text(
+                __currency_trans_from_en(sell_price_total, false)
+            );
+            $(".footer_purchase_price_total").text(
+                __currency_trans_from_en(purchase_price_total, false)
+            );
         },
     });
 }
@@ -120,7 +137,7 @@ $(document).on("click", ".remove_row", function () {
         if ($(obj).prop("checked") === true) {
             if (parseInt($(obj).val()) === product_id) {
                 let index = unique_product_array.indexOf(product_id);
-                unique_product_array.splice(index, 1)
+                unique_product_array.splice(index, 1);
                 $(obj).prop("checked", false);
             }
         }

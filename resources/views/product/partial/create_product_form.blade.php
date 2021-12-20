@@ -5,7 +5,6 @@
             <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
         </div>
     </div>
-    @if(session('system_mode') == 'pos')
     <div class="col-md-4">
         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
         <div class="input-group my-group">
@@ -23,6 +22,7 @@
         </div>
         <div class="error-msg text-red"></div>
     </div>
+    @if(session('system_mode') == 'pos')
     <div class="col-md-4">
         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
         <div class="input-group my-group">

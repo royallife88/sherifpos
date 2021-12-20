@@ -662,14 +662,14 @@ function out_of_stock_handle(product_id, variation_id) {
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];
     audio.play();
-    $('.btn-add-payment').removeClass('hide');
+    $(".btn-add-payment").removeClass("hide");
     let method = $(this).data("method");
     $(".method").val(method);
     $(".method").change();
     if (method === "deposit") {
         $(".deposit-fields").removeClass("hide");
         $(".customer_name_div").removeClass("hide");
-        $('.btn-add-payment').addClass('hide');
+        $(".btn-add-payment").addClass("hide");
     } else {
         $(".deposit-fields").addClass("hide");
         $(".customer_name_div").addClass("hide");
@@ -778,8 +778,8 @@ $(document).on("change", ".received_amount", function () {
         $(this_row).find(".change_amount").val(change);
     } else {
         $(this_row)
-        .find(".change")
-        .text(__currency_trans_from_en(change, false));
+            .find(".change")
+            .text(__currency_trans_from_en(change, false));
         $(this_row).find(".pending_amount").val(change);
         $(this_row).find(".change_text").text("Pending Amount :");
     }

@@ -123,7 +123,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
 
                                                             @endphp
                                                             @if (!empty($brands) && $brands->count() > 0)
-                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected])
+                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected, 'product_class_id' => $class->id, 'category_id' => $category->id])
                                                             @endif
                                                             @foreach ($sub_categories as $sub_category)
                                                             <div class="accordion"
@@ -158,7 +158,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                             $brands = App\Models\Product::leftjoin('brands', 'products.brand_id', 'brands.id')->where('products.sub_category_id',
                                                                             $sub_category->id)->select('brands.id', 'brands.name')->groupBy('brands.id')->get();
                                                                             @endphp
-                                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected])
+                                                                            @include('product_classification_tree.partials.brand_inner_part_pst', ['brands' => $brands, 'brand_selected' => $brand_selected, 'product_class_id' => $class->id, 'sub_category_id' => $sub_category->id])
                                                                         </div>
                                                                     </div>
                                                                 </div>
