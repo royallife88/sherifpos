@@ -44,7 +44,6 @@ function get_label_product_row(product_id, variation_id) {
     var add_via_ajax = true;
     var store_id = $("#store_id").val();
     var is_added = false;
-
     //Search for variation id in each row of pos table
     $("#product_table tbody")
         .find("tr")
@@ -61,7 +60,8 @@ function get_label_product_row(product_id, variation_id) {
                 __write_number(qty_element, qty + 1);
                 qty_element.change;
                 calculate_sub_totals();
-                $("input#search_product").focus().select();
+                $("input#search_product").val("");
+                $("input#search_product").focus();
             }
         });
 
@@ -79,6 +79,8 @@ function get_label_product_row(product_id, variation_id) {
             },
             success: function (result) {
                 $("table#product_table tbody").append(result);
+                $("input#search_product").val("");
+                $("input#search_product").focus();
                 calculate_sub_totals();
             },
         });

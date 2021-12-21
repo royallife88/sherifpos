@@ -66,7 +66,7 @@ function get_label_product_row(product_id, variation_id) {
                 __write_number(qty_element, qty + 1);
                 qty_element.change;
                 calculate_sub_totals();
-                $("input#search_product").focus().select();
+                $("input#search_product").focus();
             }
         });
 
