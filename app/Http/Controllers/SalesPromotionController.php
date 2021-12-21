@@ -93,7 +93,6 @@ class SalesPromotionController extends Controller
         );
 
         try {
-            $data = $request->except('_token');
             $data['code'] = uniqid('SP');
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
@@ -190,7 +189,7 @@ class SalesPromotionController extends Controller
         );
 
         try {
-            $data = $request->except('_token', '_method', 'pct', 'search_product');
+
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
@@ -199,6 +198,7 @@ class SalesPromotionController extends Controller
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
             $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
             $data['pct_data'] = $request->pct ?? [];
+            unset($data['qty']);
 
             DB::beginTransaction();
 
