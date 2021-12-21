@@ -77,7 +77,8 @@
             @foreach($sales as $sale)
             <tr>
                 <td>{{@format_date($sale->transaction_date)}}</td>
-                <td>{{$sale->invoice_no}}</td>
+                <td>{{$sale->invoice_no}} @if(!empty($sale->return_parent))<a data-href="{{action('SellReturnController@show', $sale->id)}}"
+                    data-container=".view_modal" class="btn btn-modal" style="color: #007bff;">R</a>@endif</td>
                 <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                 <td>{{ucfirst($sale->status)}}</td>
                 <td>{{ucfirst($sale->delivery_status)}}</td>
