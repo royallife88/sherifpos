@@ -62,7 +62,7 @@ class DatabaseSeeder extends Seeder
                 ['key' => 'time_format', 'value' => 24, 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['key' => 'timezone', 'value' => 'Asia/Qatar', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['key' => 'language', 'value' => 'en', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
-                ['key' => 'logo', 'value' => '1626262996_download.png', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+                ['key' => 'logo', 'value' => 'sharifshalaby.png', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['key' => 'site_title', 'value' => 'sherifsalaby.tech', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['key' => 'developed_by', 'value' => '<a target="_blank" href="http://www.fiverr.com/derbari">Derbari</a>', 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
                 ['key' => 'help_page_content', 'value' => null, 'created_by' => 1, 'date_and_time' => Carbon::now(), 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
