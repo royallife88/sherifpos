@@ -294,4 +294,30 @@ class SettingController extends Controller
 
         return redirect()->back()->with('status', $output);
     }
+
+    public function updateVersionData($version_number)
+    {
+        // try {
+            System::updateOrCreate(
+                ['key' => 'version_update_date'],
+                ['value' => Carbon::now(), 'date_and_time' => Carbon::now(), 'created_by' => 1]
+            );
+            System::updateOrCreate(
+                ['key' => 'version_number'],
+                ['value' => $version_number, 'date_and_time' => Carbon::now(), 'created_by' => 1]
+            );
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
+
+        return $output;
+    }
 }

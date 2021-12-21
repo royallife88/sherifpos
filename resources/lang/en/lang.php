@@ -958,8 +958,6 @@ return [
     'product_class_has_category' => 'Product class has category. delete category first',
     'sub_category_exsist' => 'Category has sub category. delete sub category first',
 
-
-
     'tac_to_be_printed' => 'Terms and condition to be printed',
     'surplus' => 'Surplus',
     'total_surplus' => 'Total Surplus',
@@ -967,6 +965,7 @@ return [
     'sent_to_admin' => 'Sent to Admin',
     'sent_to_supplier' => 'Sent to Supplier',
     'partially_received' => 'Partially Received',
+
 
     'cost' => 'Cost',
     'another_payment_option' => 'Another Payment Option',
@@ -980,5 +979,7 @@ return [
     'email_module' => 'Email Module',
     'promotions' => 'Promotions',
     'add_payment_row' => 'Add Payment Row',
+    'version' => 'Version',
+    'last_update' => 'Last Update',
 
 ];

@@ -9,10 +9,18 @@ $languages = [];
 foreach ($config_languages as $key => $value) {
 $languages[$key] = $value['full_name'];
 }
+$version_number = App\Models\System::getProperty('version_number');
+$version_update_datatime = App\Models\System::getProperty('version_update_date');
 @endphp
 <div class="container">
     <div class="form-outer text-center d-flex align-items-center">
         <div class="form-inner">
+            <div class="row" style="text-align: left;">
+                <div class="col-md-12" style="color: #7c5cc4">
+                    <h4>@lang('lang.version'): {{$version_number}}</h4>
+                    <h4>@lang('lang.last_update'): @if(!empty($version_update_datatime)){{\Carbon\Carbon::createFromTimestamp(strtotime($version_update_datatime))->format('d-M-Y H:i a')}}@endif</h4>
+                </div>
+            </div>
             <div class="navbar-holder">
                 <div class="dropdown">
                     <button class="btn dropdown-toggle" style="color: gray" type="button" id="dropdownMenuButton"
