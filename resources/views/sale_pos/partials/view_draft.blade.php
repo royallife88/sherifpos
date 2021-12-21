@@ -1,5 +1,5 @@
 <div class="table-responsive">
-    <table id="recent_transaction_table" class="table dataTable">
+    <table id="draft_table" class="table dataTable">
         <thead>
             <tr>
                 <th>@lang('lang.date_and_time')</th>

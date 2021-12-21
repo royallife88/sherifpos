@@ -251,7 +251,7 @@ function get_label_product_row(
                 __write_number(qty_element, qty + 1);
                 qty_element.change;
                 calculate_sub_totals();
-                $("input#search_product").val('');
+                $("input#search_product").val("");
                 $("input#search_product").focus().select();
             }
         });
@@ -278,7 +278,7 @@ function get_label_product_row(
             },
             success: function (result) {
                 $("table#product_table tbody").prepend(result);
-                $("input#search_product").val('');
+                $("input#search_product").val("");
                 $("input#search_product").focus().select();
                 calculate_sub_totals();
             },
@@ -1156,7 +1156,9 @@ function get_recent_transactions() {
 //Get recent transactions
 function get_draft_transactions() {
     let href = $("#view-draft-btn").data("href");
-
+    if ($.fn.dataTable.isDataTable("#draft_table")) {
+        $("#draft_table").DataTable().destroy();
+    }
     $.ajax({
         method: "get",
         url:
@@ -1168,6 +1170,7 @@ function get_draft_transactions() {
         data: {},
         success: function (result) {
             $(".draft_transaction_div").empty().append(result);
+            $("#draft_table").DataTable(datatable_params);
         },
     });
 }

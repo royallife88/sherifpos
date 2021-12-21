@@ -17,7 +17,7 @@ nav.navbar a.menu-btn:hover {
     width: 230px;
     text-align: left;
     transition: all 0.1s linear;
-    z-index: 999;
+    z-index: 9999;
     overflow-y: auto;
 }
 
