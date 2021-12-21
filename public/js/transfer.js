@@ -1,5 +1,13 @@
 $(document).ready(function () {
-    $('.datepicker').datepicker()
+    //Prevent enter key function except texarea
+    $("form").on("keyup keypress", function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13 && e.target.tagName != "TEXTAREA") {
+            e.preventDefault();
+            return false;
+        }
+    });
+    $(".datepicker").datepicker();
     //Add products
     if ($("#search_product").length > 0) {
         $("#search_product")
@@ -41,8 +49,8 @@ $(document).ready(function () {
 
 function get_label_product_row(product_id, variation_id) {
     //Get item addition method
-    var sender_store_id = parseInt($('#sender_store_id').val());
-    if(isNaN(sender_store_id)){
+    var sender_store_id = parseInt($("#sender_store_id").val());
+    if (isNaN(sender_store_id)) {
         swal("Please select store first.");
         return false;
     }
@@ -74,7 +82,7 @@ function get_label_product_row(product_id, variation_id) {
         var row_count = $("table#product_table tbody tr").length;
         $.ajax({
             method: "GET",
-            url: "/transfer/add-product-row?sender_store_id="+sender_store_id,
+            url: "/transfer/add-product-row?sender_store_id=" + sender_store_id,
             dataType: "html",
             data: {
                 product_id: product_id,
@@ -107,21 +115,20 @@ function calculate_sub_totals() {
 
 $(document).on("change", ".quantity", function () {
     let quantity = __read_number($(this));
-    let max_quantity = $(this).attr('max');
+    let max_quantity = $(this).attr("max");
 
-    if(quantity > max_quantity){
+    if (quantity > max_quantity) {
         swal("Quantity should not exceed the available quantity");
-        $(this).val(max_quantity)
+        $(this).val(max_quantity);
     }
 });
 $(document).on("change", ".quantity, .purchase_price", function () {
     calculate_sub_totals();
 });
 $(document).on("click", ".remove_row", function () {
-    let index = $(this).data('index');
+    let index = $(this).data("index");
 
     $(this).closest("tr").remove();
-    $('.row_details_'+index).remove();
+    $(".row_details_" + index).remove();
     calculate_sub_totals();
 });
-

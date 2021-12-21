@@ -1,4 +1,13 @@
 $(document).ready(function () {
+    //Prevent enter key function except texarea
+    $("form").on("keyup keypress", function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13 && e.target.tagName != "TEXTAREA") {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     $(".datepicker").datepicker();
     //Add products
     if ($("#search_product").length > 0) {
@@ -23,6 +32,7 @@ $(document).ready(function () {
                         swal("Product not found");
                     }
                 },
+                focus: function (event, ui) {},
                 select: function (event, ui) {
                     $(this).val(null);
                     get_label_product_row(

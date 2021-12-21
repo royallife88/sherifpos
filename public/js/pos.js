@@ -1,4 +1,13 @@
 $(document).ready(function () {
+    //Prevent enter key function except texarea
+    $("form").on("keyup keypress", function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13 && e.target.tagName != "TEXTAREA") {
+            e.preventDefault();
+            return false;
+        }
+    });
+
     if ($("form#edit_pos_form").length > 0) {
         pos_form_obj = $("form#edit_pos_form");
     } else {
