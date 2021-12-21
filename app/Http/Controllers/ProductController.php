@@ -520,7 +520,7 @@ class ProductController extends Controller
                 'multiple_grades' => $request->multiple_grades,
                 'is_service' => !empty($request->is_service) ? 1 : 0,
                 'product_details' => $request->product_details,
-                'barcode_type' => $request->barcode_type,
+                'barcode_type' => $request->barcode_type ?? 'C128',
                 'alert_quantity' => $request->alert_quantity,
                 'purchase_price' => $this->commonUtil->num_uf($request->purchase_price),
                 'sell_price' => $this->commonUtil->num_uf($request->sell_price),

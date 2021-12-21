@@ -38,7 +38,7 @@
                                 href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') == 'pos')
+                        @if(session('system_mode') != 'restaurant')
                         @can('product_module.barcode.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
@@ -79,7 +79,7 @@
                                 href="{{action('PurchaseOrderController@index')}}">{{__('lang.view_all_purchase_orders')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') == 'pos')
+                        @if(session('system_mode') != 'restaurant')
                         @can('purchase_order.import.view')
                         <li
                             class="@if(request()->segment(1) == 'purchase-order' && request()->segment(2) == 'import') active @endif">
@@ -139,7 +139,7 @@
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') == 'pos')
+                        @if(session('system_mode') == 'restaurant')
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
@@ -194,7 +194,7 @@
                 @endif
 
                 @if( !empty($module_settings['quotation_for_customers']) )
-                @if(session('system_mode') == 'pos')
+                @if(session('system_mode') != 'restaurant')
                 @if(auth()->user()->can('quotation_for_customers.quotation.view') ||
                 auth()->user()->can('quotation_for_customers.quotation.create_and_edit') )
                 <li><a href="#quotation_for_customers" aria-expanded="false" data-toggle="collapse"> <i
@@ -949,6 +949,7 @@
                             <a href="{{action('ProductClassController@index')}}">{{__('lang.product_class')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_mode') != 'restaurant')
                         @can('product_module.category.view')
                         <li
                             class="@if(request()->segment(1) == 'category' && empty(request()->segment(2))) active @endif">
@@ -966,24 +967,25 @@
                             <a href="{{action('BrandController@index')}}">{{__('lang.brand')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.unit.view')
-                        <li class="@if(request()->segment(1) == 'unit' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('UnitController@index')}}">{{__('lang.unit')}}</a>
-                        </li>
-                        @endcan
                         @can('product_module.color.view')
                         <li class="@if(request()->segment(1) == 'color' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('ColorController@index')}}">{{__('lang.color')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.size.view')
-                        <li class="@if(request()->segment(1) == 'size' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
-                        </li>
-                        @endcan
                         @can('product_module.grade.view')
                         <li class="@if(request()->segment(1) == 'grade' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('GradeController@index')}}">{{__('lang.grade')}}</a>
+                        </li>
+                        @endcan
+                        @endif
+                        @can('product_module.unit.view')
+                        <li class="@if(request()->segment(1) == 'unit' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('UnitController@index')}}">{{__('lang.unit')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.size.view')
+                        <li class="@if(request()->segment(1) == 'size' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
                         </li>
                         @endcan
                         @can('settings.store.view')
