@@ -58,10 +58,10 @@
                                             'style' =>'width: 80%' , 'id' => 'customer_id']) !!}
                                             <span class="input-group-btn">
                                                 @can('customer_module.customer.create_and_edit')
-                                                <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                <a class="btn-modal btn btn-default bg-white btn-flat"
                                                     data-href="{{action('CustomerController@create')}}?quick_add=1"
                                                     data-container=".view_modal"><i
-                                                        class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                                        class="fa fa-plus-circle text-primary fa-lg"></i></a>
                                                 @endcan
                                             </span>
                                         </div>

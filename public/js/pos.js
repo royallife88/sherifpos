@@ -251,6 +251,7 @@ function get_label_product_row(
                 __write_number(qty_element, qty + 1);
                 qty_element.change;
                 calculate_sub_totals();
+                $("input#search_product").val('');
                 $("input#search_product").focus().select();
             }
         });
@@ -277,6 +278,8 @@ function get_label_product_row(
             },
             success: function (result) {
                 $("table#product_table tbody").prepend(result);
+                $("input#search_product").val('');
+                $("input#search_product").focus().select();
                 calculate_sub_totals();
             },
         });

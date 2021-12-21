@@ -111,64 +111,73 @@ $invoice_lang = request()->session()->get('language');
         </p>
         <div class="table_div" style=" padding: 0 7px; width:100%; height:100%;">
             <table style="margin: 0 auto;">
+                <thead>
+                    <tr>
+                        <th style="width: 40%; padding: 0 50px !important;">@lang('lang.item', [], $invoice_lang) </th>
+                        <th style="width: 20%;text-align:center !important;"> @lang('lang.price', [], $invoice_lang)
+                        </th>
+                        <th style="width: 20%">@lang('lang.qty', [], $invoice_lang) </th>
+                        <th style="width: 20%">@lang('lang.amount', [], $invoice_lang) </th>
+                    </tr>
+                </thead>
                 <tbody>
 
                     @foreach($transaction->transaction_sell_lines as $line)
                     <tr>
-                        <td colspan="2">
+                        <td>
                             {{$line->product->name}}
                             @if(!empty($line->variation))
                             @if($line->variation->name != "Default")
                             <b>{{$line->variation->name}}</b>
                             @endif
                             @endif
-                            {{-- <br>{{@num_format($line->quantity)}} x {{@num_format($line->sell_price)}}
-                            @if(!empty((float)$line->product_discount_amount))-{{@num_format($line->product_discount_amount)}}@endif--}}
-
                         </td>
+                        <td style="text-align:center !important;vertical-align:bottom">
+                            {{@num_format($line->sell_price)}}</td>
+                        <td style="text-align:center;vertical-align:bottom">{{@num_format($line->quantity)}}</td>
                         <td style="text-align:center;vertical-align:bottom">{{@num_format($line->sub_total)}}</td>
                     </tr>
                     @endforeach
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="2">@lang('lang.total', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.total', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->grand_total)}}</th>
                     </tr>
                     @if($transaction->total_tax != 0)
                     <tr>
-                        <th colspan="2">@lang('lang.order_tax', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.order_tax', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->total_tax)}}</th>
                     </tr>
                     @endif
                     @if($transaction->discount_amount != 0)
                     <tr>
-                        <th colspan="2">@lang('lang.order_discount', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.order_discount', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->discount_amount)}}</th>
                     </tr>
                     @endif
                     @if($transaction->transaction_sell_lines->sum('coupon_discount'))
                     <tr>
-                        <th colspan="2">@lang('lang.coupon_discount', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.coupon_discount', [], $invoice_lang)</th>
                         <th style="text-align:right">
                             {{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
                     </tr>
                     @endif
                     @if(!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
                     <tr>
-                        <th colspan="2">@lang('lang.delivery_cost' , [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.delivery_cost' , [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->delivery_cost)}}
                         </th>
                     </tr>
                     @endif
                     @if(!empty($transaction->rp_redeemed_value))
                     <tr>
-                        <th colspan="2">@lang('lang.redeemed_point_value', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.redeemed_point_value', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->rp_redeemed_value)}}</th>
                     </tr>
                     @endif
                     <tr>
-                        <th colspan="2">@lang('lang.grand_total', [], $invoice_lang)</th>
+                        <th colspan="3">@lang('lang.grand_total', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->final_total)}}</th>
                     </tr>
                     <tr>
