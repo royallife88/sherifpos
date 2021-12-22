@@ -226,8 +226,17 @@ $(document).ready(function () {
                 },
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
+            var string = "";
+            if (item.is_service == 0 && item.qty_available <= 0) {
+                string +=
+                    '<li class="ui-state-disabled">' +
+                    item.text +
+                    " (Out of stock) </li>";
+            } else {
+                string += item.text;
+            }
             return $("<li>")
-                .append("<div>" + item.text + "</div>")
+                .append("<div>" + string +"</div>")
                 .appendTo(ul);
         };
     }
