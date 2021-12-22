@@ -50,7 +50,7 @@ class SizeController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $sizes = Size::pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('size.create')->with(compact(
             'quick_add',
@@ -193,7 +193,7 @@ class SizeController extends Controller
 
     public function getDropdown()
     {
-        $size = Size::pluck('name', 'id');
+        $size = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $size_dp = $this->commonUtil->createDropdownHtml($size, 'Please Select');
 
         return $size_dp;

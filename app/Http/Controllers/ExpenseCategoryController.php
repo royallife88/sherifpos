@@ -164,7 +164,7 @@ class ExpenseCategoryController extends Controller
 
     public function getBeneficiaryDropdown($expense_category_id)
     {
-        $beneficiaries = ExpenseCategory::find($expense_category_id)->beneficiaries()->pluck('name', 'id');
+        $beneficiaries = ExpenseCategory::find($expense_category_id)->beneficiaries()->orderBy('name', 'asc')->pluck('name', 'id');
 
         return $this->commonUtil->createDropdownHtml($beneficiaries, 'Please Select');
     }

@@ -126,17 +126,17 @@ class ProductController extends Controller
         )
             ->groupBy('products.id')
             ->get();
-        $product_classes = ProductClass::pluck('name', 'id');
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
-        $brands = Brand::pluck('name', 'id');
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
-        $taxes = Tax::pluck('name', 'id');
-        $customers = Customer::pluck('name', 'id');
-        $customer_types = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
         $page = 'product_stock';
@@ -250,17 +250,17 @@ class ProductController extends Controller
         )
             ->groupBy('variations.id')
             ->get();
-        $product_classes = ProductClass::pluck('name', 'id');
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
-        $brands = Brand::pluck('name', 'id');
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
-        $taxes = Tax::pluck('name', 'id');
-        $customers = Customer::pluck('name', 'id');
-        $customer_types = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -295,19 +295,19 @@ class ProductController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $product_classes = ProductClass::pluck('name', 'id');
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
-        $brands = Brand::pluck('name', 'id');
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
-        $taxes = Tax::pluck('name', 'id');
-        $customers = Customer::pluck('name', 'id');
-        $customer_types = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
-        $users = User::pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
         $quick_add = request()->quick_add;
 
@@ -465,17 +465,17 @@ class ProductController extends Controller
         }
         $product = Product::find($id);
 
-        $product_classes = ProductClass::pluck('name', 'id');
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
-        $brands = Brand::pluck('name', 'id');
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
-        $taxes = Tax::pluck('name', 'id');
-        $customers = Customer::pluck('name', 'id');
-        $customer_types = CustomerType::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::all();
 
@@ -646,10 +646,10 @@ class ProductController extends Controller
     {
         $row_id = request()->row_id;
 
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::all();
         $name = request()->name;
         $purchase_price = request()->purchase_price;

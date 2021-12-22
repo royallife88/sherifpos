@@ -86,7 +86,7 @@ class LeaveController extends Controller
             $this_employee_id = request()->employee_id;
         }
 
-        $leave_types = LeaveType::pluck('name', 'id');
+        $leave_types = LeaveType::orderBy('name', 'asc')->pluck('name', 'id');
 
 
 
@@ -185,7 +185,7 @@ class LeaveController extends Controller
             $this_employee_id = $this_employee->id;
         }
 
-        $leave_types = LeaveType::pluck('name', 'id');
+        $leave_types = LeaveType::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('leave.edit')->with(compact(
             'employees',

@@ -66,9 +66,9 @@ class CustomerTypeController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $customer_types = CustomerType::pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('customer_type.create')->with(compact(
             'quick_add',
@@ -196,7 +196,7 @@ class CustomerTypeController extends Controller
     {
         $customer_type = CustomerType::find($id);
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('customer_type.edit')->with(compact(
             'customer_type',
@@ -283,7 +283,7 @@ class CustomerTypeController extends Controller
 
     public function getDropdown()
     {
-        $customer_type = CustomerType::pluck('name', 'id');
+        $customer_type = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_type_dp = $this->commonUtil->createDropdownHtml($customer_type, 'Please Select');
 
         return $customer_type_dp;
@@ -291,7 +291,7 @@ class CustomerTypeController extends Controller
     public function getProductDiscountRow()
     {
         $row_id = request()->row_id;
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('customer_type.partial.product_discount_row')->with(compact(
             'products',
@@ -301,7 +301,7 @@ class CustomerTypeController extends Controller
     public function getProductPointRow()
     {
         $row_id = request()->row_id;
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('customer_type.partial.product_point_row')->with(compact(
             'products',

@@ -61,8 +61,8 @@ class EarningOfPointController extends Controller
     public function create()
     {
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
-        $customer_types  = CustomerType::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
 
         return view('earning_of_point.create')->with(compact(
@@ -141,8 +141,8 @@ class EarningOfPointController extends Controller
     {
         $earning_of_point = EarningOfPoint::find($id);
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
-        $customer_types  = CustomerType::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $earning_of_point->pct_data;
 

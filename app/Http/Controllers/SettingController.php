@@ -121,7 +121,7 @@ class SettingController extends Controller
         $currencies  = $this->commonUtil->allCurrencies();
 
         $timezone_list = $this->commonUtil->allTimeZones();
-        $terms_and_conditions = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $terms_and_conditions = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('settings.general_setting')->with(compact(
             'settings',

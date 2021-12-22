@@ -67,8 +67,8 @@ class CategoryController extends Controller
         $quick_add = request()->quick_add ?? null;
         $type = request()->type ?? null;
 
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $product_classes = ProductClass::pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('category.create')->with(compact(
             'type',
@@ -166,8 +166,8 @@ class CategoryController extends Controller
     public function edit($id)
     {
         $category = Category::find($id);
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $product_classes = ProductClass::pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('category.edit')->with(compact(
             'category',
@@ -265,9 +265,9 @@ class CategoryController extends Controller
     public function getDropdown()
     {
         if (!empty(request()->product_class_id)) {
-            $categories = Category::where('product_class_id', request()->product_class_id)->pluck('name', 'id');
+            $categories = Category::where('product_class_id', request()->product_class_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
-            $categories = Category::whereNull('parent_id')->pluck('name', 'id');
+            $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
 
@@ -277,9 +277,9 @@ class CategoryController extends Controller
     public function getSubCategoryDropdown()
     {
         if (!empty(request()->category_id)) {
-            $categories = Category::where('parent_id', request()->category_id)->pluck('name', 'id');
+            $categories = Category::where('parent_id', request()->category_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
-            $categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
+            $categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         }
         $categories_dp = $this->commonUtil->createDropdownHtml($categories, 'Please Select');
 

@@ -50,7 +50,7 @@ class UnitController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $units = Unit::pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('unit.create')->with(compact(
             'quick_add',
@@ -192,7 +192,7 @@ class UnitController extends Controller
 
     public function getDropdown()
     {
-        $unit = Unit::pluck('name', 'id');
+        $unit = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $unit_dp = $this->commonUtil->createDropdownHtml($unit, 'Please Select');
 
         return $unit_dp;

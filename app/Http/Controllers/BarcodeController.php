@@ -46,7 +46,7 @@ class BarcodeController extends Controller
      */
     public function create()
     {
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('barcode.create')->with(compact('products'));
     }

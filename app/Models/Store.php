@@ -24,10 +24,10 @@ class Store extends Model
     public static function getDropdown()
     {
         if (session('user.is_superadmin')) {
-            $stores = Store::pluck('name', 'id')->toArray();
+            $stores = Store::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         } else {
             $employee = Employee::where('user_id', auth()->user()->id)->first();
-            $stores = Store::whereIn('id', (array) $employee->store_id)->pluck('name', 'id')->toArray();
+            $stores = Store::whereIn('id', (array) $employee->store_id)->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         }
         return $stores;
     }

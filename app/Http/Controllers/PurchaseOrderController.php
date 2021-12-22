@@ -76,7 +76,7 @@ class PurchaseOrderController extends Controller
         // TODO: condition for superadmin --sent_admin and for other user as draft
         $purchase_orders = $query->get();
 
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
@@ -95,7 +95,7 @@ class PurchaseOrderController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $po_no = $this->productUtil->getNumberByType('purchase_order');
@@ -214,7 +214,7 @@ class PurchaseOrderController extends Controller
     {
         $purchase_order = Transaction::find($id);
 
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
@@ -480,7 +480,7 @@ class PurchaseOrderController extends Controller
 
         $purchase_orders = $query->orderBy('created_at', 'desc')->get();
 
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
@@ -557,7 +557,7 @@ class PurchaseOrderController extends Controller
 
     public function getImport()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         return view('purchase_order.import')->with(compact(

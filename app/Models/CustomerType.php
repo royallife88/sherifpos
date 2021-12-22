@@ -33,6 +33,6 @@ class CustomerType extends Model
 
     public static function getDropdown()
     {
-        return CustomerType::pluck('name', 'id')->toArray();
+        return CustomerType::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
     }
 }

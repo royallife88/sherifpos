@@ -74,9 +74,9 @@ class RemoveStockController extends Controller
 
         $remove_stocks = $query->where('status', 'compensated')->orderBy('compensated_at', 'desc')->get();
 
-        $suppliers = Supplier::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('remove_stock.compensated_list')->with(compact(
@@ -117,9 +117,9 @@ class RemoveStockController extends Controller
 
         $remove_stocks = $query->get();
 
-        $suppliers = Supplier::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
-        $stores = Store::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('remove_stock.index')->with(compact(
@@ -138,7 +138,7 @@ class RemoveStockController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $invoice_nos = Transaction::where('type', 'add_stock')->where('status', 'received')->whereNotNull('invoice_no')->pluck('invoice_no', 'id');
@@ -295,7 +295,7 @@ class RemoveStockController extends Controller
     public function edit($id)
     {
         $remove_stock = Transaction::find($id);
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $invoice_nos = Transaction::where('type', 'add_stock')->where('status', 'received')->pluck('invoice_no', 'id');

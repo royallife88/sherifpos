@@ -88,7 +88,7 @@ class SellReturnController extends Controller
         $customers = Customer::getCustomerArrayWithMobile();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('sell_return.index')->with(compact(
             'sale_returns',

@@ -106,7 +106,7 @@ class CashOutController extends Controller
     public function edit($id)
     {
         $cash_out = CashRegisterTransaction::find($id);
-        $users = User::pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_out.edit')->with(compact(
             'cash_out',

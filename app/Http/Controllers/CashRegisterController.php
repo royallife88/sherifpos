@@ -66,7 +66,7 @@ class CashRegisterController extends Controller
         }
 
         $is_pos = request()->is_pos;
-        $users = User::pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash_register.create')->with(compact('is_pos', 'users'));
     }

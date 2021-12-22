@@ -115,7 +115,7 @@ class SellController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $store_poses = [];
 
@@ -177,7 +177,7 @@ class SellController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -351,7 +351,7 @@ class SellController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('sale.import')->with(compact(
             'walk_in_customer',

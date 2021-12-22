@@ -371,7 +371,7 @@ class SellPosController extends Controller
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $product_classes = ProductClass::select('name', 'id')->get();
 

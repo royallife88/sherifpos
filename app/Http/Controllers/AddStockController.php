@@ -74,7 +74,7 @@ class AddStockController extends Controller
 
         $add_stocks = $query->orderBy('transaction_date', 'desc')->get();
 
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
@@ -93,7 +93,7 @@ class AddStockController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
@@ -241,7 +241,7 @@ class AddStockController extends Controller
     public function edit($id)
     {
         $add_stock = Transaction::find($id);
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
@@ -457,7 +457,7 @@ class AddStockController extends Controller
      */
     public function getImport()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');

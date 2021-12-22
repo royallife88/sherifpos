@@ -57,7 +57,7 @@ class CustomerPointAdjustmentController extends Controller
     {
         $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('customer_point_adjustment.create')->with(compact(
             'stores',
@@ -122,7 +122,7 @@ class CustomerPointAdjustmentController extends Controller
     {
         $stores = Store::getDropdown();
         $users = User::getDropdownByJobType('Cashier');
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_point_adjustment = CustomerPointAdjustment::find($id);
 
         return view('customer_point_adjustment.edit')->with(compact(

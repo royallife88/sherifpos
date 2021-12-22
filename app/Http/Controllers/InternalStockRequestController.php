@@ -76,15 +76,15 @@ class InternalStockRequestController extends Controller
         $stores_keys = array_keys($stores);
 
         $products = $this->productUtil->getProductList($stores_keys);
-        $product_classes = ProductClass::pluck('name', 'id');
-        $categories = Category::whereNull('parent_id')->pluck('name', 'id');
-        $sub_categories = Category::whereNotNull('parent_id')->pluck('name', 'id');
-        $brands = Brand::pluck('name', 'id');
-        $units = Unit::pluck('name', 'id');
-        $colors = Color::pluck('name', 'id');
-        $sizes = Size::pluck('name', 'id');
-        $grades = Grade::pluck('name', 'id');
-        $taxes = Tax::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('internal_stock_request.create')->with(compact(
             'products',

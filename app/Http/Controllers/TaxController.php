@@ -46,7 +46,7 @@ class TaxController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $taxes = Tax::pluck('name', 'id');
+        $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('tax.create')->with(compact(
             'quick_add',
@@ -146,7 +146,7 @@ class TaxController extends Controller
 
     public function getDropdown()
     {
-        $tax = Tax::pluck('name', 'id');
+        $tax = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $tax_dp = $this->commonUtil->createDropdownHtml($tax, 'Please Select');
 
         return $tax_dp;

@@ -67,8 +67,8 @@ class CouponController extends Controller
 
         $coupons = $query->get();
 
-        $customers = Customer::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('coupon.index')->with(compact(
             'coupons',
@@ -86,9 +86,9 @@ class CouponController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
-        $customer_types = CustomerType::pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         return view('coupon.create')->with(compact(
@@ -176,10 +176,10 @@ class CouponController extends Controller
     {
         $coupon = Coupon::find($id);
 
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $coupon->pct_data;
-        $customer_types = CustomerType::pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
 
         return view('coupon.edit')->with(compact(
@@ -272,7 +272,7 @@ class CouponController extends Controller
 
     public function getDropdown()
     {
-        $coupon = Coupon::pluck('name', 'id');
+        $coupon = Coupon::orderBy('name', 'asc')->pluck('name', 'id');
         $coupon_dp = $this->commonUtil->createDropdownHtml($coupon, 'Please Select');
 
         return $coupon_dp;

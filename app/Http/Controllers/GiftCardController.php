@@ -55,8 +55,8 @@ class GiftCardController extends Controller
 
         $gift_cards = $query->get();
 
-        $customers = Customer::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('gift_card.index')->with(compact(
             'gift_cards',
@@ -74,7 +74,7 @@ class GiftCardController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('gift_card.create')->with(compact(
             'quick_add',
@@ -153,7 +153,7 @@ class GiftCardController extends Controller
     {
         $gift_card = GiftCard::find($id);
 
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('gift_card.edit')->with(compact(
             'gift_card',
@@ -235,7 +235,7 @@ class GiftCardController extends Controller
 
     public function getDropdown()
     {
-        $gift_card = GiftCard::pluck('name', 'id');
+        $gift_card = GiftCard::orderBy('name', 'asc')->pluck('name', 'id');
         $gift_card_dp = $this->commonUtil->createDropdownHtml($gift_card, 'Please Select');
 
         return $gift_card_dp;

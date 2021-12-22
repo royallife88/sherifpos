@@ -68,7 +68,7 @@ class ForfeitLeaveController extends Controller
             $this_employee_id = request()->employee_id;
         }
 
-        $leave_types = LeaveType::pluck('name', 'id');
+        $leave_types = LeaveType::orderBy('name', 'asc')->pluck('name', 'id');
 
 
 

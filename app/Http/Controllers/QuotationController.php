@@ -109,7 +109,7 @@ class QuotationController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::getDropdown();
-        $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'quotation')->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('quotation.create')->with(compact(
             'walk_in_customer',
@@ -166,7 +166,7 @@ class QuotationController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $stores = Store::getDropdown();
-        $tac = TermsAndCondition::where('type', 'quotation')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'quotation')->orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('quotation.edit')->with(compact(
             'stores',

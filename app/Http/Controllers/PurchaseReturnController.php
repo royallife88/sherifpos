@@ -71,7 +71,7 @@ class PurchaseReturnController extends Controller
 
         $purchase_returns = $query->orderBy('invoice_no', 'desc')->get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('purchase_return.index')->with(compact(
@@ -89,7 +89,7 @@ class PurchaseReturnController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
@@ -208,7 +208,7 @@ class PurchaseReturnController extends Controller
     public function edit($id)
     {
         $purchase_return = Transaction::find($id);
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();

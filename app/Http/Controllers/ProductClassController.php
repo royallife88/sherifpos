@@ -220,7 +220,7 @@ class ProductClassController extends Controller
 
     public function getDropdown()
     {
-        $product_classes = ProductClass::pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes_dp = $this->commonUtil->createDropdownHtml($product_classes, 'Please Select');
 
         return $product_classes_dp;

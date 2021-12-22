@@ -50,7 +50,7 @@ class GradeController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $grades = Grade::pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('grade.create')->with(compact(
             'quick_add',
@@ -192,7 +192,7 @@ class GradeController extends Controller
 
     public function getDropdown()
     {
-        $grade = Grade::pluck('name', 'id');
+        $grade = Grade::orderBy('name', 'asc')->pluck('name', 'id');
         $grade_dp = $this->commonUtil->createDropdownHtml($grade, 'Please Select');
 
         return $grade_dp;

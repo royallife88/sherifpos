@@ -60,8 +60,8 @@ class SalesPromotionController extends Controller
     public function create()
     {
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
-        $customer_types  = CustomerType::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
 
         return view('sales_promotion.create')->with(compact(
@@ -149,8 +149,8 @@ class SalesPromotionController extends Controller
     {
         $sales_promotion = SalesPromotion::find($id);
         $stores = Store::getDropdown();
-        $products = Product::pluck('name', 'id');
-        $customer_types  = CustomerType::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $sales_promotion->pct_data;
 

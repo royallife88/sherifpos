@@ -50,7 +50,7 @@ class ColorController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $colors = Color::pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('color.create')->with(compact(
             'quick_add',
@@ -192,7 +192,7 @@ class ColorController extends Controller
 
     public function getDropdown()
     {
-        $color = Color::pluck('name', 'id');
+        $color = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $color_dp = $this->commonUtil->createDropdownHtml($color, 'Please Select');
 
         return $color_dp;

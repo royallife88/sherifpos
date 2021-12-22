@@ -19,7 +19,7 @@ class ExpenseBeneficiaryController extends Controller
     {
         $expense_beneficiaries = ExpenseBeneficiary::leftjoin('users', 'expense_beneficiaries.created_by', 'users.id')->select('expense_beneficiaries.*', 'users.name as created_by')->get();
 
-        $expense_categories = ExpenseCategory::pluck('name', 'id');
+        $expense_categories = ExpenseCategory::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('expense_beneficiary.index')->with(compact(
             'expense_beneficiaries',
@@ -34,7 +34,7 @@ class ExpenseBeneficiaryController extends Controller
      */
     public function create()
     {
-        $expense_categories = ExpenseCategory::pluck('name', 'id');
+        $expense_categories = ExpenseCategory::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('expense_beneficiary.create')->with(compact(
             'expense_categories'
@@ -91,7 +91,7 @@ class ExpenseBeneficiaryController extends Controller
     public function edit($id)
     {
         $expense_beneficiary = ExpenseBeneficiary::find($id);
-        $expense_categories = ExpenseCategory::pluck('name', 'id');
+        $expense_categories = ExpenseCategory::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('expense_beneficiary.edit')->with(compact(
             'expense_beneficiary',

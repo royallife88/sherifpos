@@ -155,8 +155,8 @@ class ReportController extends Controller
         )->groupBy('wages_and_compensation.payment_type')->get();
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $employees = Employee::pluck('employee_name', 'id');
         $customer_types = CustomerType::getDropdown();
         $wages_payment_types = WagesAndCompensation::getPaymentTypes();
@@ -221,10 +221,10 @@ class ReportController extends Controller
 
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::getDropdown();
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('reports.receivable_report')->with(compact(
@@ -279,10 +279,10 @@ class ReportController extends Controller
 
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::getDropdown();
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.payable_report')->with(compact(
             'add_stocks',
@@ -340,10 +340,10 @@ class ReportController extends Controller
 
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::getDropdown();
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('reports.expected_receivable_report')->with(compact(
@@ -444,10 +444,10 @@ class ReportController extends Controller
 
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::getDropdown();
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $employees = Employee::pluck('employee_name', 'id');
         $wages_payment_types = WagesAndCompensation::getPaymentTypes();
 
@@ -734,10 +734,10 @@ class ReportController extends Controller
 
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::getDropdown();
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $employees = Employee::pluck('employee_name', 'id');
         $wages_payment_types = WagesAndCompensation::getPaymentTypes();
 
@@ -868,8 +868,8 @@ class ReportController extends Controller
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.product_report')->with(compact(
             'transactions',
@@ -1199,8 +1199,8 @@ class ReportController extends Controller
         )->groupBy('p.id')->get();
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.sale_report')->with(compact(
             'transactions',
@@ -1218,7 +1218,7 @@ class ReportController extends Controller
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
-        $products = Product::pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         $transactions = [];
         foreach ($products as $key => $value) {
@@ -1257,7 +1257,7 @@ class ReportController extends Controller
         }
 
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
 
 
         return view('reports.purchase_report')->with(compact(
@@ -1490,8 +1490,8 @@ class ReportController extends Controller
 
         $items = $query->groupBy('products.id')->get();
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
-        $products = Product::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.product_quantity_alert_report')->with(compact(
             'items',
@@ -1614,7 +1614,7 @@ class ReportController extends Controller
         )->groupBy('transactions.id')->get();
 
 
-        $users = User::pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
         return view('reports.user_report')->with(compact(
@@ -1721,7 +1721,7 @@ class ReportController extends Controller
             'transactions.*'
         )->groupBy('transactions.id')->get();
 
-        $customers = Customer::pluck('name', 'id');
+        $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
         return view('reports.customer_report')->with(compact(
@@ -1832,7 +1832,7 @@ class ReportController extends Controller
         )->groupBy('transactions.id')->get();
 
 
-        $suppliers = Supplier::pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 
         return view('reports.supplier_report')->with(compact(
@@ -1866,7 +1866,7 @@ class ReportController extends Controller
 
         $dues =  $query->get();
         $stores = Store::getDropdown();
-        $store_pos = StorePos::pluck('name', 'id');
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.due_report')->with(compact(
             'dues',

@@ -169,7 +169,7 @@ class UserController extends Controller
 
     public function getDropdown()
     {
-        $user = User::pluck('name', 'id');
+        $user = User::orderBy('name', 'asc')->pluck('name', 'id');
         $user_dp = $this->commonUtil->createDropdownHtml($user, 'Please Select');
 
         return $user_dp;

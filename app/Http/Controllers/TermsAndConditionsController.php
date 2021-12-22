@@ -28,7 +28,7 @@ class TermsAndConditionsController extends Controller
             $query->where('type', $type);
         }
         $terms_and_conditions = $query->get();
-        $tac = TermsAndCondition::where('type', 'invoice')->pluck('name', 'id');
+        $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $invoice_terms_and_conditions = System::getProperty('invoice_terms_and_conditions');
 
         return view('terms_and_conditions.index')->with(compact(

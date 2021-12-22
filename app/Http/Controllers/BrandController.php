@@ -51,7 +51,7 @@ class BrandController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        $brands = Brand::pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('brand.create')->with(compact(
             'quick_add',
@@ -138,7 +138,7 @@ class BrandController extends Controller
     public function edit($id)
     {
         $brand = Brand::find($id);
-        $brands = Brand::pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('brand.edit')->with(compact(
             'brand',
@@ -216,11 +216,11 @@ class BrandController extends Controller
     public function getDropdown()
     {
         if (!empty(request()->sub_category_id)) {
-            $brand = Brand::where('category_id', request()->sub_category_id)->pluck('name', 'id');
+            $brand = Brand::where('category_id', request()->sub_category_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else if (!empty(request()->category_id)) {
-            $brand = Brand::where('category_id', request()->category_id)->pluck('name', 'id');
+            $brand = Brand::where('category_id', request()->category_id)->orderBy('name', 'asc')->pluck('name', 'id');
         } else {
-            $brand = Brand::pluck('name', 'id');
+            $brand = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         }
 
         $brand_dp = $this->commonUtil->createDropdownHtml($brand, 'Please Select');
