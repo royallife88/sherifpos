@@ -4,10 +4,10 @@ $i = $index;
 @endphp
 <tr>
     <td>
-        {{$product->product_name}}
-
         @if($product->variation_name != "Default")
-        <b>{{$product->variation_name}}</b>
+        <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
+        @else
+        {{$product->product_name}}
         @endif
         <input type="hidden" name="add_stock_lines[{{$i}}][product_id]" class="product_id"
             value="{{$product->product_id}}">

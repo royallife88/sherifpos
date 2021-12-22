@@ -280,10 +280,10 @@ class ProductUtil extends Util
             $variation_data['name'] = 'Default';
             $variation_data['product_id'] = $product->id;
             $variation_data['sub_sku'] = $product->sku;
-            $variation_data['color_id'] = null;
-            $variation_data['size_id'] = null;
-            $variation_data['grade_id'] = null;
-            $variation_data['unit_id'] = null;
+            $variation_data['color_id'] = $request->multiple_colors;
+            $variation_data['size_id'] = $request->multiple_sizes;
+            $variation_data['grade_id'] = $request->multiple_grades;
+            $variation_data['unit_id'] = $request->multiple_units;
             $variation_data['is_dummy'] = 1;
             $variation_data['default_purchase_price'] = $this->num_uf($product->purchase_price);
             $variation_data['default_sell_price'] = $this->num_uf($product->sell_price);

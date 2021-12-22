@@ -1,4 +1,12 @@
 $(document).ready(function () {
+    //Prevent enter key function except texarea
+    $("form").on("keyup keypress", function (e) {
+        var keyCode = e.keyCode || e.which;
+        if (keyCode === 13 && e.target.tagName != "TEXTAREA") {
+            e.preventDefault();
+            return false;
+        }
+    });
     tinymce.init({
         selector: "#product_details",
         height: 130,
@@ -49,9 +57,9 @@ $(document).on("click", ".add_row", function () {
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
         data: {
-            name: $('#name').val(),
-            purchase_price: $('#purchase_price').val(),
-            sell_price: $('#sell_price').val(),
+            name: $("#name").val(),
+            purchase_price: $("#purchase_price").val(),
+            sell_price: $("#sell_price").val(),
         },
         contentType: "html",
         success: function (result) {
@@ -74,7 +82,6 @@ $(document).on("change", ".v_size, .v_color", function () {
 
     let product_name = name + " " + color + " " + size;
     row.find(".v_name").val(product_name);
-
 });
 $(document).on("click", ".variant_different_prices_for_stores", function () {
     let row_id = $(this).data("row_id");
@@ -125,7 +132,7 @@ myDropzone = new Dropzone("div#my-dropzone", {
                             myFunction();
                             if (response.success) {
                                 swal("Success", response.msg, "success");
-                            }else{
+                            } else {
                                 swal("Error", response.msg, "error");
                             }
                         },

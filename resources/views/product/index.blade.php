@@ -204,12 +204,11 @@
             <tr>
                 <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                         alt="photo" width="50" height="50"></td>
-                <td>{{$product->name}}</td>
-                <td>@if(!empty($product->variations))
-                    {{implode(', ', $product->variations->pluck('sub_sku')->toArray())}} @else {{$product->sku}} @endif
+                <td>@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}} @endif</td>
+                <td>{{$product->sub_sku}}
                 </td>
-                <td><p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">{{$product->name}}</p><img class="center-block" style="width:250px; !important;height: {{2*0.24}}in !important;"
-                        src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type??'C128', 3,30,array(39, 48, 54), true)}}">
+                <td><p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}} @endif</p><img class="center-block" style="width:250px; !important;height: {{2*0.24}}in !important;"
+                        src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sub_sku,$product->barcode_type??'C128', 3,30,array(39, 48, 54), true)}}">
                 </td>
                 <td>@if(!empty($product->product_class)){{$product->product_class->name}}@endif</td>
                 <td>@if(!empty($product->category)){{$product->category->name}}@endif</td>
@@ -217,12 +216,12 @@
                 <td><a data-href="{{action('ProductController@getPurchaseHistory', $product->id)}}"
                         data-container=".view_modal" class="btn btn-modal">@lang('lang.view')</a></td>
                 <td>{{$product->batch_number}}</td>
-                <td>{{@num_format($product->sell_price)}}</td>
+                <td>{{@num_format($product->default_sell_price)}}</td>
                 <td>@if(!empty($product->tax->name)){{$product->tax->name}}@endif</td>
                 <td>@if(!empty($product->brand)){{$product->brand->name}}@endif</td>
                 <td>{{implode(', ', $product->units->pluck('name')->toArray())}}</td>
-                <td>{{implode(', ', $product->colors->pluck('name')->toArray())}}</td>
-                <td>{{implode(', ', $product->sizes->pluck('name')->toArray())}}</td>
+                <td>{{$product->color_name}}</td>
+                <td>{{$product->size_name}}</td>
                 <td>{{implode(', ', $product->grades->pluck('name')->toArray())}}</td>
                 <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
                 <td>{{$product->customer_type}}</td>
@@ -231,7 +230,7 @@
                 </td>
                 <td>{{@num_format($product->discount)}}</td>
                 @can('product_module.purchase_price.view')
-                <td>{{@num_format($product->purchase_price)}}</td>
+                <td>{{@num_format($product->default_purchase_price)}}</td>
                 @endcan
                 <td>{{$product->created_by_user->name}}</td>
 

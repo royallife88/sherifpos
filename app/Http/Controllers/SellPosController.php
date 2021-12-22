@@ -624,7 +624,6 @@ class SellPosController extends Controller
             }
 
             $products = $q->groupBy('variation_id')->get();
-
             $products_array = [];
             foreach ($products as $product) {
                 $products_array[$product->product_id]['name'] = $product->name;
@@ -636,7 +635,8 @@ class SellPosController extends Controller
                     = [
                         'variation_id' => $product->variation_id,
                         'variation_name' => $product->variation,
-                        'sub_sku' => $product->sub_sku
+                        'sub_sku' => $product->sub_sku,
+                        'qty' => $product->qty_available
                     ];
             }
 
@@ -645,16 +645,16 @@ class SellPosController extends Controller
             $no_of_records = $products->count();
             if (!empty($products_array)) {
                 foreach ($products_array as $key => $value) {
-                    if ($no_of_records > 1 && $value['type'] != 'single') {
-                        $result[] = [
-                            'id' => $i,
-                            'text' => $value['name'] . ' - ' . $value['sku'],
-                            'variation_id' => 0,
-                            'product_id' => $key,
-                            'qty_available' => $value['qty'],
-                            'is_service' => $value['is_service']
-                        ];
-                    }
+                    // if ($no_of_records > 1 && $value['type'] != 'single') {
+                    //     $result[] = [
+                    //         'id' => $i,
+                    //         'text' => $value['name'] . ' - ' . $value['sku'],
+                    //         'variation_id' => 0,
+                    //         'product_id' => $key,
+                    //         'qty_available' => $value['qty'],
+                    //         'is_service' => $value['is_service']
+                    //     ];
+                    // }
                     $name = $value['name'];
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
@@ -669,7 +669,7 @@ class SellPosController extends Controller
                             'text' => $text . ' - ' . $variation['sub_sku'],
                             'product_id' => $key,
                             'variation_id' => $variation['variation_id'],
-                            'qty_available' => $value['qty'],
+                            'qty_available' => $variation['qty'],
                             'is_service' => $value['is_service']
                         ];
                     }

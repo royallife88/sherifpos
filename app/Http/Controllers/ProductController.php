@@ -170,6 +170,10 @@ class ProductController extends Controller
             ->leftjoin('add_stock_lines', function ($join) {
                 $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
             })
+            ->leftjoin('colors', 'variations.color_id', 'colors.id')
+            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+            ->leftjoin('units', 'variations.unit_id', 'units.id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
@@ -233,10 +237,18 @@ class ProductController extends Controller
         $products->where('active', 1);
         $products = $products->select(
             'products.*',
+            'variations.sub_sku',
+            'colors.name as color_name',
+            'sizes.name as size_name',
+            'grades.name as grade_name',
+            'units.name as unit_name',
+            'variations.name as variation_name',
+            'variations.default_purchase_price',
+            'variations.default_sell_price',
             'add_stock_lines.expiry_date as exp_date',
             DB::raw('SUM(product_stores.qty_available) as current_stock'),
         )
-            ->groupBy('products.id')
+            ->groupBy('variations.id')
             ->get();
         $product_classes = ProductClass::pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->pluck('name', 'id');

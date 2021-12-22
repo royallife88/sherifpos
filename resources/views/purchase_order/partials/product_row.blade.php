@@ -1,10 +1,10 @@
 @forelse ($products as $product)
 <tr>
     <td>
-        {{$product->product_name}}
-
         @if($product->variation_name != "Default")
-        <b>{{$product->variation_name}}</b>
+        <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
+        @else
+        {{$product->product_name}}
         @endif
         <input type="hidden" name="purchase_order_lines[{{$loop->index + $index}}][product_id]"
             value="{{$product->product_id}}">

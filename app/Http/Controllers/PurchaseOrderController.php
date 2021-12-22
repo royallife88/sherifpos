@@ -391,14 +391,14 @@ class PurchaseOrderController extends Controller
             $no_of_records = $products->count();
             if (!empty($products_array)) {
                 foreach ($products_array as $key => $value) {
-                    if ($no_of_records > 1 && $value['type'] != 'single') {
-                        $result[] = [
-                            'id' => $i,
-                            'text' => $value['name'] . ' - ' . $value['sku'],
-                            'variation_id' => 0,
-                            'product_id' => $key
-                        ];
-                    }
+                    // if ($no_of_records > 1 && $value['type'] != 'single') {
+                    //     $result[] = [
+                    //         'id' => $i,
+                    //         'text' => $value['name'] . ' - ' . $value['sku'],
+                    //         'variation_id' => 0,
+                    //         'product_id' => $key
+                    //     ];
+                    // }
                     $name = $value['name'];
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
