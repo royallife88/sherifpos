@@ -59,34 +59,34 @@ class Transaction extends Model  implements HasMedia
 
     public function supplier()
     {
-        return $this->belongsTo(Supplier::class);
+        return $this->belongsTo(Supplier::class)->withDefault(['name' => '']);
     }
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->withDefault(['name' => '']);
     }
 
     public function store()
     {
-        return $this->belongsTo(Store::class);
+        return $this->belongsTo(Store::class)->withDefault(['name' => '']);
     }
 
     public function sender_store()
     {
-        return $this->belongsTo(Store::class, 'sender_store_id');
+        return $this->belongsTo(Store::class, 'sender_store_id')->withDefault(['name' => '']);
     }
 
     public function receiver_store()
     {
-        return $this->belongsTo(Store::class, 'receiver_store_id');
+        return $this->belongsTo(Store::class, 'receiver_store_id')->withDefault(['name' => '']);
     }
     public function expense_category()
     {
-        return $this->belongsTo(ExpenseCategory::class);
+        return $this->belongsTo(ExpenseCategory::class)->withDefault(['name' => '']);
     }
     public function expense_beneficiary()
     {
-        return $this->belongsTo(ExpenseBeneficiary::class);
+        return $this->belongsTo(ExpenseBeneficiary::class)->withDefault(['name' => '']);
     }
 
     public function transaction_payments()
