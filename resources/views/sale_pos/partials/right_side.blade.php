@@ -75,24 +75,31 @@
                         </label>
                     </div>
                     @if(session('system_mode') == 'restaurant')
-                    <div class="row ml-2 mb-2">
-                        <div class="btn-group btn-group-toggle ml-2" data-toggle="buttons">
-                            <label class="btn btn-primary active">
-                                <input type="radio" checked autocomplete="off" name="restaurant_filter" value="all">
-                                @lang('lang.all')
-                            </label>
-                            <label class="btn btn-primary">
-                                <input type="radio" autocomplete="off" name="restaurant_filter" value="promotions">
-                                @lang('lang.promotions')
-                            </label>
-                            @foreach ($product_classes as $product_class)
-                            <label class="btn btn-primary">
-                                <input type="radio" name="restaurant_filter" value="{{$product_class->id}}"
-                                    autocomplete="off" id="{{$product_class->name .'_'. $product_class->id}}">
-                                {{ucfirst($product_class->name)}}
-                            </label>
-                            @endforeach
+                    <div class="row ml-2 mb-2" style="width: 100%; overflow-x: scroll;">
+                        <button class="btn btn-default" id="slideLeft" type="button"><i
+                                class="fa fa-lg fa-caret-left"></i></button>
+                        <div id="scroll-horizontal">
+                            <div class="btn-group btn-group-toggle ml-2" data-toggle="buttons" id="scroll-content ">
+                                <label class="btn btn-primary active">
+                                    <input type="radio" checked autocomplete="off" name="restaurant_filter" value="all">
+                                    @lang('lang.all')
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" autocomplete="off" name="restaurant_filter" value="promotions">
+                                    @lang('lang.promotions')
+                                </label>
+                                @foreach ($product_classes as $product_class)
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="restaurant_filter" value="{{$product_class->id}}"
+                                        autocomplete="off" id="{{$product_class->name .'_'. $product_class->id}}">
+                                    {{ucfirst($product_class->name)}}
+                                </label>
+                                @endforeach
+                            </div>
+
                         </div>
+                        <button class="btn btn-default" id="slideRight" type="button"><i
+                                class="fa fa-lg fa-caret-right"></i></button>
                     </div>
                     @endif
                 </div>

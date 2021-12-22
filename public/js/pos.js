@@ -236,7 +236,7 @@ $(document).ready(function () {
                 string += item.text;
             }
             return $("<li>")
-                .append("<div>" + string +"</div>")
+                .append("<div>" + string + "</div>")
                 .appendTo(ul);
         };
     }
@@ -1471,3 +1471,13 @@ $(document).on("change", "#delivery_cost", function () {
     );
     calculate_sub_totals();
 });
+
+const buttonRight = document.getElementById("slideRight");
+const buttonLeft = document.getElementById("slideLeft");
+
+buttonRight.onclick = function () {
+    document.getElementById("scroll-horizontal").scrollLeft += 50;
+};
+buttonLeft.onclick = function () {
+    document.getElementById("scroll-horizontal").scrollLeft -= 50;
+};

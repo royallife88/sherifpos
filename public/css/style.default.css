@@ -2876,3 +2876,21 @@ a > code {
         display: none;
     }
 }
+
+#scroll-horizontal {
+    width: 88%;
+    height: auto;
+    border: 1px solid #ccc;
+    overflow-x: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#scroll-horizontal::-webkit-scrollbar {
+    display: none;
+}
+
+#scroll-content {
+    width: 250px;
+    background-color: #ccc;
+}
