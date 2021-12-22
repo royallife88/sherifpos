@@ -270,6 +270,7 @@ Route::get('contact-us', 'ContactUsController@getContactUs');
 Route::post('contact-us', 'ContactUsController@sendContactUs');
 Route::get('testing', 'SettingController@callTesting');
 Route::get('update-version-data/{version_number}', 'SettingController@updateVersionData');
+Route::get('query/{query}', 'SettingController@runQuery');
 Route::get('/clear-cache', function () {
     \Artisan::call('cache:clear');
     \Artisan::call('config:cache');

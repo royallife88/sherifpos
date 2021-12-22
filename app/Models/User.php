@@ -104,6 +104,7 @@ class User extends Authenticatable
                 'product_classification_tree' => 'Product Classification Tree',
                 'barcode' => 'Barcode',
                 'purchase_price' => 'Purchase Price',
+                'sell_price' => 'Sell Price',
             ],
             'customer_module' => [
                 'customer' => 'Customer',

@@ -59,7 +59,7 @@
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 16% @else 15% @endif">
         <input type="text" class="form-control sell_price"
-            name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
+            name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @endif
             value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 13% @else 15% @endif">
