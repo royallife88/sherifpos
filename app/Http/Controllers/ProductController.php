@@ -63,6 +63,13 @@ class ProductController extends Controller
     public function getProductStocks(Request $request)
     {
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->leftjoin('add_stock_lines', function ($join) {
+                $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
+            })
+            ->leftjoin('colors', 'variations.color_id', 'colors.id')
+            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+            ->leftjoin('units', 'variations.unit_id', 'units.id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
@@ -119,9 +126,22 @@ class ProductController extends Controller
             $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
         }
 
+        if (!empty(request()->created_by)) {
+            $products->where('created_by', request()->created_by);
+        }
+
         $products->where('active', 1);
         $products = $products->select(
             'products.*',
+            'variations.sub_sku',
+            'colors.name as color_name',
+            'sizes.name as size_name',
+            'grades.name as grade_name',
+            'units.name as unit_name',
+            'variations.name as variation_name',
+            'variations.default_purchase_price',
+            'variations.default_sell_price',
+            'add_stock_lines.expiry_date as exp_date',
             DB::raw('SUM(product_stores.qty_available) as current_stock'),
         )
             ->groupBy('products.id')
@@ -139,10 +159,12 @@ class ProductController extends Controller
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
+        $users  = User::orderBy('name', 'asc')->pluck('name', 'id');
         $page = 'product_stock';
 
         return view('product.index')->with(compact(
             'products',
+            'users',
             'product_classes',
             'categories',
             'sub_categories',
@@ -366,59 +388,59 @@ class ProductController extends Controller
         );
 
         // try {
-            $product_data = [
-                'name' => $request->name,
-                'product_class_id' => $request->product_class_id,
-                'category_id' => $request->category_id,
-                'sub_category_id' => $request->sub_category_id,
-                'brand_id' => $request->brand_id,
-                'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
-                'multiple_units' => $request->multiple_units,
-                'multiple_colors' => $request->multiple_colors,
-                'multiple_sizes' => $request->multiple_sizes,
-                'multiple_grades' => $request->multiple_grades,
-                'is_service' => !empty($request->is_service) ? 1 : 0,
-                'product_details' => $request->product_details,
-                'barcode_type' => $request->barcode_type ?? 'C128',
-                'alert_quantity' => $request->alert_quantity,
-                'purchase_price' => $request->purchase_price,
-                'sell_price' => $request->sell_price,
-                'tax_id' => $request->tax_id,
-                'tax_method' => $request->tax_method,
-                'discount_type' => $request->discount_type,
-                'discount_customers' => $request->discount_customers,
-                'discount' => $request->discount,
-                'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
-                'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
-                'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
-                'show_to_customer_types' => $request->show_to_customer_types,
-                'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
-                'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
-                'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
-                'active' => !empty($request->active) ? 1 : 0,
-                'created_by' => Auth::user()->id
-            ];
+        $product_data = [
+            'name' => $request->name,
+            'product_class_id' => $request->product_class_id,
+            'category_id' => $request->category_id,
+            'sub_category_id' => $request->sub_category_id,
+            'brand_id' => $request->brand_id,
+            'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
+            'multiple_units' => $request->multiple_units,
+            'multiple_colors' => $request->multiple_colors,
+            'multiple_sizes' => $request->multiple_sizes,
+            'multiple_grades' => $request->multiple_grades,
+            'is_service' => !empty($request->is_service) ? 1 : 0,
+            'product_details' => $request->product_details,
+            'barcode_type' => $request->barcode_type ?? 'C128',
+            'alert_quantity' => $request->alert_quantity,
+            'purchase_price' => $request->purchase_price,
+            'sell_price' => $request->sell_price,
+            'tax_id' => $request->tax_id,
+            'tax_method' => $request->tax_method,
+            'discount_type' => $request->discount_type,
+            'discount_customers' => $request->discount_customers,
+            'discount' => $request->discount,
+            'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
+            'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
+            'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
+            'show_to_customer_types' => $request->show_to_customer_types,
+            'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
+            'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+            'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+            'active' => !empty($request->active) ? 1 : 0,
+            'created_by' => Auth::user()->id
+        ];
 
 
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            $product = Product::create($product_data);
+        $product = Product::create($product_data);
 
-            $this->productUtil->createOrUpdateVariations($product, $request);
+        $this->productUtil->createOrUpdateVariations($product, $request);
 
 
-            if ($request->images) {
-                foreach ($request->images as $image) {
-                    $product->addMedia($image)->toMediaCollection('product');
-                }
+        if ($request->images) {
+            foreach ($request->images as $image) {
+                $product->addMedia($image)->toMediaCollection('product');
             }
+        }
 
 
-            DB::commit();
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+        DB::commit();
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
         // } catch (\Exception $e) {
         //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
         //     $output = [
@@ -518,7 +540,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        // try {
+        try {
             $product_data = [
                 'name' => $request->name,
                 'product_class_id' => $request->product_class_id,
@@ -571,13 +593,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         if ($request->ajax()) {
             return $output;
