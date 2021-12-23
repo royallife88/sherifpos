@@ -421,7 +421,7 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($product->variations as $item)
-                                        @include('product.partial.variation_row', ['row_id' => $loop->index, 'item' =>
+                                        @include('product.partial.edit_variation_row', ['row_id' => $loop->index, 'item' =>
                                         $item])
 
                                         @endforeach

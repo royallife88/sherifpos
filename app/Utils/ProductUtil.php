@@ -246,7 +246,10 @@ class ProductUtil extends Util
                 } else {
                     $sub_sku = !empty($v['sub_sku']) ? $v['sub_sku'] : $this->generateSubSku($product->sku, $c, $product->barcode_type);
                 }
+
                 if (!empty($v['id'])) {
+                    $v['default_purchase_price'] = (float)$v['default_purchase_price'];
+                    $v['default_sell_price'] = (float)$v['default_sell_price'];
                     $variation = Variation::find($v['id']);
                     $variation->name = $v['name'];
                     $variation->sub_sku = $sub_sku;
@@ -254,8 +257,9 @@ class ProductUtil extends Util
                     $variation->size_id = $v['size_id'];
                     $variation->grade_id = $v['grade_id'];
                     $variation->unit_id = $v['unit_id'];
-                    $variation->default_purchase_price = $this->num_uf($v['default_purchase_price']);
-                    $variation->default_sell_price = $this->num_uf($v['default_sell_price']);
+                    $variation->default_purchase_price = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
+                    $variation->default_sell_price = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
+
                     $variation->save();
                     $variation_array[] = ['variation' => $variation, 'variant_stores' => $v['variant_stores']];
                     $keey_variations[] = $v['id'];
@@ -267,8 +271,8 @@ class ProductUtil extends Util
                     $variation_data['size_id'] = $v['size_id'];
                     $variation_data['grade_id'] = $v['grade_id'];
                     $variation_data['unit_id'] = $v['unit_id'];
-                    $variation_data['default_purchase_price'] = $this->num_uf($v['default_purchase_price']);
-                    $variation_data['default_sell_price'] = $this->num_uf($v['default_sell_price']);
+                    $variation_data['default_purchase_price'] = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
+                    $variation_data['default_sell_price'] = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
                     $variation_data['is_dummy'] = 0;
 
                     $variation = Variation::create($variation_data);
