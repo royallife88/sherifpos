@@ -18,17 +18,17 @@
                         <div class="row">
                             <div class="col-md-4">
                                 {!! Form::label('supplier_name', __('lang.supplier_name'), []) !!}:
-                                <b>{{$supplier->name}}</b>
+                                <b>{{$supplier->name ?? ''}}</b>
                             </div>
                             <div class="col-md-4">
-                                {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$supplier->email}}</b>
+                                {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$supplier->email ?? ''}}</b>
                             </div>
                             <div class="col-md-4">
                                 {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                                <b>{{$supplier->mobile_number}}</b>
+                                <b>{{$supplier->mobile_number ?? ''}}</b>
                             </div>
                             <div class="col-md-4">
-                                {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address}}</b>
+                                {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$supplier->address ?? ''}}</b>
                             </div>
                             <div class="col-md-4">
                                 {!! Form::label('store', __('lang.store'), []) !!}: <b>{{$add_stock->store->name ??

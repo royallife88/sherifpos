@@ -981,5 +981,6 @@ return [
     'add_payment_row' => 'Add Payment Row',
     'version' => 'Version',
     'last_update' => 'Last Update',
+    'added_by' => 'Added By',
 
 ];

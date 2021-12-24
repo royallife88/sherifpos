@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -56,7 +57,8 @@ class AddStockController extends Controller
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $query = Transaction::where('type', 'add_stock')->where('status', '!=', 'draft');
+        $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+        ->where('type', 'add_stock')->where('status', '!=', 'draft');
 
         if (!empty($store_id)) {
             $query->where('transactions.store_id', $store_id);
@@ -65,21 +67,33 @@ class AddStockController extends Controller
         if (!empty(request()->supplier_id)) {
             $query->where('supplier_id', request()->supplier_id);
         }
+        if (!empty(request()->created_by)) {
+            $query->where('created_by', request()->created_by);
+        }
+        if (!empty(request()->product_id)) {
+            $query->where('add_stock_lines.product_id', request()->product_id);
+        }
         if (!empty(request()->start_date)) {
-            $query->where('transaction_date', '>=', request()->start_date);
+            $query->whereDate('transaction_date', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->where('transaction_date', '<=', request()->end_date);
+            $query->whereDate('transaction_date', '<=', request()->end_date);
         }
 
-        $add_stocks = $query->orderBy('transaction_date', 'desc')->get();
+        $add_stocks = $query->select(
+            'transactions.*',
+        )->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
 
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('add_stock.index')->with(compact(
             'add_stocks',
+            'users',
+            'products',
             'suppliers',
             'stores',
             'status_array'

@@ -82,6 +82,8 @@
                 <th>@lang('lang.customer')</th>
                 <th>@lang('lang.sale_status')</th>
                 <th>@lang('lang.payment_status')</th>
+                <th>@lang('lang.payment_type')</th>
+                <th>@lang('lang.ref_number')</th>
                 <th class="sum">@lang('lang.grand_total')</th>
                 <th class="sum">@lang('lang.paid')</th>
                 <th class="sum">@lang('lang.due')</th>
@@ -98,6 +100,10 @@
                 <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                 <td>{{ucfirst($sale->status)}}</td>
                 <td>@if(!empty($payment_status_array[$sale->payment_status])){{$payment_status_array[$sale->payment_status]}}@endif
+                </td>
+                <td>@if(!empty($sale->transaction_payments->first()->method)){{$payment_types[$sale->transaction_payments->first()->method]}}@endif
+                </td>
+                <td>@if(!empty($sale->transaction_payments->first()->ref_number)){{$sale->transaction_payments->first()->ref_number}}@endif
                 </td>
                 <td>{{@num_format($sale->final_total)}}
                 </td>

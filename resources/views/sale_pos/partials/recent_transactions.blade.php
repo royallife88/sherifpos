@@ -8,6 +8,7 @@
                 <th>@lang('lang.customer_type')</th>
                 <th>@lang('lang.customer_name')</th>
                 <th>@lang('lang.payment_type')</th>
+                <th>@lang('lang.ref_number')</th>
                 <th>@lang('lang.status')</th>
                 <th>@lang('lang.delivery_man')</th>
                 <th class="notexport">@lang('lang.action')</th>
@@ -24,6 +25,8 @@
                 </td>
                 <td>@if(!empty($transaction->customer)){{$transaction->customer->name}}@endif</td>
                 <td>@if(!empty($transaction->transaction_payments->first()->method)){{$payment_types[$transaction->transaction_payments->first()->method]}}@endif
+                </td>
+                <td>@if(!empty($transaction->transaction_payments->first()->ref_number)){{$transaction->transaction_payments->first()->ref_number}}@endif
                 </td>
                 <td>{{ucfirst($transaction->status)}}</td>
                 <td></td>
