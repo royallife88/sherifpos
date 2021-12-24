@@ -51,7 +51,7 @@
                                     {!! Form::select('category_id', $categories,
                                     $product->category_id, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
-                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.category.create_and_edit')
                                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -87,7 +87,7 @@
                                     {!! Form::select('brand_id', $brands,
                                     $product->brand_id, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
-                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required']) !!}
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.brand.create_and_edit')
                                         <button class="btn-modal btn btn-default bg-white btn-flat"
