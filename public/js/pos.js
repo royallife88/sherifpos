@@ -1475,9 +1475,14 @@ $(document).on("change", "#delivery_cost", function () {
 const buttonRight = document.getElementById("slideRight");
 const buttonLeft = document.getElementById("slideLeft");
 
-buttonRight.onclick = function () {
-    document.getElementById("scroll-horizontal").scrollLeft += 50;
-};
-buttonLeft.onclick = function () {
-    document.getElementById("scroll-horizontal").scrollLeft -= 50;
-};
+if (buttonRight !== undefined && buttonRight !== null) {
+    buttonRight.onclick = function () {
+        document.getElementById("scroll-horizontal").scrollLeft += 50;
+    };
+}
+
+if (buttonLeft !== undefined && buttonLeft !== null) {
+    buttonLeft.onclick = function () {
+        document.getElementById("scroll-horizontal").scrollLeft -= 50;
+    };
+}
