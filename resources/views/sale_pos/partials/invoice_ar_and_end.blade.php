@@ -95,17 +95,19 @@
         <div class="centered">
             @include('layouts.partials.print_header')
 
-            <p>@lang('lang.address',[], 'en'): {{__('lang.address',[], 'ar')}} <br> {{$transaction->store->name}}
-                {{$transaction->store->location}}</p>
-            <p>@lang('lang.phone_number',[], 'en'): {{__('lang.phone_number',[], 'ar')}} <br>
-                {{$transaction->store->phone_number}} </p>
+            <p>{{$transaction->store->name}} {{$transaction->store->location}}</p>
+            <p>{{$transaction->store->phone_number}} </p>
 
         </div>
         <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{$transaction->created_at}} {{__('lang.date',[],
             'ar')}}<br>
             @lang('lang.reference',[], 'en'): {{$transaction->invoice_no}} {{__('lang.reference',[], 'ar')}}<br>
-            @lang('lang.customer',[], 'en'): @if(!empty($transaction->customer)){{$transaction->customer->name}}@endif
-            {{__('lang.customer',[], 'ar')}}
+            @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
+            @lang('lang.customer',[], 'en'): {{$transaction->customer->name}} {{__('lang.customer',[], 'ar')}}<br>
+            @lang('lang.address',[], 'en'): {{$transaction->customer->address}} {{__('lang.address',[], 'ar')}}<br>
+            @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}} {{__('lang.mobile_number',[], 'ar')}}<br>
+            @endif
+
         </p>
         <div class="table_div" style=" width:100%; height:100%; padding: 0 7px;">
             <table style="margin: 0 auto; width: 100%">
@@ -134,10 +136,6 @@
                             <b>{{$line->variation->name}}</b>
                             @endif
                             @endif
-                            {{-- <br>{{@num_format($line->quantity)}} x {{@num_format($line->sell_price)}}
-                            @if(!empty((float)$line->product_discount_amount))-{{@num_format($line->product_discount_amount)}}@endif
-                            --}}
-
                         </td>
                     </tr>
                     @endforeach
@@ -197,21 +195,24 @@
         <div style="padding: 0 7px;">
             <table>
                 <tbody>
-                    <tr>
-                        <td colspan="2">@lang('lang.paid_by',[], 'en'): {{__('lang.paid_by',[], 'ar')}}</td>
-                    </tr>
                     @foreach($transaction->transaction_payments as $payment_data)
                     <tr style="background-color:#ddd;">
                         <td style="padding: 7px;width:30%">
                             @if(!empty($payment_data->method)){{__('lang.'. $payment_data->method, [], 'ar')}} <br>
                             {{__('lang.'. $payment_data->method, [], 'en')}}@endif</td>
-                        <td style="padding: 7px;width:40%">
+                        <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
                             {{@num_format($payment_data->amount)}}</td>
                     </tr>
                     @endforeach
                     <tr>
-                        <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again',[], 'en')
+                        <td class="centered" colspan="3">
+                            @if(session('system_mode') == 'restaurant')
+                            @lang('lang.enjoy_your_meal_please_come_again',[], 'en')
+                            {{__('lang.enjoy_your_meal_please_come_again',[], 'ar')}}
+                            @else
+                            @lang('lang.thank_you_and_come_again',[], 'en')
                             {{__('lang.thank_you_and_come_again',[], 'ar')}}
+                            @endif
                         </td>
                     </tr>
                     @if(!empty($transaction->terms_and_conditions))
@@ -224,10 +225,6 @@
                             <img style="margin-top:10px;"
                                 src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
                                 width="300" alt="barcode" />
-                            <br>
-                            <img style="margin-top:10px;"
-                                src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
-                                alt="barcode" />
                         </td>
                     </tr>
                 </tbody>

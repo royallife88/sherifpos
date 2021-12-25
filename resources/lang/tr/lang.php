@@ -964,4 +964,21 @@ return [
     'sent_to_supplier' => 'Tedarikçiye Gönderildi',
     'partially_received' => 'Kısmen Alındı',
 
+    'cost' => 'Maliyet',
+    'another_payment_option' => 'Başka Bir Ödeme Seçeneği',
+    'modules' => 'Modüller',
+    'module' => 'Modül',
+    'product_module' => 'Ürün Modülü',
+    'customer_module' => 'Müşteri Modülü',
+    'supplier_module' => 'Tedarikçi Modülü',
+    'sms_module' => 'SMS Modülü',
+    'sp_module' => 'Satış Promosyonu Modülü',
+    'email_module' => 'E-posta Modülü',
+    'promotions' => 'Promosyonlar',
+    'add_payment_row' => 'Ödeme Satırı Ekle',
+    'version' => 'sürüm',
+    'last_update' => 'Son Güncelleme',
+    'added_by' => 'Tarafından eklendi',
+    'enjoy_your_meal_please_come_again' => 'Afia olsun, tekrar gel',
+
 ];

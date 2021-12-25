@@ -540,6 +540,7 @@ $("#expiry_date").change(function () {
 
 $(document).on("change", "#sell_price", function () {
     $(".store_prices").val($(this).val());
+    $(".default_sell_price").val($(this).val());
 });
 $(document).on("change", "#sku", function () {
     let sku = $(this).val();
@@ -559,6 +560,4 @@ $(document).on("change", "#sku", function () {
 $(document).on("change", "#purchase_price", function () {
     $(".default_purchase_price").val($(this).val());
 });
-$(document).on("change", "#sell_price", function () {
-    $(".default_sell_price").val($(this).val());
-});
+

@@ -99,15 +99,18 @@ $invoice_lang = request()->session()->get('language');
         <div class="centered">
             @include('layouts.partials.print_header')
 
-            <p>@lang('lang.address', [], $invoice_lang): <br> {{$transaction->store->name}}
+            <p>{{$transaction->store->name}}
                 {{$transaction->store->location}}</p>
-            <p>@lang('lang.phone_number', [], $invoice_lang): <br> {{$transaction->store->phone_number}} </p>
+            <p>{{$transaction->store->phone_number}} </p>
 
         </div>
         <p>@lang('lang.date', [], $invoice_lang): {{$transaction->created_at}}<br>
             @lang('lang.reference', [], $invoice_lang): {{$transaction->invoice_no}}<br>
-            @lang('lang.customer', [], $invoice_lang):
-            @if(!empty($transaction->customer)){{$transaction->customer->name}}@endif
+            @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
+            @lang('lang.customer', [], $invoice_lang): {{$transaction->customer->name}} <br>
+            @lang('lang.address', [], $invoice_lang): {{$transaction->customer->address}} <br>
+            @lang('lang.mobile_number', [], $invoice_lang): {{$transaction->customer->mobile_number}} <br>
+            @endif
         </p>
         <div class="table_div" style=" padding: 0 7px; width:100%; height:100%;">
             <table style="margin: 0 auto;">
@@ -189,18 +192,20 @@ $invoice_lang = request()->session()->get('language');
         <div style="padding: 0 7px;">
             <table>
                 <tbody>
-                    <tr>
-                        <td colspan="2">@lang('lang.paid_by', [], $invoice_lang):</td>
-                    </tr>
                     @foreach($transaction->transaction_payments as $payment_data)
                     <tr style="background-color:#ddd;">
                         <td style="padding: 5px;width:30%">
                             @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
-                        <td style="padding: 5px;width:40%">{{@num_format($payment_data->amount)}}</td>
+                        <td style="padding: 5px;width:40%; text-align: right;" colspan="2">{{@num_format($payment_data->amount)}}</td>
                     </tr>
                     @endforeach
                     <tr>
-                        <td class="centered" colspan="3">@lang('lang.thank_you_and_come_again', [], $invoice_lang)
+                        <td class="centered" colspan="3">
+                            @if(session('system_mode') == 'restaurant')
+                            @lang('lang.enjoy_your_meal_please_come_again', [], $invoice_lang)
+                            @else
+                            @lang('lang.thank_you_and_come_again', [], $invoice_lang)
+                            @endif
                         </td>
                     </tr>
                     @if(!empty($transaction->terms_and_conditions))
@@ -213,10 +218,6 @@ $invoice_lang = request()->session()->get('language');
                             <img style="margin-top:10px;"
                                 src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
                                 width="300" alt="barcode" />
-                            <br>
-                            <img style="margin-top:10px;"
-                                src="data:image/png;base64,{{DNS2D::getBarcodePNG($transaction->invoice_no, 'QRCODE')}}"
-                                alt="barcode" />
                         </td>
                     </tr>
                 </tbody>

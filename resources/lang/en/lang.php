@@ -982,5 +982,6 @@ return [
     'version' => 'Version',
     'last_update' => 'Last Update',
     'added_by' => 'Added By',
+    'enjoy_your_meal_please_come_again' => 'Enjoy your meal, please come again',
 
 ];

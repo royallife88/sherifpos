@@ -962,4 +962,21 @@ return [
     'sent_to_supplier' => 'أرسل إلى المورد',
     'partially_received' => 'تم الاستلام جزئيًا',
 
+    'cost' => 'كلفة',
+    'another_payment_option' => 'خيار دفع آخر',
+    'modules' => 'الوحدات',
+    'module' => 'وحدة',
+    'product_module' => 'وحدة المنتج',
+    'customer_module' => 'وحدة العميل',
+    'supplier_module' => 'وحدة المورد',
+    'sms_module' => 'وحدة SMS',
+    'sp_module' => 'وحدة ترويج البيع',
+    'email_module' => 'وحدة البريد الإلكتروني',
+    'promotions' => 'الترقيات',
+    'add_payment_row' => 'إضافة صف الدفع',
+    'version' => 'الإصدار',
+    'last_update' => 'اخر تحديث',
+    'added_by' => 'أضيفت من قبل',
+    'enjoy_your_meal_please_come_again' => 'استمتع بوجبتك، ننتظركم مرة أخرى',
+
 ];

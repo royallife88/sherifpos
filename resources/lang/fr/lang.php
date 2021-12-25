@@ -962,4 +962,21 @@ return [
     'sent_to_supplier' => 'Envoyé au fournisseur',
     'partially_received' => 'Partiellement reçu',
 
+    'cost' => 'Coût',
+    'another_payment_option' => 'Une autre option de paiement',
+    'modules' => 'Modules',
+    'module' => 'Module',
+    'product_module' => 'Module produit',
+    'customer_module' => 'Module client',
+    'supplier_module' => 'Module Fournisseur',
+    'sms_module' => 'Module SMS',
+    'sp_module' => 'Module de promotion des ventes',
+    'email_module' => 'Module de courrier électronique',
+    'promotions' => 'Promotions',
+    'add_payment_row' => 'Ajouter une ligne de paiement',
+    'version' => 'Version',
+    'last_update' => 'Dernière mise à jour',
+    'added_by' => 'Ajouté par',
+    'enjoy_your_meal_please_come_again' => 'Bon appétit, revenez s\'il vous plait',
+
 ];
