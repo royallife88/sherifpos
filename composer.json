@@ -19,7 +19,8 @@
         "mpdf/mpdf": "^8.0",
         "spatie/laravel-medialibrary": "^9.0.0",
         "spatie/laravel-permission": "^4.2",
-        "staudenmeir/eloquent-json-relations": "^1.1"
+        "staudenmeir/eloquent-json-relations": "^1.1",
+        "yajra/laravel-datatables-oracle": "~9.0"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

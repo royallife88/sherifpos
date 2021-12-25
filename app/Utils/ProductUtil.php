@@ -519,9 +519,7 @@ class ProductUtil extends Util
      */
     public function getProductDiscountDetails($product_id, $customer_id)
     {
-        $customer = Customer::find($customer_id);
-
-        if ($customer->is_default != 1) {
+        if (!empty($customer_id)) {
             $product = Product::whereJsonContains('discount_customers', $customer_id)
                 ->where('id', $product_id)
                 ->select(

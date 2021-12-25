@@ -257,7 +257,7 @@
                 data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i>
             {!! Form::select('discount_customers[]', $customers_tree_arry,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%', 'multiple']) !!}
+            'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
         </div>
     </div>
     <div class="col-md-4">
