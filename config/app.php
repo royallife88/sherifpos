@@ -177,7 +177,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Spatie\Permission\PermissionServiceProvider::class,
         Milon\Barcode\BarcodeServiceProvider::class,
-        Barryvdh\Debugbar\ServiceProvider::class,
+        // Barryvdh\Debugbar\ServiceProvider::class,
 
     ],
 
@@ -234,7 +234,7 @@ return [
         'DNS1D' => Milon\Barcode\Facades\DNS1DFacade::class,
         'DNS2D' => Milon\Barcode\Facades\DNS2DFacade::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
-        'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
+        // 'Debugbar' => Barryvdh\Debugbar\Facades\Debugbar::class,
 
     ],
 
