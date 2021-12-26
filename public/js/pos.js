@@ -959,8 +959,6 @@ $(document).ready(function () {
             var data = $(form).serialize();
             data =
                 data +
-                "&method=" +
-                $("#payment_method").val() +
                 "&terms_and_condition_id=" +
                 $("#terms_and_condition_id").val();
             var url = $(form).attr("action");
