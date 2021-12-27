@@ -130,6 +130,7 @@ myDropzone = new Dropzone("div#my-dropzone", {
                         data: $("#product-form").serialize(),
                         success: function (response) {
                             myFunction();
+                            console.log('response.success', response.success);
                             if (response.success) {
                                 swal("Success", response.msg, "success");
                             } else {

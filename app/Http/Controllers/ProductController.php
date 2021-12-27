@@ -389,67 +389,67 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        // try {
-        $product_data = [
-            'name' => $request->name,
-            'product_class_id' => $request->product_class_id,
-            'category_id' => $request->category_id,
-            'sub_category_id' => $request->sub_category_id,
-            'brand_id' => $request->brand_id,
-            'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
-            'multiple_units' => $request->multiple_units,
-            'multiple_colors' => $request->multiple_colors,
-            'multiple_sizes' => $request->multiple_sizes,
-            'multiple_grades' => $request->multiple_grades,
-            'is_service' => !empty($request->is_service) ? 1 : 0,
-            'product_details' => $request->product_details,
-            'barcode_type' => $request->barcode_type ?? 'C128',
-            'alert_quantity' => $request->alert_quantity,
-            'purchase_price' => $request->purchase_price,
-            'sell_price' => $request->sell_price,
-            'tax_id' => $request->tax_id,
-            'tax_method' => $request->tax_method,
-            'discount_type' => $request->discount_type,
-            'discount_customers' => $request->discount_customers,
-            'discount' => $request->discount,
-            'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
-            'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
-            'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
-            'show_to_customer_types' => $request->show_to_customer_types,
-            'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
-            'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
-            'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
-            'active' => !empty($request->active) ? 1 : 0,
-            'created_by' => Auth::user()->id
-        ];
+        try {
+            $product_data = [
+                'name' => $request->name,
+                'product_class_id' => $request->product_class_id,
+                'category_id' => $request->category_id,
+                'sub_category_id' => $request->sub_category_id,
+                'brand_id' => $request->brand_id,
+                'sku' => !empty($request->sku) ? $request->sku : $this->productUtil->generateSku($request->name),
+                'multiple_units' => $request->multiple_units,
+                'multiple_colors' => $request->multiple_colors,
+                'multiple_sizes' => $request->multiple_sizes,
+                'multiple_grades' => $request->multiple_grades,
+                'is_service' => !empty($request->is_service) ? 1 : 0,
+                'product_details' => $request->product_details,
+                'barcode_type' => $request->barcode_type ?? 'C128',
+                'alert_quantity' => $request->alert_quantity,
+                'purchase_price' => $request->purchase_price,
+                'sell_price' => $request->sell_price,
+                'tax_id' => $request->tax_id,
+                'tax_method' => $request->tax_method,
+                'discount_type' => $request->discount_type,
+                'discount_customers' => $request->discount_customers,
+                'discount' => $request->discount,
+                'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
+                'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
+                'show_to_customer' => !empty($request->show_to_customer) ? 1 : 0,
+                'show_to_customer_types' => $request->show_to_customer_types,
+                'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
+                'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+                'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+                'active' => !empty($request->active) ? 1 : 0,
+                'created_by' => Auth::user()->id
+            ];
 
 
-        DB::beginTransaction();
+            DB::beginTransaction();
 
-        $product = Product::create($product_data);
+            $product = Product::create($product_data);
 
-        $this->productUtil->createOrUpdateVariations($product, $request);
+            $this->productUtil->createOrUpdateVariations($product, $request);
 
 
-        if ($request->images) {
-            foreach ($request->images as $image) {
-                $product->addMedia($image)->toMediaCollection('product');
+            if ($request->images) {
+                foreach ($request->images as $image) {
+                    $product->addMedia($image)->toMediaCollection('product');
+                }
             }
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
-
-
-        DB::commit();
-        $output = [
-            'success' => true,
-            'msg' => __('lang.success')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
 
         return $output;
     }

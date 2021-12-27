@@ -55,10 +55,10 @@
             class="modal fade text-left">
         </div>
     </div>
-    @include('layouts.partials.javascript')
     <script type="text/javascript">
         base_path = "{{url('/')}}";
     </script>
+    @include('layouts.partials.javascript')
     <script>
         $.ajaxSetup({
             headers: {

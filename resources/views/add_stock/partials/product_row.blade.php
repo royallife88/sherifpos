@@ -3,6 +3,8 @@
 $i = $index;
 @endphp
 <tr>
+    <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+        alt="photo" width="50" height="50"></td>
     <td>
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>

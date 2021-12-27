@@ -37,8 +37,8 @@
                             class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
                                 title="@lang('lang.view')" data-toggle="tooltip" class="fa fa-eye"></i></a>
                         @endcan
-                        <a target="_blank" href="{{action('SellPosController@edit', $transaction->id)}}?status=draft"
-                            class="btn btn-success"><i class="dripicons-document-edit"></i></a>
+                        {{-- <a target="_blank" href="{{action('SellPosController@edit', $transaction->id)}}?status=draft"
+                            class="btn btn-success"><i class="dripicons-document-edit"></i></a> --}}
                         <button class="btn btn-danger remove_draft" data-href={{action('SellController@destroy',
                             $transaction->id)}}
                             data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"

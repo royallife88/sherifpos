@@ -405,6 +405,7 @@ class SellPosController extends Controller
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
             if ($transaction->status != 'draft') {
+                print_r($request->payments); die();
                 foreach ($request->payments as $payment) {
 
                     $amount = $this->commonUtil->num_uf($payment['amount']);

@@ -19,21 +19,13 @@ $site_title = App\Models\System::getProperty('site_title');
 </head>
 
 <body>
-    <div class="page login-page"
-        {{-- style="background-image: url('{{asset('images/r2.jpg')}}'); background-repeat: no-repeat; background-size: cover; background-position: center;" --}}
-        >
-        {{-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
-                <div class="top-email">
-                    <span class="h5"> @lang('lang.email'): info@sherifshalaby.tech</span>
-                </div>
-            </div>
-        </nav> --}}
-        @yield('content')
-    </div>
-
-    @include('layouts.partials.javascript')
-    @yield('javascript')
+    <input type="hidden" id="__language" value="{{session('language')}}">
+    <div class="page login-page" @yield('content') </div>
+        <script type="text/javascript">
+            base_path = "{{url('/')}}";
+        </script>
+        @include('layouts.partials.javascript')
+        @yield('javascript')
 </body>
 
 </html>

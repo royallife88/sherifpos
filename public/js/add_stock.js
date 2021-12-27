@@ -42,9 +42,11 @@ $(document).ready(function () {
                 },
             })
             .autocomplete("instance")._renderItem = function (ul, item) {
-            return $("<li>")
-                .append("<div>" + item.text + "</div>")
-                .appendTo(ul);
+            var html = `<li><div>`;
+            if (item.image != "" && item.image != null) {
+                html += `<img src="${item.image}" width="50px" height="50px"/> ${item.text}</div>`;
+            }
+            return $(html).appendTo(ul);
         };
     }
 });

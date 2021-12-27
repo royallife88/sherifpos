@@ -80,6 +80,7 @@
                                 <table class="table table-bordered table-striped table-condensed" id="product_table">
                                     <thead>
                                         <tr>
+                                            <th style="width: 7%" class="col-sm-8">@lang( 'lang.image' )</th>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
@@ -91,6 +92,8 @@
                                     <tbody>
                                         @foreach ($add_stock->add_stock_lines as $product)
                                         <tr>
+                                            <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                alt="photo" width="50" height="50"></td>
                                             <td>
                                                 {{$product->product->name}}
 

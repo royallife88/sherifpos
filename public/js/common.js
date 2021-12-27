@@ -180,6 +180,19 @@ $("#method").change(function () {
     }
 });
 var language = $("#__language").val();
+
+if (language === undefined || language === null || language === "") {
+    language = $.cookie("pos.language");
+    window.location.replace(
+        base_path + "/general/switch-language/" + $.cookie("pos.language")
+    );
+}
+if ($.cookie("pos.language") !== language) {
+    $.cookie("pos.language", language);
+    window.location.replace(
+        base_path + "/general/switch-language/" + $.cookie("pos.language")
+    );
+}
 if (language == "en") {
     dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json";
 } else if (language == "fr") {

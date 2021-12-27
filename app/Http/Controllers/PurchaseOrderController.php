@@ -359,9 +359,8 @@ class PurchaseOrderController extends Controller
                 })
                 ->whereNull('variations.deleted_at')
                 ->select(
+                    'products.*',
                     'products.id as product_id',
-                    'products.name',
-                    'products.type',
                     // 'products.sku as sku',
                     'variations.id as variation_id',
                     'variations.name as variation',
@@ -378,6 +377,7 @@ class PurchaseOrderController extends Controller
                 $products_array[$product->product_id]['name'] = $product->name;
                 $products_array[$product->product_id]['sku'] = $product->sub_sku;
                 $products_array[$product->product_id]['type'] = $product->type;
+                $products_array[$product->product_id]['image'] = !empty($product->getFirstMediaUrl('product')) ? $product->getFirstMediaUrl('product') : asset('/uploads/'.session('logo'));
                 $products_array[$product->product_id]['variations'][]
                     = [
                         'variation_id' => $product->variation_id,
@@ -413,6 +413,7 @@ class PurchaseOrderController extends Controller
                             'text' => $text . ' - ' . $variation['sub_sku'],
                             'product_id' => $key,
                             'variation_id' => $variation['variation_id'],
+                            'image' => $value['image'],
                         ];
                     }
                     $i++;

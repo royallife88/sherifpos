@@ -414,6 +414,7 @@ class ProductUtil extends Util
         $product->where('products.id', $product_id)->groupBy('v.id');
 
         $products = $product->select(
+            'products.*',
             'products.id as product_id',
             'products.name as product_name',
             'product_stores.qty_available',

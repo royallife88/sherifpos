@@ -440,21 +440,38 @@ class Util
     }
 
     /**
-     * Gives a list of all timezone
+     * Gives a list of all timezone with gmt offset
      *
      * @return array
      */
     public function allTimeZones()
     {
-        $datetime = new \DateTimeZone("EDT");
+        $timezones = [];
+        foreach (timezone_identifiers_list() as $key => $zone) {
+            $timezone = timezone_open($zone);
 
-        $timezones = $datetime->listIdentifiers();
-        $timezone_list = [];
-        foreach ($timezones as $timezone) {
-            $timezone_list[$timezone] = $timezone;
+            $datetime_eur = date_create("now", timezone_open("Europe/London"));
+            $gmt_offset = timezone_offset_get($timezone, $datetime_eur);
+            $offset = $this->convertToHoursMins($gmt_offset);
+            if ($gmt_offset > 0) {
+                $timezones[$zone] = $zone . ' (GMT +' . $offset . ')';
+            } else if ($gmt_offset < 0) {
+                $timezones[$zone] = $zone . ' (GMT ' . $offset . ')';
+            } else {
+                $timezones[$zone] = $zone . ' (GMT +00:00)';
+            }
         }
+        return $timezones;
+    }
 
-        return $timezone_list;
+
+    function convertToHoursMins($time)
+    {
+        $hours = floor($time / 3600);
+        $x = $time / 3600;
+        $remain_nimutes = $x - floor($x);;
+        $minutes = ($remain_nimutes * 60);
+        return $hours . ':' . str_pad($minutes, 2, "0");;
     }
     /**
      * find user of sepcific role

@@ -905,7 +905,7 @@ return [
     'select_products' => 'Select Products',
     'unlimited' => 'Unlimted',
     'creation_date' => 'Creation Date',
-    'product_add_stock_transaction_exist' => 'Product add stock transaction exist, delete sale transaction first ',
+    'product_add_stock_transaction_exist' => 'Product add stock transaction exist, delete add stock transaction first ',
     'sku_already_in_use' => 'SKU is already in use, please try a different SKU',
     'add_product_class' => 'Add Product Class',
     'add_coupon' => 'Add Coupon',
