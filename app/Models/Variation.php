@@ -19,27 +19,27 @@ class Variation extends Model
 
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class)->withDefault(['name' => '']);
     }
 
     public function color()
     {
-        return $this->belongsTo(Color::class);
+        return $this->belongsTo(Color::class)->withDefault(['name' => '']);
     }
 
     public function Size()
     {
-        return $this->belongsTo(Size::class);
+        return $this->belongsTo(Size::class)->withDefault(['name' => '']);
     }
 
     public function grade()
     {
-        return $this->belongsTo(Grade::class);
+        return $this->belongsTo(Grade::class)->withDefault(['name' => '']);
     }
 
     public function unit()
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class)->withDefault(['name' => '']);
     }
 
     public function product_stores()

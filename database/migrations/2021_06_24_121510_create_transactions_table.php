@@ -16,8 +16,11 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('store_id')->nullable();
+            $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->unsignedBigInteger('supplier_id')->nullable();
+            $table->foreign('supplier_id')->references('id')->on('suppliers')->onDelete('cascade');
             $table->unsignedBigInteger('customer_id')->nullable();
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->unsignedBigInteger('store_pos_id')->nullable();
             $table->string('type')->nullable();
             $table->string('sub_type')->nullable();
@@ -41,6 +44,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('coupon_id')->nullable();
             $table->unsignedBigInteger('gift_card_id')->nullable();
             $table->unsignedBigInteger('tax_id')->nullable();
+            $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
             $table->decimal('total_tax', 15, 4)->nullable();
             $table->string('discount_type')->nullable();
             $table->decimal('discount_value', 15, 4)->nullable()->comment('discount value applied by user');
@@ -52,7 +56,7 @@ class CreateTransactionsTable extends Migration
             $table->string('ref_no')->nullable();
             $table->decimal('grand_total', 15, 4)->nullable();
             $table->decimal('final_total', 15, 4)->default(0.0000);
-            $table->text('deliveryman_id')->nullable()->comment('employee id foriegn key from employees table');
+            $table->unsignedBigInteger('deliveryman_id')->nullable()->comment('employee id foriegn key from employees table');
             $table->string('delivery_status')->nullable();
             $table->decimal('delivery_cost', 15, 4)->default(0);
             $table->boolean('delivery_cost_paid_by_customer')->default(1);
@@ -89,7 +93,9 @@ class CreateTransactionsTable extends Migration
             $table->boolean('notify_me')->default(0);
             $table->integer('notify_before_days')->default(0);
             $table->unsignedBigInteger('created_by');
+            $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('deleted_by')->nullable();
+            $table->foreign('deleted_by')->references('id')->on('users')->onDelete('cascade');
 
             $table->timestamps();
         });

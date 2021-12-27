@@ -69,6 +69,8 @@ class SetSessionData
             if ($employee) {
                 if (!empty($employee->job_type)) {
                     $user->job_title = $employee->job_type->job_title;
+                }else{
+                    $user->job_title = 'N/A';
                 }
             }
 
@@ -82,11 +84,13 @@ class SetSessionData
         $request->session()->put('system_mode', $system_mode);
 
 
-        $logo = System::getProperty('logo');
-        if (empty($logo)) {
-            $logo = 'sharifshalaby.png';
+        if(empty(session('logo'))){
+            $logo = System::getProperty('logo');
+            if (empty($logo)) {
+                $logo = 'sharifshalaby.png';
+            }
+            $request->session()->put('logo', $logo);
         }
-        $request->session()->put('logo', $logo);
 
         return $next($request);
     }

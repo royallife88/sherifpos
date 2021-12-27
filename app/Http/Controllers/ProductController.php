@@ -269,9 +269,10 @@ class ProductController extends Controller
             'variations.default_sell_price',
             'add_stock_lines.expiry_date as exp_date',
             DB::raw('SUM(product_stores.qty_available) as current_stock'),
-        )
+        )->with(['product_class', 'category', 'sub_category', 'brand', 'created_by_user'])
             ->groupBy('variations.id')
             ->get();
+
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -284,6 +285,7 @@ class ProductController extends Controller
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $customers_tree_arry = Customer::getCustomerTreeArray();
+
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
 

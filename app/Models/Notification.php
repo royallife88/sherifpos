@@ -26,6 +26,6 @@ class Notification extends Model
     }
     public function created_by_user()
     {
-        return $this->belongsTo(User::class, 'created_by', 'id');
+        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);
     }
 }

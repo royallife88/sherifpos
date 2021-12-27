@@ -18,10 +18,15 @@ class CreateVariationsTable extends Migration
             $table->string('name')->default('Default');
             $table->string('sub_sku');
             $table->unsignedBigInteger('product_id')->nullable();
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->unsignedBigInteger('color_id')->nullable();
+            $table->foreign('color_id')->references('id')->on('colors');
             $table->unsignedBigInteger('size_id')->nullable();
+            $table->foreign('size_id')->references('id')->on('sizes');
             $table->unsignedBigInteger('grade_id')->nullable();
+            $table->foreign('grade_id')->references('id')->on('grades');
             $table->unsignedBigInteger('unit_id')->nullable();
+            $table->foreign('unit_id')->references('id')->on('units');
             $table->decimal('default_purchase_price', 15, 4);
             $table->decimal('default_sell_price', 15, 4);
             $table->boolean('is_dummy')->default(1);

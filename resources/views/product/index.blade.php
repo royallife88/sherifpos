@@ -15,13 +15,13 @@
 
     <div class="card mt-3">
         <div class="col-md-12">
-            <form accept="" method="GET">
+            <form accept="" method="GET" id="filter_product_form">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('product_class_id', __('lang.product_class') . ':', []) !!}
                             {!! Form::select('product_class_id', $product_classes, request()->product_class_id, ['class'
-                            => 'form-control
+                            => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
@@ -29,7 +29,7 @@
                         <div class="form-group">
                             {!! Form::label('category_id', __('lang.category') . ':', []) !!}
                             {!! Form::select('category_id', $categories, request()->category_id, ['class' =>
-                            'form-control
+                            'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
@@ -37,49 +37,49 @@
                         <div class="form-group">
                             {!! Form::label('sub_category_id', __('lang.sub_category') . ':', []) !!}
                             {!! Form::select('sub_category_id', $sub_categories, request()->sub_category_id, ['class' =>
-                            'form-control
+                            'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('brand_id', __('lang.brand') . ':', []) !!}
-                            {!! Form::select('brand_id', $brands, request()->brand_id, ['class' => 'form-control
+                            {!! Form::select('brand_id', $brands, request()->brand_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
-                            {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control
+                            {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('color_id', __('lang.color') . ':', []) !!}
-                            {!! Form::select('color_id', $colors, request()->color_id, ['class' => 'form-control
+                            {!! Form::select('color_id', $colors, request()->color_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('size_id', __('lang.size') . ':', []) !!}
-                            {!! Form::select('size_id', $sizes, request()->size_id, ['class' => 'form-control
+                            {!! Form::select('size_id', $sizes, request()->size_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('grade_id', __('lang.grade') . ':', []) !!}
-                            {!! Form::select('grade_id', $grades, request()->grade_id, ['class' => 'form-control
+                            {!! Form::select('grade_id', $grades, request()->grade_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('tax_id', __('lang.tax') . ':', []) !!}
-                            {!! Form::select('tax_id', $taxes, request()->tax_id, ['class' => 'form-control
+                            {!! Form::select('tax_id', $taxes, request()->tax_id, ['class' => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
@@ -87,14 +87,14 @@
                         <div class="form-group">
                             {!! Form::label('store_id', __('lang.store'), []) !!}
                             {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            'form-control filter_product', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('customer_type_id', __('lang.customer_type') . ':', []) !!}
                             {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, ['class'
-                            => 'form-control
+                            => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
@@ -102,12 +102,12 @@
                         <div class="form-group">
                             {!! Form::label('created_by', __('lang.created_by') . ':', []) !!}
                             {!! Form::select('created_by', $users, request()->created_by, ['class'
-                            => 'form-control
+                            => 'form-control filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button>
+                        {{-- <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button> --}}
                         <a class="btn btn-danger mt-4"
                             href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a>
 
@@ -202,7 +202,10 @@
         <tbody>
             @foreach($products as $product)
             <tr>
-                <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                @php
+                    $image = $product->getFirstMediaUrl('product');
+                @endphp
+                <td><img src="@if(!empty($image)){{$image}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                         alt="photo" width="50" height="50"></td>
                 <td>@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}} @endif</td>
                 <td>{{$product->sub_sku}}
@@ -219,10 +222,10 @@
                 <td>{{@num_format($product->default_sell_price)}}</td>
                 <td>@if(!empty($product->tax->name)){{$product->tax->name}}@endif</td>
                 <td>@if(!empty($product->brand)){{$product->brand->name}}@endif</td>
-                <td>{{implode(', ', $product->units->pluck('name')->toArray())}}</td>
+                <td>{{$product->unit_name}}</td>
                 <td>{{$product->color_name}}</td>
                 <td>{{$product->size_name}}</td>
-                <td>{{implode(', ', $product->grades->pluck('name')->toArray())}}</td>
+                <td>{{$product->grade_name}}</td>
                 <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
                 <td>{{$product->customer_type}}</td>
                 <td>@if(!empty($product->exp_date)){{@format_date($product->exp_date)}}@endif</td>
@@ -328,5 +331,8 @@
 
         }
     }
+    $(document).on('change', '.filter_product', function(){
+        $('#filter_product_form').submit();
+    })
 </script>
 @endsection

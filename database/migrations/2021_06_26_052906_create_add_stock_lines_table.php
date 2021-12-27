@@ -16,8 +16,11 @@ class CreateAddStockLinesTable extends Migration
         Schema::create('add_stock_lines', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->unsignedBigInteger('variation_id');
+            $table->foreign('variation_id')->references('id')->on('variations')->onDelete('cascade');
             $table->decimal('quantity', 15, 4);
             $table->decimal('quantity_sold', 15, 4)->default(0)->comment('quantity sold from this purchase line');
             $table->decimal('quantity_returned', 15, 4)->default(0);

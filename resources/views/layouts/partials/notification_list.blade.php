@@ -12,9 +12,9 @@
 </style>
 @php
 $new_notifications = App\Models\Notification::where('user_id', Auth::user()->id)->whereDate('created_at',
-date('Y-m-d'))->orderBy('created_at', 'desc')->get();
+date('Y-m-d'))->orderBy('created_at', 'desc')->with(['created_by_user', 'product', 'transaction'])->get();
 $new_count = $new_notifications->where('is_seen', 0)->count();
-$earlier_notifications = App\Models\Notification::where('user_id', Auth::user()->id)->whereDate('created_at', '<', date('Y-m-d'))->orderBy('created_at', 'desc')->get();
+$earlier_notifications = App\Models\Notification::where('user_id', Auth::user()->id)->whereDate('created_at', '<', date('Y-m-d'))->orderBy('created_at', 'desc')->with(['created_by_user', 'product', 'transaction'])->limit(10)->get();
 @endphp
 <li class="nav-item" id="notification-icon">
     <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"

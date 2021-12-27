@@ -44,23 +44,23 @@ class Product extends Model implements HasMedia
     }
     public function product_class()
     {
-        return $this->belongsTo(ProductClass::class);
+        return $this->belongsTo(ProductClass::class)->withDefault(['name' => '']);
     }
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class)->withDefault(['name' => '']);
     }
     public function sub_category()
     {
-        return $this->belongsTo(Category::class, 'sub_category_id', 'id');
+        return $this->belongsTo(Category::class, 'sub_category_id', 'id')->withDefault(['name' => '']);
     }
     public function brand()
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class)->withDefault(['name' => '']);
     }
     public function tax()
     {
-        return $this->belongsTo(Tax::class);
+        return $this->belongsTo(Tax::class)->withDefault(['name' => '']);
     }
 
     public function variations()

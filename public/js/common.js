@@ -153,6 +153,11 @@ function __write_number_without_decimal_format(
 function __print_receipt(section_id = null) {
     setTimeout(function () {
         window.print();
+        if ($("#edit_pos_form").length > 0) {
+            setTimeout(() => {
+                window.close();
+            }, 1500);
+        }
     }, 1000);
 }
 function incrementImageCounter() {

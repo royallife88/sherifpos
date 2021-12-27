@@ -17,8 +17,11 @@ class CreateProductsTable extends Migration
             $table->id();
             $table->string('name');
             $table->unsignedBigInteger('product_class_id')->nullable();
+            $table->foreign('product_class_id')->references('id')->on('product_classes')->onDelete('cascade');
             $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->unsignedBigInteger('sub_category_id')->nullable();
+            $table->foreign('sub_category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->string('sku');
             $table->string('multiple_units')->nullable();

@@ -16,6 +16,7 @@ class CreateTransactionPaymentsTable extends Migration
         Schema::create('transaction_payments', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('transaction_id');
+            $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->decimal('amount', 15, 4);
             $table->string('method');
             $table->string('paid_on');

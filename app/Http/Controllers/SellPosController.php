@@ -361,7 +361,7 @@ class SellPosController extends Controller
      */
     public function edit($id)
     {
-        $transaction = Transaction::find($id);
+        $transaction = Transaction::findOrFail($id);
 
         $categories = Category::whereNull('parent_id')->get();
         $sub_categories = Category::whereNotNull('parent_id')->get();

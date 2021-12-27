@@ -1,5 +1,6 @@
 @php
-    $module_settings = App\Models\System::getProperty('module_settings') ? json_decode(App\Models\System::getProperty('module_settings'), true) : [];
+    $module_settings = App\Models\System::getProperty('module_settings');
+    $module_settings = !empty($module_settings) ? json_decode($module_settings, true) : [];
 @endphp
 <!-- Side Navbar -->
 <nav class="side-navbar no-print @if(request()->segment(1) == 'pos') shrink @endif">

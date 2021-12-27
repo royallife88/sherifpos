@@ -206,6 +206,10 @@ class SettingController extends Controller
                         ['key' => $key],
                         ['value' => $value, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
                     );
+                    if ($key == 'logo') {
+                        $logo = System::getProperty('logo');
+                        $request->session()->put('logo', $logo);
+                    }
                 }
             }
 
