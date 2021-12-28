@@ -121,7 +121,7 @@
                                 <div class="input-group my-group">
                                     {!! Form::select('multiple_units[]', $units,
                                     $product->multiple_units, ['class' => 'selectpicker form-control',
-                                    'data-live-search'=>"true",
+                                    'data-live-search'=>"true", 'disabled' => $product->type == 'variable' ? true : false,
                                     'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_units']) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.unit.create_and_edit')
@@ -138,7 +138,7 @@
                                 <div class="input-group my-group">
                                     {!! Form::select('multiple_colors[]', $colors,
                                     $product->multiple_colors, ['class' => 'selectpicker form-control',
-                                    'data-live-search'=>"true",
+                                    'data-live-search'=>"true", 'disabled' => $product->type == 'variable' ? true : false,
                                     'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_colors']) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.color.create_and_edit')
@@ -156,7 +156,7 @@
                                 <div class="input-group my-group">
                                     {!! Form::select('multiple_sizes[]', $sizes,
                                     $product->multiple_sizes, ['class' => 'selectpicker form-control',
-                                    'data-live-search'=>"true",
+                                    'data-live-search'=>"true", 'disabled' => $product->type == 'variable' ? true : false,
                                     'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_sizes']) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.size.create_and_edit')
@@ -174,7 +174,7 @@
                                 <div class="input-group my-group">
                                     {!! Form::select('multiple_grades[]', $grades,
                                     $product->multiple_grades, ['class' => 'selectpicker form-control',
-                                    'data-live-search'=>"true",
+                                    'data-live-search'=>"true", 'disabled' => $product->type == 'variable' ? true : false,
                                     'style' =>'width: 80%' , 'multiple', 'id' => 'multiple_grades']) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.grade.create_and_edit')

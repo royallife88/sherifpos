@@ -535,6 +535,10 @@ class TransactionUtil extends Util
         if ($transaction->status == 'final' && empty($transaction->invoice_no)) {
             $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
         }
+        if ($transaction->status == 'draft' && $request->status == 'final') {
+            $transaction_data['transaction_date'] = Carbon::now();
+            $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
+        }
         $transaction_status = $transaction->status;
         $is_block_qty = $transaction->block_qty;
         $transaction->update($transaction_data);
@@ -603,7 +607,9 @@ class TransactionUtil extends Util
         //update stock for deleted lines
         $deleted_lines = TransactionSellLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_sell_lines)->get();
         foreach ($deleted_lines as $deleted_line) {
-            $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity);
+            if ($transaction_status != 'draft') {
+                $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity);
+            }
             $deleted_line->delete();
         }
 

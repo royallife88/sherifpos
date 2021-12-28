@@ -8,7 +8,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.edit_sale')</h4>
+                    <h4>@lang('lang.edit_sale') ({{$sale->invoice_no}})</h4>
                 </div>
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellController@update', $sale->id), 'method' => 'put', 'files' =>

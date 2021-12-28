@@ -104,7 +104,7 @@ $invoice_lang = request()->session()->get('language');
             <p>{{$transaction->store->phone_number}} </p>
 
         </div>
-        <p>@lang('lang.date', [], $invoice_lang): {{$transaction->created_at}}<br>
+        <p>@lang('lang.date', [], $invoice_lang): {{$transaction->transaction_date}}<br>
             @lang('lang.reference', [], $invoice_lang): {{$transaction->invoice_no}}<br>
             @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
             @lang('lang.customer', [], $invoice_lang): {{$transaction->customer->name}} <br>

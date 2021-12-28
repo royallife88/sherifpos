@@ -99,13 +99,14 @@
             <p>{{$transaction->store->phone_number}} </p>
 
         </div>
-        <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{$transaction->created_at}} {{__('lang.date',[],
+        <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{$transaction->transaction_date}} {{__('lang.date',[],
             'ar')}}<br>
             @lang('lang.reference',[], 'en'): {{$transaction->invoice_no}} {{__('lang.reference',[], 'ar')}}<br>
             @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
             @lang('lang.customer',[], 'en'): {{$transaction->customer->name}} {{__('lang.customer',[], 'ar')}}<br>
             @lang('lang.address',[], 'en'): {{$transaction->customer->address}} {{__('lang.address',[], 'ar')}}<br>
-            @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}} {{__('lang.mobile_number',[], 'ar')}}<br>
+            @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}}
+            {{__('lang.mobile_number',[], 'ar')}}<br>
             @endif
 
         </p>
@@ -143,18 +144,21 @@
                 <tfoot>
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->grand_total)}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.total',[], 'ar')}} <br> @lang('lang.total',[], 'en') </th>
+                        <th colspan="2" style="text-align:right">{{__('lang.total',[], 'ar')}} <br>
+                            @lang('lang.total',[], 'en') </th>
                     </tr>
                     @if($transaction->total_tax != 0)
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->total_tax)}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.order_tax',[], 'ar')}} <br> @lang('lang.order_tax',[], 'en') </th>
+                        <th colspan="2" style="text-align:right">{{__('lang.order_tax',[], 'ar')}} <br>
+                            @lang('lang.order_tax',[], 'en') </th>
                     </tr>
                     @endif
                     @if($transaction->discount_amount != 0)
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->discount_amount)}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.order_discount',[], 'ar')}} <br> @lang('lang.order_discount',[],
+                        <th colspan="2" style="text-align:right">{{__('lang.order_discount',[], 'ar')}} <br>
+                            @lang('lang.order_discount',[],
                             'en')
                         </th>
                     </tr>
@@ -163,7 +167,8 @@
                     <tr>
                         <th colspan="2" style="text-align:left">
                             {{@num_format($transaction->transaction_sell_lines->sum('coupon_discount'))}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.coupon_discount',[], 'ar')}} <br> @lang('lang.coupon_discount',[],
+                        <th colspan="2" style="text-align:right">{{__('lang.coupon_discount',[], 'ar')}} <br>
+                            @lang('lang.coupon_discount',[],
                             'en')
                         </th>
                     </tr>
@@ -172,7 +177,8 @@
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->delivery_cost)}}
                         </th>
-                        <th colspan="2" style="text-align:right">{{__('lang.delivery_cost',[], 'ar')}} <br> @lang('lang.delivery_cost' , [], 'en')</th>
+                        <th colspan="2" style="text-align:right">{{__('lang.delivery_cost',[], 'ar')}} <br>
+                            @lang('lang.delivery_cost' , [], 'en')</th>
                     </tr>
                     @endif
                     @if(!empty($transaction->rp_redeemed_value))
@@ -184,7 +190,8 @@
                     @endif
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->final_total)}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.grand_total',[], 'ar')}} <br> @lang('lang.grand_total',[], 'en')</th>
+                        <th colspan="2" style="text-align:right">{{__('lang.grand_total',[], 'ar')}} <br>
+                            @lang('lang.grand_total',[], 'en')</th>
                     </tr>
                     <tr>
 

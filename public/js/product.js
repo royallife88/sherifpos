@@ -31,8 +31,11 @@ $("#different_prices_for_stores").change(function () {
 $(".this_product_have_variant_div").slideUp();
 $("#this_product_have_variant").change(function () {
     if ($(this).prop("checked")) {
+        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').selectpicker('val', '');
+        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', true).selectpicker('refresh');
         $(".this_product_have_variant_div").slideDown();
     } else {
+        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', false).selectpicker('refresh');
         $(".this_product_have_variant_div").slideUp();
     }
 });
@@ -130,7 +133,6 @@ myDropzone = new Dropzone("div#my-dropzone", {
                         data: $("#product-form").serialize(),
                         success: function (response) {
                             myFunction();
-                            console.log('response.success', response.success);
                             if (response.success) {
                                 swal("Success", response.msg, "success");
                             } else {
