@@ -87,6 +87,7 @@
                 <th class="sum">@lang('lang.grand_total')</th>
                 <th class="sum">@lang('lang.paid')</th>
                 <th class="sum">@lang('lang.due')</th>
+                <th class="hidden">@lang('lang.products')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -94,8 +95,9 @@
             @foreach($sales as $sale)
             <tr>
                 <td>{{@format_date($sale->transaction_date)}}</td>
-                <td>{{$sale->invoice_no}} @if(!empty($sale->return_parent))<a data-href="{{action('SellReturnController@show', $sale->id)}}"
-                    data-container=".view_modal" class="btn btn-modal" style="color: #007bff;">R</a>@endif</td>
+                <td>{{$sale->invoice_no}} @if(!empty($sale->return_parent))<a
+                        data-href="{{action('SellReturnController@show', $sale->id)}}" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>@endif</td>
                 <td>@if(!empty($sale->store)){{$sale->store->name}}@endif</td>
                 <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                 <td>{{ucfirst($sale->status)}}</td>
@@ -111,6 +113,13 @@
                     {{@num_format($sale->transaction_payments->sum('amount'))}}</td>
                 <td>
                     {{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
+                <td>
+                    @foreach ($sale->transaction_sell_lines as $sell_line)
+                    @if(!empty($sell_line->product)){{$sell_line->product->name}} @endif - @if(!empty($sell_line->variation)){{$sell_line->variation->sub_sku}}@endif
+
+
+                    @endforeach
+                </td>
 
                 <td>
                     <div class="btn-group">

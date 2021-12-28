@@ -297,7 +297,7 @@ var datatable_params = {
     },
 };
 var table = $(".dataTable").DataTable(datatable_params);
-
+table.columns('.hidden').visible(false);
 function sum_table_col(table, class_name) {
     var sum = 0;
     table
