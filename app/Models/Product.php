@@ -28,6 +28,7 @@ class Product extends Model implements HasMedia
         'multiple_colors' => 'array',
         'multiple_sizes' => 'array',
         'multiple_grades' => 'array',
+        'discount_customer_types' => 'array',
         'discount_customers' => 'array',
         'show_to_customer_types' => 'array',
         // 'manufacturing_date' => 'datetime:m/d/Y',

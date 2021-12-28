@@ -44,42 +44,48 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('brand_id', __('lang.brand') . ':', []) !!}
-                            {!! Form::select('brand_id', $brands, request()->brand_id, ['class' => 'form-control filter_product
+                            {!! Form::select('brand_id', $brands, request()->brand_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
-                            {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control filter_product
+                            {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('color_id', __('lang.color') . ':', []) !!}
-                            {!! Form::select('color_id', $colors, request()->color_id, ['class' => 'form-control filter_product
+                            {!! Form::select('color_id', $colors, request()->color_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('size_id', __('lang.size') . ':', []) !!}
-                            {!! Form::select('size_id', $sizes, request()->size_id, ['class' => 'form-control filter_product
+                            {!! Form::select('size_id', $sizes, request()->size_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('grade_id', __('lang.grade') . ':', []) !!}
-                            {!! Form::select('grade_id', $grades, request()->grade_id, ['class' => 'form-control filter_product
+                            {!! Form::select('grade_id', $grades, request()->grade_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
                             {!! Form::label('tax_id', __('lang.tax') . ':', []) !!}
-                            {!! Form::select('tax_id', $taxes, request()->tax_id, ['class' => 'form-control filter_product
+                            {!! Form::select('tax_id', $taxes, request()->tax_id, ['class' => 'form-control
+                            filter_product
                             selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                         </div>
                     </div>
@@ -87,7 +93,8 @@
                         <div class="form-group">
                             {!! Form::label('store_id', __('lang.store'), []) !!}
                             {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
-                            'form-control filter_product', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                            'form-control filter_product', 'placeholder' => __('lang.all'),'data-live-search'=>"true"])
+                            !!}
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -203,14 +210,19 @@
             @foreach($products as $product)
             <tr>
                 @php
-                    $image = $product->getFirstMediaUrl('product');
+                $image = $product->getFirstMediaUrl('product');
                 @endphp
                 <td><img src="@if(!empty($image)){{$image}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                         alt="photo" width="50" height="50"></td>
-                <td>@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}} @endif</td>
+                <td>@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}}
+                    @endif</td>
                 <td>{{$product->sub_sku}}
                 </td>
-                <td><p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}} @endif</p><img class="center-block" style="width:250px; !important;height: {{2*0.24}}in !important;"
+                <td>
+                    <p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">
+                        @if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}}
+                        @endif</p><img class="center-block"
+                        style="width:250px; !important;height: {{2*0.24}}in !important;"
                         src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sub_sku,$product->barcode_type??'C128', 3,30,array(39, 48, 54), true)}}">
                 </td>
                 <td>@if(!empty($product->product_class)){{$product->product_class->name}}@endif</td>

@@ -31,8 +31,7 @@
                                     {!! Form::select('product_class_id', $product_classes,
                                     $product->product_class_id, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
-                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required',
-                                    'required']) !!}
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                     <span class="input-group-btn">
                                         @can('product_module.product_class.create_and_edit')
                                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -319,11 +318,11 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    {!! Form::label('discount_customers', __('lang.customers'), []) !!} <i
+                                    {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i
                                         class="dripicons-question" data-toggle="tooltip"
                                         title="@lang('lang.discount_customer_info')"></i>
-                                    {!! Form::select('discount_customers[]', $customers_tree_arry,
-                                    $product->discount_customers, ['class' => 'selectpicker form-control',
+                                    {!! Form::select('discount_customer_types[]', $discount_customer_types,
+                                    $product->discount_customer_types, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
                                     'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
                                 </div>

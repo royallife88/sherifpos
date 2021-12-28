@@ -318,15 +318,19 @@ function calculate_sub_totals() {
         if (sell_price > price_hidden) {
             let price_discount = (sell_price - price_hidden) * quantity;
             $(tr).find(".product_discount_type").val("surplus");
-            $(tr).find(".product_discount_value").val(price_discount);
-            $(tr).find(".product_discount_amount").val(price_discount);
+            // $(tr).find(".product_discount_value").val(price_discount);
+            // $(tr).find(".product_discount_amount").val(price_discount);
+            __write_number($(tr).find(".product_discount_value"), price_discount);
+            __write_number($(tr).find(".product_discount_amount"), price_discount);
             $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price) * quantity;
             $(tr).find(".product_discount_type").val("fixed");
-            $(tr).find(".product_discount_value").val(price_discount);
-            $(tr).find(".product_discount_amount").val(price_discount);
+            // $(tr).find(".product_discount_value").val(price_discount);
+            // $(tr).find(".product_discount_amount").val(price_discount);
+            __write_number($(tr).find(".product_discount_value"), price_discount);
+            __write_number($(tr).find(".product_discount_amount"), price_discount);
             $(tr).find(".plus_sign_text").text("-");
             sub_total = price_hidden * quantity;
         } else {
@@ -443,8 +447,7 @@ function calculate_product_discount(tr) {
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
     }
-
-    $(tr).find(".product_discount_amount").val(discount);
+    __write_number($(tr).find(".product_discount_amount"), discount);
     if (type == "surplus") {
         discount = 0;
     }

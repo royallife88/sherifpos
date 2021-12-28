@@ -253,9 +253,9 @@
     </div>
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('discount_customers', __('lang.customers'), []) !!} <i class="dripicons-question"
+            {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question"
                 data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i>
-            {!! Form::select('discount_customers[]', $customers_tree_arry,
+            {!! Form::select('discount_customer_types[]', $discount_customer_types,
             false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
         </div>

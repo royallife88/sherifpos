@@ -19,8 +19,7 @@
                         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
                         {!! Form::select('product_class_id', $product_classes,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'placeholder' => __('lang.please_select'), 'required',
-                        'required']) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
@@ -30,7 +29,7 @@
                         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
                         {!! Form::select('category_id', $categories,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
@@ -40,7 +39,7 @@
                         {!! Form::label('sub_category_id', __('lang.sub_category') . ' *', []) !!}
                         {!! Form::select('sub_category_id', [],
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
@@ -50,7 +49,7 @@
                         {!! Form::label('brand_id', __('lang.brand') . ' *', []) !!}
                         {!! Form::select('brand_id', $brands,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-                        'placeholder' => __('lang.please_select'), 'required']) !!}
+                        'placeholder' => __('lang.please_select')]) !!}
 
                     </div>
                     <div class="error-msg text-red"></div>
@@ -66,7 +65,7 @@
                 <div class="col-md-4  @if(session('system_mode') == 'restaurant') hide @endif">
                     <div class="form-group">
                         {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
-                        {!! Form::text('sku', null, ['class' => 'form-control', 'required', 'placeholder'
+                        {!! Form::text('sku', null, ['class' => 'form-control', 'placeholder'
                         => __('lang.sku')]) !!}
                     </div>
                 </div>
@@ -210,10 +209,10 @@
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('discount_customers', __('lang.customers'), []) !!} <i
+                        {!! Form::label('discount_customer_types', __('lang.customers'), []) !!} <i
                             class="dripicons-question" data-toggle="tooltip"
                             title="@lang('lang.discount_customer_info')"></i>
-                        {!! Form::select('discount_customers[]', $customers_tree_arry,
+                        {!! Form::select('discount_customer_types[]', $discount_customer_types,
                         false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
                         'style' =>'width: 80%', 'multiple']) !!}
                     </div>

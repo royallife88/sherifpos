@@ -11,6 +11,8 @@
             value="{{$product->product_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][variation_id]" class="variation_id"
             value="{{$product->variation_id}}">
+            <input type="hidden" name="transaction_sell_line[{{$loop->index}}][price_hidden]" class="price_hidden"
+            value="@if(isset($product->sell_price)){{@num_format($product->sell_price)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount]" class="coupon_discount_value" value="{{$product->coupon_discount_value}}"> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_type]" class="coupon_discount_type" value="{{$product->coupon_discount_type}}"> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_amount]" class="coupon_discount_amount" value="{{$product->coupon_discount_amount}}"><!-- after calculation actual discounted amount for row product row -->

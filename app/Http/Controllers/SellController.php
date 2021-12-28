@@ -169,7 +169,7 @@ class SellController extends Controller
      */
     public function edit($id)
     {
-        $sale = Transaction::find($id);
+        $sale = Transaction::findOrFail($id);
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
         $taxes = Tax::get();

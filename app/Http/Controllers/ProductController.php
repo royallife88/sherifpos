@@ -157,7 +157,7 @@ class ProductController extends Controller
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $customers_tree_arry = Customer::getCustomerTreeArray();
+        $discount_customer_types = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
         $users  = User::orderBy('name', 'asc')->pluck('name', 'id');
         $page = 'product_stock';
@@ -176,7 +176,7 @@ class ProductController extends Controller
             'taxes',
             'customers',
             'customer_types',
-            'customers_tree_arry',
+            'discount_customer_types',
             'stores',
             'page'
         ));
@@ -284,7 +284,7 @@ class ProductController extends Controller
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $customers_tree_arry = Customer::getCustomerTreeArray();
+        $discount_customer_types = Customer::getCustomerTreeArray();
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -302,7 +302,7 @@ class ProductController extends Controller
             'taxes',
             'customers',
             'customer_types',
-            'customers_tree_arry',
+            'discount_customer_types',
             'users',
             'stores'
         ));
@@ -330,7 +330,7 @@ class ProductController extends Controller
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $customers_tree_arry = Customer::getCustomerTreeArray();
+        $discount_customer_types = CustomerType::pluck('name', 'id');
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
         $quick_add = request()->quick_add;
@@ -349,7 +349,7 @@ class ProductController extends Controller
                 'taxes',
                 'customers',
                 'customer_types',
-                'customers_tree_arry',
+                'discount_customer_types',
                 'stores',
             ));
         }
@@ -366,7 +366,7 @@ class ProductController extends Controller
             'taxes',
             'customers',
             'customer_types',
-            'customers_tree_arry',
+            'discount_customer_types',
             'stores',
         ));
     }
@@ -390,6 +390,7 @@ class ProductController extends Controller
         );
 
         try {
+            $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
             $product_data = [
                 'name' => $request->name,
                 'product_class_id' => $request->product_class_id,
@@ -410,7 +411,8 @@ class ProductController extends Controller
                 'tax_id' => $request->tax_id,
                 'tax_method' => $request->tax_method,
                 'discount_type' => $request->discount_type,
-                'discount_customers' => $request->discount_customers,
+                'discount_customer_types' => $request->discount_customer_types,
+                'discount_customers' => $discount_customers,
                 'discount' => $request->discount,
                 'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
                 'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,
@@ -454,6 +456,18 @@ class ProductController extends Controller
         return $output;
     }
 
+    public function getDiscountCustomerFromType($customer_types)
+    {
+        $discount_customers = [];
+        if (!empty($customer_types)) {
+            $customers = Customer::whereIn('customer_type_id', $customer_types)->get();
+            foreach ($customers as $customer) {
+                $discount_customers[] = $customer->id;
+            }
+        }
+
+        return $discount_customers;
+    }
     /**
      * Display the specified resource.
      *
@@ -487,7 +501,7 @@ class ProductController extends Controller
         if (!auth()->user()->can('product_module.product.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
-        $product = Product::find($id);
+        $product = Product::findOrFail($id);
 
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -500,7 +514,7 @@ class ProductController extends Controller
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
-        $customers_tree_arry = Customer::getCustomerTreeArray();
+        $discount_customer_types = CustomerType::pluck('name', 'id');
         $stores  = Store::all();
 
 
@@ -517,7 +531,7 @@ class ProductController extends Controller
             'taxes',
             'customers',
             'customer_types',
-            'customers_tree_arry',
+            'discount_customer_types',
             'stores',
         ));
     }
@@ -543,6 +557,7 @@ class ProductController extends Controller
         );
 
         try {
+            $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
             $product_data = [
                 'name' => $request->name,
                 'product_class_id' => $request->product_class_id,
@@ -563,7 +578,8 @@ class ProductController extends Controller
                 'tax_id' => $request->tax_id,
                 'tax_method' => $request->tax_method,
                 'discount_type' => $request->discount_type,
-                'discount_customers' => $request->discount_customers,
+                'discount_customer_types' => $request->discount_customer_types,
+                'discount_customers' => $discount_customers,
                 'discount' => $request->discount,
                 'discount_start_date' => !empty($request->discount_start_date) ? $this->commonUtil->uf_date($request->discount_start_date) : null,
                 'discount_end_date' => !empty($request->discount_end_date) ? $this->commonUtil->uf_date($request->discount_end_date) : null,

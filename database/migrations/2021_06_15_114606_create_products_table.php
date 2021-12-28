@@ -40,6 +40,7 @@ class CreateProductsTable extends Migration
             $table->string('discount')->nullable();
             $table->string('discount_start_date')->nullable();
             $table->string('discount_end_date')->nullable();
+            $table->text('discount_customer_types')->nullable();
             $table->text('discount_customers')->nullable();
             $table->boolean('show_to_customer')->default(1);
             $table->text('show_to_customer_types')->nullable();
