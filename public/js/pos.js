@@ -1119,7 +1119,7 @@ $(document).on("click", "#recent-transaction-btn", function () {
 
 $(document).on(
     "change",
-    "#rt_start_date, #rt_end_date, #rt_customer_id",
+    "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by",
     function () {
         get_recent_transactions();
     }
@@ -1151,6 +1151,8 @@ function get_recent_transactions() {
                 $("#rt_start_date").val() +
                 "&end_date=" +
                 $("#rt_end_date").val() +
+                "&created_by=" +
+                $("#rt_created_by").val() +
                 "&customer_id=" +
                 $("#rt_customer_id").val(),
             data: {},

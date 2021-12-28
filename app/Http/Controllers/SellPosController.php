@@ -98,6 +98,7 @@ class SellPosController extends Controller
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::getDropdown();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
         $product_classes = ProductClass::select('name', 'id')->get();
         $store_poses = [];
 
@@ -121,6 +122,7 @@ class SellPosController extends Controller
             'customers',
             'stores',
             'store_poses',
+            'cashiers',
             'taxes',
             'product_classes',
             'payment_types',
@@ -373,6 +375,7 @@ class SellPosController extends Controller
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $product_classes = ProductClass::select('name', 'id')->get();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -385,6 +388,7 @@ class SellPosController extends Controller
             'brands',
             'store_pos',
             'customers',
+            'cashiers',
             'taxes',
             'payment_types',
         ));
@@ -735,6 +739,9 @@ class SellPosController extends Controller
         }
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
+        }
+        if (!empty(request()->created_by)) {
+            $query->where('created_by', request()->created_by);
         }
         if (!empty($pos_id)) {
             $query->where('store_pos_id', $pos_id);

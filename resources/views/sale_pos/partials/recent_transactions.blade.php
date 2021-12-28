@@ -11,6 +11,7 @@
                 <th>@lang('lang.ref_number')</th>
                 <th>@lang('lang.status')</th>
                 <th>@lang('lang.delivery_man')</th>
+                <th>@lang('lang.cashier')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -30,6 +31,7 @@
                 </td>
                 <td>{{ucfirst($transaction->status)}}</td>
                 <td></td>
+                <td>@if(!empty($transaction->created_by_user)){{$transaction->created_by_user->name}}@endif</td>
                 <td>
                     <div class="btn-group">
                         @can('sale.pos.view')

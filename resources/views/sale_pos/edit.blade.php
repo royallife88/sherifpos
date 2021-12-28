@@ -371,6 +371,15 @@
                                             __('lang.all')]) !!}
                                         </div>
                                     </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            {!! Form::label('rt_created_by', __('lang.cashier'), []) !!}
+                                            {!! Form::select('rt_created_by', $cashiers, false, ['class' =>
+                                            'form-control selectpicker', 'id' =>
+                                            'rt_created_by', 'data-live-search' => 'true', 'placeholder' =>
+                                            __('lang.all')]) !!}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="recent_transaction_div col-md-12">
