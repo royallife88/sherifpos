@@ -64,7 +64,8 @@ class SellController extends Controller
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $query = Transaction::where('type', 'sell')->where('status', 'final');
+        $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'sell')->where('status', 'final');
 
         if (!empty(request()->customer_id)) {
             $query->where('customer_id', request()->customer_id);
@@ -78,6 +79,12 @@ class SellController extends Controller
         if (!empty(request()->payment_status)) {
             $query->where('payment_status', request()->payment_status);
         }
+        if (!empty(request()->created_by)) {
+            $query->where('created_by', request()->created_by);
+        }
+        if (!empty(request()->method)) {
+            $query->where('transaction_payments.method', request()->method);
+        }
         if (!empty(request()->start_date)) {
             $query->where('transaction_date', '>=', request()->start_date);
         }
@@ -85,15 +92,22 @@ class SellController extends Controller
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
 
-        $sales = $query->orderBy('created_at', 'desc')->get();
+        $sales = $query->select('transactions.*')
+            ->groupBy('transactions.id')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
 
         return view('sale.index')->with(compact(
             'sales',
             'payment_types',
+            'cashiers',
             'customers',
             'stores',
             'payment_status_array',

@@ -94,11 +94,11 @@ class SellPosController extends Controller
         $customers = Customer::getCustomerArrayWithMobile();
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $stores = Store::getDropdown();
-        $cashiers = Employee::getDropdownByJobType('Cashier');
         $product_classes = ProductClass::select('name', 'id')->get();
         $store_poses = [];
 
@@ -727,7 +727,8 @@ class SellPosController extends Controller
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
-        $query = Transaction::where('type', 'sell')->where('status', '!=', 'draft');
+        $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->where('type', 'sell')->where('status', '!=', 'draft');
 
         if (!empty($store_id)) {
             $query->where('transactions.store_id', $store_id);
@@ -744,6 +745,9 @@ class SellPosController extends Controller
         if (!empty(request()->created_by)) {
             $query->where('created_by', request()->created_by);
         }
+        if (!empty(request()->method)) {
+            $query->where('transaction_payments.method', request()->method);
+        }
         if (!empty($pos_id)) {
             $query->where('store_pos_id', $pos_id);
         }
@@ -753,7 +757,10 @@ class SellPosController extends Controller
             $query->whereIn('transactions.store_id', $stores_ids);
         }
 
-        $transactions = $query->orderBy('updated_at', 'desc')->get();
+        $transactions = $query->select('transactions.*')
+            ->groupBy('transactions.id')
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
 

@@ -887,6 +887,8 @@ class ReportController extends Controller
     public function getDailySaleReport(Request $request)
     {
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+        $method = $request->method;
+        $created_by = $request->created_by;
 
         $year = request()->year;
         $month = request()->month;
@@ -905,10 +907,18 @@ class ReportController extends Controller
             } else {
                 $date = $year . '-' . $month . '-' . $start;
             }
-            $query = Transaction::where('type', 'sell')->where('status', 'final')->whereDate('transaction_date', $date);
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->where('type', 'sell')->where('status', 'final')
+                ->whereDate('transaction_date', $date);
 
             if (!empty($store_id)) {
                 $query->where('store_id', $store_id);
+            }
+            if (!empty($method)) {
+                $query->where('method', $method);
+            }
+            if (!empty($created_by)) {
+                $query->where('created_by', $created_by);
             }
             $sale_data = $query->select(
                 DB::raw('SUM(discount_amount) AS total_discount'),
@@ -934,6 +944,8 @@ class ReportController extends Controller
         $next_month = date('m', strtotime('+1 month', strtotime($year . '-' . $month . '-01')));
 
         $stores = Store::getDropdown();
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $cashiers = Employee::getDropdownByJobType('Cashier');
 
         return view('reports.daily_sale_report', compact(
             'total_discount',
@@ -952,6 +964,8 @@ class ReportController extends Controller
             'next_year',
             'next_month',
             'stores',
+            'payment_types',
+            'cashiers',
             'store_id'
         ));
     }

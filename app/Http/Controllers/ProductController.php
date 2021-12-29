@@ -391,6 +391,7 @@ class ProductController extends Controller
 
         try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
+
             $product_data = [
                 'name' => $request->name,
                 'product_class_id' => $request->product_class_id,

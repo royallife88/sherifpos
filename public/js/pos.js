@@ -1119,7 +1119,7 @@ $(document).on("click", "#recent-transaction-btn", function () {
 
 $(document).on(
     "change",
-    "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by",
+    "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method",
     function () {
         get_recent_transactions();
     }
@@ -1151,6 +1151,8 @@ function get_recent_transactions() {
                 $("#rt_start_date").val() +
                 "&end_date=" +
                 $("#rt_end_date").val() +
+                "&method=" +
+                $("#rt_method").val() +
                 "&created_by=" +
                 $("#rt_created_by").val() +
                 "&customer_id=" +
@@ -1446,21 +1448,84 @@ $(document).on("shown.bs.modal", "#recentTransaction", function () {
     });
 });
 
-$(document).on("click", ".remove_draft", function () {
-    let href = $(this).data("href");
+$(document).on('click', '.remove_draft', function(e) {
+    e.preventDefault();
+    swal({
+        title: 'Are you sure?',
+        text: "Are you sure You Wanna Delete it?",
+        icon: 'warning',
+    }).then(willDelete => {
+        if (willDelete) {
+            var check_password = $(this).data('check_password');
+            var href = $(this).data('href');
+            var data = $(this).serialize();
 
-    $.ajax({
-        method: "delete",
-        url: href,
-        data: {},
-        success: function (result) {
-            if (result.success) {
-                swal("Success", result.msg, "success");
-                get_draft_transactions();
-            } else {
-                swal("Error", result.msg, "error");
-            }
-        },
+            swal({
+                title: 'Please Enter Your Password',
+                content: {
+                    element: "input",
+                    attributes: {
+                        placeholder: "Type your password",
+                        type: "password",
+                    },
+                },
+                inputAttributes: {
+                    autocapitalize: 'off'
+                },
+            }).then((result) => {
+                if (result) {
+                $.ajax({
+                    url: check_password,
+                    method: 'POST',
+                    data: {
+                        value: result
+                    },
+                    dataType: 'json',
+                    success: (data) => {
+
+                        if (data.success == true) {
+                            swal(
+                            'Success',
+                            'Correct Password!',
+                            'success'
+                            );
+
+                            $.ajax({
+                                method: 'DELETE',
+                                url: href,
+                                dataType: 'json',
+                                data: data,
+                                success: function(result) {
+                                    if (result.success == true) {
+                                        swal(
+                                        'Success',
+                                        result.msg,
+                                        'success'
+                                        );
+                                        get_draft_transactions();
+                                    }else{
+                                        swal(
+                                        'Error',
+                                        result.msg,
+                                        'error'
+                                        );
+                                    }
+                                },
+                            });
+
+                        } else {
+                            swal(
+                            'Failed!',
+                            'Wrong Password!',
+                            'error'
+                            )
+
+                        }
+                    }
+                });
+                }
+            });
+        }
     });
 });
 

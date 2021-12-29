@@ -398,7 +398,7 @@ class Util
         return [
             'partial' => __('lang.partially_paid'),
             'paid' => __('lang.paid'),
-            'pending' => __('lang.pending'),
+            'pending' => __('lang.pay_later'),
         ];
     }
 

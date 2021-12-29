@@ -29,7 +29,7 @@
                 </td>
                 <td>@if(!empty($transaction->transaction_payments->first()->ref_number)){{$transaction->transaction_payments->first()->ref_number}}@endif
                 </td>
-                <td>{{ucfirst($transaction->status)}}</td>
+                <td>@if($transaction->payment_status == 'pending'){{__('lang.pay_later')}}@else{{ucfirst($transaction->status)}}@endif</td>
                 <td></td>
                 <td>@if(!empty($transaction->created_by_user)){{$transaction->created_by_user->name}}@endif</td>
                 <td>

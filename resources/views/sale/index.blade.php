@@ -42,6 +42,14 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
+                            {!! Form::label('method', __('lang.payment_type'), []) !!}
+                            {!! Form::select('method', $payment_types, request()->method,
+                            ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
                             {!! Form::label('payment_status', __('lang.payment_status'), []) !!}
                             {!! Form::select('payment_status', $payment_status_array, request()->payment_status,
                             ['class' =>
@@ -59,6 +67,15 @@
                         <div class="form-group">
                             {!! Form::label('end_date', __('lang.end_date'), []) !!}
                             {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('created_by', __('lang.cashier'), []) !!}
+                            {!! Form::select('created_by', $cashiers, false, ['class' =>
+                            'form-control selectpicker', 'id' =>
+                            'created_by', 'data-live-search' => 'true', 'placeholder' =>
+                            __('lang.all')]) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -87,6 +104,7 @@
                 <th class="sum">@lang('lang.grand_total')</th>
                 <th class="sum">@lang('lang.paid')</th>
                 <th class="sum">@lang('lang.due')</th>
+                <th>@lang('lang.cashier')</th>
                 <th class="hidden">@lang('lang.products')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -113,11 +131,10 @@
                     {{@num_format($sale->transaction_payments->sum('amount'))}}</td>
                 <td>
                     {{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
+                <td>@if(!empty($sale->created_by_user)){{$sale->created_by_user->name}}@endif</td>
                 <td>
                     @foreach ($sale->transaction_sell_lines as $sell_line)
                     @if(!empty($sell_line->product)){{$sell_line->product->name}} @endif - @if(!empty($sell_line->variation)){{$sell_line->variation->sub_sku}}@endif
-
-
                     @endforeach
                 </td>
 

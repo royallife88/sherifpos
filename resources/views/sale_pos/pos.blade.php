@@ -432,6 +432,14 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
+                                            {!! Form::label('rt_method', __('lang.payment_type'), []) !!}
+                                            {!! Form::select('rt_method', $payment_types, request()->method,
+                                            ['class' =>
+                                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true", 'id' => 'rt_method']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
                                             {!! Form::label('rt_created_by', __('lang.cashier'), []) !!}
                                             {!! Form::select('rt_created_by', $cashiers, false, ['class' =>
                                             'form-control selectpicker', 'id' =>
