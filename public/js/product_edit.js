@@ -111,9 +111,9 @@ myDropzone = new Dropzone("div#my-dropzone", {
                         success: function (response) {
                             if (response.success) {
                                 swal("Success", response.msg, "success");
-                                // setTimeout(() => {
-                                //     window.close();
-                                // }, 1000);
+                                setTimeout(() => {
+                                    window.close();
+                                }, 1000);
                             }
                         },
                         error: function (response) {

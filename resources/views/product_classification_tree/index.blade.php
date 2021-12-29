@@ -98,7 +98,7 @@
                                                     $brands = null;
                                                     $brands = App\Models\Product::leftjoin('brands',
                                                     'products.brand_id', 'brands.id')->where('products.category_id',
-                                                    $category->id)->whereNull('products.sub_category_id')->select('brands.id',
+                                                    $category->id)->whereNull('products.sub_category_id')->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
                                                     'brands.name')->groupBy('brands.id')->get();
                                                     @endphp
                                                     @if (!empty($brands) && $brands->count() > 0)
@@ -137,15 +137,18 @@
                                                                 class="accordion-body collapse in">
                                                                 <div class="accordion-inner">
                                                                     @php
+                                                                    $brands = null;
                                                                     $brands = App\Models\Product::leftjoin('brands',
                                                                     'products.brand_id',
                                                                     'brands.id')->where('products.sub_category_id',
-                                                                    $sub_category->id)->select('brands.id',
+                                                                    $sub_category->id)->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
                                                                     'brands.name')->groupBy('brands.id')->get();
                                                                     @endphp
+                                                                    @if (!empty($brands) && $brands->count() > 0)
                                                                     @include('product_classification_tree.partials.brand_inner_part',
                                                                     ['brands' => $brands, 'product_class_id' =>
                                                                     $class->id, 'sub_category_id' => $sub_category->id])
+                                                                    @endif
                                                                 </div>
                                                             </div>
                                                         </div>
