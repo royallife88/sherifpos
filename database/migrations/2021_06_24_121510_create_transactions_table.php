@@ -25,6 +25,7 @@ class CreateTransactionsTable extends Migration
             $table->string('type')->nullable();
             $table->string('sub_type')->nullable();
             $table->enum('status', ['received', 'pending', 'ordered', 'final', 'draft', 'sent_admin', 'sent_supplier', 'partially_received', 'approved', 'rejected', 'expired', 'valid', 'declined', 'send_the_goods', 'compensated']);
+            $table->integer('ticket_number')->default(0)->comment('used for restaurant only');
             $table->string('order_date')->nullable();
             $table->string('transaction_date');
             $table->enum('payment_status', ['paid', 'pending', 'partial'])->nullable();

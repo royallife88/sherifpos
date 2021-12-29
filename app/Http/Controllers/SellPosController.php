@@ -160,6 +160,7 @@ class SellPosController extends Controller
                 'coupon_id' => $request->coupon_id,
                 'transaction_date' => !empty($request->transaction_date) ? $request->transaction_date : Carbon::now(),
                 'invoice_no' => $this->productUtil->getNumberByType('sell'),
+                'ticket_number' => $this->transactionUtil->getTicketNumber(),
                 'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
                 'status' => $request->status,
                 'sale_note' => $request->sale_note,

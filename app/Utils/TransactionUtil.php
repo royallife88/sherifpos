@@ -618,6 +618,13 @@ class TransactionUtil extends Util
         return $transaction;
     }
 
+    /**
+     * get invoice print html
+     *
+     * @param object $transaction
+     * @param array $payment_types
+     * @return void
+     */
     public function getInvoicePrint($transaction, $payment_types)
     {
         $invoice_lang = System::getProperty('invoice_lang');
@@ -639,5 +646,26 @@ class TransactionUtil extends Util
         }
 
         return $html_content;
+    }
+
+    /**
+     * get ticket number for restaurants
+     *
+     * @return int
+     */
+    public function getTicketNumber()
+    {
+        $last_ticket = Transaction::whereDate('transaction_date', Carbon::now()->format('Y-m-d'))
+            ->where('type', 'sell')
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        if (!empty($last_ticket)) {
+            $ticket_number = $last_ticket->ticket_number + 1;
+        } else {
+            $ticket_number = 1;
+        }
+
+        return $ticket_number;
     }
 }

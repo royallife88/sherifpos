@@ -104,14 +104,23 @@ $invoice_lang = request()->session()->get('language');
             <p>{{$transaction->store->phone_number}} </p>
 
         </div>
-        <p>@lang('lang.date', [], $invoice_lang): {{$transaction->transaction_date}}<br>
-            @lang('lang.reference', [], $invoice_lang): {{$transaction->invoice_no}}<br>
-            @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
-            @lang('lang.customer', [], $invoice_lang): {{$transaction->customer->name}} <br>
-            @lang('lang.address', [], $invoice_lang): {{$transaction->customer->address}} <br>
-            @lang('lang.mobile_number', [], $invoice_lang): {{$transaction->customer->mobile_number}} <br>
-            @endif
-        </p>
+        <div style="width: 70%; float:left;">
+            <p>@lang('lang.date', [], $invoice_lang): {{$transaction->transaction_date}}<br>
+                @lang('lang.reference', [], $invoice_lang): {{$transaction->invoice_no}}<br>
+                @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
+                @lang('lang.customer', [], $invoice_lang): {{$transaction->customer->name}} <br>
+                @lang('lang.address', [], $invoice_lang): {{$transaction->customer->address}} <br>
+                @lang('lang.mobile_number', [], $invoice_lang): {{$transaction->customer->mobile_number}} <br>
+                @endif
+            </p>
+        </div>
+        @if(session('system_mode') == 'restaurant')
+        <div style="width: 30%; float:right; text-align:center;">
+            <p
+                style="width: 75px; height:75px; border: 4px solid #111; border-radius: 50%; padding: 20px; font-size: 23px; font-weight: bold;">
+                {{$transaction->ticket_number}}</p>
+        </div>
+        @endif
         <div class="table_div" style=" padding: 0 7px; width:100%; height:100%;">
             <table style="margin: 0 auto;">
                 <thead>
@@ -196,7 +205,8 @@ $invoice_lang = request()->session()->get('language');
                     <tr style="background-color:#ddd;">
                         <td style="padding: 5px;width:30%">
                             @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
-                        <td style="padding: 5px;width:40%; text-align: right;" colspan="2">{{@num_format($payment_data->amount)}}</td>
+                        <td style="padding: 5px;width:40%; text-align: right;" colspan="2">
+                            {{@num_format($payment_data->amount)}}</td>
                     </tr>
                     @endforeach
                     <tr>
