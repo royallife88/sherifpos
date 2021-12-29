@@ -1,7 +1,10 @@
+@php
+    $recent_product = App\Models\Product::orderBy('created_at', 'desc')->first();
+@endphp
 <div class="row">
     <div class="col-md-12">
         <div class="i-checks">
-            <input id="is_service" name="is_service" type="checkbox" @if(session('system_mode') == 'restaurant') checked @endif value="1" class="form-control-custom">
+            <input id="is_service" name="is_service" type="checkbox" @if(session('system_mode') == 'restaurant') checked @elseif(!empty($recent_product) && $recent_product->is_service == 1) checked @endif value="1" class="form-control-custom">
             <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
         </div>
     </div>
@@ -9,7 +12,7 @@
         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
         <div class="input-group my-group">
             {!! Form::select('product_class_id', $product_classes,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->product_class_id : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'required',
             'required']) !!}
             <span class="input-group-btn">
@@ -27,7 +30,7 @@
         {!! Form::label('category_id', __('lang.category') . ' *', []) !!}
         <div class="input-group my-group">
             {!! Form::select('category_id', $categories,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->category_id : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.category.create_and_edit')
@@ -43,7 +46,7 @@
         {!! Form::label('sub_category_id', __('lang.sub_category'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('sub_category_id', [],
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->sub_category_id : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.sub_category.create_and_edit')
@@ -59,7 +62,7 @@
         {!! Form::label('brand_id', __('lang.brand'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('brand_id', $brands,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->brand_id : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.brand.create_and_edit')
@@ -75,7 +78,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('name', __('lang.name') . ' *', []) !!}
-            {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder'
+            {!! Form::text('name', !empty($recent_product) ? $recent_product->name : null, ['class' => 'form-control', 'required', 'placeholder'
             => __('lang.name')]) !!}
         </div>
     </div>
@@ -91,7 +94,7 @@
         {!! Form::label('multiple_units', __('lang.unit'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('multiple_units[]', $units,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->multiple_units : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
             <span class="input-group-btn">
                 @can('product_module.unit.create_and_edit')
@@ -106,7 +109,7 @@
         {!! Form::label('multiple_colors', __('lang.color'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('multiple_colors[]', $colors,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->multiple_colors : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_colors']) !!}
             <span class="input-group-btn">
                 @can('product_module.color.create_and_edit')
@@ -122,7 +125,7 @@
         {!! Form::label('multiple_sizes', __('lang.size'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('multiple_sizes[]', $sizes,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->multiple_sizes : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_sizes']) !!}
             <span class="input-group-btn">
                 @can('product_module.size.create_and_edit')
@@ -138,7 +141,7 @@
         {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('multiple_grades[]', $grades,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->multiple_grades : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_grades']) !!}
             <span class="input-group-btn">
                 @can('product_module.grade.create_and_edit')
@@ -158,7 +161,7 @@
     <div class="col-md-12">
         <div class="form-group">
             <label>@lang('lang.product_details')</label>
-            <textarea name="product_details" id="product_details" class="form-control" rows="3"></textarea>
+            <textarea name="product_details" id="product_details" class="form-control" rows="3">{{!empty($recent_product) ? $recent_product->product_details : ''}}</textarea>
         </div>
     </div>
     @if(session('system_mode') == 'pos')
@@ -166,14 +169,14 @@
         <div class="form-group">
             {!! Form::label('barcode_type', __('lang.barcode_type'), []) !!}
             {!! Form::select('barcode_type', ['C128' => 'Code 128' , 'C39' => 'Code 39', 'UPCA'
-            => 'UPC-A', 'UPCE' => 'UPC-E', 'EAN8' => 'EAN-8', 'EAN13' => 'EAN-13'], false,
+            => 'UPC-A', 'UPCE' => 'UPC-E', 'EAN8' => 'EAN-8', 'EAN13' => 'EAN-13'], !empty($recent_product) ? $recent_product->barcode_type : false,
             ['class' => 'form-control', 'required']) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('alert_quantity', __('lang.alert_quantity'), []) !!}
-            {!! Form::text('alert_quantity', null, ['class' => 'form-control', 'placeholder' =>
+            {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : null, ['class' => 'form-control', 'placeholder' =>
             __('lang.alert_quantity')]) !!}
         </div>
     </div>
@@ -182,7 +185,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('purchase_price', session('system_mode') == 'pos' ? __('lang.purchase_price') : __('lang.cost') . ' *', []) !!}
-            {!! Form::text('purchase_price', null, ['class' => 'form-control', 'placeholder' =>
+            {!! Form::text('purchase_price', !empty($recent_product) ? @num_format($recent_product->purchase_price) : null, ['class' => 'form-control', 'placeholder' =>
             session('system_mode') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
         </div>
     </div>
@@ -190,7 +193,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sell_price', __('lang.sell_price') . ' *', []) !!}
-            {!! Form::text('sell_price', null, ['class' => 'form-control', 'placeholder' =>
+            {!! Form::text('sell_price', !empty($recent_product) ? @num_format($recent_product->sell_price) : null, ['class' => 'form-control', 'placeholder' =>
             __('lang.sell_price'), 'required']) !!}
         </div>
     </div>
@@ -198,7 +201,7 @@
         {!! Form::label('tax_id', __('lang.tax') , []) !!}
         <div class="input-group my-group">
             {!! Form::select('tax_id', $taxes,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->tax_id : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
             <span class="input-group-btn">
                 @can('product_module.tax.create')
@@ -215,7 +218,7 @@
             {!! Form::label('tax_method', __('lang.tax_method'), []) !!}
             {!! Form::select('tax_method', ['inclusive' => __('lang.inclusive'), 'exclusive' =>
             __('lang.exclusive')],
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->tax_method : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
         </div>
     </div>
@@ -226,28 +229,28 @@
             {!! Form::label('discount_type', __('lang.discount_type'), []) !!}
             {!! Form::select('discount_type', ['fixed' => __('lang.fixed'), 'percentage' =>
             __('lang.percentage')],
-            'fixed', ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->discount_type : 'fixed', ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount', __('lang.discount'), []) !!}
-            {!! Form::text('discount', null, ['class' => 'form-control', 'placeholder' =>
+            {!! Form::text('discount', !empty($recent_product) ? @num_format($recent_product->discount) : null, ['class' => 'form-control', 'placeholder' =>
             __('lang.discount')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_start_date', __('lang.discount_start_date'), []) !!}
-            {!! Form::text('discount_start_date', null, ['class' => 'form-control datepicker',
+            {!! Form::text('discount_start_date', !empty($recent_product) && !empty($recent_product->discount_start_date) ? @format_date($recent_product->discount_start_date) : null, ['class' => 'form-control datepicker',
             'placeholder' => __('lang.discount_start_date')]) !!}
         </div>
     </div>
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_end_date', __('lang.discount_end_date'), []) !!}
-            {!! Form::text('discount_end_date', null, ['class' => 'form-control datepicker',
+            {!! Form::text('discount_end_date', !empty($recent_product) && !empty($recent_product->discount_end_date) ? @format_date($recent_product->discount_end_date) : null, ['class' => 'form-control datepicker',
             'placeholder' => __('lang.discount_end_date')]) !!}
         </div>
     </div>
@@ -256,7 +259,7 @@
             {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question"
                 data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i>
             {!! Form::select('discount_customer_types[]', $discount_customer_types,
-            false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+            !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
             'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
         </div>
     </div>
@@ -275,7 +278,7 @@
                 <i class="dripicons-question" data-toggle="tooltip"
                     title="@lang('lang.show_to_customer_types_info')"></i>
                 {!! Form::select('show_to_customer_types[]', $customer_types,
-                false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
                 'style' =>'width: 80%', 'multiple']) !!}
             </div>
         </div>
