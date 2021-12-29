@@ -66,7 +66,7 @@ $(document).on("click", ".add_row", function () {
         },
         contentType: "html",
         success: function (result) {
-            $("#variation_table tbody").append(result);
+            $("#variation_table tbody").prepend(result);
             $(".row_" + row_id)
                 .find(".selectpicker")
                 .selectpicker("refresh");

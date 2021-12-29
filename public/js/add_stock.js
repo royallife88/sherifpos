@@ -90,7 +90,7 @@ function get_label_product_row(product_id, variation_id) {
                 store_id: store_id,
             },
             success: function (result) {
-                $("table#product_table tbody").append(result);
+                $("table#product_table tbody").prepend(result);
                 $("input#search_product").val("");
                 $("input#search_product").focus();
                 calculate_sub_totals();
