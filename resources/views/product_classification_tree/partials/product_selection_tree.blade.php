@@ -210,12 +210,11 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                         <div class="accordion-inner">
                                             @php
                                             $query =
-                                            App\Models\Product::leftjoin('variations', 'products.id',
-                                            'variations.product_id')->where('product_class_id',
+                                            App\Models\Product::where('product_class_id',
                                             $class->id);
+
                                             $products = $query->select('products.id',
-                                            'products.name', 'variations.id as
-                                            variation_id')->groupBy('products.id')->get();
+                                            'products.name')->groupBy('products.id')->get();
                                             @endphp
                                             @foreach ($products as
                                             $product)
