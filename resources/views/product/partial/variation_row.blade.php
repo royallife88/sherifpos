@@ -80,7 +80,7 @@
 
         <input type="hidden" class="form-control"
             name="variations[{{$row_id}}][variant_stores][{{$store->id}}][store_id]" value="{{$store->id}}">
-        <input type="text" class="form-control" style="width: 200px;"
+        <input type="text" class="form-control store_prices" style="width: 200px;"
             name="variations[{{$row_id}}][variant_stores][{{$store->id}}][price]"
             value="@if(!empty($variant_store)){{$variant_store->price}}@endif">
 
