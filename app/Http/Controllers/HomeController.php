@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\WagesAndCompensation;
 use App\Utils\ProductUtil;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,16 +21,18 @@ class HomeController extends Controller
 {
     protected $commonUtil;
     protected $productUtil;
+    protected $transactionUtil;
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(Util $commonUtil, ProductUtil $productUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil)
     {
         $this->middleware('auth');
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
+        $this->transactionUtil = $transactionUtil;
     }
 
     /**
@@ -163,7 +166,7 @@ class HomeController extends Controller
         $end = strtotime($end_date);
         $payment_received = [];
         $payment_sent = [];
-        while ($start < $end) {
+        while ($start <= $end) {
             $start_date = date("Y-m", $start) . '-' . '01';
             $end_date = date("Y-m", $start) . '-' . '31';
 
@@ -399,7 +402,7 @@ class HomeController extends Controller
         } else {
             $store_id = request()->get('store_id', null);
         }
-        if(empty($store_pos_id)){
+        if (empty($store_pos_id)) {
             if (strtolower(session('user.job_title')) == 'cashier') {
                 $store_pos_id = session('user.pos_id');
             }
@@ -440,7 +443,10 @@ class HomeController extends Controller
         $purchase =  $this->getPurchaseAmount($start_date, $end_date, $store_id);
 
         $revenue -= $sell_return;
-        $profit = $revenue + $purchase_return - $purchase;
+
+        $cost_sold_product = 0;
+        $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id);
+        $profit = $revenue + $purchase_return - $cost_sold_product;
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

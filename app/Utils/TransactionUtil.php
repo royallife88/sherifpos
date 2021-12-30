@@ -668,4 +668,38 @@ class TransactionUtil extends Util
 
         return $ticket_number;
     }
+
+    /**
+     * calculate the cost of sold product for restaurants
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $store_id
+     * @return double
+     */
+    public function getCostOfSoldProducts($start_date, $end_date, $store_id = null)
+    {
+        $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
+            ->where('transactions.status', 'final');
+
+        if (!empty($start_date)) {
+            $query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $query->whereDate('transaction_date',  '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+
+        $sales = $query->select(
+            DB::raw("SUM(transaction_sell_lines.quantity * variations.default_purchase_price) as cost_of_sold_products")
+        )->first();
+
+        if (!empty($sales)) {
+            return $sales->cost_of_sold_products;
+        }
+        return 0;
+    }
 }
