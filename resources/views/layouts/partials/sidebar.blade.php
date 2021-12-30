@@ -140,7 +140,7 @@
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') == 'restaurant')
+                        @if(session('system_mode') == 'pos')
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
