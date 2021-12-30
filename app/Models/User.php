@@ -146,7 +146,7 @@ class User extends Authenticatable
                 'send_to_supplier' => 'Send to Supplier',
                 'import' => 'Import'
             ],
-            'expenses' => [
+            'expense' => [
                 'expense_categories' => 'Expense Categories',
                 'expense_beneficiaries' => 'Expense Beneficiaries',
                 'expenses' => 'Expenses',

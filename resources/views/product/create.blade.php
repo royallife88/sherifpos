@@ -36,6 +36,8 @@
 @section('javascript')
 <script src="{{asset('js/product.js')}}"></script>
 <script type="text/javascript">
-
+    $(document).ready(function () {
+        $('#discount_customer_types').selectpicker('selectAll');
+    });
 </script>
 @endsection

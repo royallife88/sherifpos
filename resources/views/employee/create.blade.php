@@ -24,7 +24,7 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="store_id">@lang('lang.store')</label>
-                                        {!! Form::select('store_id[]', $stores, null, ['class' => 'form-control
+                                        {!! Form::select('store_id[]', $stores, !empty($stores) && count($stores) > 0? array_key_first($stores) : null, ['class' => 'form-control
                                         selectpicker', 'multiple', 'data-live-search' => 'true', 'id' => 'store_id'])
                                         !!}
                                     </div>
@@ -258,5 +258,6 @@
             $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', false);
         }
     })
+
 </script>
 @endsection

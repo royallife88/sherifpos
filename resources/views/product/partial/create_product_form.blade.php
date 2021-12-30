@@ -260,7 +260,7 @@
                 data-toggle="tooltip" title="@lang('lang.discount_customer_info')"></i>
             {!! Form::select('discount_customer_types[]', $discount_customer_types,
             !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
-            'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
+            'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true", 'id' => 'discount_customer_types']) !!}
         </div>
     </div>
     <div class="col-md-4">

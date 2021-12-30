@@ -89,6 +89,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @if($customer->is_default == 0)
                             @can('customer_module.customer.delete')
                             <li>
                                 <a data-href="{{action('CustomerController@destroy', $customer->id)}}"
@@ -97,6 +98,7 @@
                                     @lang('lang.delete')</a>
                             </li>
                             @endcan
+                            @endif
                         </ul>
                     </div>
                 </td>

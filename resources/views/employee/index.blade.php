@@ -3,12 +3,15 @@
 
 @section('content')
 <div class="container-fluid">
+    @can('hr_management.employee.create_and_edit')
+    <a style="color: white" href="{{action('EmployeeController@create')}}" class="btn btn-info"><i
+            class="dripicons-plus"></i>
+        @lang('lang.add_new_employee')</a>
+
+    @endcan
     <div class="row">
         <div class="col-md-12">
             <div class="card">
-                <div class="card-header d-flex align-items-center">
-                    <h4>@lang('lang.all_employees')</h4>
-                </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col-sm-12">

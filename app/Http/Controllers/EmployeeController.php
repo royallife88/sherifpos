@@ -384,6 +384,7 @@ class EmployeeController extends Controller
             User::where('id', $employee->user_id)->update($user_data);
 
             if ($request->hasFile('photo')) {
+                $employee->clearMediaCollection('employee_photo');
                 $employee->addMedia($request->photo)->toMediaCollection('employee_photo');
             }
 
