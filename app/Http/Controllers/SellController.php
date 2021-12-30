@@ -92,11 +92,17 @@ class SellController extends Controller
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
 
-        $sales = $query->select('transactions.*')
+        $sales = $query->select(
+            'transactions.*',
+        )
+            ->with([
+                'transaction_payments',
+                'sell_products',
+                'sell_variations',
+            ])
             ->groupBy('transactions.id')
             ->orderBy('created_at', 'desc')
             ->get();
-
 
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();

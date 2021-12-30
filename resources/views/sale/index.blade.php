@@ -133,8 +133,11 @@
                     {{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
                 <td>@if(!empty($sale->created_by_user)){{$sale->created_by_user->name}}@endif</td>
                 <td>
-                    @foreach ($sale->transaction_sell_lines as $sell_line)
-                    @if(!empty($sell_line->product)){{$sell_line->product->name}} @endif - @if(!empty($sell_line->variation)){{$sell_line->variation->sub_sku}}@endif
+                    @foreach ($sale->sell_products as $sell_product)
+                    @if(!empty($sell_product)){{$sell_product->name}} @endif -
+                    @endforeach
+                    @foreach ($sale->sell_variations as $sell_variation)
+                    @if(!empty($sell_variation)){{$sell_variation->sub_sku}} @endif -
                     @endforeach
                 </td>
 

@@ -20,7 +20,8 @@
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 0">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
-                            value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
+                        value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
+                        <input type="hidden" name="row_count" id="row_count" value="0">
 
                         <div class="row">
                             <div class="col-md-12">

@@ -63,12 +63,22 @@ class Transaction extends Model  implements HasMedia
     }
     public function customer()
     {
-        return $this->belongsTo(Customer::class)->withDefault(['name' => '']);
+        return $this->belongsTo(Customer::class, 'customer_id', 'id')->withDefault(['name' => '']);
+    }
+
+    public function sell_products()
+    {
+        return $this->hasManyThrough(Product::class, TransactionSellLine::class, 'transaction_id', 'id', 'id', 'product_id');
+    }
+
+    public function sell_variations()
+    {
+        return $this->hasManyThrough(Variation::class, TransactionSellLine::class, 'transaction_id', 'id', 'id', 'variation_id');
     }
 
     public function store()
     {
-        return $this->belongsTo(Store::class)->withDefault(['name' => '']);
+        return $this->belongsTo(Store::class, 'store_id', 'id')->withDefault(['name' => '']);
     }
 
     public function sender_store()

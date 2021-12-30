@@ -280,7 +280,8 @@ function get_label_product_row(
         if (edit_row_count !== 0) {
             row_count = edit_row_count;
         } else {
-            var row_count = $("table#product_table tbody tr").length;
+            var row_count = parseInt($('#row_count').val());
+            $('#row_count').val(row_count+1);
         }
         $.ajax({
             method: "GET",
@@ -1056,6 +1057,7 @@ function reset_pos_form() {
         "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance "
     ).val("");
     $("#status").val("final");
+    $("#row_count").val(0);
     $("button#submit-btn").attr("disabled", false);
     $("button#redeem_btn").attr("disabled", false); //TODO:: not working on reset
     set_default_customer();
