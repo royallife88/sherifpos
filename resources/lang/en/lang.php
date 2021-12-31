@@ -957,7 +957,6 @@ return [
     'compensated_from_supplier' => 'Compensations from Suppliers',
     'product_class_has_category' => 'Product class has category. delete category first',
     'sub_category_exsist' => 'Category has sub category. delete sub category first',
-
     'tac_to_be_printed' => 'Terms and condition to be printed',
     'surplus' => 'Surplus',
     'total_surplus' => 'Total Surplus',
@@ -965,8 +964,6 @@ return [
     'sent_to_admin' => 'Sent to Admin',
     'sent_to_supplier' => 'Sent to Supplier',
     'partially_received' => 'Partially Received',
-
-
     'cost' => 'Cost',
     'another_payment_option' => 'Another Payment Option',
     'modules' => 'Modules',
@@ -983,5 +980,8 @@ return [
     'last_update' => 'Last Update',
     'added_by' => 'Added By',
     'enjoy_your_meal_please_come_again' => 'Enjoy your meal, please come again',
+
+    'or_add_new_product' => 'Or Add New Product',
+    'last_session_closed_at' => 'Last Session Closed At',
 
 ];

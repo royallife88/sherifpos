@@ -29,6 +29,7 @@
                                 <th>@lang('lang.pending_orders')</th>
                                 <th>@lang('lang.pay_later_sales')</th>
                                 <th>@lang('lang.return_sale_of_this_pos')</th>
+                                <th>@lang('lang.last_session_closed_at')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -46,6 +47,10 @@
                                 <td>{{@num_format($store_pos->pending_orders)}}</td>
                                 <td>{{@num_format($store_pos->pay_later_sales)}}</td>
                                 <td>{{@num_format($store_pos->total_sales_return)}}</td>
+                                @php
+                                    $last_session = App\Models\CashRegister::where('store_pos_id', $store_pos->id)->where('status', 'close')->orderBy('closed_at', 'desc')->first();
+                                @endphp
+                                <td>{{!empty($last_session) ? @format_datetime($last_session->closed_at): ''}}</td>
                                 <td>
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-default btn-sm dropdown-toggle"

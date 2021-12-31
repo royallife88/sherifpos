@@ -21,7 +21,7 @@
                                     <input id="is_service" name="is_service" type="checkbox"
                                         @if(!empty($product->is_service)) checked @endif value="1"
                                     class="form-control-custom">
-                                    <label for="is_service"><strong>@lang('lang.add_new_service')</strong></label>
+                                    <label for="is_service"><strong>@if(session('system_mode') == 'restaurant')@lang('lang.or_add_new_product')@else @lang('lang.add_new_service') @endif</strong></label>
                                 </div>
                             </div>
 

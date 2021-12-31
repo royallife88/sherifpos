@@ -230,7 +230,10 @@ class StorePosController extends Controller
      */
     public function getPosDetailsByStore($store_id)
     {
-        $store_pos = StorePos::where('store_id', $store_id)->first();
+        $store_pos = StorePos::where('store_id', $store_id)->where('user_id', Auth::user()->id)->first();
+        if(empty($store_pos)){
+            $store_pos = StorePos::where('store_id', $store_id)->first();
+        }
         return $store_pos;
     }
 }
