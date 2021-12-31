@@ -48,6 +48,11 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
+                                <div class="col-md-6">
+                                    @include('product_classification_tree.partials.product_selection_tree')
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -60,7 +65,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        @include('product_classification_tree.partials.product_selection_tree')
+                                        @include('sales_promotion.partials.product_selection_tree')
                                     </div>
                                 </div>
                             </div>
