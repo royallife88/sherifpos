@@ -212,8 +212,14 @@ $invoice_lang = request()->session()->get('language');
                         <td style="padding: 5px;width:30%">
                             @if(!empty($payment_data->method)){{$payment_types[$payment_data->method]}}@endif</td>
                         <td style="padding: 5px;width:40%; text-align: right;" colspan="2">
-                            {{@num_format($payment_data->amount)}}</td>
+                            {{@num_format($payment_data->amount + $payment_data->change_amount)}}</td>
                     </tr>
+                    @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0)
+                    <tr>
+                        <td style="padding: 5px;width:30%">@lang('lang.change')</td>
+                        <td colspan="2" style="padding: 5px;width:40%; text-align: right;">{{@num_format($payment_data->change_amount)}}</td>
+                    </tr>
+                    @endif
                     @endforeach
                     <tr>
                         <td class="centered" colspan="3">

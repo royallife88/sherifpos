@@ -18,6 +18,7 @@ class CreateTransactionPaymentsTable extends Migration
             $table->unsignedBigInteger('transaction_id');
             $table->foreign('transaction_id')->references('id')->on('transactions')->onDelete('cascade');
             $table->decimal('amount', 15, 4);
+            $table->decimal('change_amount', 15, 4)->default(0);
             $table->string('method');
             $table->string('paid_on');
             $table->string('ref_number')->nullable();

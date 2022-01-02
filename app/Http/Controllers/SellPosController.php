@@ -267,6 +267,7 @@ class SellPosController extends Controller
                         'gift_card_number' => $request->gift_card_number,
                         'amount_to_be_used' => $request->amount_to_be_used,
                         'payment_note' => $request->payment_note,
+                        'change_amount' => $payment['change_amount'] ?? 0,
                     ];
                     if ($amount > 0) {
                         $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
