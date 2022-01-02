@@ -105,6 +105,7 @@
                                                 value="{{$store_pos->id}}" />
                                             <input type="hidden" id="status" name="status"
                                                 value="@if(!empty(request()->status)){{request()->status}}@else{{'final'}}@endif" />
+                                                <input type="hidden" id="total_sp_discount" name="total_sp_discount" value="0" />
                                         </div>
                                     </div>
                                 </div>

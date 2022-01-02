@@ -173,6 +173,12 @@
                         </th>
                     </tr>
                     @endif
+                    @if($transaction->total_sp_discount != 0)
+                    <tr>
+                        <th colspan="3">@lang('lang.sales_promotion', [], $invoice_lang)</th>
+                        <th style="text-align:right">{{@num_format($transaction->total_sp_discount)}}</th>
+                    </tr>
+                    @endif
                     @if($transaction->transaction_sell_lines->sum('coupon_discount'))
                     <tr>
                         <th colspan="2" style="text-align:left">

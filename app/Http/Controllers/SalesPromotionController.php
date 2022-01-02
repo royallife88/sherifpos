@@ -84,6 +84,7 @@ class SalesPromotionController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
+            ['type' => ['required', 'max:255']],
             ['store_ids' => ['required', 'max:255']],
             ['customer_type_ids' => ['required', 'max:255']],
             ['discount_type' => ['required', 'max:255']],
@@ -93,16 +94,26 @@ class SalesPromotionController extends Controller
         );
 
         try {
-            $data['code'] = uniqid('SP');
+            $data['name'] = $request->name;
+            $data['type'] = $request->type;
+            $data['start_date'] = $request->start_date;
+            $data['end_date'] = $request->end_date;
+            $data['store_ids'] = $request->store_ids;
+            $data['customer_type_ids'] = $request->customer_type_ids;
+            $data['code'] = $this->commonUtil->randString(5, 'SP');
             $data['created_by'] = Auth::user()->id;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
             $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
+            $data['discount_type'] = !empty($request->discount_type) ? $request->discount_type : 'fixed';
+            $data['actual_sell_price'] = !empty($request->actual_sell_price) ? $this->productUtil->num_uf($request->actual_sell_price) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
-            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct); //product ids to get the discount
+            $data['condition_product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pci); //product ids condition to get the discount
             $data['pct_data'] = $request->pct ?? [];
-
+            $data['pci_data'] = $request->pci ?? []; //product condition items
+            $data['package_promotion_qty'] = $request->package_promotion_qty ?? []; //package promotion qty condition
             DB::beginTransaction();
 
             SalesPromotion::create($data);
@@ -153,7 +164,7 @@ class SalesPromotionController extends Controller
         $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $sales_promotion->pct_data;
-
+        $pci_data = $sales_promotion->pci_data;
         $product_details = $this->productUtil->getProductDetailsUsingArrayIds($sales_promotion->product_ids, $sales_promotion->store_ids);
 
         return view('sales_promotion.edit')->with(compact(
@@ -163,7 +174,8 @@ class SalesPromotionController extends Controller
             'customer_types',
             'product_classes',
             'product_details',
-            'pct_data'
+            'pct_data',
+            'pci_data',
         ));
     }
 
@@ -189,16 +201,27 @@ class SalesPromotionController extends Controller
         );
 
         try {
-
-            $data['created_by'] = Auth::user()->id;
+            $data['name'] = $request->name;
+            $data['type'] = $request->type;
+            $data['start_date'] = $request->start_date;
+            $data['end_date'] = $request->end_date;
+            $data['store_ids'] = $request->store_ids;
+            $data['customer_type_ids'] = $request->customer_type_ids;
+            $data['start_date'] = $request->start_date;
+            $data['end_date'] = $request->end_date;
+            $data['store_ids'] = $request->store_ids;
             $data['product_condition'] = !empty($request->product_condition) ? 1 : 0;
             $data['purchase_condition'] = !empty($request->purchase_condition) ? 1 : 0;
             $data['generate_barcode'] = !empty($request->generate_barcode) ? 1 : 0;
             $data['discount_value'] = !empty($request->discount_value) ? $this->productUtil->num_uf($request->discount_value) : 0;
+            $data['discount_type'] = !empty($request->discount_type) ? $request->discount_type : 'fixed';
+            $data['actual_sell_price'] = !empty($request->actual_sell_price) ? $this->productUtil->num_uf($request->actual_sell_price) : 0;
             $data['purchase_condition_amount'] = !empty($request->purchase_condition_amount) ? $this->productUtil->num_uf($request->purchase_condition_amount) : 0;
-            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
+            $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct); //product ids to get the discount
+            $data['condition_product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pci); //product ids condition to get the discount
             $data['pct_data'] = $request->pct ?? [];
-            unset($data['qty']);
+            $data['pci_data'] = $request->pci ?? []; //product condition items
+            $data['package_promotion_qty'] = $request->package_promotion_qty ?? []; //package promotion qty condition
 
             DB::beginTransaction();
 
@@ -219,7 +242,6 @@ class SalesPromotionController extends Controller
         }
 
         return redirect()->back()->with('status', $output);
-        // return redirect()->to('sales-promotion')->with('status', $output);
     }
 
     /**
@@ -245,5 +267,25 @@ class SalesPromotionController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get product details
+     *
+     * @param int $id
+     * @return void
+     */
+    public function getProductDetailsRows(Request $request)
+    {
+        $store_ids = $request->store_ids;
+        $type = $request->type;
+        $array = $request->array;
+
+        $products = $this->productUtil->getProductDetailsUsingArrayIds($array, $store_ids);
+
+        return view('sales_promotion.partials.product_details_row')->with(compact(
+            'products',
+            'type'
+        ));
     }
 }

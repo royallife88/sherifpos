@@ -513,6 +513,7 @@ class TransactionUtil extends Util
             'discount_type' => $request->discount_type,
             'discount_value' => $this->num_f($request->discount_value),
             'discount_amount' => $this->num_f($request->discount_amount),
+            'total_sp_discount' => $this->num_f($request->total_sp_discount),
             'tax_id' => $request->tax_id,
             'block_qty' => 0,
             'block_for_days' => 0,

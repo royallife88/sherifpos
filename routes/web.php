@@ -77,7 +77,6 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
-    Route::get('product-classification-tree/get-product-details-rows', 'ProductClassificationTreeController@getProductDetailsRows');
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
 
     Route::get('store/get-dropdown', 'StoreController@getDropdown');
@@ -141,6 +140,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
     Route::get('pos/get-payment-row', 'SellPosController@getPaymentRow');
+    Route::get('pos/get-sale-promotion-details-if-valid', 'SellPosController@getSalePromotionDetailsIfValid');
     Route::resource('pos', SellPosController::class);
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
@@ -196,6 +196,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('redemption-of-points/get-list-of-redeemed-point', 'RedemptionOfPointController@getListOfRedeemedPoint');
     Route::resource('redemption-of-points', RedemptionOfPointController::class);
 
+    Route::get('sales-promotion/get-product-details-rows', 'SalesPromotionController@getProductDetailsRows');
     Route::resource('sales-promotion', SalesPromotionController::class);
 
     Route::get('cash/add-closing-cash/{cash_register_id}', 'CashController@addClosingCash');

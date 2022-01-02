@@ -43,13 +43,19 @@
                                 <div class="form-group">
                                     {!! Form::label('type', __( 'lang.type' ) . ':*') !!}
                                     {!! Form::select('type',['item_discount' => __('lang.item_discount'),
-                                    'package_promotion' => __('lang.package_promotion')], $sales_promotion->type, ['class' =>
+                                    'package_promotion' => __('lang.package_promotion')], $sales_promotion->type,
+                                    ['class' =>
                                     'selectpicker
                                     form-control', 'data-live-search' => "true", 'placeholder' =>
                                     __('lang.please_select'),'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
+                                <div class="col-md-6">
+                                    @include('product_classification_tree.partials.product_selection_tree')
+                                </div>
+                            </div>
+                            <div class="col-md-4 product_condition_div">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -64,7 +70,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        @include('product_classification_tree.partials.product_selection_tree')
+                                        @include('sales_promotion.partials.product_condition_tree')
                                     </div>
                                 </div>
                             </div>
@@ -75,18 +81,31 @@
                                             <th>@lang('lang.image')</th>
                                             <th>@lang('lang.name')</th>
                                             <th>@lang('lang.sku')</th>
-                                            <th>@lang('lang.purchase_price')</th>
-                                            <th>@lang('lang.sell_price')</th>
+                                            <th class="sum">@lang('lang.purchase_price')</th>
+                                            <th class="sum">@lang('lang.sell_price')</th>
                                             <th>@lang('lang.stock')</th>
                                             <th>@lang('lang.expiry_date')</th>
                                             <th>@lang('lang.date_of_purchase')</th>
-                                            <th  class="qty_hide  @if ($sales_promotion->type == 'item_discount') hide @endif">@lang('lang.qty')</th>
+                                            <th
+                                                class="qty_hide  @if ($sales_promotion->type == 'item_discount') hide @endif">
+                                                @lang('lang.qty')</th>
 
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @include('product_classification_tree.partials.product_details_row', ['products' => $product_details, 'type' => $sales_promotion->type])
+                                        @include('sales_promotion.partials.product_details_row', ['products' =>
+                                        $product_details, 'type' => $sales_promotion->type, 'package_promotion_qty' =>
+                                        $sales_promotion->package_promotion_qty])
                                     </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                                            <td class="footer_purchase_price_total"></td>
+                                            <td class="footer_sell_price_total"></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                    <input type="hidden" name="actual_sell_price" id="actual_sell_price" value="{{$sales_promotion->actual_sell_price}}">
                                 </table>
                             </div>
                             <div class="col-md-4">
@@ -136,8 +155,9 @@
                             <div class="col-md-4 mt-5">
                                 <div class="form-group">
                                     <div class="i-checks">
-                                        <input id="generate_barcode" name="generate_barcode" type="checkbox" value="1" @if($sales_promotion->generate_barcode == '1') checked @endif
-                                            class="form-control-custom">
+                                        <input id="generate_barcode" name="generate_barcode" type="checkbox" value="1"
+                                            @if($sales_promotion->generate_barcode == '1') checked @endif
+                                        class="form-control-custom">
                                         <label
                                             for="generate_barcode"><strong>@lang('lang.generate_barcode')</strong></label>
                                     </div>
@@ -164,6 +184,8 @@
 
 @section('javascript')
 <script src="{{asset('js/product_selection_tree.js')}}"></script>
+<script src="{{asset('js/product_condition_tree.js')}}"></script>
 <script type="text/javascript">
+
 </script>
 @endsection

@@ -268,6 +268,7 @@ function get_label_product_row(
                 var qty = __read_number(qty_element);
                 __write_number(qty_element, qty + 1);
                 qty_element.change;
+                check_for_sale_promotion();
                 calculate_sub_totals();
                 $("input#search_product").val("");
                 $("input#search_product").focus();
@@ -280,9 +281,10 @@ function get_label_product_row(
         if (edit_row_count !== 0) {
             row_count = edit_row_count;
         } else {
-            var row_count = parseInt($('#row_count').val());
-            $('#row_count').val(row_count+1);
+            var row_count = parseInt($("#row_count").val());
+            $("#row_count").val(row_count + 1);
         }
+
         $.ajax({
             method: "GET",
             url: "/pos/add-product-row",
@@ -299,10 +301,141 @@ function get_label_product_row(
                 $("table#product_table tbody").prepend(result);
                 $("input#search_product").val("");
                 $("input#search_product").focus();
+                check_for_sale_promotion();
                 calculate_sub_totals();
             },
         });
     }
+}
+
+function check_for_sale_promotion() {
+    var store_id = $("#store_id").val();
+    var customer_id = $("#customer_id").val();
+
+    var added_products = [];
+    var added_qty = [];
+    $("#product_table > tbody  > tr").each((ele, tr) => {
+        let product_id_tr = __read_number($(tr).find(".product_id"));
+        let qty_tr = {
+            product_id: product_id_tr,
+            qty: __read_number($(tr).find(".quantity")),
+        };
+        added_products.push(product_id_tr);
+        added_qty.push(qty_tr);
+    });
+
+    $.ajax({
+        method: "GET",
+        url: "/pos/get-sale-promotion-details-if-valid",
+        data: {
+            store_id: store_id,
+            customer_id: customer_id,
+            added_products: JSON.stringify(added_products),
+            added_qty: JSON.stringify(added_qty),
+        },
+        success: function (result) {
+            if (result.valid) {
+                if (result.sale_promotion_details.type === "item_discount") {
+                    let product_ids = result.sale_promotion_details.product_ids;
+                    let discount_type =
+                        result.sale_promotion_details.discount_type;
+                    let discount_value =
+                        result.sale_promotion_details.discount_value;
+                    let purchase_condition =
+                        result.sale_promotion_details.purchase_condition;
+                    let purchase_condition_amount =
+                        result.sale_promotion_details.purchase_condition_amount;
+                    product_ids.forEach((product_id) => {
+                        $("#product_table tbody")
+                            .find("tr")
+                            .each(function () {
+                                var row_product_id = $(this)
+                                    .find(".product_id")
+                                    .val()
+                                    .trim();
+                                if (row_product_id == product_id) {
+                                    if (discount_type == "fixed") {
+                                        $(this)
+                                            .find(".promotion_discount_type")
+                                            .val("fixed");
+                                    } else if (discount_type == "percentage") {
+                                        $(this)
+                                            .find(".promotion_discount_type")
+                                            .val("percentage");
+                                    }
+                                    $(this)
+                                        .find(".promotion_discount_value")
+                                        .val(discount_value);
+                                    $(this)
+                                        .find(
+                                            ".promotion_purchase_condition_amount"
+                                        )
+                                        .val(purchase_condition_amount);
+                                    $(this)
+                                        .find(".promotion_purchase_condition")
+                                        .val(purchase_condition);
+                                }
+                            });
+                    });
+                }
+
+                if (
+                    result.sale_promotion_details.type === "package_promotion"
+                ) {
+                    let discount = 0;
+                    if (
+                        result.sale_promotion_details.discount_type === "fixed"
+                    ) {
+                        discount =
+                            parseFloat(
+                                result.sale_promotion_details.actual_sell_price
+                            ) -
+                            parseFloat(
+                                result.sale_promotion_details.discount_value
+                            );
+                    }
+                    if (
+                        result.sale_promotion_details.discount_type ===
+                        "percentage"
+                    ) {
+                        let discount_value =
+                            (parseFloat(
+                                result.sale_promotion_details.actual_sell_price
+                            ) *
+                                parseFloat(
+                                    result.sale_promotion_details.discount_value
+                                )) /
+                            100;
+                        discount =
+                            parseFloat(
+                                result.sale_promotion_details.actual_sell_price
+                            ) - discount_value;
+                    }
+                    if (result.sale_promotion_details.purchase_condition) {
+                        let purchase_condition_amount =
+                            result.sale_promotion_details
+                                .purchase_condition_amount;
+                        let grand_total = __read_number($("#grand_total"));
+                        if (purchase_condition_amount > grand_total) {
+                            discount = 0;
+                        }
+                    }
+
+                    var product_ids = result.sale_promotion_details.product_ids;
+                    $("#product_table > tbody > tr").each(function (ele, tr) {
+                        let product_id = __read_number(
+                            $(tr).find(".product_id")
+                        );
+                        if (product_ids.includes(product_id)) {
+                            $(tr).find(".sell_price").attr("readonly", true);
+                        }
+                    });
+                    __write_number($("#total_sp_discount"), discount);
+                }
+                calculate_sub_totals();
+            }
+        },
+    });
 }
 function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
@@ -319,19 +452,27 @@ function calculate_sub_totals() {
         if (sell_price > price_hidden) {
             let price_discount = (sell_price - price_hidden) * quantity;
             $(tr).find(".product_discount_type").val("surplus");
-            // $(tr).find(".product_discount_value").val(price_discount);
-            // $(tr).find(".product_discount_amount").val(price_discount);
-            __write_number($(tr).find(".product_discount_value"), price_discount);
-            __write_number($(tr).find(".product_discount_amount"), price_discount);
+            __write_number(
+                $(tr).find(".product_discount_value"),
+                price_discount
+            );
+            __write_number(
+                $(tr).find(".product_discount_amount"),
+                price_discount
+            );
             $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price) * quantity;
             $(tr).find(".product_discount_type").val("fixed");
-            // $(tr).find(".product_discount_value").val(price_discount);
-            // $(tr).find(".product_discount_amount").val(price_discount);
-            __write_number($(tr).find(".product_discount_value"), price_discount);
-            __write_number($(tr).find(".product_discount_amount"), price_discount);
+            __write_number(
+                $(tr).find(".product_discount_value"),
+                price_discount
+            );
+            __write_number(
+                $(tr).find(".product_discount_amount"),
+                price_discount
+            );
             $(tr).find(".plus_sign_text").text("-");
             sub_total = price_hidden * quantity;
         } else {
@@ -406,11 +547,11 @@ function calculate_sub_totals() {
         }
     }
 
-    __write_number($("#final_total"), total);
-    let promo_discount = apply_promotion_discounts();
-    if (promo_discount > 0) {
-        __write_number($("#discount_amount"), promo_discount);
-    }
+    apply_promotion_discounts();
+    let promo_discount = __read_number($("#total_sp_discount"));
+    // if (promo_discount > 0) {
+    //     __write_number($("#discount_amount"), promo_discount);
+    // }
     total -= promo_discount;
 
     let delivery_cost = 0;
@@ -492,6 +633,9 @@ function apply_promotion_discounts() {
             promo_discount += promotion_discount_amount;
         }
     });
+    let total_sp_discount =
+        __read_number($("#total_sp_discount")) + promo_discount;
+    $("#total_sp_discount").val(total_sp_discount);
     return promo_discount;
 }
 function calculate_coupon_discount(tr) {
@@ -569,6 +713,7 @@ $(document).on(
 );
 
 $(document).on("change", ".quantity, .sell_price", function () {
+    check_for_sale_promotion();
     calculate_sub_totals();
 });
 $(document).on("click", ".remove_row", function () {
@@ -1054,7 +1199,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount "
+        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -1450,20 +1595,20 @@ $(document).on("shown.bs.modal", "#recentTransaction", function () {
     });
 });
 
-$(document).on('click', '.remove_draft', function(e) {
+$(document).on("click", ".remove_draft", function (e) {
     e.preventDefault();
     swal({
-        title: 'Are you sure?',
+        title: "Are you sure?",
         text: "Are you sure You Wanna Delete it?",
-        icon: 'warning',
-    }).then(willDelete => {
+        icon: "warning",
+    }).then((willDelete) => {
         if (willDelete) {
-            var check_password = $(this).data('check_password');
-            var href = $(this).data('href');
+            var check_password = $(this).data("check_password");
+            var href = $(this).data("href");
             var data = $(this).serialize();
 
             swal({
-                title: 'Please Enter Your Password',
+                title: "Please Enter Your Password",
                 content: {
                     element: "input",
                     attributes: {
@@ -1472,59 +1617,44 @@ $(document).on('click', '.remove_draft', function(e) {
                     },
                 },
                 inputAttributes: {
-                    autocapitalize: 'off'
+                    autocapitalize: "off",
                 },
             }).then((result) => {
                 if (result) {
-                $.ajax({
-                    url: check_password,
-                    method: 'POST',
-                    data: {
-                        value: result
-                    },
-                    dataType: 'json',
-                    success: (data) => {
+                    $.ajax({
+                        url: check_password,
+                        method: "POST",
+                        data: {
+                            value: result,
+                        },
+                        dataType: "json",
+                        success: (data) => {
+                            if (data.success == true) {
+                                swal("Success", "Correct Password!", "success");
 
-                        if (data.success == true) {
-                            swal(
-                            'Success',
-                            'Correct Password!',
-                            'success'
-                            );
-
-                            $.ajax({
-                                method: 'DELETE',
-                                url: href,
-                                dataType: 'json',
-                                data: data,
-                                success: function(result) {
-                                    if (result.success == true) {
-                                        swal(
-                                        'Success',
-                                        result.msg,
-                                        'success'
-                                        );
-                                        get_draft_transactions();
-                                    }else{
-                                        swal(
-                                        'Error',
-                                        result.msg,
-                                        'error'
-                                        );
-                                    }
-                                },
-                            });
-
-                        } else {
-                            swal(
-                            'Failed!',
-                            'Wrong Password!',
-                            'error'
-                            )
-
-                        }
-                    }
-                });
+                                $.ajax({
+                                    method: "DELETE",
+                                    url: href,
+                                    dataType: "json",
+                                    data: data,
+                                    success: function (result) {
+                                        if (result.success == true) {
+                                            swal(
+                                                "Success",
+                                                result.msg,
+                                                "success"
+                                            );
+                                            get_draft_transactions();
+                                        } else {
+                                            swal("Error", result.msg, "error");
+                                        }
+                                    },
+                                });
+                            } else {
+                                swal("Failed!", "Wrong Password!", "error");
+                            }
+                        },
+                    });
                 }
             });
         }

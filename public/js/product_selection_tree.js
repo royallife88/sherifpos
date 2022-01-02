@@ -91,7 +91,7 @@ function getProductRows(array) {
     $.ajax({
         async: false,
         method: "get",
-        url: "/product-classification-tree/get-product-details-rows",
+        url: "/sales-promotion/get-product-details-rows",
         data: {
             store_ids: $("#store_ids").val(),
             type: $("#type").val(),
@@ -124,22 +124,11 @@ function onlyUnique(value, index, self) {
 
 $(document).on("change", "#type", function () {
     if ($(this).val() === "package_promotion") {
+        $(".product_condition_div").addClass("hide");
         $(".qty_hide").removeClass("hide");
     } else {
+        $(".product_condition_div").removeClass("hide");
         $(".qty_hide").addClass("hide");
     }
 });
 
-$(document).on("click", ".remove_row", function () {
-    let product_id = parseInt($(this).data("product_id"));
-    $(this).parents("tr").remove();
-    $(".product_checkbox").each((i, obj) => {
-        if ($(obj).prop("checked") === true) {
-            if (parseInt($(obj).val()) === product_id) {
-                let index = unique_product_array.indexOf(product_id);
-                unique_product_array.splice(index, 1);
-                $(obj).prop("checked", false);
-            }
-        }
-    });
-});

@@ -134,6 +134,7 @@
                                             <input type="hidden" id="coupon_id" name="coupon_id">
                                             <input type="hidden" id="total_tax" name="total_tax" value="0.00">
                                             <input type="hidden" id="status" name="status" value="final" />
+                                            <input type="hidden" id="total_sp_discount" name="total_sp_discount" value="0" />
                                         </div>
                                     </div>
                                 </div>

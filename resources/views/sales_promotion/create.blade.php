@@ -52,7 +52,7 @@
                                     @include('product_classification_tree.partials.product_selection_tree')
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-4 product_condition_div hide">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -65,7 +65,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        @include('sales_promotion.partials.product_selection_tree')
+                                        @include('sales_promotion.partials.product_condition_tree')
                                     </div>
                                 </div>
                             </div>
@@ -89,11 +89,12 @@
                                     <tfoot>
                                         <tr>
                                             <th colspan="3" style="text-align: right">@lang('lang.total')</th>
-                                            <td class="footer_sell_price_total"></td>
                                             <td class="footer_purchase_price_total"></td>
+                                            <td class="footer_sell_price_total"></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>
+                                    <input type="hidden" name="actual_sell_price" id="actual_sell_price" value="0">
                                 </table>
                             </div>
                             <div class="col-md-4">
@@ -164,6 +165,7 @@
 
 @section('javascript')
 <script src="{{asset('js/product_selection_tree.js')}}"></script>
+<script src="{{asset('js/product_condition_tree.js')}}"></script>
 <script type="text/javascript">
     $('.selectpicker').selectpicker('selectAll');
 </script>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\TransactionSellLineImport;
 use App\Models\Brand;
+use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
@@ -260,6 +261,7 @@ class SellController extends Controller
                 $transaction_sell_line->delete();
             }
             $transaction->delete();
+            CashRegisterTransaction::where('transaction_id', $id)->delete();
 
             DB::commit();
             $output = [

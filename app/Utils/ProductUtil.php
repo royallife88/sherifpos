@@ -554,40 +554,113 @@ class ProductUtil extends Util
      * @param int $product_id
      * @param int $store_id
      * @param int $customer_id
-     * @return mix
+     * @return object
      */
-    public function getSalesPromotionDetail($product_id, $store_id, $customer_id)
+    public function getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products = [])
     {
         $customer = Customer::find($customer_id);
         $store_id = (string) $store_id;
-        $product_id = (string) $product_id;
+        $product_id = (int) $product_id;
+        $added_products = (array)$added_products;
 
-        if ($customer->is_default != 1) {
-
-            $customer_type_id = (string) $customer->customer_type_id;
-            if (!empty($customer_type_id)) {
-                $sales_promotion = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
-                    ->whereJsonContains('store_ids', $store_id)
-                    ->whereDate('start_date', '<=', date('Y-m-d'))
-                    ->whereDate('end_date', '>=', date('Y-m-d'))
-                    ->first();
-                if (!empty($sales_promotion)) {
-                    if (!empty($sales_promotion->start_date) && !empty($sales_promotion->end_date)) {
-                        //if end date set then check for expiry
-                        $start_date = Carbon::parse($sales_promotion->start_date);
-                        $end_date = Carbon::parse($sales_promotion->end_date);
-                        if (Carbon::now()->gte($start_date) && Carbon::now()->lte($end_date)) {
-                            if (!$sales_promotion->product_condition) {
-                                return $sales_promotion;
-                            } else {
-                                return SalesPromotion::where('id', $sales_promotion->id)->whereJsonContains('product_ids', $product_id)->first();
-                            }
+        $customer_type_id = (string) $customer->customer_type_id;
+        if (!empty($customer_type_id)) {
+            $sales_promotions = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
+                ->whereJsonContains('store_ids', $store_id)
+                ->whereJsonContains('product_ids', $product_id)
+                ->whereDate('start_date', '<=', date('Y-m-d'))
+                ->whereDate('end_date', '>=', date('Y-m-d'))
+                ->get();
+            foreach ($sales_promotions as $sales_promotion) {
+                if ($sales_promotion->type == 'item_discount') {
+                    if (!$sales_promotion->product_condition) {
+                        return $sales_promotion;
+                    } else {
+                        $com = $this->compareArray($sales_promotion->condition_product_ids, $added_products);
+                        if ($com) {
+                            return $sales_promotion;
                         }
                     }
                 }
             }
         }
     }
+    /**
+     * get the sales promotion details for product if valid for this sale
+     *
+     * @param int $product_id
+     * @param int $store_id
+     * @param int $customer_id
+     * @return object
+     */
+    public function getSalePromotionDetailsIfValidForThisSale($store_id, $customer_id, $added_products = [], $qty_array = [])
+    {
+        $customer = Customer::find($customer_id);
+        $store_id = (string) $store_id;
+        $added_products = (array)$added_products;
+
+        $customer_type_id = (string) $customer->customer_type_id;
+        if (!empty($customer_type_id)) {
+            $sales_promotions = SalesPromotion::whereJsonContains('customer_type_ids', $customer_type_id)
+                ->whereJsonContains('store_ids', $store_id)
+                ->whereDate('start_date', '<=', date('Y-m-d'))
+                ->whereDate('end_date', '>=', date('Y-m-d'))
+                ->get();
+            foreach ($sales_promotions as $sales_promotion) {
+                if ($sales_promotion->type == 'item_discount') {
+                    if (!$sales_promotion->product_condition) {
+                        return $sales_promotion;
+                    } else {
+                        $is_valid = $this->compareArray($sales_promotion->condition_product_ids, $added_products);
+                        if ($is_valid) {
+                            return $sales_promotion;
+                        }
+                    }
+                }
+                if ($sales_promotion->type == 'package_promotion') {
+                    $package_promotion_qty = $sales_promotion->package_promotion_qty;
+
+                    $is_valid = $this->comparePackagePromotionData($package_promotion_qty, $qty_array);
+                    if ($is_valid) {
+                        return $sales_promotion;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * compare package promotion data with add product data
+     *
+     * @param array $package_promotion_qty
+     * @param array $qty_array
+     * @return boolean
+     */
+    public function comparePackagePromotionData($package_promotion_qty, $qty_array)
+    {
+        foreach ($package_promotion_qty as $product_id => $qty) {
+            if (!isset($qty_array[$product_id])) {
+                return false;
+            }
+            if ($qty_array[$product_id] < $qty) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //function to compare two array have equal value or not
+    public function compareArray($array1, $array2)
+    {
+        foreach ($array1 as $value) {
+            if (!in_array($value, $array2)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Get all details for a product from its variation id
      *
@@ -1141,7 +1214,7 @@ class ProductUtil extends Util
 
         $product_ids  = array_unique($product_ids);
 
-        return $product_ids;
+        return (array)$product_ids;
     }
 
     public function getProductDetailsUsingArrayIds($array, $store_ids = null)

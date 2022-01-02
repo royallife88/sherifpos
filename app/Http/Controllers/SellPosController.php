@@ -226,7 +226,7 @@ class SellPosController extends Controller
                     $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
                     $transaction->rp_redeemed = $rp_redeemed;
                 }
-                $transaction->total_sp_discount = $transaction->transaction_sell_lines->sum('promotion_discount_amount');
+                $transaction->total_sp_discount = $request->total_sp_discount;
                 $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
                 $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
                 $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
@@ -407,6 +407,36 @@ class SellPosController extends Controller
         try {
             DB::beginTransaction();
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
+
+            if ($transaction->status == 'final') {
+                //if transaction is final then calculate the reward points
+                $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
+                $transaction->rp_earned = $points_earned;
+                if ($request->is_redeem_points) {
+                    // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
+                    $transaction->rp_redeemed_value = $request->rp_redeemed_value;
+                    $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
+                    $transaction->rp_redeemed = $rp_redeemed;
+                }
+                $transaction->total_sp_discount = $request->total_sp_discount;
+                $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
+                $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
+                $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
+
+                $transaction->save();
+
+                $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+
+                //update customer deposit balance if any
+                $customer = Customer::find($transaction->customer_id);
+                if ($request->used_deposit_balance > 0) {
+                    $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
+                }
+                if ($request->add_to_deposit > 0) {
+                    $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
+                }
+                $customer->save();
+            }
 
             if ($transaction->status != 'draft') {
                 foreach ($request->payments as $payment) {
@@ -704,18 +734,45 @@ class SellPosController extends Controller
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
             $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
+            $added_products = json_decode($request->input('added_products'), true);
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
 
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
-                $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id);
-
+                // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
+                $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
                 return view('sale_pos.partials.product_row')
                     ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'));
             }
         }
+    }
+    /**
+     * Returns the html for product row
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function getSalePromotionDetailsIfValid(Request $request)
+    {
+        $result = ['valid' => false, 'sale_promotion_details' => null];
+        if ($request->ajax()) {
+            $store_id = $request->input('store_id');
+            $customer_id = $request->input('customer_id');
+            $added_products = json_decode($request->input('added_products'), true);
+            $added_qty = json_decode($request->input('added_qty'), true);
+            $qty_array = [];
+            foreach ($added_qty as $value) {
+                $qty_array[$value['product_id']] = $value['qty'];
+            }
+
+            $sale_promotion_details = $this->productUtil->getSalePromotionDetailsIfValidForThisSale($store_id, $customer_id, $added_products, $qty_array);
+            if (!empty($sale_promotion_details)) {
+                $result = ['valid' => true, 'sale_promotion_details' => $sale_promotion_details];
+            }
+        }
+
+        return $result;
     }
 
     /**

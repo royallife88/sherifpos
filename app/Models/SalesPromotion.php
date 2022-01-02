@@ -26,6 +26,9 @@ class SalesPromotion extends Model
         'customer_type_ids' => 'array',
         'product_ids' => 'array',
         'pct_data' => 'array',
+        'pci_data' => 'array',
+        'condition_product_ids' => 'array',
+        'package_promotion_qty' => 'array',
     ];
 
 
@@ -42,6 +45,11 @@ class SalesPromotion extends Model
     public function products()
     {
         return $this->belongsToJson(Product::class, 'product_ids');
+    }
+
+    public function condition_products()
+    {
+        return $this->belongsToJson(Product::class, 'condition_product_ids');
     }
 
     public function created_by_user()

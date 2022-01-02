@@ -983,5 +983,6 @@ return [
 
     'or_add_new_product' => 'Or Add New Product',
     'last_session_closed_at' => 'Last Session Closed At',
+    'condition_products' => 'Condition Products',
 
 ];

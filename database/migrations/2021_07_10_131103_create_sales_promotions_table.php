@@ -24,9 +24,13 @@ class CreateSalesPromotionsTable extends Migration
             $table->text('pct_data');
             $table->enum('discount_type', ['fixed', 'percentage'])->default('fixed');
             $table->decimal('discount_value', 15, 4)->default(0);
+            $table->decimal('actual_sell_price', 15, 4)->default(0);
             $table->boolean('purchase_condition')->default(0);
             $table->decimal('purchase_condition_amount', 15, 4)->default(0);
             $table->boolean('product_condition')->default(0);
+            $table->text('package_promotion_qty');
+            $table->text('condition_product_ids');
+            $table->text('pci_data')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('generate_barcode')->default(0);

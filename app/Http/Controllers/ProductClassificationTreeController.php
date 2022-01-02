@@ -110,24 +110,4 @@ class ProductClassificationTreeController extends Controller
     {
         //
     }
-
-    /**
-     * get product details
-     *
-     * @param int $id
-     * @return void
-     */
-    public function getProductDetailsRows(Request $request)
-    {
-        $store_ids = $request->store_ids;
-        $type = $request->type;
-        $array = $request->array;
-
-        $products = $this->productUtil->getProductDetailsUsingArrayIds($array, $store_ids);
-
-        return view('product_classification_tree.partials.product_details_row')->with(compact(
-            'products',
-            'type'
-        ));
-    }
 }
