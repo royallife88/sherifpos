@@ -21,7 +21,11 @@ class TermsAndCondition extends Model
     {
         $invoice_terms_and_conditions =  System::getProperty('invoice_terms_and_conditions');
 
-        $tac = TermsAndCondition::where('type', 'invoice')->where('id', $invoice_terms_and_conditions)->orderBy('name', 'asc')->pluck('name', 'id');
+        if(auth()->user()->can('superadmin')){
+            $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+        }else{
+            $tac = TermsAndCondition::where('type', 'invoice')->where('id', $invoice_terms_and_conditions)->orderBy('name', 'asc')->pluck('name', 'id')->toArray();
+        }
 
         return $tac;
     }

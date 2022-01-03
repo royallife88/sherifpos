@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerType;
 use App\Models\Transaction;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,6 +20,7 @@ class CustomerController extends Controller
      *
      */
     protected $commonUtil;
+    protected $transactionUtil;
 
     /**
      * Constructor
@@ -26,9 +28,10 @@ class CustomerController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->transactionUtil = $transactionUtil;
     }
 
     /**
@@ -39,19 +42,19 @@ class CustomerController extends Controller
     public function index()
     {
         $query = Customer::leftjoin('transactions', 'customers.id', 'transactions.customer_id')
-        ->select(
-            'customers.*',
-            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
-            DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
-            DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
-            DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
-        );
+            ->select(
+                'customers.*',
+                DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
+                DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
+                DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
+                DB::raw('SUM(IF(transactions.type="sell", total_coupon_discount, 0)) as total_coupon_discount'),
+            );
 
         $customers = $query->groupBy('customers.id')->get();
-        $balances =[];
-        foreach($customers as $customer){
-            $balances[$customer->id] = $this->getCustomerBalance($customer->id)['balance'];
 
+        $balances = [];
+        foreach ($customers as $customer) {
+            $balances[$customer->id] = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
         }
 
         return view('customer.index')->with(compact(
@@ -164,7 +167,7 @@ class CustomerController extends Controller
 
         $discount_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final'])
-            ->where(function($q){
+            ->where(function ($q) {
                 $q->where('total_sp_discount', '>', 0);
                 $q->orWhere('total_product_discount', '>', 0);
                 $q->orWhere('total_coupon_discount', '>', 0);
@@ -185,7 +188,7 @@ class CustomerController extends Controller
 
         $point_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final'])
-            ->where(function($q){
+            ->where(function ($q) {
                 $q->where('rp_earned', '>', 0);
             });
 
@@ -343,31 +346,8 @@ class CustomerController extends Controller
         return $customer_details;
     }
 
-    /**
-     * calculate the customer balance
-     *
-     * @param int $customer_id
-     * @return void
-     */
     public function getCustomerBalance($customer_id)
     {
-        $query = Customer::join('transactions as t', 'customers.id', 't.customer_id')
-            ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
-            ->where('customers.id', $customer_id);
-
-        $query->select(
-            'customers.total_rp',
-            'customers.deposit_balance',
-            DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
-            DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
-        );
-        $customer_details = $query->first();
-
-        $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
-
-
-        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance;
-
-        return ['balance' => $balance, 'points' => $customer_details->total_rp];
+        return $this->transactionUtil->getCustomerBalance($customer_id);
     }
 }

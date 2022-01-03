@@ -20,7 +20,7 @@
                 <div class="card">
                     <div class="card-body" style="padding-bottom: 0">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
-                        value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
+                            value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
                         <input type="hidden" name="row_count" id="row_count" value="0">
 
                         <div class="row">
@@ -72,9 +72,12 @@
                                             data-toggle="modal"
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
-                                    <div class="col-md-4">
-                                        <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span
+                                    <div class="col-md-3">
+                                        <label for="customer_type_name" style="margin-top: 40px;">@lang('lang.customer_type'): <span
                                                 class="customer_type_name"></span></label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'): <span class="customer_balance">{{@num_format(0)}}</span></label>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -134,7 +137,8 @@
                                             <input type="hidden" id="coupon_id" name="coupon_id">
                                             <input type="hidden" id="total_tax" name="total_tax" value="0.00">
                                             <input type="hidden" id="status" name="status" value="final" />
-                                            <input type="hidden" id="total_sp_discount" name="total_sp_discount" value="0" />
+                                            <input type="hidden" id="total_sp_discount" name="total_sp_discount"
+                                                value="0" />
                                         </div>
                                     </div>
                                 </div>
@@ -177,7 +181,16 @@
                     <div class="payment-amount">
                         <h2>{{__('lang.grand_total')}} <span class="final_total_span">0.00</span></h2>
                     </div>
-
+                    @php
+                    $default_invoice_toc =App\Models\System::getProperty('invoice_terms_and_conditions');
+                    if(!empty($default_invoice_toc)){
+                    $toc_hidden = $default_invoice_toc;
+                    }else{
+                    $toc_hidden = array_key_first($tac);
+                    }
+                    @endphp
+                    <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
+                        value="{{$toc_hidden}}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-4">
@@ -187,7 +200,7 @@
                                         class="form-control selectpicker" data-live-search="true">
                                         <option value="">@lang('lang.please_select')</option>
                                         @foreach ($tac as $key => $item)
-                                        <option selected value="{{$key}}">{{$item}}</option>
+                                        <option value="{{$key}}">{{$item}}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -437,7 +450,8 @@
                                             {!! Form::label('rt_method', __('lang.payment_type'), []) !!}
                                             {!! Form::select('rt_method', $payment_types, request()->method,
                                             ['class' =>
-                                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true", 'id' => 'rt_method']) !!}
+                                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true",
+                                            'id' => 'rt_method']) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-3">

@@ -194,23 +194,23 @@ if ($.cookie("pos.language") !== language) {
     );
 }
 if (language == "en") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json";
+    dt_lang_url = base_path + "/js/datatables_lang/en.json";
 } else if (language == "fr") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/fr_fr.json";
+    dt_lang_url = base_path + "/js/datatables_lang/fr.json";
 } else if (language == "ar") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ar.json";
+    dt_lang_url = base_path + "/js/datatables_lang/ar.json";
 } else if (language == "hi") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/hi.json";
+    dt_lang_url = base_path + "/js/datatables_lang/hi.json";
 } else if (language == "pr") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/fa.json";
+    dt_lang_url = base_path + "/js/datatables_lang/pr.json";
 } else if (language == "ur") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/ur.json";
+    dt_lang_url = base_path + "/js/datatables_lang/ur.json";
 } else if (language == "tr") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/tr.json";
+    dt_lang_url = base_path + "/js/datatables_lang/tr.json";
 } else if (language == "du") {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/nl_nl.json";
+    dt_lang_url = base_path + "/js/datatables_lang/du.json";
 } else {
-    dt_lang_url = "//cdn.datatables.net/plug-ins/1.11.3/i18n/en-gb.json";
+    dt_lang_url = base_path + "/js/datatables_lang/en.json";
 }
 var datatable_params = {
     lengthChange: true,
@@ -297,7 +297,7 @@ var datatable_params = {
     },
 };
 var table = $(".dataTable").DataTable(datatable_params);
-table.columns('.hidden').visible(false);
+table.columns(".hidden").visible(false);
 function sum_table_col(table, class_name) {
     var sum = 0;
     table
@@ -328,7 +328,7 @@ $(document).ready(function () {
 
 $(document).on("change", "#terms_and_condition_id", function () {
     let terms_and_condition_id = $(this).val();
-
+    $("#terms_and_condition_hidden").val($(this).val());
     if (terms_and_condition_id) {
         $.ajax({
             method: "get",

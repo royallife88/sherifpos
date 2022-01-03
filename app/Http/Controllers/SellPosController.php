@@ -879,8 +879,9 @@ class SellPosController extends Controller
             $total_redeemable = $this->transactionUtil->calculateRedeemablePointValue($customer_id, $product_array, $store_id);
         }
 
+        $balance = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
         $customer_type = CustomerType::find($customer->customer_type_id);
 
-        return ['customer' => $customer, 'rp_value' => $rp_value, 'total_redeemable'  => $total_redeemable, 'customer_type_name' => !empty($customer_type) ? $customer_type->name : ''];
+        return ['customer' => $customer, 'rp_value' => $rp_value, 'total_redeemable'  => $total_redeemable, 'customer_type_name' => !empty($customer_type) ? $customer_type->name : '', 'balance' => $balance];
     }
 }

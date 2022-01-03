@@ -207,6 +207,8 @@
                                 <textarea rows="3" class="form-control"
                                     name="staff_note">{{$sale->staff_note}}</textarea>
                             </div>
+                            <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
+                            value="{{$sale->terms_and_condition_id}}">
                             <div class="col-md-4">
                                 {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
                                 <div class="input-group my-group">

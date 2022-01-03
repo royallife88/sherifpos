@@ -226,13 +226,21 @@
                         <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
                             {{@num_format($payment_data->amount + $payment_data->change_amount)}}</td>
                     </tr>
-                    @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0)
+                    @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
                     <tr>
                         <td style="padding: 7px;width:30%">@lang('lang.change')</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">{{@num_format($payment_data->change_amount)}}</td>
                     </tr>
                     @endif
                     @endforeach
+                    @if($transaction->payment_status != 'paid')
+                    <tr>
+                        <td style="padding: 7px;width:30%">@lang('lang.due')</td>
+                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
+                            {{@num_format($transaction->final_total -
+                            $transaction->transaction_payments->sum('amount'))}}</td>
+                    </tr>
+                    @endif
                     <tr>
                         <td class="centered" colspan="3">
                             @if(session('system_mode') == 'restaurant')

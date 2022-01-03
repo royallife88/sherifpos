@@ -22,7 +22,8 @@
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
                             value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
-                            <input type="hidden" name="row_count" id="row_count" value="{{$transaction->transaction_sell_lines->count()}}">
+                        <input type="hidden" name="row_count" id="row_count"
+                            value="{{$transaction->transaction_sell_lines->count()}}">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -105,7 +106,8 @@
                                                 value="{{$store_pos->id}}" />
                                             <input type="hidden" id="status" name="status"
                                                 value="@if(!empty(request()->status)){{request()->status}}@else{{'final'}}@endif" />
-                                                <input type="hidden" id="total_sp_discount" name="total_sp_discount" value="0" />
+                                            <input type="hidden" id="total_sp_discount" name="total_sp_discount"
+                                                value="0" />
                                         </div>
                                     </div>
                                 </div>
@@ -150,6 +152,8 @@
                         <h2>{{__('lang.grand_total')}} <span class="final_total_span">0.00</span></h2>
                     </div>
 
+                    <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
+                    value="{{$transaction->terms_and_condition_id}}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-4">
@@ -159,7 +163,8 @@
                                         class="form-control selectpicker" data-live-searcg="true">
                                         <option value="">@lang('lang.please_select')</option>
                                         @foreach ($tac as $key => $item)
-                                        <option value="{{$key}}">{{$item}}</option>
+                                        <option @if($transaction->terms_and_condition_id == $key) selected @endif
+                                            value="{{$key}}">{{$item}}</option>
                                         @endforeach
                                     </select>
                                 </div>

@@ -844,6 +844,7 @@ $(document).on("click", ".payment-btn", function (e) {
         $(".deposit-fields").addClass("hide");
         $(".customer_name_div").addClass("hide");
         $(".card_bank_field").addClass("hide");
+        $(".btn-add-payment").removeClass("hide");
     }
     if (method === "cheque") {
         $(".cheque_field").removeClass("hide");
@@ -884,6 +885,16 @@ $(document).on("change", ".method", function (e) {
 
 function changeMethodFields(method, row) {
     $(".card_bank_field").addClass("hide");
+    if (method === "deposit") {
+        $(".deposit-fields").removeClass("hide");
+        $(".customer_name_div").removeClass("hide");
+        $(".btn-add-payment").addClass("hide");
+    } else {
+        $(".deposit-fields").addClass("hide");
+        $(".customer_name_div").addClass("hide");
+        $(".card_bank_field").addClass("hide");
+        $(".btn-add-payment").removeClass("hide");
+    }
     if (method === "cheque") {
         $(row).find(".cheque_field").removeClass("hide");
     } else {
@@ -1101,7 +1112,7 @@ $("button#submit-btn").click(function () {
     pos_form_obj.submit();
 });
 $("button#update-btn").click(function () {
-    $("#is_edit").val('');
+    $("#is_edit").val("");
     pos_form_obj.submit();
 });
 
@@ -1140,7 +1151,7 @@ $(document).ready(function () {
                         ) {
                             pos_print(result.html_content);
                         }
-                        if ($("#is_edit").val() == '1') {
+                        if ($("#is_edit").val() == "1") {
                             pos_print(result.html_content);
                         }
 
@@ -1210,12 +1221,15 @@ function reset_pos_form() {
     $("#status").val("final");
     $("#row_count").val(0);
     $("button#submit-btn").attr("disabled", false);
-    $("button#redeem_btn").attr("disabled", false); //TODO:: not working on reset
+    $("button#redeem_btn").attr("disabled", false);
+    $("button.add_to_deposit").attr("disabled", false);
     set_default_customer();
     $("#tax_id").val("");
     $("#tax_id").selectpicker("refresh");
     $("#deliveryman_id").val("");
     $("#deliveryman_id").selectpicker("refresh");
+    $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
+    $("#terms_and_condition_id").selectpicker("render");
     $("tr.product_row").remove();
     $(this).attr("disabled", false);
 
@@ -1225,7 +1239,10 @@ function reset_pos_form() {
     $(first_row).find(".change_text").text("Change :");
     $(first_row).nextAll().remove();
 }
-
+$(document).ready(function () {
+    $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
+    $("#terms_and_condition_id").selectpicker("render");
+});
 function set_default_customer() {
     var default_customer_id = $("#default_customer_id").val();
 
@@ -1295,23 +1312,23 @@ function get_recent_transactions() {
         `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
     );
 
-    setTimeout(() => {
-        $.ajax({
-            method: "get",
-            url:
-                href +
-                "?start_date=" +
-                $("#rt_start_date").val() +
-                "&end_date=" +
-                $("#rt_end_date").val() +
-                "&method=" +
-                $("#rt_method").val() +
-                "&created_by=" +
-                $("#rt_created_by").val() +
-                "&customer_id=" +
-                $("#rt_customer_id").val(),
-            data: {},
-            success: function (result) {
+    $.ajax({
+        method: "get",
+        url:
+            href +
+            "?start_date=" +
+            $("#rt_start_date").val() +
+            "&end_date=" +
+            $("#rt_end_date").val() +
+            "&method=" +
+            $("#rt_method").val() +
+            "&created_by=" +
+            $("#rt_created_by").val() +
+            "&customer_id=" +
+            $("#rt_customer_id").val(),
+        data: {},
+        success: function (result) {
+            setTimeout(() => {
                 $(".recent_transaction_div").empty().append(result);
 
                 if (
@@ -1324,9 +1341,9 @@ function get_recent_transactions() {
                         "#recent_transaction_table"
                     ).DataTable(datatable_params);
                 }
-            },
-        });
-    }, 3000);
+            }, 1000);
+        },
+    });
 }
 
 //Get recent transactions
@@ -1371,14 +1388,6 @@ $(document).on("change", "#customer_id", function () {
             $(".customer_due").text(
                 __currency_trans_from_en(result.due, false)
             );
-            $(".current_deposit_balance").text(
-                __currency_trans_from_en(result.deposit_balance, false)
-            );
-            $(".remaining_balance_text").text(
-                __currency_trans_from_en(result.deposit_balance, false)
-            );
-            $("#current_deposit_balance").val(result.deposit_balance);
-            $("#remaining_deposit_balance").val(result.deposit_balance);
         },
     });
     getCustomerPointDetails();
@@ -1406,8 +1415,7 @@ $(document).on("click", ".use_it_deposit_balance", function () {
     }
 
     let used_deposit_balance = __read_number($("#used_deposit_balance"));
-    let amount = __read_number($("#amount"));
-    // __write_number($("#amount"), amount - used_deposit_balance);
+    __write_number($("#amount"), used_deposit_balance);
 });
 
 $(document).on("click", ".add_to_deposit", function () {
@@ -1459,6 +1467,23 @@ function getCustomerPointDetails() {
             }
             $(".customer_type_name").text(result.customer_type_name);
             $("#emails").val(result.customer.email);
+            $(".customer_balance").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $(".customer_balance").removeClass("text-red");
+            if (result.balance < 0) {
+                $(".customer_balance").addClass("text-red");
+            }
+            $(".remaining_balance_text").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $('.balance_error_msg').addClass('hide')
+            $("#remaining_deposit_balance").val(result.balance);
+            $(".current_deposit_balance").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $("#current_deposit_balance").val(result.balance);
+
             calculate_sub_totals();
         },
     });
