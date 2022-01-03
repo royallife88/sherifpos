@@ -265,9 +265,10 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND type = 'credit', amount, 0)) as total_cash_sales"),
         )->first();
 
-        $cash_in_amount = CashRegisterTransaction::where('cash_register_id', $cash_register_id)->where('transaction_type', 'cash_in')->where('type', 'debit')->sum('amount');
+        $cash_in_amount = CashRegisterTransaction::where('cash_register_id', $cash_register_id)->where('transaction_type', 'cash_in')->sum('amount');
+        $cash_out_amount = CashRegisterTransaction::where('cash_register_id', $cash_register_id)->where('transaction_type', 'cash_out')->sum('amount');
 
-        $total_cash = $cash_register->total_cash_sales + $cash_in_amount;
+        $total_cash = $cash_register->total_cash_sales + $cash_in_amount - $cash_out_amount;
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         return view('cash.add_closing_cash')->with(compact(
