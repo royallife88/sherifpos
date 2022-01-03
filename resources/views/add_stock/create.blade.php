@@ -18,7 +18,8 @@
                                 <div class="form-group">
                                     {!! Form::label('store_id', __('lang.store'). ':*', []) !!}
                                     {!! Form::select('store_id', $stores,
-                                    session('user.store_id'), ['class' => 'selectpicker form-control', 'data-live-search'=>"true",
+                                    session('user.store_id'), ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true",
                                     'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
@@ -106,7 +107,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('files', __('lang.files'), []) !!} <br>
-                                    {!! Form::file('files[]', null, ['class' => '']) !!}
+                                    <input type="file" name="files[]" id="files" multiple>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -119,9 +120,10 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('transaction_date', __('lang.date'). ':*', []) !!} <br>
-                                    {!! Form::text('transaction_date', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker',
+                                    {!! Form::text('transaction_date', @format_date(date('Y-m-d')), ['class' =>
+                                    'form-control datepicker',
                                     'required',
-                                     'placeholder' => __('lang.date')]) !!}
+                                    'placeholder' => __('lang.date')]) !!}
                                 </div>
                             </div>
 
@@ -149,8 +151,10 @@
 
                             <div class="col-md-3 due_fields hide">
                                 <div class="form-group">
-                                    {!! Form::label('notify_before_days', __('lang.notify_before_days'). ':', []) !!} <br>
-                                    {!! Form::text('notify_before_days', !empty($payment) ? $payment->notify_before_days : null, ['class'
+                                    {!! Form::label('notify_before_days', __('lang.notify_before_days'). ':', []) !!}
+                                    <br>
+                                    {!! Form::text('notify_before_days', !empty($payment) ? $payment->notify_before_days
+                                    : null, ['class'
                                     => 'form-control',
                                     'placeholder' => __('lang.notify_before_days')]) !!}
                                 </div>

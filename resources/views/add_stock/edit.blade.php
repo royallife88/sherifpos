@@ -93,7 +93,7 @@
                                         @foreach ($add_stock->add_stock_lines as $product)
                                         <tr>
                                             <td><img src="@if(!empty($product->product->getFirstMediaUrl('product'))){{$product->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                alt="photo" width="50" height="50"></td>
+                                                    alt="photo" width="50" height="50"></td>
                                             <td>
                                                 {{$product->product->name}}
 
@@ -130,29 +130,38 @@
                                                     value="{{$product->sub_total}}">
                                             </td>
                                             <td>
-                                                <button type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$loop->index}}"><i
-                                                        class="fa fa-times"></i></button>
+                                                <button type="button" class="btn btn-danger btn-sx remove_row"
+                                                    data-index="{{$loop->index}}"><i class="fa fa-times"></i></button>
                                             </td>
                                         </tr>
                                         <tr class="row_details_{{$loop->index}}">
-                                            <td> {!! Form::text('add_stock_lines['.$loop->index.'][batch_number]', $product->batch_number, ['class' => 'form-control', 'placeholder' =>
+                                            <td> {!! Form::text('add_stock_lines['.$loop->index.'][batch_number]',
+                                                $product->batch_number, ['class' => 'form-control', 'placeholder' =>
                                                 __('lang.batch_number')]) !!}</td>
                                             <td>
-                                                {!! Form::text('add_stock_lines['.$loop->index.'][manufacturing_date]', !empty($product->manufacturing_date) ? @format_date($product->manufacturing_date) : null, ['class' => 'form-control datepicker',
+                                                {!! Form::text('add_stock_lines['.$loop->index.'][manufacturing_date]',
+                                                !empty($product->manufacturing_date) ?
+                                                @format_date($product->manufacturing_date) : null, ['class' =>
+                                                'form-control datepicker',
                                                 'placeholder'
                                                 => __('lang.manufacturing_date'), 'readonly']) !!}
                                             </td>
                                             <td>
-                                                {!! Form::text('add_stock_lines['.$loop->index.'][expiry_date]', !empty($product->expiry_date) ? @format_date($product->expiry_date) : null, ['class' => 'form-control datepicker',
+                                                {!! Form::text('add_stock_lines['.$loop->index.'][expiry_date]',
+                                                !empty($product->expiry_date) ? @format_date($product->expiry_date) :
+                                                null, ['class' => 'form-control datepicker',
                                                 'placeholder' =>
                                                 __('lang.expiry_date'), 'readonly']) !!}
                                             </td>
                                             <td>
-                                                {!! Form::text('add_stock_lines['.$loop->index.'][expiry_warning]', $product->expiry_warning, ['class' => 'form-control', 'placeholder' =>
+                                                {!! Form::text('add_stock_lines['.$loop->index.'][expiry_warning]',
+                                                $product->expiry_warning, ['class' => 'form-control', 'placeholder' =>
                                                 __('lang.days_before_the_expiry_date')]) !!}
                                             </td>
                                             <td>
-                                                {!! Form::text('add_stock_lines['.$loop->index.'][convert_status_expire]', $product->convert_status_expire, ['class' => 'form-control',
+                                                {!!
+                                                Form::text('add_stock_lines['.$loop->index.'][convert_status_expire]',
+                                                $product->convert_status_expire, ['class' => 'form-control',
                                                 'placeholder' => __('lang.convert_status_expire')]) !!}
                                             </td>
                                         </tr>
@@ -175,7 +184,7 @@
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('files', __('lang.files'), []) !!} <br>
-                                    {!! Form::file('files[]', null, ['class' => '']) !!}
+                                    <input type="file" name="files[]" id="files" multiple>
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -212,17 +221,20 @@
                             <div class="col-md-3 payment_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('amount', __('lang.amount'). ':*', []) !!} <br>
-                                    {!! Form::text('amount', !empty($transaction_payment) ? @num_format($transaction_payment->amount) : 0, ['class' =>
+                                    {!! Form::text('amount', !empty($transaction_payment) ?
+                                    @num_format($transaction_payment->amount) : 0, ['class' =>
                                     'form-control', 'placeholder'
                                     => __('lang.amount')]) !!}
                                 </div>
                             </div>
-                            <input type="hidden" name="transaction_payment_id" value="@if(!empty($transaction_payment)){{$transaction_payment->id}}@endif">
+                            <input type="hidden" name="transaction_payment_id"
+                                value="@if(!empty($transaction_payment)){{$transaction_payment->id}}@endif">
                             <div class="col-md-3 payment_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('method', __('lang.payment_type'). ':*', []) !!}
                                     {!! Form::select('method', $payment_type_array,
-                                    !empty($transaction_payment) ? $transaction_payment->method : null, ['class' => 'selectpicker form-control',
+                                    !empty($transaction_payment) ? $transaction_payment->method : null, ['class' =>
+                                    'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
@@ -231,7 +243,9 @@
                             <div class="col-md-3 payment_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-                                    {!! Form::text('paid_on',!empty($transaction_payment) ? @format_date($transaction_payment->paid_on) : @format_date(date('Y-m-d')), ['class' =>
+                                    {!! Form::text('paid_on',!empty($transaction_payment) ?
+                                    @format_date($transaction_payment->paid_on) : @format_date(date('Y-m-d')), ['class'
+                                    =>
                                     'form-control datepicker',
                                     'placeholder' => __('lang.payment_date')]) !!}
                                 </div>
@@ -240,13 +254,14 @@
                             <div class="col-md-3 payment_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('upload_documents', __('lang.upload_documents'). ':', []) !!} <br>
-                                    {!! Form::file('upload_documents[]', null, ['class' => '']) !!}
+                                    <input type="file" name="upload_documents[]" id="upload_documents" multiple>
                                 </div>
                             </div>
                             <div class="col-md-3 not_cash_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('ref_number', __('lang.ref_number'). ':', []) !!} <br>
-                                    {!! Form::text('ref_number', !empty($transaction_payment) ? $transaction_payment->ref_number : null, ['class' =>
+                                    {!! Form::text('ref_number', !empty($transaction_payment) ?
+                                    $transaction_payment->ref_number : null, ['class' =>
                                     'form-control not_cash',
                                     'placeholder' => __('lang.ref_number')]) !!}
                                 </div>
@@ -255,7 +270,8 @@
                                 <div class="form-group">
                                     {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':', []) !!} <br>
                                     {!! Form::text('bank_deposit_date',
-                                    !empty($transaction_payment) ? @format_date($transaction_payment->bank_deposit_date) : @format_date(date('Y-m-d')), ['class' => 'form-control
+                                    !empty($transaction_payment) ? @format_date($transaction_payment->bank_deposit_date)
+                                    : @format_date(date('Y-m-d')), ['class' => 'form-control
                                     not_cash datepicker',
                                     'placeholder' => __('lang.bank_deposit_date')]) !!}
                                 </div>
@@ -263,7 +279,8 @@
                             <div class="col-md-3 not_cash_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('bank_name', __('lang.bank_name'). ':', []) !!} <br>
-                                    {!! Form::text('bank_name', !empty($transaction_payment) ? $transaction_payment->bank_name : null , ['class' =>
+                                    {!! Form::text('bank_name', !empty($transaction_payment) ?
+                                    $transaction_payment->bank_name : null , ['class' =>
                                     'form-control not_cash',
                                     'placeholder' => __('lang.bank_name')]) !!}
                                 </div>

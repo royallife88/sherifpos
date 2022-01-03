@@ -119,6 +119,23 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    {!! Form::label('files', __('lang.files'), []) !!}: <br>
+                                    @php
+                                        $mediaItems = $add_stock->getMedia('add_stock');
+                                    @endphp
+                                    @if(!empty($mediaItems))
+                                    @foreach ($mediaItems as $item)
+                                        <a href="{{$item->getUrl()}}">{{$item->name}}</a> <br>
+                                    @endforeach
+
+                                    @endif
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

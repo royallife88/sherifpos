@@ -97,7 +97,7 @@ class SellPosController extends Controller
         $cashiers = Employee::getDropdownByJobType('Cashier');
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::getDropdownInvoice();
-        $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
+        $walk_in_customer = Customer::where('is_default', 1)->first();
         $stores = Store::getDropdown();
         $product_classes = ProductClass::select('name', 'id')->get();
         $store_poses = [];
@@ -148,7 +148,7 @@ class SellPosController extends Controller
     public function store(Request $request)
     {
 
-        try {
+        // try {
             $transaction_data = [
                 'store_id' => $request->store_id,
                 'customer_id' => $request->customer_id,
@@ -332,13 +332,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
         if ($request->action == 'send') {
             return redirect()->back()->with('status', $output);
         }

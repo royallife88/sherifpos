@@ -2,7 +2,7 @@
     <div class="modal-content">
 
         {!! Form::open(['url' => action('TransactionPaymentController@store'), 'method' => 'post', 'id' =>
-        'add_payment_form' ])
+        'add_payment_form', 'enctype' => 'multipart/form-data' ])
         !!}
 
         <div class="modal-header">
@@ -47,7 +47,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('upload_documents', __('lang.upload_documents'). ':', []) !!} <br>
-                        {!! Form::file('upload_documents[]', null, ['class' => '']) !!}
+                        <input type="file" name="upload_documents[]" id="upload_documents" multiple>
                     </div>
                 </div>
                 <div class="col-md-4 not_cash_fields hide">

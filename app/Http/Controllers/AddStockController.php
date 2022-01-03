@@ -58,7 +58,7 @@ class AddStockController extends Controller
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
         $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
-        ->where('type', 'add_stock')->where('status', '!=', 'draft');
+            ->where('type', 'add_stock')->where('status', '!=', 'draft');
 
         if (!empty($store_id)) {
             $query->where('transactions.store_id', $store_id);

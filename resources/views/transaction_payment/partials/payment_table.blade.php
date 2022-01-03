@@ -18,6 +18,7 @@
                     <th>@lang('lang.card_number')</th>
                     <th>@lang('lang.year')</th>
                     <th>@lang('lang.month')</th>
+                    <th>@lang('lang.files')</th>
                     @if(!empty($show_action))
                     <th>@lang('lang.action')</th>
                     @endif
@@ -36,6 +37,17 @@
                 <td>{{$payment->card_number}}</td>
                 <td>{{$payment->card_year}}</td>
                 <td>{{$payment->card_month}}</td>
+                <td>
+                    @php
+                    $payment_media = $payment->getMedia('transaction_payment');
+                    @endphp
+                    @if(!empty($payment_media))
+                    @foreach ($payment_media as $media)
+                    <a href="{{$media->getUrl()}}">{{$media->name}}</a> <br>
+                    @endforeach
+
+                    @endif
+                </td>
                 @if(!empty($show_action))
                 <td>
                     <div class="btn-group">
