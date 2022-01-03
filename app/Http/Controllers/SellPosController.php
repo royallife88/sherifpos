@@ -508,9 +508,7 @@ class SellPosController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-        if (!empty($request->is_edit)) {
-            return redirect()->back()->with('status', $output);
-        }
+
         return $output;
     }
 

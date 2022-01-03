@@ -1100,6 +1100,10 @@ $("button#submit-btn").click(function () {
     $("#add-payment").modal("hide");
     pos_form_obj.submit();
 });
+$("button#update-btn").click(function () {
+    $("#is_edit").val('');
+    pos_form_obj.submit();
+});
 
 $(document).ready(function () {
     pos_form_validator = pos_form_obj.validate({
@@ -1136,6 +1140,9 @@ $(document).ready(function () {
                         ) {
                             pos_print(result.html_content);
                         }
+                        if ($("#is_edit").val() == '1') {
+                            pos_print(result.html_content);
+                        }
 
                         reset_pos_form();
                         getFilterProductRightSide();
@@ -1143,7 +1150,6 @@ $(document).ready(function () {
                     } else {
                         toastr.error(result.msg);
                     }
-
                 },
             });
             $("div.pos-processing").hide();

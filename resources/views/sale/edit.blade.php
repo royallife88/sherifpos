@@ -3,7 +3,7 @@
 
 @section('content')
 
-<div class="container-fluid">
+<div class="container-fluid no-print">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
@@ -13,7 +13,7 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellPosController@update', $sale->id), 'method' => 'put', 'files'
                     =>
-                    true, 'class' => 'pos-form', 'id' => 'edit_sale_form']) !!}
+                    true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                     <input type="hidden" name="is_edit" id="is_edit" value="1">
                     <input type="hidden" name="store_id" id="store_id" value="{{$sale->store_id}}">
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
@@ -75,6 +75,7 @@
                                             @include('sale.partials.edit_product_row', ['products' =>
                                             $sale->transaction_sell_lines])
                                         </tbody>
+                                        <input type="hidden" name="row_count" id="row_count" value="{{$sale->transaction_sell_lines->count()}}">
                                         <tfoot>
                                             <tr>
                                                 <td></td>
@@ -221,7 +222,8 @@
                     <br>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">@lang('lang.update')</button>
+                            <button id="update-btn" type="button" class="btn btn-primary">@lang('lang.update')</button>
+                            <button id="submit-btn" type="button" class="btn btn-danger">@lang('lang.print')</button>
                         </div>
                     </div>
 
@@ -242,5 +244,42 @@
     $(document).ready(function(){
         $('.method').change()
     })
+    // $(document).on('click', '#pos-edit-sale', function(){
+    //     $.ajax({
+    //             method: "POST",
+    //             url: url,
+    //             data: data,
+    //             dataType: "json",
+    //             success: function (result) {
+    //                 if (result.success == 1) {
+    //                     if ($("#is_quotation").val()) {
+    //                         if ($("#submit_type").val() === "print") {
+    //                             pos_print(result.html_content);
+    //                         } else {
+    //                             swal("success", result.msg, "Success");
+    //                             location.reload();
+    //                         }
+    //                         return false;
+    //                     }
+    //                     $("#add-payment").modal("hide");
+    //                     toastr.success(result.msg);
+
+    //                     if (
+    //                         $("#print_the_transaction").prop("checked") &&
+    //                         $("#status").val() !== "draft"
+    //                     ) {
+    //                         pos_print(result.html_content);
+    //                     }
+
+    //                     reset_pos_form();
+    //                     getFilterProductRightSide();
+    //                     get_recent_transactions();
+    //                 } else {
+    //                     toastr.error(result.msg);
+    //                 }
+
+    //             },
+    //         });
+    // });
 </script>
 @endsection
