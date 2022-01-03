@@ -16,11 +16,13 @@ class StorePos extends Model
      */
     protected $guarded = ['id'];
 
-    public function user(){
-        return $this->belongsTo(User::class);
+    public function user()
+    {
+        return $this->belongsTo(User::class)->withDefault(['name' => '']);
     }
 
-    public function store(){
-        return $this->belongsTo(Store::class);
+    public function store()
+    {
+        return $this->belongsTo(Store::class)->withDefault(['name' => '']);
     }
 }
