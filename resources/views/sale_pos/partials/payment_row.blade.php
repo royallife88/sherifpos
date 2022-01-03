@@ -21,10 +21,6 @@
                 <label>@lang('lang.card_number') *</label>
                 <input type="text" name="payments[{{$index}}][card_number]" class="form-control">
             </div>
-            {{-- <div class="col-md-3">
-                <label>@lang('lang.card_security')</label>
-                <input type="text" name="payments[{{$index}}][card_security]" class="form-control">
-            </div> --}}
             <div class="col-md-2">
                 <label>@lang('lang.month')</label>
                 <input type="text" name="payments[{{$index}}][card_month]" class="form-control">
@@ -42,7 +38,7 @@
     </div>
     <div class="form-group col-md-12 card_bank_field hide">
         <label>@lang('lang.ref_number') </label>
-        <input type="text" name="payments[0][ref_number]" class="form-control">
+        <input type="text" name="payments[{{$index}}][ref_number]" class="form-control">
     </div>
     <div class="form-group col-md-12 cheque_field hide">
         <label>@lang('lang.cheque_number')</label>

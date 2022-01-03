@@ -440,31 +440,34 @@ class SellPosController extends Controller
             }
 
             if ($transaction->status != 'draft') {
-                foreach ($request->payments as $payment) {
+                if (!empty($request->payments)) {
+                    foreach ($request->payments as $payment) {
 
-                    $amount = $this->commonUtil->num_uf($payment['amount']);
-                    $payment_data = [
-                        'transaction_id' => $transaction->id,
-                        'amount' => $amount,
-                        'method' => $payment['method'],
-                        'paid_on' => $transaction->transaction_date,
-                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
-                        'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
-                        'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
-                        'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
-                        'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
-                        'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
-                        'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
-                        'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
-                        'gift_card_number' => $request->gift_card_number,
-                        'amount_to_be_used' => $request->amount_to_be_used,
-                        'payment_note' => $request->payment_note,
-                    ];
-                    if ($amount > 0) {
-                        $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                        $amount = $this->commonUtil->num_uf($payment['amount']);
+                        $payment_data = [
+                            'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
+                            'transaction_id' => $transaction->id,
+                            'amount' => $amount,
+                            'method' => $payment['method'],
+                            'paid_on' => $transaction->transaction_date,
+                            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                            'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
+                            'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
+                            'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                            'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
+                            'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                            'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
+                            'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
+                            'gift_card_number' => $request->gift_card_number,
+                            'amount_to_be_used' => $request->amount_to_be_used,
+                            'payment_note' => $request->payment_note,
+                        ];
+                        if ($amount > 0) {
+                            $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                        }
+                        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
                     }
-                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
                 }
 
 
@@ -485,6 +488,8 @@ class SellPosController extends Controller
 
 
             DB::commit();
+
+
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
             $html_content = view('sale_pos.partials.invoice')->with(compact(
                 'transaction',
@@ -503,7 +508,9 @@ class SellPosController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
-
+        if (!empty($request->is_edit)) {
+            return redirect()->back()->with('status', $output);
+        }
         return $output;
     }
 

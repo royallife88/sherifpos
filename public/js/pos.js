@@ -1144,10 +1144,10 @@ $(document).ready(function () {
                         toastr.error(result.msg);
                     }
 
-                    $("div.pos-processing").hide();
-                    $("#pos-save").removeAttr("disabled");
                 },
             });
+            $("div.pos-processing").hide();
+            $("#pos-save").removeAttr("disabled");
         },
     });
 });
