@@ -167,6 +167,10 @@ class SettingController extends Controller
                 ['value' => $request->invoice_lang, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             System::updateOrCreate(
+                ['key' => 'default_purchase_price_percentage'],
+                ['value' => $request->default_purchase_price_percentage ?? 75, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
                 ['key' => 'help_page_content'],
                 ['value' => $request->help_page_content, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );

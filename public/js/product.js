@@ -31,11 +31,21 @@ $("#different_prices_for_stores").change(function () {
 $(".this_product_have_variant_div").slideUp();
 $("#this_product_have_variant").change(function () {
     if ($(this).prop("checked")) {
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').selectpicker('val', '');
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', true).selectpicker('refresh');
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        ).selectpicker("val", "");
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        )
+            .attr("disabled", true)
+            .selectpicker("refresh");
         $(".this_product_have_variant_div").slideDown();
     } else {
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', false).selectpicker('refresh');
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        )
+            .attr("disabled", false)
+            .selectpicker("refresh");
         $(".this_product_have_variant_div").slideUp();
     }
 });
@@ -542,6 +552,11 @@ $("#expiry_date").change(function () {
 });
 
 $(document).on("change", "#sell_price", function () {
+    let sell_price = __read_number($('#sell_price'));
+    let default_purchase_price_percentage =__read_number($("#default_purchase_price_percentage"));
+    let purchase_price_percentage =
+        (sell_price * default_purchase_price_percentage) / 100;
+    __write_number($("#purchase_price"), purchase_price_percentage);
     $(".store_prices").val($(this).val());
     $(".default_sell_price").val($(this).val());
 });
@@ -563,4 +578,3 @@ $(document).on("change", "#sku", function () {
 $(document).on("change", "#purchase_price", function () {
     $(".default_purchase_price").val($(this).val());
 });
-

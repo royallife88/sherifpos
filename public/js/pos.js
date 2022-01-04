@@ -840,11 +840,16 @@ $(document).on("click", ".payment-btn", function (e) {
         $(".deposit-fields").removeClass("hide");
         $(".customer_name_div").removeClass("hide");
         $(".btn-add-payment").addClass("hide");
+        __write_number($('#amount'), 0)
+
     } else {
         $(".deposit-fields").addClass("hide");
         $(".customer_name_div").addClass("hide");
         $(".card_bank_field").addClass("hide");
         $(".btn-add-payment").removeClass("hide");
+
+        let final_total = __read_number($("#final_total"));
+        __write_number($('#amount'), final_total)
     }
     if (method === "cheque") {
         $(".cheque_field").removeClass("hide");
@@ -1419,14 +1424,15 @@ $(document).on("click", ".use_it_deposit_balance", function () {
 });
 
 $(document).on("click", ".add_to_deposit", function () {
-    let change_amount = __read_number($("#change_amount"));
+    let amount = __read_number($("#amount"));
+    __write_number($("#amount"), 0);
     let current_deposit_balance = __read_number($("#current_deposit_balance"));
 
-    total_deposit = current_deposit_balance + change_amount;
+    total_deposit = current_deposit_balance + amount;
     $(".current_deposit_balance").text(
         __currency_trans_from_en(total_deposit, false)
     );
-    $("#add_to_deposit").val(change_amount);
+    $("#add_to_deposit").val(amount);
     $(this).attr("disabled", true);
 });
 

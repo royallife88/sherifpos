@@ -219,6 +219,7 @@
             <table>
                 <tbody>
                     @foreach($transaction->transaction_payments as $payment_data)
+                    @if($payment_data->method != 'deposit')
                     <tr style="background-color:#ddd;">
                         <td style="padding: 7px;width:30%">
                             @if(!empty($payment_data->method)){{__('lang.'. $payment_data->method, [], 'ar')}} <br>
@@ -226,13 +227,32 @@
                         <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
                             {{@num_format($payment_data->amount + $payment_data->change_amount)}}</td>
                     </tr>
-                    @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
+                    @endif
+                    @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0 &&
+                    $payment_data->method != 'deposit')
                     <tr>
                         <td style="padding: 7px;width:30%">@lang('lang.change')</td>
-                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">{{@num_format($payment_data->change_amount)}}</td>
+                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
+                            {{@num_format($payment_data->change_amount)}}</td>
                     </tr>
                     @endif
                     @endforeach
+                    @if(!empty($payment_data->add_to_deposit) && $payment_data->add_to_deposit > 0 &&
+                    $payment_data->method == 'deposit')
+                    <tr>
+                        <td style="padding: 7px;width:30%">@lang('lang.deposit')</td>
+                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
+                            {{@num_format($payment_data->add_to_deposit)}}</td>
+                    </tr>
+                    @endif
+                    @if(!empty($payment_data->used_deposit_balance) && $payment_data->used_deposit_balance > 0 &&
+                    $payment_data->method == 'deposit')
+                    <tr>
+                        <td style="padding: 7px;width:30%">@lang('lang.used_deposit_balance')</td>
+                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
+                            {{@num_format($payment_data->used_deposit_balance)}}</td>
+                    </tr>
+                    @endif
                     @if($transaction->payment_status != 'paid')
                     <tr>
                         <td style="padding: 7px;width:30%">@lang('lang.due')</td>

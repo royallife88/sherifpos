@@ -25,7 +25,7 @@
     <tbody>
         @foreach ($modulePermissionArray as $key_module => $moudle)
         <div>
-            <tr = class="module_permission" data-moudle="{{$key_module}}">
+            <tr=class="module_permission" data-moudle="{{$key_module}}">
                 <td class="">{{$moudle}} {!! Form::checkbox('module_check_all', 1, false, ['class' =>
                     'module_check_all']) !!}</td>
                 <td></td>
@@ -33,9 +33,23 @@
                 <td></td>
                 <td></td>
                 <td></td>
-            </tr>
+            </tr=class=>
             @if(!empty($subModulePermissionArray[$key_module]))
-            @foreach ( $subModulePermissionArray[$key_module] as $key_sub_module => $sub_module)
+            @php
+            $sub_module_permission_array = $subModulePermissionArray[$key_module];
+            @endphp
+            @if(session('system_mode') == 'restaurant')
+            @if($key_module == 'product_module')
+            @php
+            unset($sub_module_permission_array['category']);
+            unset($sub_module_permission_array['sub_category']);
+            unset($sub_module_permission_array['brand']);
+            unset($sub_module_permission_array['color']);
+            unset($sub_module_permission_array['grade']);
+            @endphp
+            @endif
+            @endif
+            @foreach ( $sub_module_permission_array as $key_sub_module => $sub_module)
             <tr class="sub_module_permission_{{$key_module}}">
                 <td class=""></td>
                 <td>{{$sub_module}}</td>
@@ -57,7 +71,8 @@
                     'check_box']) !!}
                 </td>
                 <td class="">
-                    @if($delete_permission != 'sale.pos.delete' && $delete_permission != 'sale.sale.delete' &&  $delete_permission != 'stock.add_stock.delete')
+                    @if($delete_permission != 'sale.pos.delete' && $delete_permission != 'sale.sale.delete' &&
+                    $delete_permission != 'stock.add_stock.delete')
                     {!! Form::checkbox('permissions['.$delete_permission.']', 1, !empty($user) &&
                     !empty($user->hasPermissionTo($delete_permission)) ? true : false, ['class' => 'check_box']) !!}
                     @endif

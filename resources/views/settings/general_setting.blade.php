@@ -67,6 +67,14 @@
                     'form-control selectpicker', 'data-live-search' => "true", 'placeholder' => __('lang.please_select')])
                     !!}
                 </div>
+                <div class="col-md-3">
+                    {!! Form::label('default_purchase_price_percentage', __('lang.default_purchase_price_percentage'), []) !!} <i class="dripicons-question"
+                    data-toggle="tooltip" title="@lang('lang.default_purchase_price_percentage_info')"></i>
+                    {!! Form::number('default_purchase_price_percentage',!empty($settings['default_purchase_price_percentage']) ?
+                    $settings['default_purchase_price_percentage'] : null, ['class' =>
+                    'form-control'])
+                    !!}
+                </div>
             </div>
             <br>
             <hr>

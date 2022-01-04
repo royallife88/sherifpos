@@ -985,4 +985,8 @@ return [
     'last_session_closed_at' => 'Last Session Closed At',
     'condition_products' => 'Condition Products',
 
+    'used_deposit_balance' => 'Used Deposit Balance',
+    'it_will_be_used_for_login' => 'it will be used for login',
+    'default_purchase_price_percentage' => 'Default purchase price percentage',
+    'default_purchase_price_percentage_info' => 'Add product page purchase price percentage of sell price, by default it is 75',
 ];

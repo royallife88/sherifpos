@@ -39,7 +39,7 @@
                             data-toggle="tab">@lang('lang.info')</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @if(request()->show == 'purchases') active @endif" href="#store-sale"
+                        <a class="nav-link @if(request()->show == 'purchases') active @endif" href="#purchases"
                             role="tab" data-toggle="tab">@lang('lang.purchases')</a>
                     </li>
                     <li class="nav-item">
@@ -91,7 +91,7 @@
                     </div>
 
                     <div role="tabpanel" class="tab-pane fade @if(request()->show == 'purchases') show active @endif"
-                        id="store-sale">
+                        id="purchases">
                         <div class="table-responsive">
                             <table class="table dataTable">
                                 <thead>
@@ -161,7 +161,13 @@
                                                     </li>
                                                     <li class="divider"></li>
                                                     @endcan
-
+                                                    @if($sale->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $sale->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                                            @lang('lang.add_payment')</a>
+                                                    </li>
+                                                    @endif
                                                     @can('sale.pos.delete')
                                                     <li>
                                                         <a data-href="{{action('SellController@destroy', $sale->id)}}"

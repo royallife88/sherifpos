@@ -162,7 +162,7 @@ class CustomerController extends Controller
         }
         $sales = $sale_query->select(
             'transactions.*'
-        )->groupBy('transactions.id')->get();
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->get();
 
 
         $discount_query = Transaction::whereIn('transactions.type', ['sell'])

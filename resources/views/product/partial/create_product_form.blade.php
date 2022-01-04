@@ -176,7 +176,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('alert_quantity', __('lang.alert_quantity'), []) !!}
-            {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : null, ['class' => 'form-control', 'placeholder' =>
+            {!! Form::text('alert_quantity', !empty($recent_product) ? @num_format($recent_product->alert_quantity) : 3, ['class' => 'form-control', 'placeholder' =>
             __('lang.alert_quantity')]) !!}
         </div>
     </div>
@@ -254,6 +254,7 @@
             'placeholder' => __('lang.discount_end_date')]) !!}
         </div>
     </div>
+    <input type="hidden" name="default_purchase_price_percentage" id="default_purchase_price_percentage" value="{{App\Models\System::getProperty('default_purchase_price_percentage')??75}}">
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question"

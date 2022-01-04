@@ -18,21 +18,23 @@
                     <div class="row">
 
                         <div class="col-sm-6">
-                            <label for="fname">@lang('lang.full_name')</label>
+                            <label for="fname">@lang('lang.name'):*</label>
                             <input type="text" class="form-control" name="name" value="{{$employee->name}}" id="name"
-                                required placeholder="Enter Full Name">
+                                required placeholder="Name">
                         </div>
                         <div class="col-sm-6">
                             <label for="store_id">@lang('lang.store')</label>
-                            {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id : [], ['class' => 'form-control
+                            {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id :
+                            [], ['class' => 'form-control
                             selectpicker', 'multiple',
                             'placeholder'
                             => __('lang.please_select'), 'data-live-search' => 'true', 'id' => 'store_id']) !!}
                         </div>
                         <div class="col-sm-6">
-                            <label for="email">@lang('lang.email')</label>
+                            <label
+                                for="email">@lang('lang.email'):*<small>(@lang('lang.it_will_be_used_for_login'))</small></label>
                             <input type="email" class="form-control" name="email" value="{{$employee->email}}"
-                                id="email" required placeholder="Enter Email Address">
+                                id="email" required placeholder="Email">
                         </div>
 
                     </div>
@@ -77,7 +79,7 @@
                             !!}
                         </div>
                         <div class="col-sm-6">
-                            <label for="mobile">@lang('lang.mobile')</label>
+                            <label for="mobile">@lang('lang.mobile'):*</label>
                             <input type="mobile" class="form-control" name="mobile" id="mobile" required
                                 value="{{$employee->mobile}}" placeholder="@lang('lang.mobile')">
                         </div>
@@ -184,7 +186,7 @@
                     <div class="row mt-4">
 
                         <div class="col-sm-12">
-                            <button type="submit" class="btn btn-primary" id="update_employee_btn">@lang(
+                            <button type="submit" class="btn btn-primary" id="submit-btn">@lang(
                                 'lang.update_employee'
                                 )</button>
                         </div>
@@ -260,6 +262,32 @@
         }else{
             $('.sub_module_permission_'+moudle_id).find('.checked_all').prop('checked', false);
             $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', false);
+        }
+    })
+
+    $(document).on('click', '#submit-btn', function(e){
+        jQuery('#edit_employee_form').validate({
+            rules : {
+                password : {
+                    minlength : function () {
+                        return $('#password').val().length > 0 ? 6 : 0;
+                    }
+                },
+                password_confirmation : {
+                    minlength : function () {
+                        return $('#password').val().length > 0 ? 6 : 0;
+                    },
+                    equalTo : {
+                        depends: function(){
+                            return $('#password').val().length > 0;
+                        },
+                        param: "#password"
+                    }
+                }
+            }
+        });
+        if($('#edit_employee_form').valid()){
+            $('form#edit_employee_form').submit();
         }
     })
 </script>

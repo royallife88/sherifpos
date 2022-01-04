@@ -18,32 +18,34 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-sm-6">
-                                        <label for="fname">@lang('lang.full_name')</label>
+                                        <label for="fname">@lang('lang.name'):*</label>
                                         <input type="text" class="form-control" name="name" id="name" required
-                                            placeholder="Enter Full Name">
+                                            placeholder="Name">
                                     </div>
                                     <div class="col-sm-6">
                                         <label for="store_id">@lang('lang.store')</label>
-                                        {!! Form::select('store_id[]', $stores, !empty($stores) && count($stores) > 0? array_key_first($stores) : null, ['class' => 'form-control
+                                        {!! Form::select('store_id[]', $stores, !empty($stores) && count($stores) > 0?
+                                        array_key_first($stores) : null, ['class' => 'form-control
                                         selectpicker', 'multiple', 'data-live-search' => 'true', 'id' => 'store_id'])
                                         !!}
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="email">@lang('lang.email')</label>
+                                        <label for="email">@lang('lang.email'):*
+                                            <small>(@lang('lang.it_will_be_used_for_login'))</small></label>
                                         <input type="email" class="form-control" name="email" id="email" required
-                                            placeholder="Enter Email Address">
+                                            placeholder="Email">
                                     </div>
                                 </div>
 
                                 <div class="row mt-4">
 
                                     <div class="col-sm-6">
-                                        <label for="password">@lang('lang.password')</label>
+                                        <label for="password">@lang('lang.password'):*</label>
                                         <input type="password" class="form-control" name="password" id="password"
                                             required placeholder="Create New Password">
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="pass">@lang('lang.confirm_password')</label>
+                                        <label for="pass">@lang('lang.confirm_password'):*</label>
                                         <input type="password" class="form-control" id="password_confirmation"
                                             name="password_confirmation" required placeholder="Conform Password">
                                     </div>
@@ -75,7 +77,7 @@
                                         __('lang.select_job_type'), 'data-live-search' => 'true']) !!}
                                     </div>
                                     <div class="col-sm-6">
-                                        <label for="mobile">@lang('lang.mobile')</label>
+                                        <label for="mobile">@lang('lang.mobile'):*</label>
                                         <input type="mobile" class="form-control" name="mobile" id="mobile" required
                                             placeholder="@lang('lang.mobile')">
                                     </div>
@@ -182,9 +184,9 @@
 
                                 <div class="row mt-4">
                                     <div class="col-sm-12">
-                                        <input type="submit" class="btn btn-primary" value="@lang('lang.save')"
-                                            name="submit">
-                                        <input type="submit" class="btn btn-primary"
+                                        <input type="submit" id="submit-btn" class="btn btn-primary"
+                                            value="@lang('lang.save')" name="submit">
+                                        <input type="submit" id="send-btn" class="btn btn-primary"
                                             value="@lang('lang.send_credentials')" name="submit">
                                     </div>
                                 </div>
@@ -210,7 +212,6 @@
     $('.checked_all').change(function(){
         tr = $(this).closest('tr');
         var checked_all = $(this).prop('checked');
-        console.log(checked_all);
 
         tr.find('.check_box').each(function(item) {
             if(checked_all === true){
@@ -249,7 +250,6 @@
     })
     $('.module_check_all').change(function (){
         let moudle_id = $(this).closest('tr').data('moudle');
-        console.log(moudle_id, 'moudle_id');
         if($(this).prop('checked')){
             $('.sub_module_permission_'+moudle_id).find('.checked_all').prop('checked', true);
             $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', true);
@@ -259,5 +259,21 @@
         }
     })
 
+    $(document).on('click', '#submit-btn, #send-btn', function(e){
+        jQuery('#new_employee_form').validate({
+            rules : {
+                password : {
+                    minlength : 6
+                },
+                password_confirmation : {
+                    minlength : 6,
+                    equalTo : "#password"
+                }
+            }
+        });
+        if($('#new_employee_form').valid()){
+            $('form#new_employee_form').submit();
+        }
+    })
 </script>
 @endsection
