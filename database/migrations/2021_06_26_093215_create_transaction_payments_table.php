@@ -31,6 +31,8 @@ class CreateTransactionPaymentsTable extends Migration
             $table->string('amount_to_be_used')->nullable()->comment('Gift card amount used for this payment');
             $table->string('bank_deposit_date')->nullable();
             $table->string('bank_name')->nullable();
+            $table->string('source_type')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable()->comment('Other users in the system as source.');
             $table->text('payment_note')->nullable();
 
             $table->timestamps();

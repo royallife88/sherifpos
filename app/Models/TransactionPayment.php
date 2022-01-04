@@ -17,4 +17,9 @@ class TransactionPayment extends Model implements HasMedia
      * @var array
      */
     protected $guarded = ['id'];
+
+    public function source()
+    {
+        return $this->belongsTo(User::class, 'source_id')->withDefault(['name' => '']);
+    }
 }

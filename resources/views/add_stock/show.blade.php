@@ -100,9 +100,25 @@
                         <div class="col-md-12">
                             <div class="col-md-3 offset-md-8 text-right">
                                 <h3> @lang('lang.total'): <span
-                                        class="final_total_span">{{@num_format($add_stock->final_total)}}</span>
+                                        class="final_total_span">{{@num_format($add_stock->add_stock_lines->sum('sub_total'))}}</span>
                                 </h3>
 
+                            </div>
+                        </div>
+                        <br>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {!! Form::label('total_tax', __('lang.tax'), []) !!}:
+                                <b>{{@num_format($add_stock->total_tax)}}</b>
+                            </div>
+                            <div class="col-md-4">
+                                {!! Form::label('discount_amount', __('lang.discount'), []) !!}:
+                                <b>{{@num_format($add_stock->discount_amount)}}</b>
+                            </div>
+                            <div class="col-md-4">
+                                {!! Form::label('other_payments', __('lang.other_payments'), []) !!}:
+                                <b>{{@num_format($add_stock->other_payments)}}</b>
                             </div>
                         </div>
                         <br>

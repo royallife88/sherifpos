@@ -133,4 +133,9 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(TermsAndCondition::class, 'terms_and_condition_id');
     }
+
+    public function source()
+    {
+        return $this->belongsTo(User::class, 'source_id')->withDefault(['name' => '']);
+    }
 }

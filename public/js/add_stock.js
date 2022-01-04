@@ -110,11 +110,20 @@ function calculate_sub_totals() {
             .text(__currency_trans_from_en(sub_total, false));
         total += sub_total;
     });
+    __write_number($("#grand_total"), total);
 
+    var total_tax = __read_number($('#total_tax'));
+    var discount_amount = __read_number($('#discount_amount'));
+    var other_payments = __read_number($('#other_payments'));
+
+    total = total + total_tax - discount_amount + other_payments;
     __write_number($("#final_total"), total);
+    __write_number($("#amount"), total);
     $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
-
+$(document).on('change', '#total_tax, #discount_amount, #other_payments',function(){
+    calculate_sub_totals();
+})
 $(document).on("change", ".quantity, .purchase_price", function () {
     let tr = $(this).closest("tr");
     let current_stock = __read_number($(tr).find(".current_stock"));

@@ -33,7 +33,7 @@
                 <td>{{$payment_type_array[$payment->method]}}</td>
                 <td>{{$payment->bank_name}}</td>
                 <td>{{$payment->ref_number}}</td>
-                <td>@if(!empty($payment->bank_deposit_date)){{@format_date($payment->bank_deposit_date)}} @endif</td>
+                <td>@if(!empty($payment->bank_deposit_date && ($payment->method == 'bank_transfer' || $payment->method == 'cheque'))){{@format_date($payment->bank_deposit_date)}} @endif</td>
                 <td>{{$payment->card_number}}</td>
                 <td>{{$payment->card_year}}</td>
                 <td>{{$payment->card_month}}</td>

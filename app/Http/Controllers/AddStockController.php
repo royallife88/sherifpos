@@ -7,7 +7,9 @@ use App\Models\AddStockLine;
 use App\Models\Email;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\StorePos;
 use App\Models\Supplier;
+use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Utils\NotificationUtil;
@@ -107,13 +109,15 @@ class AddStockController extends Controller
      */
     public function create()
     {
-        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $taxes = Tax::pluck('name', 'id');
+        $users = User::pluck('name', 'id');
 
         return view('add_stock.create')->with(compact(
             'suppliers',
@@ -121,7 +125,9 @@ class AddStockController extends Controller
             'payment_status_array',
             'payment_type_array',
             'stores',
-            'po_nos'
+            'po_nos',
+            'taxes',
+            'users',
         ));
     }
 
@@ -151,14 +157,20 @@ class AddStockController extends Controller
                 'payment_status' => $data['payment_status'],
                 'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
                 'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,
+                'grand_total' => $this->productUtil->num_uf($data['grand_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
+                'total_tax' => $this->productUtil->num_uf($data['total_tax']),
+                'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
+                'other_payments' => $this->productUtil->num_uf($data['other_payments']),
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
                 'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
                 'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
             ];
 
             DB::beginTransaction();
@@ -179,6 +191,8 @@ class AddStockController extends Controller
                     'method' => $request->method,
                     'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                     'ref_number' => $request->ref_number,
+                    'source_type' => $request->source_type,
+                    'source_id' => $request->source_id,
                     'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
                     'bank_name' => $request->bank_name,
                 ];
@@ -239,10 +253,15 @@ class AddStockController extends Controller
 
         $supplier = Supplier::find($add_stock->supplier_id);
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $taxes = Tax::pluck('name', 'id');
+        $users = User::pluck('name', 'id');
+
         return view('add_stock.show')->with(compact(
             'add_stock',
             'supplier',
-            'payment_type_array'
+            'payment_type_array',
+            'users',
+            'taxes'
         ));
     }
 
@@ -262,6 +281,8 @@ class AddStockController extends Controller
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $taxes = Tax::pluck('name', 'id');
+        $users = User::pluck('name', 'id');
 
         return view('add_stock.edit')->with(compact(
             'add_stock',
@@ -270,6 +291,8 @@ class AddStockController extends Controller
             'payment_status_array',
             'payment_type_array',
             'stores',
+            'users',
+            'taxes',
             'po_nos'
         ));
     }
@@ -284,7 +307,7 @@ class AddStockController extends Controller
     public function update(Request $request, $id)
     {
 
-        try {
+        // try {
             $data = $request->except('_token');
 
             if (!empty($data['po_no'])) {
@@ -300,14 +323,20 @@ class AddStockController extends Controller
                 'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
                 'payment_status' => $data['payment_status'],
                 'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
+                'grand_total' => $this->productUtil->num_uf($data['grand_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
+                'total_tax' => $this->productUtil->num_uf($data['total_tax']),
+                'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
+                'other_payments' => $this->productUtil->num_uf($data['other_payments']),
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
                 'notify_me' => !empty($data['notify_before_days']) ? 1 : 0,
                 'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
             ];
 
             if (!empty($data['po_no'])) {
@@ -339,6 +368,8 @@ class AddStockController extends Controller
                     'method' => $request->method,
                     'paid_on' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['paid_on']) : null,
                     'ref_number' => $request->ref_number,
+                    'source_type' => $request->source_type,
+                    'source_id' => $request->source_id,
                     'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
                     'bank_name' => $request->bank_name,
                 ];
@@ -372,13 +403,13 @@ class AddStockController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -554,5 +585,20 @@ class AddStockController extends Controller
         }
 
         return redirect()->back()->with('status', $output);
+    }
+
+    public function getSourceByTypeDropdown($type = null)
+    {
+        if ($type == 'user') {
+            $array = User::pluck('name', 'id');
+        }
+        if ($type == 'pos') {
+            $array = StorePos::pluck('name', 'id');
+        }
+        if ($type == 'store') {
+            $array = Store::pluck('name', 'id');
+        }
+
+        return $this->commonUtil->createDropdownHtml($array, __('lang.please_select'));
     }
 }

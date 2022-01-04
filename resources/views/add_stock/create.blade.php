@@ -28,7 +28,7 @@
                                 <div class="form-group">
                                     {!! Form::label('supplier_id', __('lang.supplier'). ':*', []) !!}
                                     {!! Form::select('supplier_id', $suppliers,
-                                    null, ['class' => 'selectpicker form-control',
+                                    array_key_first($suppliers), ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
@@ -99,6 +99,7 @@
                         <div class="col-md-12">
                             <div class="col-md-3 offset-md-8 text-right">
                                 <h3> @lang('lang.total'): <span class="final_total_span"></span> </h3>
+                                <input type="hidden" name="grand_total" id="grand_total" value="0">
                                 <input type="hidden" name="final_total" id="final_total" value="0">
                             </div>
                         </div>
@@ -119,6 +120,47 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
+                                    {!! Form::label('total_tax', __('lang.tax'), []) !!} <br>
+                                    {!! Form::text('total_tax', null, ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.tax'), 'id' => 'total_tax']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('discount_amount', __('lang.discount'), []) !!} <br>
+                                    {!! Form::text('discount_amount', null, ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.discount'), 'id' => 'discount_amount']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('other_payments', __('lang.other_payments'), []) !!} <br>
+                                    {!! Form::text('other_payments', null, ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.other_payments'), 'id' => 'other_payments']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                                    {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'),
+                                    'store' => __('lang.store')],
+                                    'user', ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true",
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                                    {!! Form::select('source_id', $users,
+                                    null, ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true",
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' =>
+                                    'source_id']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
                                     {!! Form::label('transaction_date', __('lang.date'). ':*', []) !!} <br>
                                     {!! Form::text('transaction_date', @format_date(date('Y-m-d')), ['class' =>
                                     'form-control datepicker',
@@ -132,7 +174,7 @@
                                     {!! Form::label('payment_status', __('lang.payment_status'). ':*', [])
                                     !!}
                                     {!! Form::select('payment_status', $payment_status_array,
-                                    null, ['class' => 'selectpicker form-control',
+                                    'paid', ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
                                     'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
@@ -291,6 +333,31 @@
         }else{
             $('.not_cash_fields').removeClass('hide');
             $('.not_cash').attr('required', true);
+        }
+    });
+
+    $(document).ready(function(){
+        $('#payment_status').change();
+        $('#source_type').change();
+    })
+    $('#source_type').change(function(){
+        if($(this).val() !== ''){
+            $.ajax({
+                method: 'get',
+                url: '/add-stock/get-source-by-type-dropdown/'+$(this).val(),
+                data: {  },
+                success: function(result) {
+                    $("#source_id").empty().append(result);
+                    $("#source_id").selectpicker("refresh");
+                },
+            });
+        }
+    });
+
+    $(document).on('change', '.expiry_date', function(){
+        if($(this).val() != ''){
+            let tr = $(this).parents('tr');
+            tr.find('.days_before_the_expiry_date').val(15);
         }
     })
 </script>

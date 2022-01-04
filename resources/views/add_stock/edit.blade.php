@@ -116,7 +116,7 @@
                                             <td>
                                                 <input type="text" class="form-control quantity" min=1
                                                     name="add_stock_lines[{{$loop->index}}][quantity]" required
-                                                    value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
+                                                    value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif">
                                             </td>
                                             <td>
                                                 <input type="text" class="form-control purchase_price"
@@ -177,6 +177,7 @@
                                         class="final_total_span">{{@num_format($add_stock->final_total)}}</span> </h3>
                                 <input type="hidden" name="final_total" id="final_total"
                                     value="{{$add_stock->final_total}}">
+                                <input type="hidden" name="grand_total" id="grand_total" value="{{$add_stock->grand_total}}">
                             </div>
                         </div>
                         <br>
@@ -193,6 +194,46 @@
                                     {!! Form::text('invoice_no', $add_stock->invoice_no, ['class' => 'form-control',
                                     'placeholder' =>
                                     __('lang.invoice_no')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('total_tax', __('lang.tax'), []) !!} <br>
+                                    {!! Form::text('total_tax', @num_format($add_stock->total_tax), ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.tax'), 'id' => 'total_tax']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('discount_amount', __('lang.discount'), []) !!} <br>
+                                    {!! Form::text('discount_amount', @num_format($add_stock->discount_amount), ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.discount'), 'id' => 'discount_amount']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('other_payments', __('lang.other_payments'), []) !!} <br>
+                                    {!! Form::text('other_payments', @num_format($add_stock->other_payments), ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.other_payments'), 'id' => 'other_payments']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                                    {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'),
+                                    'store' => __('lang.store')],
+                                    $add_stock->source_type, ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true", 'required',
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                                    {!! Form::select('source_id', $users,
+                                    $add_stock->source_id, ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true", 'required',
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'source_id']) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">
@@ -441,6 +482,20 @@
         }else{
             $('.not_cash_fields').removeClass('hide');
             $('.not_cash').attr('required', true);
+        }
+    })
+
+    $('#source_type').change(function(){
+        if($(this).val() !== ''){
+            $.ajax({
+                method: 'get',
+                url: '/add-stock/get-source-by-type-dropdown/'+$(this).val(),
+                data: {  },
+                success: function(result) {
+                    $("#source_id").empty().append(result);
+                    $("#source_id").selectpicker("refresh");
+                },
+            });
         }
     })
 </script>

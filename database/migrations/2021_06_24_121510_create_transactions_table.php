@@ -47,9 +47,10 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('tax_id')->nullable();
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
             $table->decimal('total_tax', 15, 4)->nullable();
+            $table->decimal('other_payments', 15, 4)->default(0);
             $table->string('discount_type')->nullable();
-            $table->decimal('discount_value', 15, 4)->nullable()->comment('discount value applied by user');
-            $table->decimal('discount_amount', 15, 4)->nullable()->comment('amount calculated based on type and value');
+            $table->decimal('discount_value', 15, 4)->default(0)->comment('discount value applied by user');
+            $table->decimal('discount_amount', 15, 4)->default(0)->comment('amount calculated based on type and value');
             $table->decimal('total_sp_discount', 15, 4)->default(0)->comment('total of sale promotion discount');
             $table->decimal('total_product_surplus', 15, 4)->default(0)->comment('total of product surplus');
             $table->decimal('total_product_discount', 15, 4)->default(0)->comment('total of product discount');
@@ -79,6 +80,8 @@ class CreateTransactionsTable extends Migration
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
             $table->text('notes')->nullable();
+            $table->string('source_type')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
             $table->unsignedBigInteger('terms_and_condition_id')->nullable();
             $table->decimal('compensated_value', 15, 4)->default(0);
             $table->string('compensated_at')->nullable();

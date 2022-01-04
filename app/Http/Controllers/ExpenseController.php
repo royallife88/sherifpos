@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Store;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
+use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -97,11 +98,13 @@ class ExpenseController extends Controller
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
         $stores = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('expense.create')->with(compact(
             'expense_categories',
             'payment_type_array',
-            'stores'
+            'stores',
+            'users'
         ));
     }
 
@@ -130,7 +133,9 @@ class ExpenseController extends Controller
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'notify_me' => !empty($data['notify_me']) ? 1 : 0,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
             ];
             $expense_data['created_by'] = Auth::user()->id;
 
@@ -150,6 +155,11 @@ class ExpenseController extends Controller
                 'method' => $request->method,
                 'paid_on' => $data['paid_on'],
                 'ref_number' => $request->ref_number,
+                'card_number' => $request->card_number,
+                'card_month' => $request->card_month,
+                'card_year' => $request->card_year,
+                'source_type' => $request->source_type,
+                'source_id' => $request->source_id,
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,
             ];
@@ -198,10 +208,12 @@ class ExpenseController extends Controller
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::where('expense_category_id', $expense->expense_category_id)->pluck('name', 'id');
         $stores = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('expense.edit')->with(compact(
             'expense',
             'stores',
+            'users',
             'payment_type_array',
             'expense_beneficiaries',
             'expense_categories'
@@ -233,7 +245,9 @@ class ExpenseController extends Controller
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'notify_me' => !empty($data['notify_me']) ? 1 : 0,
-                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
             ];
             $expense_data['created_by'] = Auth::user()->id;
             DB::beginTransaction();
@@ -252,6 +266,11 @@ class ExpenseController extends Controller
                 'method' => $request->method,
                 'paid_on' => $data['paid_on'],
                 'ref_number' => $request->ref_number,
+                'card_number' => $request->card_number,
+                'card_month' => $request->card_month,
+                'card_year' => $request->card_year,
+                'source_type' => $request->source_type,
+                'source_id' => $request->source_id,
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,
             ];

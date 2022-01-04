@@ -40,6 +40,26 @@
                                         __('lang.please_select')]) !!}
                                     </div>
                                 </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'),
+                                        'store' => __('lang.store')],
+                                        'user', ['class' => 'selectpicker form-control',
+                                        'data-live-search'=>"true",
+                                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                                        {!! Form::select('source_id', $users,
+                                        null, ['class' => 'selectpicker form-control',
+                                        'data-live-search'=>"true",
+                                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' =>
+                                        'source_id']) !!}
+                                    </div>
+                                </div>
                                 <div class="col-md-12">
                                     @include('transaction_payment.partials.payment_form')
 
@@ -91,11 +111,18 @@
     $('#method').change(function(){
         var method = $(this).val();
 
-        if(method === 'cash'){
+        if(method === 'card'){
+            $('.card_field').removeClass('hide');
             $('.not_cash_fields').addClass('hide');
+            $('.not_cash').attr('required', false);
+        }
+        else if(method === 'cash'){
+            $('.not_cash_fields').addClass('hide');
+            $('.card_field').addClass('hide');
             $('.not_cash').attr('required', false);
         }else{
             $('.not_cash_fields').removeClass('hide');
+            $('.card_field').addClass('hide');
             $('.not_cash').attr('required', true);
         }
     })
@@ -122,6 +149,24 @@
                 },
             });
         }
+    });
+
+    $(document).ready(function(){
+        $('#payment_status').change();
+        $('#source_type').change();
     })
+    $('#source_type').change(function(){
+        if($(this).val() !== ''){
+            $.ajax({
+                method: 'get',
+                url: '/add-stock/get-source-by-type-dropdown/'+$(this).val(),
+                data: {  },
+                success: function(result) {
+                    $("#source_id").empty().append(result);
+                    $("#source_id").selectpicker("refresh");
+                },
+            });
+        }
+    });
 </script>
 @endsection

@@ -21,7 +21,7 @@ $i = $index;
     </td>
     <td>
         <input type="text" class="form-control quantity" min=1 name="add_stock_lines[{{$i}}][quantity]" required
-            value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
+            value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif">
     </td>
     <td>
         <input type="text" class="form-control purchase_price" name="add_stock_lines[{{$i}}][purchase_price]" required
@@ -50,11 +50,11 @@ $i = $index;
         'readonly']) !!}
     </td>
     <td> {!! Form::label('', __('lang.expiry_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][expiry_date]', null, ['class' => 'form-control datepicker',
+        {!! Form::text('add_stock_lines['.$i.'][expiry_date]', null, ['class' => 'form-control datepicker expiry_date',
         'readonly']) !!}
     </td>
     <td> {!! Form::label('', __('lang.days_before_the_expiry_date'), []) !!}<br>
-        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control']) !!}
+        {!! Form::text('add_stock_lines['.$i.'][expiry_warning]', null, ['class' => 'form-control days_before_the_expiry_date']) !!}
     </td>
     <td> {!! Form::label('', __('lang.convert_status_expire'), []) !!}<br>
         {!! Form::text('add_stock_lines['.$i.'][convert_status_expire]', null, ['class' => 'form-control']) !!}

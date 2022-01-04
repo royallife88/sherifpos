@@ -62,6 +62,8 @@ class TransactionUtil extends Util
             $transaction_payment->method = $payment_data['method'];
             $transaction_payment->paid_on = $payment_data['paid_on'];
             $transaction_payment->ref_number = !empty($payment_data['ref_number']) ? $payment_data['ref_number'] : null;
+            $transaction_payment->source_type = !empty($payment_data['source_type']) ? $payment_data['source_type'] : null;
+            $transaction_payment->source_id = !empty($payment_data['source_id']) ? $payment_data['source_id'] : null;
             $transaction_payment->bank_deposit_date = !empty($payment_data['bank_deposit_date']) ? $payment_data['bank_deposit_date'] : null;
             $transaction_payment->bank_name = !empty($payment_data['bank_name']) ?  $payment_data['bank_name'] : null;
             $transaction_payment->card_number = !empty($payment_data['card_number']) ?  $payment_data['card_number'] : null;

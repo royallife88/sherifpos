@@ -29,7 +29,7 @@
                     <div class="form-group">
                         {!! Form::label('method', __('lang.payment_type'). ':*', []) !!}
                         {!! Form::select('method', $payment_type_array,
-                        null, ['class' => 'selectpicker form-control',
+                        'cash', ['class' => 'selectpicker form-control',
                         'data-live-search'=>"true", 'required',
                         'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
                     </div>
@@ -78,10 +78,6 @@
                     <label>@lang('lang.card_number') *</label>
                     <input type="text" name="card_number" class="form-control">
                 </div>
-                {{-- <div class="col-md-3">
-                    <label>@lang('lang.card_security')</label>
-                    <input type="text" name="card_security" class="form-control">
-                </div> --}}
                 <div class="col-md-2 card_field hide">
                     <label>@lang('lang.month')</label>
                     <input type="text" name="card_month" class="form-control">
