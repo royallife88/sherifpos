@@ -10,14 +10,33 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class Transaction extends Model  implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
-
+    protected $appends = ['source_name'];
     /**
      * The attributes that aren't mass assignable.
      *
      * @var array
      */
     protected $guarded = ['id'];
+    public function getSourceNameAttribute()
+    {
+        $source_type = $this->source_type;
+        $source_id = $this->source_id;
+        if(empty($source_id)){
+            return '';
+        }
 
+        if($source_type == 'pos'){
+            $source = StorePos::where('id', $source_id)->first();
+        }
+        if($source_type == 'user'){
+            $source = User::where('id', $source_id)->first();
+        }
+        if($source_type == 'store'){
+            $source = Store::where('id', $source_id)->first();
+        }
+
+        return $source->name ?? null;
+    }
     public function purchase_order_lines()
     {
         return $this->hasMany(PurchaseOrderLine::class);

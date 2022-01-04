@@ -75,6 +75,7 @@
                                         <th>@lang('lang.creation_date')</th>
                                         <th>@lang('lang.payment_date')</th>
                                         <th>@lang('lang.next_payment_date')</th>
+                                        <th>@lang('lang.source_of_payment')</th>
                                         <th>@lang('lang.files')</th>
                                         <th class="notexport">@lang('lang.action')</th>
                                     </tr>
@@ -99,6 +100,7 @@
                                         </td>
                                         <td>@if(!empty($expense->next_payment_date)){{@format_date($expense->next_payment_date)}}@endif
                                         </td>
+                                        <td>{{$expense->source_name}}</td>
                                         <td>
                                             <a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $expense->id, 'collection_name' => 'expense'])}}"
                                                 data-container=".view_modal"
