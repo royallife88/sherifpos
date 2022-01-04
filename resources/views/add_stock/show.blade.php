@@ -108,17 +108,21 @@
                         <br>
                         <br>
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {!! Form::label('total_tax', __('lang.tax'), []) !!}:
                                 <b>{{@num_format($add_stock->total_tax)}}</b>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {!! Form::label('discount_amount', __('lang.discount'), []) !!}:
                                 <b>{{@num_format($add_stock->discount_amount)}}</b>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 {!! Form::label('other_payments', __('lang.other_payments'), []) !!}:
                                 <b>{{@num_format($add_stock->other_payments)}}</b>
+                            </div>
+                            <div class="col-md-3">
+                                {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!}:
+                                <b>{{$add_stock->source_name}}</b>
                             </div>
                         </div>
                         <br>

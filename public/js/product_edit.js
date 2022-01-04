@@ -48,13 +48,18 @@ $(document).on("click", ".remove_row", function () {
 
 $(document).on("click", ".add_row", function () {
     var row_id = parseInt($("#row_id").val());
+    console.log(row_id, 'row_id');
     $.ajax({
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
-        data: {},
+        data: {
+            name: $("#name").val(),
+            purchase_price: $("#purchase_price").val(),
+            sell_price: $("#sell_price").val(),
+        },
         contentType: "html",
         success: function (result) {
-            $("#variation_table tbody").append(result);
+            $("#variation_table tbody").prepend(result);
             $(".row_" + row_id)
                 .find(".selectpicker")
                 .selectpicker("refresh");
@@ -64,7 +69,15 @@ $(document).on("click", ".add_row", function () {
         },
     });
 });
+$(document).on("change", ".v_size, .v_color", function () {
+    let row = $(this).parents(".variation_row");
+    let name = row.find(".name_hidden").val();
+    let color = row.find(".v_color :selected").text();
+    let size = row.find(".v_size :selected").text();
 
+    let product_name = name + " " + color + " " + size;
+    row.find(".v_name").val(product_name);
+});
 $(document).on("click", ".variant_different_prices_for_stores", function () {
     let row_id = $(this).data("row_id");
 
