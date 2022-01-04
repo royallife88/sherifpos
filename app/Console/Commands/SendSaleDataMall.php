@@ -59,7 +59,6 @@ class SendSaleDataMall extends Command
             $url = $live_url;
         }
         $store = Store::where('name', $store_name)->first();
-
         if (!empty($url) && !empty($token) && !empty($username) && !empty($password) && !empty($store) && !empty($outlet_name)) {
             $today_date = Carbon::now()->format('Y-m-d');
             $sales_total = Transaction::where('type', 'sell')
@@ -67,15 +66,8 @@ class SendSaleDataMall extends Command
                 ->whereDate('transaction_date', $today_date)
                 ->select('final_total')
                 ->get();
-            $data = [];
-            foreach($sales_total as $sale){
-                $data[]= '{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : ' . $sale->final_total . '}';
-            }
-            if(empty($data)){
-                $data[]= '{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : 0}';
-            }
-            $data_string = '['. implode(',', $data). ']';
 
+            $data_string = '{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : ' . $sales_total->sum('final_total') . '}';
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
