@@ -115,8 +115,8 @@
                     </div>
                     <div class="col-md-3">
                         {{-- <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button> --}}
-                        <a class="btn btn-danger mt-4"
-                            href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a>
+                        {{-- <a class="btn btn-danger mt-4"
+                            href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a> --}}
 
                     </div>
                 </div>
@@ -175,7 +175,7 @@
 
 </div>
 <div class="table-responsive">
-    <table id="product_table" class="table dataTable" style="width: auto">
+    <table id="product_table" class="table" style="width: auto">
         <thead>
             <tr>
                 <th>@lang('lang.image')</th>
@@ -207,7 +207,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($products as $product)
+            {{-- @foreach($products as $product)
             <tr>
                 @php
                 $image = $product->getFirstMediaUrl('product');
@@ -286,7 +286,7 @@
                 </td>
             </tr>
 
-            @endforeach
+            @endforeach --}}
         </tbody>
         <tfoot>
             <tr>
@@ -300,6 +300,88 @@
 
 @section('javascript')
 <script>
+    $(document).ready( function(){
+        product_table = $('#product_table').DataTable({
+            lengthChange: true,
+            paging: true,
+            info: false,
+            bAutoWidth: false,
+            order: [],
+            language: {
+                url: dt_lang_url,
+            },
+            lengthMenu: [
+                [10, 25, 50, 75, 100, 200, 500, -1],
+                [10, 25, 50, 75, 100, 200, 500, "All"],
+            ],
+            dom: "lBfrtip",
+            buttons: buttons,
+            processing: true,
+            serverSide: true,
+            aaSorting: [[2, 'asc']],
+             "ajax": {
+                "url": "/product",
+                "data": function ( d ) {
+                    d.product_class_id = $('#product_class_id').val();
+                    d.category_id = $('#category_id').val();
+                    d.sub_category_id = $('#sub_category_id').val();
+                    d.brand_id = $('#brand_id').val();
+                    d.unit_id = $('#unit_id').val();
+                    d.color_id = $('#color_id').val();
+                    d.size_id = $('#size_id').val();
+                    d.grade_id = $('#grade_id').val();
+                    d.tax_id = $('#tax_id').val();
+                    d.store_id = $('#store_id').val();
+                    d.customer_type_id = $('#customer_type_id').val();
+                    d.created_by = $('#created_by').val();
+                }
+            },
+            columnDefs: [ {
+                "targets": [0, 3],
+                "orderable": false,
+                "searchable": false
+            } ],
+            columns: [
+                { data: 'image', name: 'products.image'  },
+                { data: 'variation_name', name: 'variation_name'},
+                { data: 'sub_sku', name: 'sub_sku'  },
+                { data: 'barcode', name: 'barcode'  },
+                { data: 'product_class', name: 'product_class'},
+                { data: 'category', name: 'category'},
+                { data: 'sub_category', name: 'sub_category'},
+                { data: 'purchase_history', name: 'purchase_history'},
+                { data: 'batch_number', name: 'batch_number'},
+                { data: 'default_sell_price', name: 'default_sell_price'},
+                { data: 'tax', name: 'tax'},
+                { data: 'brand', name: 'brand'},
+                { data: 'unit', name: 'unit'},
+                { data: 'color', name: 'color'},
+                { data: 'size', name: 'size'},
+                { data: 'grade', name: 'grade'},
+                { data: 'current_stock', name: 'current_stock'},
+                { data: 'customer_type', name: 'customer_type'},
+                { data: 'exp_date', name: 'exp_date'},
+                { data: 'manufacturing_date', name: 'manufacturing_date'},
+                { data: 'discount', name: 'discount'},
+                @can('product_module.purchase_price.view')
+                { data: 'default_purchase_price', name: 'default_purchase_price', searchable: false},
+                @endcan
+                { data: 'created_by', name: 'created_by'},
+                { data: 'action', name: 'action'},
+
+            ],
+            createdRow: function( row, data, dataIndex ) {
+
+            },
+            fnDrawCallback: function(oSettings) {
+                __currency_convert_recursively($('#product_table'));
+            },
+        });
+
+    });
+
+
+
     var hidden_column_array = $.cookie('column_visibility') ? JSON.parse($.cookie('column_visibility')) : [];
     $(document).ready(function(){
 
@@ -331,7 +413,7 @@
     })
 
     function toggleColumnVisibility(column_index, this_btn){
-        column = table.column(column_index);
+        column = product_table.column(column_index);
         column.visible(! column.visible());
 
         if(column.visible()){
@@ -344,7 +426,7 @@
         }
     }
     $(document).on('change', '.filter_product', function(){
-        $('#filter_product_form').submit();
+        product_table.ajax.reload();
     })
 </script>
 @endsection

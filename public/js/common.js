@@ -212,6 +212,42 @@ if (language == "en") {
 } else {
     dt_lang_url = base_path + "/js/datatables_lang/en.json";
 }
+var buttons = [
+    {
+        extend: "print",
+        exportOptions: {
+            columns: ":visible:not(.notexport)",
+        },
+    },
+    {
+        extend: "excel",
+        exportOptions: {
+            columns: ":visible:not(.notexport)",
+        },
+    },
+    {
+        extend: "csvHtml5",
+        exportOptions: {
+            columns: ":visible:not(.notexport)",
+        },
+    },
+    {
+        extend: "pdfHtml5",
+        exportOptions: {
+            columns: ":visible:not(.notexport)",
+        },
+    },
+    {
+        extend: "copyHtml5",
+        exportOptions: {
+            columns: ":visible:not(.notexport)",
+        },
+    },
+    {
+        extend: "colvis",
+        columns: ":gt(0)",
+    },
+];
 var datatable_params = {
     lengthChange: true,
     paging: true,
@@ -226,42 +262,7 @@ var datatable_params = {
         [10, 25, 50, 75, 100, 200, 500, "All"],
     ],
     dom: "lBfrtip",
-    buttons: [
-        {
-            extend: "print",
-            exportOptions: {
-                columns: ":visible:not(.notexport)",
-            },
-        },
-        {
-            extend: "excel",
-            exportOptions: {
-                columns: ":visible:not(.notexport)",
-            },
-        },
-        {
-            extend: "csvHtml5",
-            exportOptions: {
-                columns: ":visible:not(.notexport)",
-            },
-        },
-        {
-            extend: "pdfHtml5",
-            exportOptions: {
-                columns: ":visible:not(.notexport)",
-            },
-        },
-        {
-            extend: "copyHtml5",
-            exportOptions: {
-                columns: ":visible:not(.notexport)",
-            },
-        },
-        {
-            extend: "colvis",
-            columns: ":gt(0)",
-        },
-    ],
+    buttons: buttons,
     footerCallback: function (row, data, start, end, display) {
         var intVal = function (i) {
             return typeof i === "string"

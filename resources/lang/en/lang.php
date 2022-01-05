@@ -180,7 +180,7 @@ return [
     'view_all_supplier' => 'View All Supplier',
     'product_classification_tree' => 'Product Classification Tree',
     'print_barcode' => 'Print Barcode',
-    'enter_product_name_to_print_labels' => 'Enter product name to print barcode',
+    'enter_product_name_to_print_labels' => 'Write first number of the barcode, scan it or write first letters',
     'products' => 'Products',
     'no_of_labels' => 'Number of labels',
     'product_name' => 'Product Name',

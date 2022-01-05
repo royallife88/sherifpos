@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class ProductController extends Controller
 {
@@ -188,90 +189,226 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
-        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->leftjoin('add_stock_lines', function ($join) {
-                $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
-            })
-            ->leftjoin('colors', 'variations.color_id', 'colors.id')
-            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
-            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
-            ->leftjoin('units', 'variations.unit_id', 'units.id')
-            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+        if (request()->ajax()) {
 
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+                ->leftjoin('add_stock_lines', function ($join) {
+                    $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
+                })
+                ->leftjoin('colors', 'variations.color_id', 'colors.id')
+                ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+                ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+                ->leftjoin('units', 'variations.unit_id', 'units.id')
+                ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
+                ->leftjoin('categories', 'products.category_id', 'categories.id')
+                ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
+                ->leftjoin('brands', 'products.brand_id', 'brands.id')
+                ->leftjoin('users', 'products.created_by', 'users.id')
+                ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
+                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
-        if (!empty($store_id)) {
-            $products->where('product_stores.store_id', $store_id);
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+
+            if (!empty($store_id)) {
+                $products->where('product_stores.store_id', $store_id);
+            }
+
+            if (!empty(request()->product_id)) {
+                $products->where('products.id', request()->product_id);
+            }
+
+            if (!empty(request()->product_class_id)) {
+                $products->where('product_class_id', request()->product_class_id);
+            }
+
+            if (!empty(request()->category_id)) {
+                $products->where('products.category_id', request()->category_id);
+            }
+
+            if (!empty(request()->sub_category_id)) {
+                $products->where('products.sub_category_id', request()->sub_category_id);
+            }
+
+            if (!empty(request()->tax_id)) {
+                $products->where('tax_id', request()->tax_id);
+            }
+
+            if (!empty(request()->brand_id)) {
+                $products->where('brand_id', request()->brand_id);
+            }
+
+            if (!empty(request()->unit_id)) {
+                $products->where('variations.unit_id', request()->unit_id);
+            }
+
+            if (!empty(request()->color_id)) {
+                $products->where('variations.color_id', request()->color_id);
+            }
+
+            if (!empty(request()->size_id)) {
+                $products->where('variations.size_id', request()->size_id);
+            }
+
+            if (!empty(request()->grade_id)) {
+                $products->where('variations.grade_id', request()->grade_id);
+            }
+
+            if (!empty(request()->customer_type_id)) {
+                $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+            }
+
+            if (!empty(request()->customer_type_id)) {
+                $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
+            }
+
+            if (!empty(request()->created_by)) {
+                $products->where('products.created_by', request()->created_by);
+            }
+            $products->where('active', 1);
+            $products = $products->select(
+                'products.*',
+                'add_stock_lines.batch_number',
+                'variations.sub_sku',
+                'product_classes.name as product_class',
+                'categories.name as category',
+                'sub_categories.name as sub_category',
+                'brands.name as brand',
+                'colors.name as color',
+                'sizes.name as size',
+                'grades.name as grade',
+                'units.name as unit',
+                'taxes.name as tax',
+                'variations.name as variation_name',
+                'variations.default_purchase_price',
+                'variations.default_sell_price',
+                'add_stock_lines.expiry_date as exp_date',
+                'users.name as created_by_name',
+                DB::raw('SUM(product_stores.qty_available) as current_stock'),
+            )
+                ->groupBy('variations.id');
+
+            return DataTables::of($products)
+                ->addColumn('image', function ($row) {
+                    $image = $row->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
+                @endif')
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->addColumn('barcode', '<p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">
+                @if($variation_name != "Default"){{$variation_name}} @else {{$name}}
+                @endif</p><img class="center-block"
+                style="width:250px; !important;height: {{2*0.24}}in !important;"
+                src="data:image/png;base64,{{DNS1D::getBarcodePNG($sub_sku,$barcode_type??"C128", 3,30,array(39, 48, 54), true)}}">')
+                ->addColumn('product_class', '{{$product_class}}')
+                ->addColumn('category', '{{$category}}')
+                ->addColumn('sub_category', '{{$sub_category}}')
+                ->addColumn('purchase_history', function ($row) {
+                    $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->id) . '"
+                    data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
+                    return $html;
+                })
+                ->editColumn('batch_number', '{{$batch_number}}')
+                ->editColumn('default_sell_price', '{{@num_format($default_sell_price)}}')
+                ->addColumn('tax', '{{$tax}}')
+                ->editColumn('brand', '{{$brand}}')
+                ->editColumn('unit', '{{$unit}}')
+                ->editColumn('color', '{{$color}}')
+                ->editColumn('size', '{{$size}}')
+                ->editColumn('grade', '{{$grade}}')
+                ->editColumn('current_stock', '@if($is_service)-@else{{@num_format($current_stock)}}@endif')
+                ->addColumn('customer_type', function ($row) {
+                    return $row->customer_type;
+                })
+                ->editColumn('exp_date', '@if(!empty($exp_date)){{@format_date($exp_date)}}@endif')
+                ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
+                ->editColumn('discount', '{{@num_format($discount)}}')
+                ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html =
+                            '<div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">' . __('lang.action') .
+                            '<span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+
+                        if (auth()->user()->can('product_module.product.view')) {
+                            $html .=
+                                '<a data-href="' . action('ProductController@show', $row->id) . '"
+                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                            ' . __('lang.view') . '</a>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.product.create_and_edit')) {
+                            $html .=
+                                '<a href="' . action('ProductController@edit', $row->id) . '" class="btn"
+                            target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.product.delete')) {
+                            $html .=
+                                '<li>
+                            <a data-href="' . action('ProductController@destroy', $row->id) . '"
+                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                ' . __('lang.delete') . '</a>
+                        </li>';
+                        }
+
+                        $html .= '</ul></div>';
+
+                        return $html;
+                    }
+                )
+
+                ->setRowAttr([
+                    'data-href' => function ($row) {
+                        if (auth()->user()->can("product.view")) {
+                            return  action('ProductController@show', [$row->id]);
+                        } else {
+                            return '';
+                        }
+                    }
+                ])
+                ->rawColumns([
+                    'action',
+                    'image',
+                    'variation_name',
+                    'sku',
+                    'barcode',
+                    'product_class',
+                    'category',
+                    'sub_category',
+                    'purchase_history',
+                    'batch_number',
+                    'sell_price',
+                    'tax',
+                    'brand',
+                    'unit',
+                    'color',
+                    'size',
+                    'grade',
+                    'is_service',
+                    'customer_type',
+                    'expiry',
+                    'manufacturing_date',
+                    'discount',
+                    'purchase_price',
+                    'created_by',
+                    'action',
+                ])
+                ->make(true);
         }
 
-        if (!empty(request()->product_id)) {
-            $products->where('products.id', request()->product_id);
-        }
-
-        if (!empty(request()->product_class_id)) {
-            $products->where('product_class_id', request()->product_class_id);
-        }
-
-        if (!empty(request()->category_id)) {
-            $products->where('category_id', request()->category_id);
-        }
-
-        if (!empty(request()->sub_category_id)) {
-            $products->where('sub_category_id', request()->sub_category_id);
-        }
-
-        if (!empty(request()->tax_id)) {
-            $products->where('tax_id', request()->tax_id);
-        }
-
-        if (!empty(request()->brand_id)) {
-            $products->where('brand_id', request()->brand_id);
-        }
-
-        if (!empty(request()->unit_id)) {
-            $products->whereJsonContains('multiple_units', request()->unit_id);
-        }
-
-        if (!empty(request()->color_id)) {
-            $products->whereJsonContains('multiple_colors', request()->color_id);
-        }
-
-        if (!empty(request()->size_id)) {
-            $products->whereJsonContains('multiple_sizes', request()->size_id);
-        }
-
-        if (!empty(request()->grade_id)) {
-            $products->whereJsonContains('multiple_grades', request()->grade_id);
-        }
-
-        if (!empty(request()->customer_type_id)) {
-            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
-        }
-
-        if (!empty(request()->customer_type_id)) {
-            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
-        }
-
-        if (!empty(request()->created_by)) {
-            $products->where('created_by', request()->created_by);
-        }
-
-        $products->where('active', 1);
-        $products = $products->select(
-            'products.*',
-            'variations.sub_sku',
-            'colors.name as color_name',
-            'sizes.name as size_name',
-            'grades.name as grade_name',
-            'units.name as unit_name',
-            'variations.name as variation_name',
-            'variations.default_purchase_price',
-            'variations.default_sell_price',
-            'add_stock_lines.expiry_date as exp_date',
-            DB::raw('SUM(product_stores.qty_available) as current_stock'),
-        )->with(['product_class', 'category', 'sub_category', 'brand', 'created_by_user'])
-            ->groupBy('variations.id')
-            ->get();
 
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -290,7 +427,6 @@ class ProductController extends Controller
         $users = User::pluck('name', 'id');
 
         return view('product.index')->with(compact(
-            'products',
             'product_classes',
             'categories',
             'sub_categories',
