@@ -930,9 +930,6 @@ class SellPosController extends Controller
                     'created_by',
                 ])
                 ->make(true);
-            // $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-
-            // return view('sale_pos.partials.recent_transactions')->with(compact('transactions', 'payment_types'));
         }
     }
 

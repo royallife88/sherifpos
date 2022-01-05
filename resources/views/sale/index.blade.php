@@ -16,84 +16,80 @@
             <h4>@lang('lang.sales_list')</h4>
         </div>
         <div class="card-body">
-            <form action="">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('customer_id', __('lang.customer'), []) !!}
-                            {!! Form::select('customer_id', $customers, request()->customer_id, ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('store_id', __('lang.store'), []) !!}
-                            {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('status', __('lang.status'), []) !!}
-                            {!! Form::select('status', ['final' => 'Completed', 'pending' => 'Pending'],
-                            request()->status, ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('method', __('lang.payment_type'), []) !!}
-                            {!! Form::select('method', $payment_types, request()->method,
-                            ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('payment_status', __('lang.payment_status'), []) !!}
-                            {!! Form::select('payment_status', $payment_status_array, request()->payment_status,
-                            ['class' =>
-                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                            {!! Form::date('start_date', request()->start_date, ['class' => 'form-control']) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                            {!! Form::date('end_date', request()->end_date, ['class' => 'form-control']) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            {!! Form::label('created_by', __('lang.cashier'), []) !!}
-                            {!! Form::select('created_by', $cashiers, false, ['class' =>
-                            'form-control selectpicker', 'id' =>
-                            'created_by', 'data-live-search' => 'true', 'placeholder' =>
-                            __('lang.all')]) !!}
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <br>
-                        <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                        <a href="{{action('SellController@index')}}"
-                            class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('customer_id', __('lang.customer'), []) !!}
+                        {!! Form::select('customer_id', $customers, request()->customer_id, ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                     </div>
                 </div>
-            </form>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('store_id', __('lang.store'), []) !!}
+                        {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('status', __('lang.status'), []) !!}
+                        {!! Form::select('status', ['final' => 'Completed', 'pending' => 'Pending'],
+                        request()->status, ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('method', __('lang.payment_type'), []) !!}
+                        {!! Form::select('method', $payment_types, request()->method,
+                        ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('payment_status', __('lang.payment_status'), []) !!}
+                        {!! Form::select('payment_status', $payment_status_array, request()->payment_status,
+                        ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                        {!! Form::date('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                        {!! Form::date('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('created_by', __('lang.cashier'), []) !!}
+                        {!! Form::select('created_by', $cashiers, false, ['class' =>
+                        'form-control sale_filter selectpicker', 'id' =>
+                        'created_by', 'data-live-search' => 'true', 'placeholder' =>
+                        __('lang.all')]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <button type="button"
+                        class="btn btn-danger mt-2 ml-2 clear_filter">@lang('lang.clear_filter')</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 <div class="table-responsive no-print">
-    <table id="sales_table" class="table dataTable" style="min-height: 300px;">
+    <table id="sales_table" class="table" style="min-height: 300px;">
         <thead>
             <tr>
-                <th>@lang('lang.date')</th>
+                <th>@lang('lang.date_and_time')</th>
                 <th>@lang('lang.reference')</th>
                 <th>@lang('lang.store')</th>
                 <th>@lang('lang.customer')</th>
@@ -110,110 +106,6 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($sales as $sale)
-            <tr>
-                <td>{{@format_date($sale->transaction_date)}}</td>
-                <td>{{$sale->invoice_no}} @if(!empty($sale->return_parent))<a
-                        data-href="{{action('SellReturnController@show', $sale->id)}}" data-container=".view_modal"
-                        class="btn btn-modal" style="color: #007bff;">R</a>@endif</td>
-                <td>@if(!empty($sale->store)){{$sale->store->name}}@endif</td>
-                <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
-                <td>{{ucfirst($sale->status)}}</td>
-                <td>@if(!empty($payment_status_array[$sale->payment_status])){{$payment_status_array[$sale->payment_status]}}@endif
-                </td>
-                <td>@if(!empty($sale->transaction_payments->first()->method)){{$payment_types[$sale->transaction_payments->first()->method]}}@endif
-                </td>
-                <td>@if(!empty($sale->transaction_payments->first()->ref_number)){{$sale->transaction_payments->first()->ref_number}}@endif
-                </td>
-                <td>{{@num_format($sale->final_total)}}
-                </td>
-                <td>
-                    {{@num_format($sale->transaction_payments->sum('amount'))}}</td>
-                <td>
-                    {{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
-                <td>@if(!empty($sale->created_by_user)){{$sale->created_by_user->name}}@endif</td>
-                <td>
-                    @foreach ($sale->sell_products as $sell_product)
-                    @if(!empty($sell_product)){{$sell_product->name}} @endif -
-                    @endforeach
-                    @foreach ($sale->sell_variations as $sell_variation)
-                    @if(!empty($sell_variation)){{$sell_variation->sub_sku}} @endif -
-                    @endforeach
-                </td>
-
-                <td>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">@lang('lang.action')
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            @can('sale.pos.create_and_edit')
-                            <li>
-
-                                <a data-href="{{action('SellController@print', $sale->id)}}"
-                                    class="btn print-invoice"><i class="dripicons-print"></i>
-                                    @lang('lang.generate_invoice')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @can('sale.pos.view')
-                            <li>
-
-                                <a data-href="{{action('SellController@show', $sale->id)}}" data-container=".view_modal"
-                                    class="btn btn-modal"><i class="fa fa-eye"></i> @lang('lang.view')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @can('superadmin')
-                            <li>
-
-                                <a href="{{action('SellController@edit', $sale->id)}}" class="btn"><i
-                                        class="dripicons-document-edit"></i> @lang('lang.edit')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @if(empty($sale->return_parent))
-                            @can('return.sell_return.create_and_edit')
-                            <li>
-                                <a href="{{action('SellReturnController@add', $sale->id)}}" class="btn"><i
-                                        class="fa fa-undo"></i> @lang('lang.sale_return')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @endif
-                            @can('sale.pay.create_and_edit')
-                            @if($sale->payment_status != 'paid')
-                            <li>
-                                <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $sale->id])}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
-                                    @lang('lang.add_payment')</a>
-                            </li>
-                            @endif
-                            @endcan
-                            @can('sale.pay.view')
-                            @if($sale->payment_status != 'pending')
-                            <li>
-                                <a data-href="{{action('TransactionPaymentController@show', $sale->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
-                                    @lang('lang.view_payments')</a>
-                            </li>
-                            @endif
-                            @endcan
-                            @can('superadmin')
-                            <li>
-                                <a data-href="{{action('SellController@destroy', $sale->id)}}"
-                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
-                                    @lang('lang.delete')</a>
-                            </li>
-                            @endcan
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-            @endforeach
         </tbody>
         <tfoot>
             <tr>
@@ -235,6 +127,111 @@
 
 @section('javascript')
 <script>
+    $(document).ready(function(){
+    sales_table = $("#sales_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        order: [],
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[2, "asc"]],
+        ajax: {
+            url: "/sale",
+            data: function (d) {
+                d.customer_id = $("#customer_id").val();
+                d.store_id = $("#store_id").val();
+                d.status = $("#status").val();
+                d.method = $("#method").val();
+                d.payment_status = $("#payment_status").val();
+                d.start_date = $("#start_date").val();
+                d.end_date = $("#end_date").val();
+                d.created_by = $("#created_by").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [13],
+                orderable: false,
+                searchable: false,
+            },
+            {
+                targets: [12],
+                visible: false,
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
+            { data: "store_name", name: "stores.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "status", name: "transactions.status" },
+            { data: "payment_status", name: "transactions.payment_status" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "ref_number", name: "transaction_payments.ref_number" },
+            { data: "final_total", name: "final_total" },
+            { data: "paid", name: "transaction_payments.amount", searchable: false },
+            { data: "due", name: "transaction_payments.amount", searchable: false },
+            { data: "created_by", name: "users.name" },
+            { data: "products", name: "products.name" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    if (column.data().count()) {
+                        var sum = column.data().reduce(function (a, b) {
+                            a = intVal(a);
+                            if (isNaN(a)) {
+                                a = 0;
+                            }
+
+                            b = intVal(b);
+                            if (isNaN(b)) {
+                                b = 0;
+                            }
+
+                            return a + b;
+                        });
+                        $(column.footer()).html(
+                            __currency_trans_from_en(sum, false)
+                        );
+                    }
+                });
+        },
+    });
+    })
+    $(document).on('change', '.sale_filter', function(){
+        sales_table.ajax.reload();
+    });
+    $(document).on('click', '.clear_filter', function(){
+        $('.sale_filter').val('');
+        $('.sale_filter').selectpicker('refresh');
+        sales_table.ajax.reload();
+    });
     $(document).on('click', '.print-invoice', function(){
         $('.view_modal').modal('hide')
         $.ajax({
