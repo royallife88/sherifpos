@@ -73,11 +73,13 @@
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
                                     <div class="col-md-3">
-                                        <label for="customer_type_name" style="margin-top: 40px;">@lang('lang.customer_type'): <span
+                                        <label for="customer_type_name"
+                                            style="margin-top: 40px;">@lang('lang.customer_type'): <span
                                                 class="customer_type_name"></span></label>
                                     </div>
                                     <div class="col-md-2">
-                                        <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'): <span class="customer_balance">{{@num_format(0)}}</span></label>
+                                        <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
+                                            <span class="customer_balance">{{@num_format(0)}}</span></label>
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -284,8 +286,7 @@
                         </div>
                         <div class="column-5">
                             <button style="background-color: #ffc107;" type="button" class="btn btn-custom"
-                                id="recent-transaction-btn"
-                                data-href="{{action('SellPosController@getRecentTransactions')}}"><i
+                                id="recent-transaction-btn"><i
                                     class="dripicons-clock"></i>
                                 @lang('lang.recent_transactions')</button>
                         </div>
@@ -465,7 +466,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="recent_transaction_div col-md-12">
+                            <div class="col-md-12">
+                                @include('sale_pos.partials.recent_transactions')
                             </div>
                         </div>
 

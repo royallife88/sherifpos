@@ -840,8 +840,7 @@ $(document).on("click", ".payment-btn", function (e) {
         $(".deposit-fields").removeClass("hide");
         $(".customer_name_div").removeClass("hide");
         $(".btn-add-payment").addClass("hide");
-        __write_number($('#amount'), 0)
-
+        __write_number($("#amount"), 0);
     } else {
         $(".deposit-fields").addClass("hide");
         $(".customer_name_div").addClass("hide");
@@ -849,7 +848,7 @@ $(document).on("click", ".payment-btn", function (e) {
         $(".btn-add-payment").removeClass("hide");
 
         let final_total = __read_number($("#final_total"));
-        __write_number($('#amount'), final_total)
+        __write_number($("#amount"), final_total);
     }
     if (method === "cheque") {
         $(".cheque_field").removeClass("hide");
@@ -1289,7 +1288,7 @@ $(document).on("change", "#draft_start_date, #draft_end_date", function () {
 });
 $(document).on("click", "#recent-transaction-btn", function () {
     $("#recentTransaction").modal("show");
-    get_recent_transactions();
+    // get_recent_transactions();
 });
 
 $(document).on(
@@ -1299,56 +1298,97 @@ $(document).on(
         get_recent_transactions();
     }
 );
+$(document).ready(function () {
+    recent_transaction_table = $("#recent_transaction_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        order: [],
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[2, "asc"]],
+        ajax: {
+            url: "/pos/get-recent-transactions",
+            data: function (d) {
+                d.start_date = $("#rt_start_date").val();
+                d.end_date = $("#rt_end_date").val();
+                d.method = $("#rt_method").val();
+                d.created_by = $("#rt_created_by").val();
+                d.customer_id = $("#rt_customer_id").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [10],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
+            { data: "final_total", name: "final_total" },
+            { data: "customer_type", name: "customer_types.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "ref_number", name: "transaction_payments.ref_number" },
+            { data: "status", name: "transactions.status" },
+            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "created_by", name: "users.name" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
 
-//Get recent transactions
-function get_recent_transactions() {
-    $(".recent_transaction_div").empty();
-    if (
-        typeof recent_transaction_table !== "undefined" &&
-        recent_transaction_table !== null
-    ) {
-        if ($.fn.dataTable.isDataTable("#recent_transaction_table")) {
-            $("#recent_transaction_table").DataTable().destroy();
-        }
-    }
-    let href = $("#recent-transaction-btn").data("href");
-    $(".recent_transaction_div").css("text-align", "center");
-    $(".recent_transaction_div").html(
-        `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
-    );
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    if (column.data().count()) {
+                        var sum = column.data().reduce(function (a, b) {
+                            a = intVal(a);
+                            if (isNaN(a)) {
+                                a = 0;
+                            }
 
-    $.ajax({
-        method: "get",
-        url:
-            href +
-            "?start_date=" +
-            $("#rt_start_date").val() +
-            "&end_date=" +
-            $("#rt_end_date").val() +
-            "&method=" +
-            $("#rt_method").val() +
-            "&created_by=" +
-            $("#rt_created_by").val() +
-            "&customer_id=" +
-            $("#rt_customer_id").val(),
-        data: {},
-        success: function (result) {
-            setTimeout(() => {
-                $(".recent_transaction_div").empty().append(result);
+                            b = intVal(b);
+                            if (isNaN(b)) {
+                                b = 0;
+                            }
 
-                if (
-                    !$(".recent_transaction_div")
-                        .find("#recent_transaction_table tbody tr")
-                        .hasClass("no_data_found")
-                ) {
-                    $(".recent_transaction_div").empty().append(result);
-                    recent_transaction_table = $(
-                        "#recent_transaction_table"
-                    ).DataTable(datatable_params);
-                }
-            }, 1000);
+                            return a + b;
+                        });
+                        $(column.footer()).html(
+                            __currency_trans_from_en(sum, false)
+                        );
+                    }
+                });
         },
     });
+});
+$(document).on("shown.bs.modal", "#recentTransaction", function () {
+    recent_transaction_table.ajax.reload();
+});
+//Get recent transactions
+function get_recent_transactions() {
+    recent_transaction_table.ajax.reload();
 }
 
 //Get recent transactions
@@ -1483,7 +1523,7 @@ function getCustomerPointDetails() {
             $(".remaining_balance_text").text(
                 __currency_trans_from_en(result.balance, false)
             );
-            $('.balance_error_msg').addClass('hide')
+            $(".balance_error_msg").addClass("hide");
             $("#remaining_deposit_balance").val(result.balance);
             $(".current_deposit_balance").text(
                 __currency_trans_from_en(result.balance, false)
@@ -1549,88 +1589,6 @@ function pos_print(receipt) {
     __currency_convert_recursively($("#receipt_section"));
     __print_receipt("receipt_section");
 }
-
-$(document).on("shown.bs.modal", "#recentTransaction", function () {
-    $("#recent_transaction_table").DataTable({
-        lengthChange: true,
-        paging: true,
-        info: false,
-        bAutoWidth: false,
-        lengthMenu: [
-            [10, 25, 50, 75, 100, 200, 500, -1],
-            [10, 25, 50, 75, 100, 200, 500, "All"],
-        ],
-        dom: "lBfrtip",
-        buttons: [
-            {
-                extend: "print",
-                exportOptions: {
-                    columns: ":visible:not(.notexport)",
-                },
-            },
-            {
-                extend: "excel",
-                exportOptions: {
-                    columns: ":visible:not(.notexport)",
-                },
-            },
-            {
-                extend: "csvHtml5",
-                exportOptions: {
-                    columns: ":visible:not(.notexport)",
-                },
-            },
-            {
-                extend: "pdfHtml5",
-                exportOptions: {
-                    columns: ":visible:not(.notexport)",
-                },
-            },
-            {
-                extend: "copyHtml5",
-                exportOptions: {
-                    columns: ":visible:not(.notexport)",
-                },
-            },
-            {
-                extend: "colvis",
-                columns: ":gt(0)",
-            },
-        ],
-        footerCallback: function (row, data, start, end, display) {
-            var intVal = function (i) {
-                return typeof i === "string"
-                    ? i.replace(/[\$,]/g, "") * 1
-                    : typeof i === "number"
-                    ? i
-                    : 0;
-            };
-
-            this.api()
-                .columns(".sum", { page: "current" })
-                .every(function () {
-                    var column = this;
-
-                    var sum = column.data().reduce(function (a, b) {
-                        a = intVal(a);
-                        if (isNaN(a)) {
-                            a = 0;
-                        }
-
-                        b = intVal(b);
-                        if (isNaN(b)) {
-                            b = 0;
-                        }
-
-                        return a + b;
-                    });
-                    $(column.footer()).html(
-                        __currency_trans_from_en(sum, false)
-                    );
-                });
-        },
-    });
-});
 
 $(document).on("click", ".remove_draft", function (e) {
     e.preventDefault();

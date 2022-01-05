@@ -30,6 +30,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 class SellPosController extends Controller
 {
@@ -788,46 +789,151 @@ class SellPosController extends Controller
      */
     public function getRecentTransactions(Request $request)
     {
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
-        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
-        $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'sell')->where('status', '!=', 'draft');
+        if (request()->ajax()) {
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->where('type', 'sell')->where('status', '!=', 'draft');
 
-        if (!empty($store_id)) {
-            $query->where('transactions.store_id', $store_id);
-        }
-        if (!empty(request()->start_date)) {
-            $query->whereDate('transaction_date', '>=', request()->start_date);
-        }
-        if (!empty(request()->end_date)) {
-            $query->whereDate('transaction_date', '<=', request()->end_date);
-        }
-        if (!empty(request()->customer_id)) {
-            $query->where('customer_id', request()->customer_id);
-        }
-        if (!empty(request()->created_by)) {
-            $query->where('created_by', request()->created_by);
-        }
-        if (!empty(request()->method)) {
-            $query->where('transaction_payments.method', request()->method);
-        }
-        if (!empty($pos_id)) {
-            $query->where('store_pos_id', $pos_id);
-        }
-        if (!session('user.is_superadmin')) {
-            $stores = Store::getDropdown();
-            $stores_ids = array_keys($stores);
-            $query->whereIn('transactions.store_id', $stores_ids);
-        }
+            if (!empty($store_id)) {
+                $query->where('transactions.store_id', $store_id);
+            }
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->customer_id)) {
+                $query->where('customer_id', request()->customer_id);
+            }
+            if (!empty(request()->created_by)) {
+                $query->where('created_by', request()->created_by);
+            }
+            if (!empty(request()->method)) {
+                $query->where('transaction_payments.method', request()->method);
+            }
+            if (!empty($pos_id)) {
+                $query->where('store_pos_id', $pos_id);
+            }
+            if (!session('user.is_superadmin')) {
+                $stores = Store::getDropdown();
+                $stores_ids = array_keys($stores);
+                $query->whereIn('transactions.store_id', $stores_ids);
+            }
 
-        $transactions = $query->select('transactions.*')
-            ->groupBy('transactions.id')
-            ->orderBy('updated_at', 'desc')
-            ->get();
+            $transactions = $query->select(
+                'transactions.*',
+                'users.name as created_by_name',
+                'customers.name as customer_name',
+            )
+                ->groupBy('transactions.id')
+                ->orderBy('updated_at', 'desc');
 
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            return DataTables::of($transactions)
+                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('method', function ($row) {
+                    if (!empty($row->transaction_payments[0]->method)) {
+                        return ucfirst($row->transaction_payments[0]->method);
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('ref_number', function ($row) {
+                    if (!empty($row->transaction_payments[0]->ref_number)) {
+                        return $row->transaction_payments[0]->ref_number;
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('deliveryman_name', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                    }
+                })
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<div class="btn-group">';
 
-        return view('sale_pos.partials.recent_transactions')->with(compact('transactions', 'payment_types'));
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                ' <a data-href="' . action('SellController@print', $row->id) . '"
+                            class="btn btn-danger text-white print-invoice"><i title="' . __('lang.print') . '"
+                                data-toggle="tooltip" class="dripicons-print"></i></a>';
+                        }
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<a data-href="' . action('SellController@show', $row->id) . '"
+                            class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
+                                title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
+                        }
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<a href="' . action('SellController@edit', $row->id) . '" class="btn btn-success"><i
+                            title="' . __('lang.edit') . '" data-toggle="tooltip"
+                            class="dripicons-document-edit"></i></a>';
+                        }
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<a data-href="' . action('SellController@destroy', $row->id) . '"
+                            title="' . __('lang.delete') . '" data-toggle="tooltip"
+                            data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                            class="btn btn-danger delete_item" style="color: white"><i class="fa fa-trash"></i></a>';
+                        }
+                        if (auth()->user()->can('return.sell_return.create_and_edit')) {
+                            if (empty($row->return_parent)) {
+                                $html .=
+                                    '  <a href="' . action('SellReturnController@add', $row->id) . '"
+                                title="' . __('lang.sell_return') . '" data-toggle="tooltip" class="btn btn-secondary"
+                                style="color: white"><i class="fa fa-undo"></i></a>';
+                            }
+                        }
+                        if (auth()->user()->can('return.sell_return.create_and_edit')) {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid') {
+                                $html .=
+                                    '<a data-href="' . action('TransactionPaymentController@addPayment', ['id' => $row->id]) . '"
+                                title="' . __('lang.pay_now') . '" data-toggle="tooltip" data-container=".view_modal"
+                                class="btn btn-modal btn-success" style="color: white"><i class="fa fa-money"></i></a>';
+                            }
+                        }
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'transaction_date',
+                    'final_total',
+                    'status',
+                    'created_by',
+                ])
+                ->make(true);
+            // $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
+            // return view('sale_pos.partials.recent_transactions')->with(compact('transactions', 'payment_types'));
+        }
     }
 
     /**
