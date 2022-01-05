@@ -15,7 +15,6 @@
 
     <div class="card mt-3">
         <div class="col-md-12">
-            <form accept="" method="GET" id="filter_product_form">
                 <div class="row">
                     <div class="col-md-3">
                         <div class="form-group">
@@ -115,12 +114,10 @@
                     </div>
                     <div class="col-md-3">
                         {{-- <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button> --}}
-                        {{-- <a class="btn btn-danger mt-4"
-                            href="{{action('ProductController@index')}}">@lang('lang.clear_filters')</a> --}}
+                        <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
 
                     </div>
                 </div>
-            </form>
         </div>
     </div>
     <div class="row">
@@ -207,86 +204,7 @@
             </tr>
         </thead>
         <tbody>
-            {{-- @foreach($products as $product)
-            <tr>
-                @php
-                $image = $product->getFirstMediaUrl('product');
-                @endphp
-                <td><img src="@if(!empty($image)){{$image}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                        alt="photo" width="50" height="50"></td>
-                <td>@if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}}
-                    @endif</td>
-                <td>{{$product->sub_sku}}
-                </td>
-                <td>
-                    <p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">
-                        @if($product->variation_name != 'Default'){{$product->variation_name}} @else {{$product->name}}
-                        @endif</p><img class="center-block"
-                        style="width:250px; !important;height: {{2*0.24}}in !important;"
-                        src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sub_sku,$product->barcode_type??'C128', 3,30,array(39, 48, 54), true)}}">
-                </td>
-                <td>@if(!empty($product->product_class)){{$product->product_class->name}}@endif</td>
-                <td>@if(!empty($product->category)){{$product->category->name}}@endif</td>
-                <td>@if(!empty($product->sub_category)){{$product->sub_category->name}}@endif</td>
-                <td><a data-href="{{action('ProductController@getPurchaseHistory', $product->id)}}"
-                        data-container=".view_modal" class="btn btn-modal">@lang('lang.view')</a></td>
-                <td>{{$product->batch_number}}</td>
-                <td>{{@num_format($product->default_sell_price)}}</td>
-                <td>@if(!empty($product->tax->name)){{$product->tax->name}}@endif</td>
-                <td>@if(!empty($product->brand)){{$product->brand->name}}@endif</td>
-                <td>{{$product->unit_name}}</td>
-                <td>{{$product->color_name}}</td>
-                <td>{{$product->size_name}}</td>
-                <td>{{$product->grade_name}}</td>
-                <td>@if($product->is_service){{'-'}}@else{{@num_format($product->current_stock)}}@endif</td>
-                <td>{{$product->customer_type}}</td>
-                <td>@if(!empty($product->exp_date)){{@format_date($product->exp_date)}}@endif</td>
-                <td>@if(!empty($product->manufacturing_date)){{@format_date($product->manufacturing_date)}}@endif
-                </td>
-                <td>{{@num_format($product->discount)}}</td>
-                @can('product_module.purchase_price.view')
-                <td>{{@num_format($product->default_purchase_price)}}</td>
-                @endcan
-                <td>{{$product->created_by_user->name}}</td>
 
-                <td>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="false">@lang('lang.action')
-                            <span class="caret"></span>
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            @can('product_module.product.view')
-                            <li>
-                                <a data-href="{{action('ProductController@show', $product->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
-                                    @lang('lang.view')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @can('product_module.product.create_and_edit')
-                            <li>
-
-                                <a href="{{action('ProductController@edit', $product->id)}}" class="btn"
-                                    target="_blank"><i class="dripicons-document-edit"></i> @lang('lang.edit')</a>
-                            </li>
-                            <li class="divider"></li>
-                            @endcan
-                            @can('product_module.product.delete')
-                            <li>
-                                <a data-href="{{action('ProductController@destroy', $product->id)}}"
-                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
-                                    @lang('lang.delete')</a>
-                            </li>
-                            @endcan
-                        </ul>
-                    </div>
-                </td>
-            </tr>
-
-            @endforeach --}}
         </tbody>
         <tfoot>
             <tr>
@@ -426,6 +344,11 @@
         }
     }
     $(document).on('change', '.filter_product', function(){
+        product_table.ajax.reload();
+    })
+    $(document).on('click', '.clear_filters', function(){
+        $('.filter_product').val('');
+        $('.filter_product').selectpicker('refresh')
         product_table.ajax.reload();
     })
 </script>
