@@ -212,8 +212,10 @@ class ProductController extends Controller
 
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
 
+            $store_query = '';
             if (!empty($store_id)) {
                 $products->where('product_stores.store_id', $store_id);
+                $store_query = 'AND store_id=' . $store_id;
             }
 
             if (!empty(request()->product_id)) {
@@ -288,7 +290,7 @@ class ProductController extends Controller
                 'add_stock_lines.expiry_date as exp_date',
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
-                DB::raw('SUM(product_stores.qty_available) as current_stock'),
+                DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
             )
                 ->groupBy('variations.id');
 
