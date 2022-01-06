@@ -70,7 +70,7 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
             DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
         )
-            ->groupBy('cash_registers.id')->get();
+            ->groupBy('cash_registers.id')->orderBy('created_at', 'desc')->get();
 
 
         $stores = Store::getDropdown();

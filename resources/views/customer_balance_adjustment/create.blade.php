@@ -29,7 +29,7 @@
                                     {!! Form::label('user_id', __('lang.cashier'), []) !!}
                                     {!! Form::select('user_id', $users, false, ['class' => 'form-control
                                     selectpicker', 'id' => 'user_id' ,'placeholder' =>
-                                    __('lang.please_select'), 'required']) !!}
+                                    __('lang.please_select')]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

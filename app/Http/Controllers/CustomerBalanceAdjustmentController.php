@@ -77,7 +77,7 @@ class CustomerBalanceAdjustmentController extends Controller
             $data['add_new_balance'] = $this->commonUtil->num_uf($data['add_new_balance']);
             $data['new_balance'] = $this->commonUtil->num_uf($data['new_balance']);
             $data['date_and_time'] = Carbon::now();
-            $data['created_by'] = Auth::user()->id;
+            $data['created_by'] = $request->user_id;
 
             CustomerBalanceAdjustment::create($data);
             //TODO::total_rp need to update or not based on client response
@@ -142,7 +142,7 @@ class CustomerBalanceAdjustmentController extends Controller
             $data['current_balance'] = $this->commonUtil->num_uf($data['current_balance']);
             $data['add_new_balance'] = $this->commonUtil->num_uf($data['add_new_balance']);
             $data['new_balance'] = $this->commonUtil->num_uf($data['new_balance']);
-
+            $data['created_by'] = $request->user_id;
             CustomerBalanceAdjustment::where('id', $id)->update($data);
 
             $output = [

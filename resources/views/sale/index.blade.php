@@ -56,16 +56,28 @@
                     </div>
                 </div>
 
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('start_date', __('lang.start_date'), []) !!}
                         {!! Form::date('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        {!! Form::label('start_time', __('lang.start_time'), []) !!}
+                        {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('end_date', __('lang.end_date'), []) !!}
                         {!! Form::date('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        {!! Form::label('end_time', __('lang.end_time'), []) !!}
+                        {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -155,7 +167,9 @@
                 d.method = $("#method").val();
                 d.payment_status = $("#payment_status").val();
                 d.start_date = $("#start_date").val();
+                d.start_time = $("#start_time").val();
                 d.end_date = $("#end_date").val();
+                d.end_time = $("#end_time").val();
                 d.created_by = $("#created_by").val();
             },
         },
@@ -224,7 +238,10 @@
         },
     });
     })
-    $(document).on('change', '.sale_filter', function(){
+    $('.time_picker').focusout(function (event) {
+        sales_table.ajax.reload();
+    });
+    $(document).on('change', '.sale_filter, .time_picker', function(){
         sales_table.ajax.reload();
     });
     $(document).on('click', '.clear_filter', function(){

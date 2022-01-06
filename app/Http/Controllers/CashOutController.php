@@ -58,7 +58,7 @@ class CashOutController extends Controller
             'cashier.name as cashier_name',
             'job_types.job_title'
         )
-            ->groupBy('cash_register_transactions.id')->get();
+            ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
 
         return view('cash_out.index')->with(compact(
             'cash_registers'

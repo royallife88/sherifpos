@@ -1,13 +1,22 @@
+@php
+$moment_time_format = App\Models\System::getProperty('time_format') == '12' ? 'hh:mm A' : 'HH:mm';
+@endphp
+<script>
+    var moment_time_format = "{{$moment_time_format}}";
+</script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery-ui.min.js') }}"></script>
-<script type="text/javascript" src="{{asset('vendor/jquery/bootstrap-datepicker.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery.timepicker.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/popper.js/umd/popper.min.js') }}">
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="{{asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('vendor/daterange/js/moment.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js')}}">
+</script>
 <script type="text/javascript" src="{{asset('vendor/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/bootstrap/js/bootstrap-select.min.js') }}"></script>
+{{-- <script type="text/javascript" src="{{asset('vendor/jquery/bootstrap-datepicker.min.js') }}"></script> --}}
 <script type="text/javascript" src="{{asset('vendor/keyboard/js/jquery.keyboard.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/keyboard/js/jquery.keyboard.extension-autocomplete.js') }}">
 </script>
@@ -20,7 +29,6 @@
     src="{{asset('vendor/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/charts-custom.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/front.js') }}"></script>
-<script type="text/javascript" src="{{asset('vendor/daterange/js/moment.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/daterange/js/knockout-3.4.2.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/daterange/js/daterangepicker.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/tinymce/js/tinymce/tinymce.min.js') }}"></script>

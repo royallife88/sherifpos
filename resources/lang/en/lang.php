@@ -992,4 +992,6 @@ return [
     'source_of_payment' => 'Source of Payment',
     'source_type' => 'Source Type',
     'other_payments' => 'Other Payments',
+    'start_time' => 'Start Time',
+    'end_time' => 'End Time',
 ];

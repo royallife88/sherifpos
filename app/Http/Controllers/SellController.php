@@ -94,10 +94,16 @@ class SellController extends Controller
                 $query->where('transaction_payments.method', request()->method);
             }
             if (!empty(request()->start_date)) {
-                $query->where('transaction_date', '>=', request()->start_date);
+                $query->whereDate('transaction_date', '>=', request()->start_date);
             }
             if (!empty(request()->end_date)) {
                 $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
             }
 
             $sales = $query->select(

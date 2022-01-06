@@ -22,7 +22,7 @@ class CreateCustomerBalanceAdjustmentsTable extends Migration
             $table->decimal('new_balance', 15, 4)->default(0);
             $table->text('notes')->nullable();
             $table->dateTime('date_and_time');
-            $table->unsignedBigInteger('created_by');
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
         });
     }

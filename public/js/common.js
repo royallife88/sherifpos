@@ -1,11 +1,17 @@
 $(document).on("submit", "form", function () {
     $(this).validate();
 });
-
-$(".time_picker").timepicker({
-    step: 15,
+$(document).ready(function () {
+    $(".time_picker").datetimepicker({
+        format: moment_time_format,
+        icons: {
+            up: "fa fa-angle-up",
+            down: "fa fa-angle-down",
+            previous: "fa fa-angle-left",
+            next: "fa fa-angle-right",
+        },
+    });
 });
-
 __currency_decimal_separator = $("input#__decimal").val();
 __currency_precision = $("input#__currency_precision").val();
 __currency_symbol = $("input#__currency_symbol ").val();
