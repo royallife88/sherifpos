@@ -62,6 +62,7 @@
                         <thead>
                             <tr>
                                 <th>@lang('lang.product_name')</th>
+                                <th>@lang('lang.sku')</th>
                                 <th class="sum">@lang('lang.purchased_amount')</th>
                                 <th class="sum">@lang('lang.purchased_qty')</th>
                                 <th class="sum">@lang('lang.sold_amount')</th>
@@ -76,6 +77,7 @@
                             @foreach ($transactions as $transaction)
                             <tr>
                                 <td>{{$transaction->product_name}}</td>
+                                <td>{{$transaction->sku}}</td>
                                 <td> {{@num_format($transaction->purchased_amount)}}</td>
                                 <td> {{@num_format($transaction->purchased_qty)}}</td>
                                 <td> {{@num_format($transaction->sold_amount)}}</td>

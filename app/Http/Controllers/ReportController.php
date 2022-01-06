@@ -858,11 +858,12 @@ class ReportController extends Controller
             $query->where('p.id', $request->product_id);
         }
         $transactions = $query->select(
-            DB::raw("SUM(IF(transactions.type='sell', final_total, 0)) as sold_amount"),
-            DB::raw("SUM(IF(transactions.type='add_stock', final_total, 0)) as purchased_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.sell_price, 0)) as sold_amount"),
+            DB::raw("SUM(IF(transactions.type='sell', tsl.quantity * p.purchase_price, 0)) as purchased_amount"),
             DB::raw("SUM(IF(transactions.type='sell', tsl.quantity, 0)) as sold_qty"),
             DB::raw("SUM(IF(transactions.type='add_stock', pl.quantity, 0)) as purchased_qty"),
             DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN products ON product_stores.product_id=products.id WHERE products.id=p.id ' . $store_query . ') as in_stock'),
+            'p.sku',
             'p.name as product_name',
             'p.id'
         )->groupBy('p.id')->get();
