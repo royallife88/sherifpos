@@ -1304,7 +1304,6 @@ $(document).ready(function () {
         paging: true,
         info: false,
         bAutoWidth: false,
-        order: [],
         language: {
             url: dt_lang_url,
         },
@@ -1316,7 +1315,7 @@ $(document).ready(function () {
         buttons: buttons,
         processing: true,
         serverSide: true,
-        aaSorting: [[0, "asc"]],
+        aaSorting: [[0, "desc"]],
         ajax: {
             url: "/pos/get-recent-transactions",
             data: function (d) {
