@@ -192,8 +192,8 @@ class ProductController extends Controller
         if (request()->ajax()) {
 
             $products = Product::leftjoin('variations', function ($join) {
-                    $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
-                })
+                $join->on('products.id', 'variations.product_id')->whereNull('variations.deleted_at');
+            })
                 ->leftjoin('add_stock_lines', function ($join) {
                     $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
                 })
@@ -346,15 +346,15 @@ class ProductController extends Controller
 
                         if (auth()->user()->can('product_module.product.view')) {
                             $html .=
-                                '<a data-href="' . action('ProductController@show', $row->id) . '"
-                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
-                            ' . __('lang.view') . '</a>';
+                                '<li><a data-href="' . action('ProductController@show', $row->id) . '"
+                                data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                ' . __('lang.view') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.create_and_edit')) {
                             $html .=
-                                '<a href="' . action('ProductController@edit', $row->id) . '" class="btn"
-                            target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a>';
+                                '<li><a href="' . action('ProductController@edit', $row->id) . '" class="btn"
+                            target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.delete')) {
@@ -778,51 +778,27 @@ class ProductController extends Controller
         }
         try {
             DB::beginTransaction();
-            $sell_lines = TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
-                ->join('products', 'transaction_sell_lines.product_id', 'products.id')->groupBy('transaction_sell_lines.product_id')
-                ->where('transactions.type', 'sell')
-                ->where('transaction_sell_lines.variation_id', $id)
-                ->first();
+            $variation = Variation::find($id);
+            $variation_count = Variation::where('product_id', $variation->product_id)->count();
+            if ($variation_count > 1) {
 
-            $add_stock_lines = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
-                ->join('products', 'add_stock_lines.product_id', 'products.id')->groupBy('add_stock_lines.product_id')
-                ->where('transactions.type', 'add_stock')
-                ->where('add_stock_lines.variation_id', $id)
-                ->first();
-
-            if (!empty($sell_lines)) {
-                $output = [
-                    'success' => false,
-                    'msg' => __('lang.product_sell_transaction_exist')
-                ];
-            } else if (!empty($add_stock_lines)) {
-                $output = [
-                    'success' => false,
-                    'msg' => __('lang.product_add_stock_transaction_exist')
-                ];
-            } else {
-                $variation = Variation::find($id);
-                $variation_count = Variation::where('product_id', $variation->product_id)->count();
-                if ($variation_count > 1) {
-
-                    $variation->delete();
-                    ProductStore::where('variation_id', $id)->delete();
-                    $output = [
-                        'success' => true,
-                        'msg' => __('lang.deleted')
-                    ];
-                } else {
-                    ProductStore::where('product_id', $variation->product_id)->delete();
-                    $product = Product::where('id', $variation->product_id)->first();
-                    $product->clearMediaCollection('product');
-                    $product->delete();
-                    $variation->delete();
-                }
+                $variation->delete();
+                ProductStore::where('variation_id', $id)->delete();
                 $output = [
                     'success' => true,
-                    'msg' => __('lang.success')
+                    'msg' => __('lang.deleted')
                 ];
+            } else {
+                ProductStore::where('product_id', $variation->product_id)->delete();
+                $product = Product::where('id', $variation->product_id)->first();
+                $product->clearMediaCollection('product');
+                $product->delete();
+                $variation->delete();
             }
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
             DB::commit();
         } catch (\Exception $e) {
             Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());

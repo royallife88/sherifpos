@@ -67,7 +67,9 @@
                                                 <b>{{$line->variation->name}}</b>
                                                 @endif
                                                 @endif
-
+                                                @if(empty($line->variation) && empty($line->product))
+                                                <span class="text-red">@lang('lang.deleted')</span>
+                                                @endif
                                             </td>
                                             <td>
                                                 @if(!empty($line->variation))

@@ -11,8 +11,10 @@
             <div class="row">
                 <div class="col-md-6">
                     <div class="col-md-12">
-                        <h5>@lang('lang.invoice_no'): {{$sale->invoice_no}} @if(!empty($sale->return_parent))<a data-href="{{action('SellReturnController@show', $sale->id)}}"
-                            data-container=".view_modal" class="btn btn-modal" style="color: #007bff;">R</a>@endif</h5>
+                        <h5>@lang('lang.invoice_no'): {{$sale->invoice_no}} @if(!empty($sale->return_parent))<a
+                                data-href="{{action('SellReturnController@show', $sale->id)}}"
+                                data-container=".view_modal" class="btn btn-modal" style="color: #007bff;">R</a>@endif
+                        </h5>
                     </div>
                     <div class="col-md-12">
                         <h5>@lang('lang.date'): {{@format_datetime($sale->transaction_date)}}</h5>
@@ -68,6 +70,9 @@
                                     @if($line->variation->name != "Default")
                                     <b>{{$line->variation->name}}</b>
                                     @endif
+                                    @endif
+                                    @if(empty($line->variation) && empty($line->product))
+                                    <span class="text-red">@lang('lang.deleted')</span>
                                     @endif
 
                                 </td>
