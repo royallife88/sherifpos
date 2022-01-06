@@ -830,8 +830,7 @@ class SellPosController extends Controller
                 'users.name as created_by_name',
                 'customers.name as customer_name',
             )
-                ->groupBy('transactions.id')
-                ->orderBy('updated_at', 'desc');
+                ->groupBy('transactions.id');
 
             return DataTables::of($transactions)
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')

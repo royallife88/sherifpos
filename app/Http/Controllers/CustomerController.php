@@ -208,13 +208,15 @@ class CustomerController extends Controller
 
         $customers = Customer::pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $balance = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
 
         return view('customer.show')->with(compact(
             'sales',
             'points',
             'discounts',
             'customers',
-            'customer'
+            'customer',
+            'balance'
         ));
     }
 

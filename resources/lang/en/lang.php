@@ -994,4 +994,6 @@ return [
     'other_payments' => 'Other Payments',
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
+    'edited_by' => 'Edit By',
+    'out_of_stock' => 'Out of Stock',
 ];

@@ -145,7 +145,7 @@
         paging: true,
         info: false,
         bAutoWidth: false,
-        order: [],
+        // order: [],
         language: {
             url: dt_lang_url,
         },
@@ -157,7 +157,7 @@
         buttons: buttons,
         processing: true,
         serverSide: true,
-        aaSorting: [[2, "asc"]],
+        aaSorting: [[0, "desc"]],
         ajax: {
             url: "/sale",
             data: function (d) {

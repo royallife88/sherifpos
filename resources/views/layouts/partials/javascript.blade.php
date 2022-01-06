@@ -4,6 +4,7 @@ $moment_time_format = App\Models\System::getProperty('time_format') == '12' ? 'h
 <script>
     var moment_time_format = "{{$moment_time_format}}";
 </script>
+<script type="text/javascript" src="{{asset('js/lang/'.session('language').'.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery-ui.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/jquery/jquery.timepicker.min.js') }}"></script>

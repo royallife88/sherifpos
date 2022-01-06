@@ -100,10 +100,10 @@ class SellController extends Controller
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
+                $query->where('transaction_date', '>=', request()->start_date .' '. Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->end_time)) {
-                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
+                $query->where('transaction_date', '<=', request()->end_date .' '. Carbon::parse(request()->end_time)->format('H:i:s'));
             }
 
             $sales = $query->select(
@@ -112,8 +112,7 @@ class SellController extends Controller
                 'users.name as created_by_name',
                 'customers.name as customer_name',
             )
-                ->groupBy('transactions.id')
-                ->orderBy('created_at', 'desc');
+                ->groupBy('transactions.id');
 
             return DataTables::of($sales)
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')

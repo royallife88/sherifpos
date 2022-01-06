@@ -80,6 +80,10 @@
                                         <b>@lang('lang.email'):</b> <span
                                             class="customer_email_span">{{$customer->email}}</span>
                                     </div>
+                                    <div class="col-md-12">
+                                        <b>@lang('lang.balance'):</b> <span
+                                            class="balance @if($balance < 0 ) text-red @endif">{{$balance}}</span>
+                                    </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="thumbnail">

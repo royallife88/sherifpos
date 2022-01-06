@@ -93,4 +93,8 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);
     }
+    public function edited_by_user()
+    {
+        return $this->belongsTo(User::class, 'edited_by', 'id')->withDefault(['name' => '']);
+    }
 }

@@ -206,6 +206,7 @@ class ProductController extends Controller
                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
+                ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
                 ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
 
@@ -286,6 +287,7 @@ class ProductController extends Controller
                 'variations.default_sell_price',
                 'add_stock_lines.expiry_date as exp_date',
                 'users.name as created_by_name',
+                'edited.name as edited_by_name',
                 DB::raw('SUM(product_stores.qty_available) as current_stock'),
             )
                 ->groupBy('variations.id');
@@ -727,6 +729,7 @@ class ProductController extends Controller
                 'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+                'edited_by' => Auth::user()->id,
             ];
 
 

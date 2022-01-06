@@ -200,6 +200,7 @@
                 <th>@lang('lang.purchase_price')</th>
                 @endcan
                 <th>@lang('lang.created_by')</th>
+                <th>@lang('lang.edited_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
         </thead>
@@ -285,6 +286,7 @@
                 { data: 'default_purchase_price', name: 'default_purchase_price', searchable: false},
                 @endcan
                 { data: 'created_by', name: 'users.name'},
+                { data: 'edited_by_name', name: 'edited.name'},
                 { data: 'action', name: 'action'},
 
             ],

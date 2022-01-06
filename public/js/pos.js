@@ -231,7 +231,7 @@ $(document).ready(function () {
                 string +=
                     '<li class="ui-state-disabled">' +
                     item.text +
-                    " (Out of stock) </li>";
+                    " ("+LANG.out_of_stock+") </li>";
             } else {
                 string += item.text;
             }
@@ -801,7 +801,7 @@ $(document).on("click", ".quick_add_purchase_order", function () {
 
 function out_of_stock_handle(product_id, variation_id) {
     swal({
-        title: "Out of stock",
+        title: LANG.out_of_stock,
         text: "",
         icon: "error",
         buttons: true,
@@ -1316,7 +1316,7 @@ $(document).ready(function () {
         buttons: buttons,
         processing: true,
         serverSide: true,
-        aaSorting: [[2, "asc"]],
+        aaSorting: [[0, "asc"]],
         ajax: {
             url: "/pos/get-recent-transactions",
             data: function (d) {
@@ -1386,12 +1386,10 @@ $(document).ready(function () {
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
     recent_transaction_table.ajax.reload();
 });
-//Get recent transactions
 function get_recent_transactions() {
     recent_transaction_table.ajax.reload();
 }
 
-//Get recent transactions
 function get_draft_transactions() {
     let href = $("#view-draft-btn").data("href");
     if ($.fn.dataTable.isDataTable("#draft_table")) {

@@ -48,6 +48,7 @@ class CreateProductsTable extends Migration
             $table->boolean('this_product_have_variant')->default(0);
             $table->enum('type', ['single', 'variable'])->default('single');
             $table->boolean('active')->default(1);
+            $table->unsignedBigInteger('edited_by')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });
