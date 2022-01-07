@@ -291,6 +291,7 @@ function get_label_product_row(
             method: "GET",
             url: "/pos/add-product-row",
             dataType: "html",
+            async: false,
             data: {
                 product_id: product_id,
                 row_count: row_count,
