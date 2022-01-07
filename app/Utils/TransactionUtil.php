@@ -24,6 +24,7 @@ use App\Models\Variation;
 use App\Utils\Util;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Mockery\Matcher\Type;
 use Psy\CodeCleaner\FunctionContextPass;
@@ -61,6 +62,7 @@ class TransactionUtil extends Util
             $transaction_payment->amount = $payment_data['amount'];
             $transaction_payment->method = $payment_data['method'];
             $transaction_payment->paid_on = $payment_data['paid_on'];
+            $transaction_payment->payment_for = !empty($payment_data['payment_for']) ? $payment_data['payment_for'] : $transaction->customer_id;
             $transaction_payment->ref_number = !empty($payment_data['ref_number']) ? $payment_data['ref_number'] : null;
             $transaction_payment->source_type = !empty($payment_data['source_type']) ? $payment_data['source_type'] : null;
             $transaction_payment->source_id = !empty($payment_data['source_id']) ? $payment_data['source_id'] : null;
@@ -74,10 +76,13 @@ class TransactionUtil extends Util
             $transaction_payment->gift_card_number = !empty($payment_data['gift_card_number']) ?  $payment_data['gift_card_number'] : null;
             $transaction_payment->amount_to_be_used = !empty($payment_data['amount_to_be_used']) ?  $this->num_uf($payment_data['amount_to_be_used']) : 0;
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
+            $transaction_payment->created_by = !empty($payment_data['created_by']) ? $payment_data['created_by'] : Auth::user()->id;
             $transaction_payment->save();
         } else {
             $transaction_payment = null;
             if (!empty($payment_data['amount'])) {
+                $payment_data['created_by'] = Auth::user()->id;
+                $payment_data['payment_for'] = !empty($payment_data['payment_for']) ? $payment_data['payment_for'] : $transaction->customer_id;
                 $transaction_payment = TransactionPayment::create($payment_data);
                 //     if($transaction->type == 'sell'){
                 //         if($payment_data['method'] != 'deposit'){
@@ -729,9 +734,165 @@ class TransactionUtil extends Util
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
 
-
         $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance;
 
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
+    }
+
+    public function payCustomer($request, $format_data = true)
+    {
+        $customer_id = $request->input('customer_id');
+        $inputs = $request->only([
+            'amount', 'method', 'note', 'card_number', 'card_month', 'card_year',
+            'cheque_number', 'bank_name', 'bank_deposit_date', 'ref_number', 'paid_on'
+        ]);
+
+        if ($format_data) {
+            $inputs['paid_on'] = $inputs['paid_on'];
+            $inputs['amount'] = $this->num_uf($inputs['amount']);
+        }
+
+
+        $inputs['payment_for'] = $customer_id;
+        $inputs['created_by'] = auth()->user()->id;
+
+        $parent_payment = TransactionPayment::create($inputs);
+        $customer = Customer::findOrFail($customer_id);
+
+
+        //Distribute above payment among unpaid transactions
+        $excess_amount = $this->payAtOnce($parent_payment, $customer_id);
+        //Update excess amount
+        if (!empty($excess_amount)) {
+            $this->updateCustomerBalance($customer, $excess_amount);
+        }
+
+        if ($request->upload_documents) {
+            foreach ($request->file('upload_documents', []) as $key => $doc) {
+                $parent_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+            }
+        }
+
+        return $parent_payment;
+    }
+
+    /**
+     * Pay Customer due at once
+     *
+     * @param obj $parent_payment, string $type
+     *
+     * @return void
+     */
+    public function payAtOnce($parent_payment, $customer_id)
+    {
+
+        $due_transactions = Transaction::where('customer_id', $customer_id)
+            ->whereIn('type', ['sell'])
+            ->whereIn('status', ['final'])
+            ->where('payment_status', '!=', 'paid')
+            ->orderBy('transaction_date', 'asc')
+            ->get();
+
+        $total_amount = $parent_payment->amount;
+        $tranaction_payments = [];
+        if ($due_transactions->count()) {
+            foreach ($due_transactions as $transaction) {
+                //If sell check status is final
+                if ($transaction->type == 'sell' && $transaction->status != 'final') {
+                    continue;
+                }
+
+                if ($total_amount > 0) {
+                    $total_paid = $this->getTotalPaid($transaction->id);
+                    $due = $transaction->final_total - $total_paid;
+
+                    $now = Carbon::now()->toDateTimeString();
+
+                    $array =  [
+                        'transaction_id' =>  $transaction->id,
+                        'amount' => $this->num_uf($parent_payment->amount),
+                        'payment_for' => $transaction->customer_id,
+                        'method' => $parent_payment->method,
+                        'paid_on' => $parent_payment->paid_on,
+                        'ref_number' => $parent_payment->ref_number,
+                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->uf_date($data['bank_deposit_date']) : null,
+                        'bank_name' => $parent_payment->bank_name,
+                        'card_number' => $parent_payment->card_number,
+                        'card_month' => $parent_payment->card_month,
+                        'card_year' => $parent_payment->card_year,
+                        'parent_id' => $parent_payment->id,
+                        'created_by' => Auth::user()->id,
+                        'created_at' => $now,
+                        'updated_at' => $now
+                    ];
+
+                    if ($due <= $total_amount) {
+                        $array['amount'] = $due;
+                        $tranaction_payments[] = $array;
+
+                        //Update transaction status to paid
+                        $transaction->payment_status = 'paid';
+                        $transaction->save();
+
+                        $total_amount = $total_amount - $due;
+                    } else {
+                        $array['amount'] = $total_amount;
+                        $tranaction_payments[] = $array;
+
+                        //Update transaction status to partial
+                        $transaction->payment_status = 'partial';
+                        $transaction->save();
+                        $total_amount = 0;
+                        break;
+                    }
+                }
+            }
+
+            //Insert new transaction payments
+            if (!empty($tranaction_payments)) {
+                TransactionPayment::insert($tranaction_payments);
+            }
+        }
+
+        return $total_amount;
+    }
+
+    /**
+     * Get total paid amount for a transaction
+     *
+     * @param int $transaction_id
+     *
+     * @return int
+     */
+    public function getTotalPaid($transaction_id)
+    {
+        $total_paid = TransactionPayment::where('transaction_id', $transaction_id)
+            ->select(DB::raw('SUM(IF( is_return = 0, amount, amount*-1))as total_paid'))
+            ->first()
+            ->total_paid;
+
+        return $total_paid;
+    }
+
+    /**
+     * Updates customer balance
+     * @param obj $customer
+     * @param float $amount
+     * @param string $type [add, deduct]
+     *
+     * @return obj $recurring_invoice
+     */
+    function updateCustomerBalance($customer, $amount, $type = 'add')
+    {
+        if (!is_object($customer)) {
+            $customer = Customer::findOrFail($customer);
+        }
+
+        if ($type == 'add') {
+            $customer->deposit_balance += $amount;
+        } elseif ($type == 'deduct') {
+            $customer->deposit_balance -= $amount;
+        }
+        $customer->save();
     }
 }

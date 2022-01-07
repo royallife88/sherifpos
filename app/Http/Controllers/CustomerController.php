@@ -8,6 +8,7 @@ use App\Models\CustomerType;
 use App\Models\Transaction;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -348,8 +349,75 @@ class CustomerController extends Controller
         return $customer_details;
     }
 
+    /**
+     * get customer balance
+     *
+     * @param int $customer_id
+     * @return void
+     */
     public function getCustomerBalance($customer_id)
     {
         return $this->transactionUtil->getCustomerBalance($customer_id);
+    }
+
+    /**
+     * Shows contact's payment due modal
+     *
+     * @param  int  $customer_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getPayContactDue($customer_id)
+    {
+        if (request()->ajax()) {
+
+            $due_payment_type = request()->input('type');
+            $query = Customer::where('customers.id', $customer_id)
+                ->join('transactions AS t', 'customers.id', '=', 't.customer_id');
+            $query->select(
+                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
+                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
+                'customers.name',
+                'customers.mobile_number',
+                'customers.id as customer_id'
+            );
+
+
+            $customer_details = $query->first();
+            $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+
+            return view('customer.partial.pay_customer_due')
+                ->with(compact('customer_details', 'payment_type_array',));
+        }
+    }
+
+    /**
+     * Adds Payments for Contact due
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function postPayContactDue(Request  $request)
+    {
+        try {
+            DB::beginTransaction();
+
+            $this->transactionUtil->payCustomer($request);
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => "File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage()
+            ];
+        }
+
+        return redirect()->back()->with(['status' => $output]);
     }
 }
