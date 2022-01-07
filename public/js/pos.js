@@ -1538,6 +1538,7 @@ $(document).on("click", ".add_to_deposit", function () {
 
 function getCustomerPointDetails() {
     let customer_id = $("#customer_id").val();
+    let default_customer_id = $("#default_customer_id").val();
     var product_array = [];
     $("#product_table > tbody  > tr").each((i, tr) => {
         let product_id = __read_number($(tr).find(".product_id"));
@@ -1573,12 +1574,14 @@ function getCustomerPointDetails() {
             }
             $(".customer_type_name").text(result.customer_type_name);
             $("#emails").val(result.customer.email);
-            $(".customer_balance").text(
-                __currency_trans_from_en(result.balance, false)
-            );
-            $(".customer_balance").removeClass("text-red");
-            if (result.balance < 0) {
-                $(".customer_balance").addClass("text-red");
+            if (default_customer_id !== customer_id) {
+                $(".customer_balance").text(
+                    __currency_trans_from_en(result.balance, false)
+                );
+                $(".customer_balance").removeClass("text-red");
+                if (result.balance < 0) {
+                    $(".customer_balance").addClass("text-red");
+                }
             }
             $(".remaining_balance_text").text(
                 __currency_trans_from_en(result.balance, false)
