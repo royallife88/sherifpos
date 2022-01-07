@@ -46,7 +46,7 @@
             <br>
             <div class="row">
                 <div class="col-md-12">
-                    <table class="table table-bordered table-striped table-condensed" id="product_table">
+                    <table class="table table-bordered table-striped table-condensed" id="product_sale_table">
                         <thead class="bg-success" style="color: white">
                             <tr>
                                 <th style="width: 25%" class="col-sm-8">@lang( 'lang.image' )</th>

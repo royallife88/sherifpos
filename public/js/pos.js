@@ -1241,6 +1241,7 @@ function reset_pos_form() {
     $("#terms_and_condition_id").selectpicker("render");
     $("tr.product_row").remove();
     $(this).attr("disabled", false);
+    $("#product_table > tbody").empty();
 
     let first_row = $("#payment_rows .payment_row").first();
     $(first_row).find(".change").text(__currency_trans_from_en(0, false));

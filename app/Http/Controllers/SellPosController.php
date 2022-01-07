@@ -1001,7 +1001,7 @@ class SellPosController extends Controller
                         title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
                         }
                         $html .=
-                            '<a href="' . action('SellPosController@edit', $row->id) . '" class="btn btn-success"><i
+                            '<a  target="_blank" href="' . action('SellPosController@edit', $row->id) . '" class="btn btn-success"><i
                         title="' . __('lang.edit') . '" data-toggle="tooltip"
                         class="dripicons-document-edit"></i></a>';
                         $html .=
@@ -1015,6 +1015,7 @@ class SellPosController extends Controller
 
                         $html .=
                             '<a target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final"
+                            title="' . __('lang.pay_now') . '" data-toggle="tooltip"
                             class="btn btn-success"><i class="fa fa-money"></i></a>';
 
                         $html .= '</div>';
