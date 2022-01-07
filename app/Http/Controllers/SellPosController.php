@@ -691,16 +691,6 @@ class SellPosController extends Controller
             $no_of_records = $products->count();
             if (!empty($products_array)) {
                 foreach ($products_array as $key => $value) {
-                    // if ($no_of_records > 1 && $value['type'] != 'single') {
-                    //     $result[] = [
-                    //         'id' => $i,
-                    //         'text' => $value['name'] . ' - ' . $value['sku'],
-                    //         'variation_id' => 0,
-                    //         'product_id' => $key,
-                    //         'qty_available' => $value['qty'],
-                    //         'is_service' => $value['is_service']
-                    //     ];
-                    // }
                     $name = $value['name'];
                     foreach ($value['variations'] as $variation) {
                         $text = $name;
@@ -939,26 +929,107 @@ class SellPosController extends Controller
      */
     public function getDraftTransactions(Request $request)
     {
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
-        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+        if (request()->ajax()) {
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $query = Transaction::where('type', 'sell')->where('status', 'draft');
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->where('type', 'sell')->where('status', 'draft');
 
-        if (!empty($store_id)) {
-            $query->where('transactions.store_id', $store_id);
+            if (!empty($store_id)) {
+                $query->where('transactions.store_id', $store_id);
+            }
+            if (!empty(request()->start_date)) {
+                $query->where('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->where('transaction_date', '<=', request()->end_date);
+            }
+
+            $transactions = $query->select(
+                'transactions.*',
+                'customer_types.name as customer_type_name',
+                'customers.name as customer_name'
+            )
+                ->orderBy('transaction_date', 'desc')->get();
+
+            return DataTables::of($transactions)
+                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('method', function ($row) {
+                    if (!empty($row->transaction_payments[0]->method)) {
+                        return ucfirst($row->transaction_payments[0]->method);
+                    } else {
+                        return '';
+                    }
+                })
+
+                ->addColumn('deliveryman_name', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<div class="btn-group">';
+
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                ' <a data-href="' . action('SellController@print', $row->id) . '"
+                        class="btn btn-danger text-white print-invoice"><i title="' . __('lang.print') . '"
+                        data-toggle="tooltip" class="dripicons-print"></i></a>';
+                        }
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<a data-href="' . action('SellController@show', $row->id) . '"
+                        class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
+                        title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
+                        }
+                        $html .=
+                            '<a href="' . action('SellPosController@edit', $row->id) . '" class="btn btn-success"><i
+                        title="' . __('lang.edit') . '" data-toggle="tooltip"
+                        class="dripicons-document-edit"></i></a>';
+                        $html .=
+                            '<button class="btn btn-danger remove_draft" data-href=' . action(
+                                'SellController@destroy',
+                                $row->id
+                            ) . '
+                            data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                            ><i class="dripicons-trash"></i></button>';
+
+
+                        $html .=
+                            '<a target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final"
+                            class="btn btn-success"><i class="fa fa-money"></i></a>';
+
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'transaction_date',
+                    'final_total',
+                    'status',
+                    'created_by',
+                ])
+                ->make(true);
         }
-        if (!empty(request()->start_date)) {
-            $query->where('transaction_date', '>=', request()->start_date);
-        }
-        if (!empty(request()->end_date)) {
-            $query->where('transaction_date', '<=', request()->end_date);
-        }
-
-        $transactions = $query->orderBy('transaction_date', 'desc')->get();
-
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-
-        return view('sale_pos.partials.view_draft')->with(compact('transactions', 'payment_types'));
     }
 
     /**

@@ -286,8 +286,7 @@
                         </div>
                         <div class="column-5">
                             <button style="background-color: #ffc107;" type="button" class="btn btn-custom"
-                                id="recent-transaction-btn"><i
-                                    class="dripicons-clock"></i>
+                                id="recent-transaction-btn"><i class="dripicons-clock"></i>
                                 @lang('lang.recent_transactions')</button>
                         </div>
                     </div>
@@ -508,13 +507,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="draft_transaction_div col-md-12">
+                            <div class="col-md-12">
+                                @include('sale_pos.partials.view_draft')
                             </div>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close'
-                                )</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close')</button>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->

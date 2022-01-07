@@ -231,7 +231,9 @@ $(document).ready(function () {
                 string +=
                     '<li class="ui-state-disabled">' +
                     item.text +
-                    " ("+LANG.out_of_stock+") </li>";
+                    " (" +
+                    LANG.out_of_stock +
+                    ") </li>";
             } else {
                 string += item.text;
             }
@@ -1103,7 +1105,6 @@ $(document).on("click", "#pay-later-btn", function (e) {
     pos_form_obj.submit();
 });
 
-//Finalize without showing payment options
 $("button#submit-btn").click(function () {
     //Check if product is present or not.
     if ($("table#product_table tbody").find(".product_row").length <= 0) {
@@ -1114,6 +1115,9 @@ $("button#submit-btn").click(function () {
     $(this).attr("disabled", true);
     $("#add-payment").modal("hide");
     pos_form_obj.submit();
+    setTimeout(() => {
+        $("#submit-btn").attr("disabled", false);
+    }, 2000);
 });
 $("button#update-btn").click(function () {
     $("#is_edit").val("");
@@ -1381,6 +1385,82 @@ $(document).ready(function () {
                 });
         },
     });
+    draft_table = $("#draft_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        ajax: {
+            url: "/pos/get-draft-transactions",
+            data: function (d) {
+                d.start_date = $("#draft_start_date").val();
+                d.end_date = $("#draft_end_date").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [7],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "final_total", name: "final_total" },
+            { data: "customer_type", name: "customer_types.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "status", name: "transactions.status" },
+            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    if (column.data().count()) {
+                        var sum = column.data().reduce(function (a, b) {
+                            a = intVal(a);
+                            if (isNaN(a)) {
+                                a = 0;
+                            }
+
+                            b = intVal(b);
+                            if (isNaN(b)) {
+                                b = 0;
+                            }
+
+                            return a + b;
+                        });
+                        $(column.footer()).html(
+                            __currency_trans_from_en(sum, false)
+                        );
+                    }
+                });
+        },
+    });
 });
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
     recent_transaction_table.ajax.reload();
@@ -1390,24 +1470,7 @@ function get_recent_transactions() {
 }
 
 function get_draft_transactions() {
-    let href = $("#view-draft-btn").data("href");
-    if ($.fn.dataTable.isDataTable("#draft_table")) {
-        $("#draft_table").DataTable().destroy();
-    }
-    $.ajax({
-        method: "get",
-        url:
-            href +
-            "?start_date=" +
-            $("#draft_start_date").val() +
-            "&end_date=" +
-            $("#draft_end_date").val(),
-        data: {},
-        success: function (result) {
-            $(".draft_transaction_div").empty().append(result);
-            $("#draft_table").DataTable(datatable_params);
-        },
-    });
+    draft_table.ajax.reload();
 }
 
 $(document).on("change", "#customer_id", function () {

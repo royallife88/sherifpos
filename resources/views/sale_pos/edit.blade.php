@@ -72,20 +72,29 @@
                                             class="table table-hover table-striped order-list table-fixed">
                                             <thead>
                                                 <tr>
-                                                    <th style="width: 20%; font-size: 12px !important;">
-                                                        @lang('lang.product')</th>
-                                                    <th style="width: 22%; font-size: 12px !important;">
-                                                        @lang('lang.quantity')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">
-                                                        @lang('lang.price')</th>
-                                                    <th style="width: 13%; font-size: 12px !important;">
-                                                        @lang('lang.discount')</th>
-                                                    <th style="width: 15%; font-size: 12px !important;">
-                                                        @lang('lang.sub_total')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">
-                                                        @lang('lang.current_stock')</th>
-                                                    <th style="width: 10%; font-size: 12px !important;">
-                                                        @lang('lang.action')</th>
+                                                    <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                    @lang('lang.product')</th>
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                    @lang('lang.quantity')</th>
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 16% @else 15% @endif; font-size: 12px !important;">
+                                                    @lang('lang.price')</th>
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 12px !important;">
+                                                    @lang('lang.discount')</th>
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                    @lang('lang.sub_total')</th>
+                                                @if(session('system_mode') != 'restaurant')
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                    @lang('lang.current_stock')</th>
+                                                @endif
+                                                <th
+                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                    @lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

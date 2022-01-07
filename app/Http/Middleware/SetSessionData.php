@@ -21,7 +21,10 @@ class SetSessionData
      */
     public function handle(Request $request, Closure $next)
     {
-        if (!$request->session()->has('user') || empty(session('user.store_id')) || empty(session('user.job_title')) || empty(session('user.pos_id'))) {
+        if (session('language') == 'undefined') {
+            $request->session()->put('language', null);
+        }
+        if (!$request->session()->has('user') || empty(session('user.store_id')) || empty(session('user.job_title')) || empty(session('user.pos_id')) || empty(session('language'))) {
 
             $currency_id = System::getProperty('currency');
             if (empty($currency_id)) {
@@ -69,7 +72,7 @@ class SetSessionData
             if ($employee) {
                 if (!empty($employee->job_type)) {
                     $user->job_title = $employee->job_type->job_title;
-                }else{
+                } else {
                     $user->job_title = 'N/A';
                 }
             }
@@ -84,7 +87,7 @@ class SetSessionData
         $request->session()->put('system_mode', $system_mode);
 
 
-        if(empty(session('logo'))){
+        if (empty(session('logo'))) {
             $logo = System::getProperty('logo');
             if (empty($logo)) {
                 $logo = 'sharifshalaby.png';
