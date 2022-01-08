@@ -52,10 +52,10 @@ class CashController extends Controller
         }
 
         if (!empty(request()->start_date)) {
-            $query->whereDate('created_at', '>=', request()->start_date);
+            $query->whereDate('cash_registers.created_at', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->whereDate('created_at', '<=', request()->end_date);
+            $query->whereDate('cash_registers.created_at', '<=', request()->end_date);
         }
         if (!empty(request()->store_id)) {
             $query->where('store_id', request()->store_id);
@@ -70,7 +70,7 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
             DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
         )
-            ->groupBy('cash_registers.id')->orderBy('created_at', 'desc')->get();
+            ->groupBy('cash_registers.id')->orderBy('cash_registers.created_at', 'desc')->get();
 
 
         $stores = Store::getDropdown();

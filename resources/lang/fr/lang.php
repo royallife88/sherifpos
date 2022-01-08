@@ -979,4 +979,16 @@ return [
     'added_by' => 'Ajouté par',
     'enjoy_your_meal_please_come_again' => 'Bon appétit, revenez s\'il vous plait',
 
+    'used_deposit_balance' => 'Solde du dépôt utilisé',
+    'it_will_be_used_for_login' => 'il sera utilisé pour la connexion',
+    'default_purchase_price_percentage' => 'Pourcentage du prix d\'achat par défaut',
+    'default_purchase_price_percentage_info' => 'Ajouter le pourcentage du prix d\'achat de la page produit du prix de vente, par défaut, il est de 75',
+    'source_of_payment' => 'Source de paiement',
+    'source_type' => 'Type de Source',
+    'other_payments' => 'Autres paiements',
+    'start_time' => 'Heure de début',
+    'end_time' => 'Heure de fin',
+    'edited_by' => 'Édité par',
+    'out_of_stock' => 'En rupture de stock',
+
 ];

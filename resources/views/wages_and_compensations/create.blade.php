@@ -57,7 +57,7 @@
                                     <div class="form-group">
                                         <label
                                             for="acount_period_start_date">@lang('lang.acount_period_start_date')</label>
-                                        {!! Form::date('acount_period_start_date', null, ['class' => 'form-control',
+                                        {!! Form::text('acount_period_start_date', null, ['class' => 'form-control  datepicker',
                                         'placeholder' =>
                                         __('lang.acount_period_start_date')]) !!}
                                     </div>
@@ -65,7 +65,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="acount_period_end_date">@lang('lang.acount_period_end_date')</label>
-                                        {!! Form::date('acount_period_end_date', null, ['class' => 'form-control',
+                                        {!! Form::text('acount_period_end_date', null, ['class' => 'form-control datepicker',
                                         'placeholder' =>
                                         __('lang.acount_period_end_date')]) !!}
                                     </div>
@@ -98,7 +98,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="payment_date">@lang('lang.payment_date')</label>
-                                {!! Form::date('payment_date', date('Y-m-d'), ['class' => 'form-control', 'placeholder'
+                                {!! Form::text('payment_date', date('Y-m-d'), ['class' => 'form-control', 'placeholder'
                                 =>
                                 __('lang.payment_date')]) !!}
                             </div>

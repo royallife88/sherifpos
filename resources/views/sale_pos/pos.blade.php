@@ -425,14 +425,14 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                                            {!! Form::date('start_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('start_date', null, ['class' => 'form-control', 'id' =>
                                             'rt_start_date']) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                                            {!! Form::date('end_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('end_date', null, ['class' => 'form-control', 'id' =>
                                             'rt_end_date']) !!}
                                         </div>
                                     </div>
@@ -494,14 +494,14 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
-                                            {!! Form::date('draft_start_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('start_date', null, ['class' => 'form-control', 'id' =>
                                             'draft_start_date']) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
-                                            {!! Form::date('draft_end_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('end_date', null, ['class' => 'form-control', 'id' =>
                                             'draft_end_date']) !!}
                                         </div>
                                     </div>

@@ -117,7 +117,9 @@
 @section('javascript')
 <script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script>
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('.selectpicker').selectpicker('render');
     // $('.selectpicker').selectpicker('selectAll');
 

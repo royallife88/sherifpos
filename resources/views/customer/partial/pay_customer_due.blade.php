@@ -120,7 +120,9 @@
 
 <script>
     $('.selectpicker').selectpicker('refresh');
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('#add_payment_form #method').change(function(){
         var method = $(this).val();
 

@@ -979,4 +979,16 @@ return [
     'added_by' => 'أضيفت من قبل',
     'enjoy_your_meal_please_come_again' => 'استمتع بوجبتك، ننتظركم مرة أخرى',
 
+
+    'used_deposit_balance' => 'رصيد الإيداع المستخدم',
+    'it_will_be_used_for_login' => 'سيتم استخدامه لتسجيل الدخول',
+    'default_purchase_price_percentage' => 'النسبة المئوية لسعر الشراء الافتراضي',
+    'default_purchase_price_percentage_info' => 'أضف النسبة المئوية لسعر شراء صفحة المنتج لسعر البيع ، افتراضيًا 75',
+    'source_of_payment' => ' اسم الموظف',
+    'source_type' => 'مصدر الأموال',
+    'other_payments' => 'خصومات أخرى',
+    'start_time' => 'وقت البدء',
+    'end_time' => 'وقت النهاية',
+    'edited_by' => 'تحرير بواسطة',
+    'out_of_stock' => 'إنتهى من المخزن',
 ];

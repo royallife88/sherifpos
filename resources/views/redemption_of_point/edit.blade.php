@@ -46,14 +46,14 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}
-                                    {!! Form::date('start_date', $redemption_of_point->start_date, ['class' =>
+                                    {!! Form::text('start_date', $redemption_of_point->start_date, ['class' =>
                                     'form-control']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
-                                    {!! Form::date('end_date', $redemption_of_point->end_date, ['class' => 'form-control'])
+                                    {!! Form::text('end_date', $redemption_of_point->end_date, ['class' => 'form-control'])
                                     !!}
                                 </div>
                             </div>

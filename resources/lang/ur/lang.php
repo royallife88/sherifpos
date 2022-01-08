@@ -979,4 +979,16 @@ return [
     'last_update' => 'آخری اپ ڈیٹ',
     'added_by' => 'نے شامل کیا',
     'enjoy_your_meal_please_come_again' => 'اپنے کھانے کا لطف اٹھائیں، براہ کرم دوبارہ آئیں',
+
+    'used_deposit_balance' => 'استعمال شدہ ڈپازٹ بیلنس',
+    'it_will_be_used_for_login' => 'اسے لاگ ان کے لیے استعمال کیا جائے گا۔',
+    'default_purchase_price_percentage' => 'خریداری کی قیمت کا طے شدہ فیصد',
+    'default_purchase_price_percentage_info' => 'پروڈکٹ کا صفحہ خرید قیمت فروخت کی قیمت کا فیصد شامل کریں، بطور ڈیفالٹ یہ 75 ہے۔',
+    'source_of_payment' => 'ادائیگی کا ذریعہ',
+    'source_type' => 'ماخذ کی قسم',
+    'other_payments' => 'دیگر ادائیگیاں',
+    'start_time' => 'وقت آغاز',
+    'end_time' => 'اختتامی وقت',
+    'edited_by' => 'کی طرف سے ترمیم کریں',
+    'out_of_stock' => 'زخیرے سے باہر',
 ];

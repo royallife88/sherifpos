@@ -27,7 +27,9 @@
 </div><!-- /.modal-dialog -->
 <script>
     $('.selectpicker').selectpicker('render');
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('#method').change(function(){
         var method = $(this).val();
 

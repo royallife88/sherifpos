@@ -317,7 +317,9 @@
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 <script>
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('.selectpicker').selectpicker('render');
     tinymce.init({
         selector: "#product_details",

@@ -21,13 +21,13 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="">@lang('lang.date_of_creation') @lang('lang.start_date')</label>
-                                        {!! Form::date('doc_start_date', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('doc_start_date', null, ['class' => 'form-control datepicker']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="">@lang('lang.date_of_creation') @lang('lang.end_date')</label>
-                                        {!! Form::date('doc_end_date', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('doc_end_date', null, ['class' => 'form-control datepicker']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -73,13 +73,13 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="">@lang('lang.payment_start_date')</label>
-                                        {!! Form::date('payment_start_date', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('payment_start_date', null, ['class' => 'form-control datepicker']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="">@lang('lang.payment_end_date')</label>
-                                        {!! Form::date('payment_end_date', null, ['class' => 'form-control']) !!}
+                                        {!! Form::text('payment_end_date', null, ['class' => 'form-control datepicker']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">

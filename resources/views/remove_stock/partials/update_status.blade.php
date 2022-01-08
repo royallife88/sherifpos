@@ -33,7 +33,7 @@
             <div class="col-md-12">
                 <div class="form-group">
                     {!! Form::label('compensated_at', __('lang.date'). ':*', []) !!}
-                    {!! Form::date('compensated_at', date('Y-m-d'), ['class' => 'form-control', 'required']) !!}
+                    {!! Form::text('compensated_at', date('Y-m-d'), ['class' => 'form-control  datepicker', 'required']) !!}
                 </div>
                 <div class="form-group">
                     {!! Form::label('compensated_invoice_no', __('lang.invoice_no'). ':*', []) !!}

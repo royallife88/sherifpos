@@ -57,7 +57,9 @@
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 <script>
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('.selectpicker').selectpicker('render');
     $('.selectpicker').selectpicker('selectAll');
 

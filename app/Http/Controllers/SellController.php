@@ -217,7 +217,7 @@ class SellController extends Controller
                                 $html .=
                                     '<li>
                                     <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
-                                        class="fa fa-undo"></i> ' . ('lang.sale_return') . '</a>
+                                        class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
                                     </li>';
                             }
                         }

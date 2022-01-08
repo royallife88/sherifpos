@@ -78,7 +78,8 @@
     $('.datepicker').datepicker({
         format: "yyyy",
         viewMode: "years",
-        minViewMode: "years"
+        minViewMode: "years",
+        language: '{{session('language')}}',
     });
     $('#employee_id').change(function(){
         employee_id = $(this).val();

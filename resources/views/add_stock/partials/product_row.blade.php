@@ -64,5 +64,7 @@ $i = $index;
 
 @endforelse
 <script>
-    $('.datepicker').datepicker()
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    })
 </script>

@@ -8,7 +8,6 @@ $(document).ready(function () {
         }
     });
 
-    $(".datepicker").datepicker();
     //Add products
     if ($("#search_product").length > 0) {
         $("#search_product")

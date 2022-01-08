@@ -1,6 +1,15 @@
 $(document).on("submit", "form", function () {
     $(this).validate();
 });
+__language = $("input#__language").val();
+__currency_decimal_separator = $("input#__decimal").val();
+__currency_precision = $("input#__currency_precision").val();
+__currency_symbol = $("input#__currency_symbol ").val();
+__currency_thousand_separator = $("input#__currency_thousand_separator").val();
+__currency_symbol_placement = $("input#__currency_symbol_placement").val();
+__precision = $("input#__precision").val();
+__quantity_precision = $("input#__quantity_precision").val();
+
 $(document).ready(function () {
     $(".time_picker").datetimepicker({
         format: moment_time_format,
@@ -11,14 +20,21 @@ $(document).ready(function () {
             next: "fa fa-angle-right",
         },
     });
+
+    $(".datepicker").datepicker({
+        language: __language,
+    });
+    $("input[name='start_date']").datepicker({
+        language: __language,
+        format: 'yyyy-mm-dd'
+    });
+    $("input[name='end_date']").datepicker({
+        language: __language,
+        format: 'yyyy-mm-dd'
+    });
+    $("input[name='start_date']").attr('autocomplete', 'off');
+    $("input[name='end_date']").attr('autocomplete', 'off');
 });
-__currency_decimal_separator = $("input#__decimal").val();
-__currency_precision = $("input#__currency_precision").val();
-__currency_symbol = $("input#__currency_symbol ").val();
-__currency_thousand_separator = $("input#__currency_thousand_separator").val();
-__currency_symbol_placement = $("input#__currency_symbol_placement").val();
-__precision = $("input#__precision").val();
-__quantity_precision = $("input#__quantity_precision").val();
 
 function __currency_trans_from_en(
     input,
@@ -173,7 +189,6 @@ function incrementImageCounter() {
     }
 }
 
-$(".datepicker").datepicker();
 $("#method").change(function () {
     var method = $(this).val();
 

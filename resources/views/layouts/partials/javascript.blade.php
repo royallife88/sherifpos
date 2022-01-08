@@ -13,11 +13,13 @@ $moment_time_format = App\Models\System::getProperty('time_format') == '12' ? 'h
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <script type="text/javascript" src="{{asset('vendor/bootstrap/js/bootstrap.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/daterange/js/moment.min.js') }}"></script>
-<script type="text/javascript" src="{{asset('vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js')}}">
-</script>
+
+<script type="text/javascript" src="{{asset('vendor/bootstrap-datepicker/bootstrap-datepicker.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('vendor/bootstrap-datepicker/locales/bootstrap-datepicker.'.session('language').'.min.js') }}"></script>
+<script type="text/javascript" src="{{asset('vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min.js')}}"></script>
+
 <script type="text/javascript" src="{{asset('vendor/bootstrap-toggle/js/bootstrap-toggle.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/bootstrap/js/bootstrap-select.min.js') }}"></script>
-{{-- <script type="text/javascript" src="{{asset('vendor/jquery/bootstrap-datepicker.min.js') }}"></script> --}}
 <script type="text/javascript" src="{{asset('vendor/keyboard/js/jquery.keyboard.js') }}"></script>
 <script type="text/javascript" src="{{asset('vendor/keyboard/js/jquery.keyboard.extension-autocomplete.js') }}">
 </script>

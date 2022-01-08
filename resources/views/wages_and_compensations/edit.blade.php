@@ -63,19 +63,19 @@
                                     <div class="form-group">
                                         <label
                                             for="acount_period_start_date">@lang('lang.acount_period_start_date')</label>
-                                        {!! Form::date('acount_period_start_date',
+                                        {!! Form::text('acount_period_start_date',
                                         $wages_and_compensation->acount_period_start_date,
-                                        ['class' => 'form-control', 'placeholder' =>
+                                        ['class' => 'form-control datepicker', 'placeholder' =>
                                         __('lang.acount_period_start_date')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="acount_period_end_date">@lang('lang.acount_period_end_date')</label>
-                                        {!! Form::date('acount_period_end_date',
+                                        {!! Form::text('acount_period_end_date',
                                         $wages_and_compensation->acount_period_end_date,
                                         ['class'
-                                        => 'form-control', 'placeholder' =>
+                                        => 'form-control datepicker', 'placeholder' =>
                                         __('lang.acount_period_end_date')]) !!}
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="payment_date">@lang('lang.payment_date')</label>
-                                {!! Form::date('payment_date', $wages_and_compensation->payment_date, ['class' =>
+                                {!! Form::text('payment_date', $wages_and_compensation->payment_date, ['class' =>
                                 'form-control',
                                 'placeholder' =>
                                 __('lang.payment_date')]) !!}

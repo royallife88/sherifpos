@@ -97,7 +97,9 @@
 
 <script>
     $('.selectpicker').selectpicker('refresh');
-    $('.datepicker').datepicker();
+    $('.datepicker').datepicker({
+        language: '{{session('language')}}',
+    });
     $('#method').change(function(){
         var method = $(this).val();
 

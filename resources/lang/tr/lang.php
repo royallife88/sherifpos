@@ -981,4 +981,16 @@ return [
     'added_by' => 'Tarafından eklendi',
     'enjoy_your_meal_please_come_again' => 'Afia olsun, tekrar gel',
 
+    'used_deposit_balance' => 'Kullanılmış Mevduat Bakiyesi',
+    'it_will_be_used_for_login' => 'giriş için kullanılacak',
+    'default_purchase_price_percentage' => 'Varsayılan satın alma fiyatı yüzdesi',
+    'default_purchase_price_percentage_info' => 'Ürün sayfası satın alma fiyatı satış fiyatının yüzdesini ekleyin, varsayılan olarak 75\'tir.',
+    'source_of_payment' => 'Ödeme Kaynağı',
+    'source_type' => 'kaynak tipi',
+    'other_payments' => 'Diğer Ödemeler',
+    'start_time' => 'Başlangıç ​​saati',
+    'end_time' => 'Bitiş zamanı',
+    'edited_by' => 'Tarafından düzenlendi',
+    'out_of_stock' => 'Stoklar tükendi',
+
 ];

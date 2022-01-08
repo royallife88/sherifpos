@@ -205,8 +205,12 @@
 
 @section('javascript')
 <script>
-    $('#date_of_start_working').datepicker();
-        $('#date_of_birth').datepicker();
+    $('#date_of_start_working').datepicker({
+        language: '{{session('language')}}',
+    });
+    $('#date_of_birth').datepicker({
+        language: '{{session('language')}}',
+    });
 
 
     $('#fixed_wage').change(function(){

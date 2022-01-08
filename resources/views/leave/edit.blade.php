@@ -63,7 +63,7 @@
                 </div>
                 <div class="col-md-4 if_paid hide">
                     <label for="payment_date">@lang('lang.payment_date')</label>
-                    {!! Form::date('payment_date', $leave->payment_date, ['class' => 'form-control', 'placeholder' =>
+                    {!! Form::text('payment_date', $leave->payment_date, ['class' => 'form-control datepicker', 'placeholder' =>
                     __('lang.payment_date'), 'id' => 'payment_date']) !!}
                 </div>
                 <div class="col-md-4 ">

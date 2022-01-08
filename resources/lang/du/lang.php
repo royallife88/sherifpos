@@ -981,4 +981,17 @@ return [
     'last_update' => 'Laatste update',
     'added_by' => 'Toegevoegd door',
     'enjoy_your_meal_please_come_again' => 'Eet smakelijk, kom alsjeblieft nog een keer',
+
+    'used_deposit_balance' => 'Gebruikt aanbetalingssaldo',
+    'it_will_be_used_for_login' => 'het wordt gebruikt om in te loggen',
+    'default_purchase_price_percentage' => 'Standaard aankoopprijspercentage',
+    'default_purchase_price_percentage_info' => 'Productpagina aankoopprijs percentage van verkoopprijs toevoegen, standaard is dit 75',
+    'source_of_payment' => 'Bron van betaling',
+    'source_type' => 'Bron Type',
+    'other_payments' => 'Andere betalingen',
+    'start_time' => 'Starttijd',
+    'end_time' => 'Eindtijd',
+    'edited_by' => 'Bewerkt door',
+    'out_of_stock' => 'Uitverkocht',
+
 ];

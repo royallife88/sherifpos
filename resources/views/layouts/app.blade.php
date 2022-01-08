@@ -218,7 +218,6 @@
           }
       });
       $('[data-toggle="tooltip"]').tooltip();
-      $('.datepicker').datepicker();
       $('.selectpicker').selectpicker({
           style: 'btn-link',
       });

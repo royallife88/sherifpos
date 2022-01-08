@@ -986,7 +986,7 @@ return [
     'condition_products' => 'Condition Products',
 
     'used_deposit_balance' => 'Used Deposit Balance',
-    'it_will_be_used_for_login' => 'it will be used for login',
+    'it_will_be_used_for_login' => 'It will be used for login',
     'default_purchase_price_percentage' => 'Default purchase price percentage',
     'default_purchase_price_percentage_info' => 'Add product page purchase price percentage of sell price, by default it is 75',
     'source_of_payment' => 'Source of Payment',
@@ -994,6 +994,6 @@ return [
     'other_payments' => 'Other Payments',
     'start_time' => 'Start Time',
     'end_time' => 'End Time',
-    'edited_by' => 'Edit By',
+    'edited_by' => 'Edited By',
     'out_of_stock' => 'Out of Stock',
 ];

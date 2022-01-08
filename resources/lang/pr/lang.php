@@ -978,4 +978,16 @@ return [
     'last_update' => 'اخرین بروزرسانی',
     'added_by' => 'اضافه شده توسط',
     'enjoy_your_meal_please_come_again' => 'از غذایتان لذت ببرید، لطفا دوباره بیایید',
+
+    'used_deposit_balance' => 'موجودی سپرده استفاده شده',
+    'it_will_be_used_for_login' => 'برای ورود استفاده خواهد شد',
+    'default_purchase_price_percentage' => 'درصد قیمت پیش فرض خرید',
+    'default_purchase_price_percentage_info' => 'درصد قیمت خرید صفحه محصول را به قیمت فروش اضافه کنید، به طور پیش فرض 75 است',
+    'source_of_payment' => 'منبع پرداخت',
+    'source_type' => 'نوع منبع',
+    'other_payments' => 'سایر پرداخت ها',
+    'start_time' => 'زمان شروع',
+    'end_time' => 'زمان پایان',
+    'edited_by' => 'ویرایش توسط',
+    'out_of_stock' => 'تمام شده',
 ];

@@ -979,4 +979,16 @@ return [
     'last_update' => 'आखिरी अपडेट',
     'added_by' => 'द्वारा जोड़ा',
     'enjoy_your_meal_please_come_again' => 'अपने भोजन का आनंद लें, कृपया फिर से आएं',
+
+    'used_deposit_balance' => 'प्रयुक्त जमा शेष राशि',
+    'it_will_be_used_for_login' => 'इसका उपयोग लॉगिन के लिए किया जाएगा',
+    'default_purchase_price_percentage' => 'डिफ़ॉल्ट खरीद मूल्य प्रतिशत',
+    'default_purchase_price_percentage_info' => 'उत्पाद पृष्ठ खरीद मूल्य बिक्री मूल्य का प्रतिशत जोड़ें, डिफ़ॉल्ट रूप से यह 75 . है',
+    'source_of_payment' => 'भुगतान का स्रोत',
+    'source_type' => 'स्रोत प्रकार',
+    'other_payments' => 'अन्य भुगतान',
+    'start_time' => 'समय शुरू',
+    'end_time' => 'अंतिम समय',
+    'edited_by' => 'द्वारा सम्पादन',
+    'out_of_stock' => 'स्टॉक ख़त्म',
 ];

@@ -59,7 +59,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                        {!! Form::date('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
+                        {!! Form::text('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -71,7 +71,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                        {!! Form::date('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
+                        {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-1">
@@ -237,13 +237,14 @@
                 });
         },
     });
-    })
+    $(document).on('change', '.sale_filter', function(){
+        sales_table.ajax.reload();
+    });
+})
     $('.time_picker').focusout(function (event) {
         sales_table.ajax.reload();
     });
-    $(document).on('change', '.sale_filter, .time_picker', function(){
-        sales_table.ajax.reload();
-    });
+
     $(document).on('click', '.clear_filter', function(){
         $('.sale_filter').val('');
         $('.sale_filter').selectpicker('refresh');

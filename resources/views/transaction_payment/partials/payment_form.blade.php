@@ -25,8 +25,8 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-            {!! Form::date('paid_on', !empty($payment) ? \Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d') :
-            date('Y-m-d'), ['class' => 'form-control',
+            {!! Form::text('paid_on', !empty($payment) ? \Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d') :
+            date('Y-m-d'), ['class' => 'form-control datepicker',
             'placeholder' => __('lang.payment_date')]) !!}
         </div>
     </div>
@@ -48,7 +48,7 @@
     <div class="col-md-4 not_cash_fields hide">
         <div class="form-group">
             {!! Form::label('bank_deposit_date', __('lang.bank_deposit_date'). ':', []) !!} <br>
-            {!! Form::date('bank_deposit_date', null, ['class' => 'form-control not_cash',
+            {!! Form::text('bank_deposit_date', null, ['class' => 'form-control not_cash datepicker',
 
             'placeholder' => __('lang.bank_deposit_date')]) !!}
         </div>
