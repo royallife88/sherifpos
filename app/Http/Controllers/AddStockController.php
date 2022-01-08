@@ -82,6 +82,10 @@ class AddStockController extends Controller
             $query->whereDate('transaction_date', '<=', request()->end_date);
         }
 
+        if(strtolower($request->session()->get('user.job_title')) == 'cashier'){
+            $query->where('transactions.created_by', $request->session()->get('user.id'));
+        }
+
         $add_stocks = $query->select(
             'transactions.*',
         )->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();

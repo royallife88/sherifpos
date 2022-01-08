@@ -105,6 +105,9 @@ class SellController extends Controller
             if (!empty(request()->end_time)) {
                 $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
+            if(strtolower($request->session()->get('user.job_title')) == 'cashier'){
+                $query->where('transactions.created_by', $request->session()->get('user.id'));
+            }
 
             $sales = $query->select(
                 'transactions.*',

@@ -686,7 +686,7 @@ class TransactionUtil extends Util
      * @param int $store_id
      * @return double
      */
-    public function getCostOfSoldProducts($start_date, $end_date, $store_id = null)
+    public function getCostOfSoldProducts($start_date, $end_date, $store_id = null, $store_pos_id = null)
     {
         $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
@@ -700,6 +700,9 @@ class TransactionUtil extends Util
         }
         if (!empty($store_id)) {
             $query->where('store_id', $store_id);
+        }
+        if (!empty($store_pos_id)) {
+            $query->where('store_pos_id', $store_pos_id);
         }
 
         $sales = $query->select(

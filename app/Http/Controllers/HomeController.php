@@ -444,9 +444,8 @@ class HomeController extends Controller
 
         $revenue -= $sell_return;
 
-        $cost_sold_product = 0;
-        $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id);
-        $profit = $revenue + $purchase_return - $cost_sold_product;
+        $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id, $store_pos_id);
+        $profit = $revenue - $cost_sold_product;
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

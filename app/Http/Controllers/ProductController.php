@@ -239,7 +239,7 @@ class ProductController extends Controller
             }
 
             if (!empty(request()->brand_id)) {
-                $products->where('brand_id', request()->brand_id);
+                $products->where('products.brand_id', request()->brand_id);
             }
 
             if (!empty(request()->unit_id)) {
