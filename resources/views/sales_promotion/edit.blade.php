@@ -123,7 +123,7 @@
                                     'form-control']) !!}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('discount_type', __( 'lang.discount_type' ) . ':*') !!}
                                     {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' =>
@@ -131,12 +131,15 @@
                                     selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('discount_value', __( 'lang.discount' ) . ':*') !!}
                                     {!! Form::text('discount_value', @num_format($sales_promotion->discount_value),
                                     ['class' => 'form-control', 'required']) !!}
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="" style="margin-top: 40px;" class="new_price @if($sales_promotion->discount_type == 'package_promotion') hide @endif">@lang('lang.new_price'): <span class="new_price_span">{{@num_format(0)}}</span></label>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -186,6 +189,34 @@
 <script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script src="{{asset('js/product_condition_tree.js')}}"></script>
 <script type="text/javascript">
+    $(document).ready(function(){
+        $('#discount_type').change()
+    })
+    $(document).on('change', '#type',function(){
+        if($(this).val() === 'package_promotion'){
+            $('.new_price').removeClass('hide');
+        }else{
+            $('.new_price').addClass('hide');
+        }
+    })
+    $(document).on('change', '#discount_type, #discount_value', function(){
+        let type = $('#type').val()
+        let discount_type = $('#discount_type').val()
+        console.log(discount_type, 'discount_type');
+        let discount_value = __read_number($('#discount_value'))
 
+        let new_price = 0;
+        if(type == 'package_promotion'){
+            if(discount_type == 'fixed'){
+                new_price = discount_value;
+            }
+            if(discount_type == 'percentage'){
+                let actual_sell_price = __read_number($('#actual_sell_price'))
+                new_price = (actual_sell_price * discount_value) / 100;
+            }
+        }
+        $('.new_price_span').text(__currency_trans_from_en(new_price, false))
+
+    })
 </script>
 @endsection

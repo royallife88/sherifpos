@@ -996,4 +996,8 @@ return [
     'end_time' => 'End Time',
     'edited_by' => 'Edited By',
     'out_of_stock' => 'Out of Stock',
+
+
+
+    'new_price' => 'New Price',
 ];

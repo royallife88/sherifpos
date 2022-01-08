@@ -115,6 +115,7 @@ function getProductRows(array) {
             $(".footer_purchase_price_total").text(
                 __currency_trans_from_en(purchase_price_total, false)
             );
+            calculate_total_prices();
         },
     });
 }

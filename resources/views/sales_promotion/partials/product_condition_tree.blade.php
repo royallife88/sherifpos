@@ -265,7 +265,7 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.close')</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.next')</button>
             </div>
         </div>
     </div>
