@@ -84,23 +84,23 @@ class ProductController extends Controller
         }
 
         if (!empty(request()->product_class_id)) {
-            $products->where('product_class_id', request()->product_class_id);
+            $products->where('products.product_class_id', request()->product_class_id);
         }
 
         if (!empty(request()->category_id)) {
-            $products->where('category_id', request()->category_id);
+            $products->where('products.category_id', request()->category_id);
         }
 
         if (!empty(request()->sub_category_id)) {
-            $products->where('sub_category_id', request()->sub_category_id);
+            $products->where('products.sub_category_id', request()->sub_category_id);
         }
 
         if (!empty(request()->tax_id)) {
-            $products->where('tax_id', request()->tax_id);
+            $products->where('products.tax_id', request()->tax_id);
         }
 
         if (!empty(request()->brand_id)) {
-            $products->where('brand_id', request()->brand_id);
+            $products->where('products.brand_id', request()->brand_id);
         }
 
         if (!empty(request()->unit_id)) {
@@ -223,7 +223,7 @@ class ProductController extends Controller
             }
 
             if (!empty(request()->product_class_id)) {
-                $products->where('product_class_id', request()->product_class_id);
+                $products->where('products.product_class_id', request()->product_class_id);
             }
 
             if (!empty(request()->category_id)) {
