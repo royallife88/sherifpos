@@ -259,7 +259,6 @@
     })
     $('.module_check_all').change(function (){
         let moudle_id = $(this).closest('tr').data('moudle');
-        console.log(moudle_id, 'moudle_id');
         if($(this).prop('checked')){
             $('.sub_module_permission_'+moudle_id).find('.checked_all').prop('checked', true);
             $('.sub_module_permission_'+moudle_id).find('.check_box').prop('checked', true);

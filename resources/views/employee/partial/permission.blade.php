@@ -25,7 +25,7 @@
     <tbody>
         @foreach ($modulePermissionArray as $key_module => $moudle)
         <div>
-            <tr=class="module_permission" data-moudle="{{$key_module}}">
+            <tr class="module_permission" data-moudle="{{$key_module}}">
                 <td class="">{{$moudle}} {!! Form::checkbox('module_check_all', 1, false, ['class' =>
                     'module_check_all']) !!}</td>
                 <td></td>
@@ -33,7 +33,7 @@
                 <td></td>
                 <td></td>
                 <td></td>
-            </tr=class=>
+            </tr>
             @if(!empty($subModulePermissionArray[$key_module]))
             @php
             $sub_module_permission_array = $subModulePermissionArray[$key_module];
