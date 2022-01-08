@@ -191,6 +191,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $('#discount_type').change()
+        $('#type').change()
     })
     $(document).on('change', '#type',function(){
         if($(this).val() === 'package_promotion'){
