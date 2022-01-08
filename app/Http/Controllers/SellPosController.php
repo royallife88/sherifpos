@@ -95,7 +95,7 @@ class SellPosController extends Controller
         $customers = Customer::getCustomerArrayWithMobile();
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-        $cashiers = Employee::getDropdownByJobType('Cashier');
+        $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('is_default', 1)->first();
@@ -378,7 +378,7 @@ class SellPosController extends Controller
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $product_classes = ProductClass::select('name', 'id')->get();
-        $cashiers = Employee::getDropdownByJobType('Cashier');
+        $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -801,7 +801,7 @@ class SellPosController extends Controller
                 $query->where('customer_id', request()->customer_id);
             }
             if (!empty(request()->created_by)) {
-                $query->where('created_by', request()->created_by);
+                $query->where('transactions.created_by', request()->created_by);
             }
             if (!empty(request()->method)) {
                 $query->where('transaction_payments.method', request()->method);

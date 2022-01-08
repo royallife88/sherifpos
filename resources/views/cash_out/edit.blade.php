@@ -16,6 +16,7 @@
         <div class="modal-body">
             <div class="col-md-12">
                 <div class="row">
+                    <input type="hidden" name="cash_register_id" value="{{$cash_out->cash_register_id}}">
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('amount', __( 'lang.amount' ) . ':*') !!}

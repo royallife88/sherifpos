@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'View All Stores',
 
 
-    'pos_for_the_stores' => 'POS for the stores',
+    'pos_for_the_stores' => 'POS of Cashiers',
     'return_sale_of_this_pos' => 'Return sales of this pos',
     'total_sales' => 'Total Sales',
     'cash_sales' => 'Cash Sales',

@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'تمام اسٹورز دیکھیں۔',
 
 
-    'pos_for_the_stores' => 'اسٹورز کے لیے POS۔',
+    'pos_for_the_stores' => 'کیشیئرز کا پی او ایس',
     'return_sale_of_this_pos' => 'اس پوز کی فروخت واپس کریں۔',
     'total_sales' => 'کل فروخت',
     'cash_sales' => 'نقد فروخت۔',

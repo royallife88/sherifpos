@@ -88,7 +88,7 @@ class SellController extends Controller
                 $query->where('payment_status', request()->payment_status);
             }
             if (!empty(request()->created_by)) {
-                $query->where('created_by', request()->created_by);
+                $query->where('transactions.created_by', request()->created_by);
             }
             if (!empty(request()->method)) {
                 $query->where('transaction_payments.method', request()->method);
@@ -100,10 +100,10 @@ class SellController extends Controller
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->where('transaction_date', '>=', request()->start_date .' '. Carbon::parse(request()->start_time)->format('H:i:s'));
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->end_time)) {
-                $query->where('transaction_date', '<=', request()->end_date .' '. Carbon::parse(request()->end_time)->format('H:i:s'));
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
 
             $sales = $query->select(
@@ -271,7 +271,7 @@ class SellController extends Controller
         $customers = Customer::getCustomerArrayWithMobile();
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
-        $cashiers = Employee::getDropdownByJobType('Cashier');
+        $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
 
         return view('sale.index')->with(compact(
             'payment_types',

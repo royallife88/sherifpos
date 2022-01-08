@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'Bekijk alle winkels',
 
 
-    'pos_for_the_stores' => 'POS voor de winkels',
+    'pos_for_the_stores' => 'POS van Kassiers',
     'return_sale_of_this_pos' => 'Retourverkopen van deze pos',
     'total_sales' => 'Totale verkoop',
     'cash_sales' => 'Contante verkoop',

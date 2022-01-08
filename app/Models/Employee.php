@@ -203,14 +203,20 @@ class Employee extends Model implements HasMedia
         return $employees;
     }
 
-    public static function getDropdownByJobType($job_type)
+    public static function getDropdownByJobType($job_type, $include_superadmin = false, $return_user_id = false)
     {
-        $employees = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
+        $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
             ->leftjoin('users', 'employees.user_id', 'users.id')
-            ->where('job_types.job_title', $job_type)
-            ->pluck('users.name', 'employees.id');
-
-        return $employees;
+            ->where('job_types.job_title', $job_type);
+        if ($include_superadmin) {
+            $query->orWhere('is_superadmin', 1);
+        }
+        if ($return_user_id) {
+            $employees = $query->pluck('users.name', 'users.id');
+        } else {
+            $employees = $query->pluck('users.name', 'employees.id');
+        }
+        return $employees->toArray();
     }
 
     public function getStorePosAttribute()

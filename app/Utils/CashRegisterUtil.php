@@ -71,7 +71,7 @@ class CashRegisterUtil extends Util
         return $register;
     }
 
-    public function createCashRegisterTransaction($register, $amount, $transaction_type, $type, $source_id, $notes)
+    public function createCashRegisterTransaction($register, $amount, $transaction_type, $type, $source_id, $notes, $referenced_id = null)
     {
         $cash_register_transaction = CashRegisterTransaction::create([
             'cash_register_id' => $register->id,
@@ -80,9 +80,27 @@ class CashRegisterUtil extends Util
             'type' => $type,
             'transaction_type' => $transaction_type,
             'source_id' => $source_id,
+            'referenced_id' => $referenced_id,
             'notes' => $notes,
         ]);
 
+        return $cash_register_transaction;
+    }
+
+    public function updateCashRegisterTransaction($id, $register, $amount, $transaction_type, $type, $source_id, $notes, $referenced_id = null)
+    {
+        $data = [
+            'cash_register_id' => $register->id,
+            'amount' => $amount,
+            'pay_method' => 'cash',
+            'type' => $type,
+            'transaction_type' => $transaction_type,
+            'source_id' => $source_id,
+            'referenced_id' => $referenced_id,
+            'notes' => $notes,
+        ];
+        $cash_register_transaction = CashRegisterTransaction::where('id', $id)->first();
+        $cash_register_transaction->update($data);
         return $cash_register_transaction;
     }
 

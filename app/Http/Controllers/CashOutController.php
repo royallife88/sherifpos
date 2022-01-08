@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\User;
+use App\Utils\CashRegisterUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class CashOutController extends Controller
@@ -16,6 +19,7 @@ class CashOutController extends Controller
      *
      */
     protected $commonUtil;
+    protected $cashRegisterUtil;
 
     /**
      * Constructor
@@ -23,9 +27,10 @@ class CashOutController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, CashRegisterUtil $cashRegisterUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
     }
 
     /**
@@ -125,13 +130,22 @@ class CashOutController extends Controller
     {
         try {
             $amount = $this->commonUtil->num_uf($request->input('amount'));
+            $register = CashRegister::find($request->cash_register_id);
+            $cr_transaction = CashRegisterTransaction::where('id', $id)->first();
+            DB::begintransaction();
+            $referenced_id = $cr_transaction->referenced_id;
 
-            CashRegisterTransaction::where('id', $id)->update([
-                'amount' => $amount,
-                'source_id' => $request->source_id,
-                'notes' => $request->notes,
-            ]);
+            $cash_register_transaction = $this->cashRegisterUtil->updateCashRegisterTransaction($id, $register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes);
 
+            $refercene_transaction = CashRegisterTransaction::where('id', $referenced_id)->first();
+
+            if (!empty($request->source_id)) {
+                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                $cash_register_transaction_out = $this->cashRegisterUtil->updateCashRegisterTransaction($refercene_transaction->id, $register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+                $cash_register_transaction->save();
+            }
+            DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
@@ -155,6 +169,22 @@ class CashOutController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            CashRegisterTransaction::where('id', $id)->delete();
+            CashRegisterTransaction::where('referenced_id', $id)->delete();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

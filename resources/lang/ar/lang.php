@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'مشاهدة جميع المتاجر',
 
 
-    'pos_for_the_stores' => 'نقاط البيع للمخازن',
+    'pos_for_the_stores' => 'نقاط البيع للصرافين',
     'return_sale_of_this_pos' => 'إعادة مبيعات لنقطة البيع',
     'total_sales' => 'إجمالي المبيعات',
     'cash_sales' => 'البيع نقدا',

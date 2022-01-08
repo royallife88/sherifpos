@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'सभी स्टोर देखें',
 
 
-    'pos_for_the_stores' => 'दुकानों के लिए पीओएस',
+    'pos_for_the_stores' => 'कैशियर के पीओएस',
     'return_sale_of_this_pos' => 'इस स्थिति की वापसी बिक्री',
     'total_sales' => 'संपूर्ण बिक्री',
     'cash_sales' => 'नकद बिक्री',

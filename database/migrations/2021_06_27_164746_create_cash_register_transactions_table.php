@@ -22,6 +22,7 @@ class CreateCashRegisterTransactionsTable extends Migration
             $table->enum('transaction_type', ['initial', 'sell', 'transfer', 'refund', 'cash_in', 'cash_out'])->nullable();
             $table->unsignedBigInteger('transaction_id');
             $table->unsignedBigInteger('source_id')->nullable()->comment('Other users in the system as source.');
+            $table->unsignedBigInteger('referenced_id')->nullable()->comment('used for cash in and cash out.');
             $table->text('notes')->nullable();
             $table->timestamps();
         });

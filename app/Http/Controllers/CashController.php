@@ -161,7 +161,9 @@ class CashController extends Controller
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes);
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+                $cash_register_transaction->save();
             }
             if ($request->has('image')) {
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');
@@ -222,7 +224,9 @@ class CashController extends Controller
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
+                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
+                $cash_register_transaction->save();
             }
             if ($request->has('image')) {
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');

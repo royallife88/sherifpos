@@ -946,7 +946,7 @@ class ReportController extends Controller
 
         $stores = Store::getDropdown();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-        $cashiers = Employee::getDropdownByJobType('Cashier');
+        $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
 
         return view('reports.daily_sale_report', compact(
             'total_discount',

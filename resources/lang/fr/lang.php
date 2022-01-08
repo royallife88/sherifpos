@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'Voir tous les magasins',
 
 
-    'pos_for_the_stores' => 'PLV pour les magasins',
+    'pos_for_the_stores' => 'POS des caissiers',
     'return_sale_of_this_pos' => 'Retourner les ventes de ce poste',
     'total_sales' => 'Ventes totales',
     'cash_sales' => 'Les ventes au comptant',

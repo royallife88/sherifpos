@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
+use App\Utils\CashRegisterUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -19,6 +20,7 @@ class TransactionPaymentController extends Controller
      */
     protected $commonUtil;
     protected $transactionUtil;
+    protected $cashRegisterUtil;
 
 
     /**
@@ -27,10 +29,11 @@ class TransactionPaymentController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, CashRegisterUtil $cashRegisterUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
     }
 
     /**
@@ -94,6 +97,7 @@ class TransactionPaymentController extends Controller
                 'card_month' => $request->card_month,
                 'card_year' => $request->card_year,
             ];
+            DB::beginTransaction();
             $transaction = Transaction::find($request->transaction_id);
 
             $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
@@ -104,6 +108,10 @@ class TransactionPaymentController extends Controller
                 }
             }
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+            if ($transaction->type == 'sell') {
+                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+            }
+            DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')

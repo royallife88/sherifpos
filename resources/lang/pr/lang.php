@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'مشاهده همه فروشگاه ها',
 
 
-    'pos_for_the_stores' => 'POS برای فروشگاه ها',
+    'pos_for_the_stores' => 'POS صندوقداران',
     'return_sale_of_this_pos' => 'فروش این پست را پس دهید',
     'total_sales' => 'مجموع فروش',
     'cash_sales' => 'فروش نقدی',

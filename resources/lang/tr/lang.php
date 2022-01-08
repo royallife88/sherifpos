@@ -239,7 +239,7 @@ return [
     'view_all_stores' => 'Tüm Mağazaları Görüntüle',
 
 
-    'pos_for_the_stores' => 'Mağazalar için POS',
+    'pos_for_the_stores' => 'Kasiyerlerin POS\'u',
     'return_sale_of_this_pos' => 'Bu pozisyonun iade satışları',
     'total_sales' => 'Toplam satış',
     'cash_sales' => 'Nakit satış',
