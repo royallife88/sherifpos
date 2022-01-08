@@ -21,9 +21,6 @@ $(document).ready(function () {
         },
     });
 
-    $(".datepicker").datepicker({
-        language: __language,
-    });
     $("input[name='start_date']").datepicker({
         language: __language,
         format: 'yyyy-mm-dd'
@@ -34,6 +31,11 @@ $(document).ready(function () {
     });
     $("input[name='start_date']").attr('autocomplete', 'off');
     $("input[name='end_date']").attr('autocomplete', 'off');
+
+
+    $(".datepicker").datepicker({
+        language: __language,
+    });
 });
 
 function __currency_trans_from_en(

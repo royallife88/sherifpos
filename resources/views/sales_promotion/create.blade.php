@@ -125,13 +125,13 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}
-                                    {!! Form::text('start_date', 1, ['class' => 'form-control', 'required']) !!}
+                                    {!! Form::text('start_date', null, ['class' => 'form-control datepicker', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
-                                    {!! Form::text('end_date', 1, ['class' => 'form-control', 'required']) !!}
+                                    {!! Form::text('end_date', null, ['class' => 'form-control datepicker', 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4 mt-5">

@@ -142,13 +142,13 @@
                                 <div class="form-group">
                                     {!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}
                                     {!! Form::text('start_date', $sales_promotion->start_date, ['class' =>
-                                    'form-control']) !!}
+                                    'form-control datepicker']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
-                                    {!! Form::text('end_date', $sales_promotion->end_date, ['class' => 'form-control'])
+                                    {!! Form::text('end_date', $sales_promotion->end_date, ['class' => 'form-control datepicker'])
                                     !!}
                                 </div>
                             </div>
