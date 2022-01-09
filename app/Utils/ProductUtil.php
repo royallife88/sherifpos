@@ -255,10 +255,10 @@ class ProductUtil extends Util
                     $variation = Variation::find($v['id']);
                     $variation->name = $v['name'];
                     $variation->sub_sku = $sub_sku;
-                    $variation->color_id = $v['color_id'];
-                    $variation->size_id = $v['size_id'];
-                    $variation->grade_id = $v['grade_id'];
-                    $variation->unit_id = $v['unit_id'];
+                    $variation->color_id = $v['color_id'] ?? null;
+                    $variation->size_id = $v['size_id'] ?? null;
+                    $variation->grade_id = $v['grade_id'] ?? null;
+                    $variation->unit_id = $v['unit_id'] ?? null;
                     $variation->default_purchase_price = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
                     $variation->default_sell_price = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
 
@@ -269,10 +269,10 @@ class ProductUtil extends Util
                     $variation_data['name'] = $v['name'];
                     $variation_data['product_id'] = $product->id;
                     $variation_data['sub_sku'] = !empty($v['sub_sku']) ? $v['sub_sku'] : $this->generateSubSku($product->sku, $c, $product->barcode_type);
-                    $variation_data['color_id'] = $v['color_id'];
-                    $variation_data['size_id'] = $v['size_id'];
-                    $variation_data['grade_id'] = $v['grade_id'];
-                    $variation_data['unit_id'] = $v['unit_id'];
+                    $variation_data['color_id'] = $v['color_id'] ?? null;
+                    $variation_data['size_id'] = $v['size_id'] ?? null;
+                    $variation_data['grade_id'] = $v['grade_id'] ?? null;
+                    $variation_data['unit_id'] = $v['unit_id'] ?? null;
                     $variation_data['default_purchase_price'] = !empty($v['default_purchase_price']) ? $this->num_uf($v['default_purchase_price']) : $this->num_uf($product->purchase_price);
                     $variation_data['default_sell_price'] = !empty($v['default_sell_price']) ? $this->num_uf($v['default_sell_price']) : $this->num_uf($product->sell_price);
                     $variation_data['is_dummy'] = 0;
