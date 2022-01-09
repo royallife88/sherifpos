@@ -253,6 +253,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('email', EmailController::class);
 
 
+    Route::post('settings/update-weighing-scale-setting', 'SettingController@postWeighingScaleSetting');
+    Route::get('settings/get-weighing-scale-setting', 'SettingController@getWeighingScaleSetting');
     Route::post('settings/update-general-setting', 'SettingController@updateGeneralSetting');
     Route::get('settings/get-general-setting', 'SettingController@getGeneralSetting');
     Route::post('settings/remove-image/{type}', 'SettingController@removeImage');

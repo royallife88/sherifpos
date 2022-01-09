@@ -1000,4 +1000,14 @@ return [
 
 
     'new_price' => 'New Price',
+    'weighing_scale_setting' => 'Weighting Scale Setting',
+    'weighing_barcode_prefix' => 'Prefix',
+    'weighing_product_sku_length' => 'Product sku length',
+    'weighing_qty_integer_part_length' => 'Quantity integer part length',
+    'weighing_qty_fractional_part_length' => 'Quantity fractional part length',
+    'weighing_scale_barcode' => 'Weighing Scale Barcode',
+    'sku_not_match' => 'SKU not match',
+    'prefix_did_not_match' => 'Prefix did not match',
+    'weighing_scale' => 'Weighing Scale',
+    'enable' => 'Enable',
 ];

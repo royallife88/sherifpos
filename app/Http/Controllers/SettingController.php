@@ -304,6 +304,49 @@ class SettingController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
+    /**
+     * get Weighing Scale settings
+     *
+     * @return void
+     */
+    public function getWeighingScaleSetting()
+    {
+        $settings = [];
+        $weighing_scale_setting = !empty(System::getProperty('weighing_scale_setting')) ? json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+
+        return view('settings.weighing_scale_setting')->with(compact(
+            'weighing_scale_setting'
+        ));
+    }
+
+    /**
+     * update Weighing Scale settings
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function postWeighingScaleSetting(Request $request)
+    {
+        try {
+            System::updateOrCreate(
+                ['key' => 'weighing_scale_setting'],
+                ['value' => json_encode($request->weighing_scale_setting), 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
+    }
     public function updateVersionData($version_number)
     {
         try {

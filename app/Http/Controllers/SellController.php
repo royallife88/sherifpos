@@ -105,7 +105,7 @@ class SellController extends Controller
             if (!empty(request()->end_time)) {
                 $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
-            if(strtolower($request->session()->get('user.job_title')) == 'cashier'){
+            if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
                 $query->where('transactions.created_by', $request->session()->get('user.id'));
             }
 
@@ -303,6 +303,7 @@ class SellController extends Controller
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
         $store_poses = [];
+        $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
 
         return view('sale.create')->with(compact(
             'walk_in_customer',
@@ -314,7 +315,8 @@ class SellController extends Controller
             'payment_types',
             'stores',
             'store_poses',
-            'payment_status_array'
+            'payment_status_array',
+            'weighing_scale_setting'
         ));
     }
 
@@ -363,6 +365,7 @@ class SellController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
+        $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -373,7 +376,8 @@ class SellController extends Controller
             'customers',
             'taxes',
             'payment_types',
-            'payment_status_array'
+            'payment_status_array',
+            'weighing_scale_setting'
         ));
     }
 

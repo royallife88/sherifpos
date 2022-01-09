@@ -1355,4 +1355,86 @@ class ProductUtil extends Util
 
         return $products;
     }
+
+    /**
+     * Filters product as per the given inputs and return the details.
+     *
+     * @param string $search_type (like or exact)
+     *
+     * @return object
+     */
+    public function filterProduct($search_term, $search_fields = [], $search_type = 'like')
+    {
+
+        $query = Product::join('variations', 'products.id', '=', 'variations.product_id')
+            ->active()
+            ->whereNull('variations.deleted_at');
+
+
+        if (!empty($product_types)) {
+            $query->whereIn('products.type', $product_types);
+        }
+
+        //Include search
+        if (!empty($search_term)) {
+
+            //Search with like condition
+            if ($search_type == 'like') {
+                $query->where(function ($query) use ($search_term, $search_fields) {
+
+                    if (in_array('name', $search_fields)) {
+                        $query->where('products.name', 'like', '%' . $search_term . '%');
+                    }
+
+                    if (in_array('sku', $search_fields)) {
+                        $query->orWhere('sku', 'like', '%' . $search_term . '%');
+                    }
+
+                    if (in_array('sub_sku', $search_fields)) {
+                        $query->orWhere('sub_sku', 'like', '%' . $search_term . '%');
+                    }
+
+                    if (in_array('lot', $search_fields)) {
+                        $query->orWhere('pl.lot_number', 'like', '%' . $search_term . '%');
+                    }
+                });
+            }
+
+            //Search with exact condition
+            if ($search_type == 'exact') {
+                $query->where(function ($query) use ($search_term, $search_fields) {
+
+                    if (in_array('name', $search_fields)) {
+                        $query->where('products.name', $search_term);
+                    }
+
+                    if (in_array('sku', $search_fields)) {
+                        $query->orWhere('sku', $search_term);
+                    }
+
+                    if (in_array('sub_sku', $search_fields)) {
+                        $query->orWhere('sub_sku', $search_term);
+                    }
+
+                    if (in_array('lot', $search_fields)) {
+                        $query->orWhere('pl.lot_number', $search_term);
+                    }
+                });
+            }
+        }
+
+        $query->select(
+            'products.id as product_id',
+            'products.name',
+            'products.type',
+            'variations.id as variation_id',
+            'variations.name as variation',
+            'variations.default_sell_price',
+            'variations.sub_sku',
+        );
+
+        $query->groupBy('variations.id');
+        return $query
+            ->get();
+    }
 }

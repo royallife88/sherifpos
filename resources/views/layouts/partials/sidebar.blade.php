@@ -1041,6 +1041,12 @@
                             <a href="{{action('SettingController@getModuleSettings')}}">{{__('lang.modules')}}</a>
                         </li>
                         @endcan
+                        @can('settings.modules.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-weighing-scale-setting') active @endif">
+                            <a href="{{action('SettingController@getWeighingScaleSetting')}}">{{__('lang.weighing_scale_setting')}}</a>
+                        </li>
+                        @endcan
                         @can('settings.general_settings.view')
                         <li
                             class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-general-setting') active @endif">

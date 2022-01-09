@@ -60,6 +60,14 @@
                                             <input type="text" name="search_product" id="search_product"
                                                 placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                                 class="form-control ui-autocomplete-input" autocomplete="off">
+                                            @if(isset($weighing_scale_setting['enable']) &&
+                                            $weighing_scale_setting['enable'])
+                                            <button type="button" class="btn btn-default bg-white btn-flat"
+                                                id="weighing_scale_btn" data-toggle="modal"
+                                                data-target="#weighing_scale_modal"
+                                                title="@lang('lang.weighing_scale')"><i
+                                                    class="fa fa-balance-scale text-primary fa-lg"></i></button>
+                                            @endif
                                             <button type="button" class="btn btn-success btn-lg btn-modal"
                                                 data-href="{{action('ProductController@create')}}?quick_add=1"
                                                 data-container=".view_modal"><i class="fa fa-plus"></i></button>
@@ -73,28 +81,28 @@
                                             <thead>
                                                 <tr>
                                                     <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
-                                                    @lang('lang.product')</th>
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
-                                                    @lang('lang.quantity')</th>
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 16% @else 15% @endif; font-size: 12px !important;">
-                                                    @lang('lang.price')</th>
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 12px !important;">
-                                                    @lang('lang.discount')</th>
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
-                                                    @lang('lang.sub_total')</th>
-                                                @if(session('system_mode') != 'restaurant')
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
-                                                    @lang('lang.current_stock')</th>
-                                                @endif
-                                                <th
-                                                    style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
-                                                    @lang('lang.action')</th>
+                                                        style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                        @lang('lang.product')</th>
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 18% @else 20% @endif; font-size: 12px !important;">
+                                                        @lang('lang.quantity')</th>
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 16% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.price')</th>
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 13% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.discount')</th>
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.sub_total')</th>
+                                                    @if(session('system_mode') != 'restaurant')
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.current_stock')</th>
+                                                    @endif
+                                                    <th
+                                                        style="width: @if(session('system_mode') != 'restaurant') 10% @else 15% @endif; font-size: 12px !important;">
+                                                        @lang('lang.action')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -162,7 +170,7 @@
                     </div>
 
                     <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
-                    value="{{$transaction->terms_and_condition_id}}">
+                        value="{{$transaction->terms_and_condition_id}}">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="col-md-4">
@@ -268,6 +276,7 @@
             @include('sale_pos.partials.delivery_cost_modal')
             @include('sale_pos.partials.coupon_modal')
             @include('sale_pos.partials.contact_details_modal')
+            @include('sale_pos.partials.weighing_scale_modal')
 
 
 
@@ -425,26 +434,27 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('draft_start_date', __('lang.start_date'), []) !!}
-                                            {!! Form::text('draft_start_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('start_date', null, ['class' => 'form-control', 'id' =>
                                             'draft_start_date']) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
-                                            {!! Form::text('draft_end_date', null, ['class' => 'form-control', 'id' =>
+                                            {!! Form::text('end_date', null, ['class' => 'form-control', 'id' =>
                                             'draft_end_date']) !!}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="draft_transaction_div col-md-12">
+                            <div class="col-md-12">
+                                @include('sale_pos.partials.view_draft')
                             </div>
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close'
-                                )</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
+                                'lang.close')</button>
                         </div>
                     </div><!-- /.modal-content -->
                 </div><!-- /.modal-dialog -->
@@ -462,6 +472,7 @@
 @endsection
 
 @section('javascript')
+<script src="{{asset('js/onscan.min.js')}}"></script>
 <script src="{{asset('js/pos.js')}}"></script>
 <script>
     $(document).ready(function(){

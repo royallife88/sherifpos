@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Yajra\DataTables\Facades\DataTables;
+use Str;
 
 class SellPosController extends Controller
 {
@@ -102,6 +103,7 @@ class SellPosController extends Controller
         $stores = Store::getDropdown();
         $product_classes = ProductClass::select('name', 'id')->get();
         $store_poses = [];
+        $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
 
         if (empty($store_pos)) {
             $output = [
@@ -127,6 +129,7 @@ class SellPosController extends Controller
             'taxes',
             'product_classes',
             'payment_types',
+            'weighing_scale_setting',
         ));
     }
 
@@ -379,6 +382,7 @@ class SellPosController extends Controller
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $product_classes = ProductClass::select('name', 'id')->get();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
+        $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -394,6 +398,7 @@ class SellPosController extends Controller
             'cashiers',
             'taxes',
             'payment_types',
+            'weighing_scale_setting',
         ));
     }
 
@@ -726,12 +731,31 @@ class SellPosController extends Controller
     public function addProductRow(Request $request)
     {
         if ($request->ajax()) {
+            $weighing_scale_barcode = $request->input('weighing_scale_barcode');
+
+
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
             $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
             $added_products = json_decode($request->input('added_products'), true);
+
+            //Check for weighing scale barcode
+            $weighing_barcode = request()->get('weighing_scale_barcode');
+            if (empty($variation_id) && !empty($weighing_barcode)) {
+                $product_details = $this->__parseWeighingBarcode($weighing_barcode);
+                if ($product_details['success']) {
+                    $product_id = $product_details['product_id'];
+                    $variation_id = $product_details['variation_id'];
+                    $quantity = $product_details['qty'];
+                    $edit_quantity = $quantity;
+                } else {
+                    $output['success'] = false;
+                    $output['msg'] = $product_details['msg'];
+                    return $output;
+                }
+            }
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
@@ -740,10 +764,65 @@ class SellPosController extends Controller
                 $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
-                return view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'));
+                $html_content =  view('sale_pos.partials.product_row')
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'))->render();
+
+                $output['success'] = true;
+                $output['html_content'] = $html_content;
+            } else {
+                $output['success'] = false;
+                $output['msg'] = __('lang.sku_no_match');
             }
+            return  $output;
         }
+    }
+
+    /**
+     * Parse the weighing barcode.
+     *
+     * @return array
+     */
+    private function __parseWeighingBarcode($scale_barcode)
+    {
+        $scale_setting = System::getProperty('weighing_scale_setting') ? json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+
+        $error_msg = trans("lang.something_went_wrong");
+
+        //Check for prefix.
+        if ((strlen($scale_setting['label_prefix']) == 0) || Str::startsWith($scale_barcode, $scale_setting['label_prefix'])) {
+            $scale_barcode = substr($scale_barcode, strlen($scale_setting['label_prefix']));
+            //Get product sku, trim left side 0
+            $sku = ltrim(substr($scale_barcode, 0, $scale_setting['product_sku_length'] + 1), '0');
+
+            //Get quantity integer
+            $qty_int = substr($scale_barcode, $scale_setting['product_sku_length'] + 1, $scale_setting['qty_length'] + 1);
+
+            //Get quantity decimal
+            $qty_decimal = '0.' . substr($scale_barcode, $scale_setting['product_sku_length'] + $scale_setting['qty_length'] + 2, $scale_setting['qty_length_decimal'] + 1);
+
+            $qty = (float)$qty_int + (float)$qty_decimal;
+
+            //Find the variation id
+            $result = $this->productUtil->filterProduct($sku, ['sub_sku'], 'like')->first();
+
+            if (!empty($result)) {
+                return [
+                    'product_id' => $result->product_id,
+                    'variation_id' => $result->variation_id,
+                    'qty' => $qty,
+                    'success' => true
+                ];
+            } else {
+                $error_msg = trans("lang.sku_not_match", ['sku' => $sku]);
+            }
+        } else {
+            $error_msg = trans("lang.prefix_did_not_match");
+        }
+
+        return [
+            'success' => false,
+            'msg' => $error_msg
+        ];
     }
     /**
      * Returns the html for product row

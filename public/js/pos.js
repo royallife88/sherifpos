@@ -245,10 +245,11 @@ $(document).ready(function () {
 });
 
 function get_label_product_row(
-    product_id,
-    variation_id,
+    product_id = null,
+    variation_id = null,
     edit_quantity = 1,
-    edit_row_count = 0
+    edit_row_count = 0,
+    weighing_scale_barcode = null
 ) {
     //Get item addition method
     var add_via_ajax = true;
@@ -290,7 +291,7 @@ function get_label_product_row(
         $.ajax({
             method: "GET",
             url: "/pos/add-product-row",
-            dataType: "html",
+            dataType: "json",
             async: false,
             data: {
                 product_id: product_id,
@@ -299,9 +300,14 @@ function get_label_product_row(
                 store_id: store_id,
                 customer_id: customer_id,
                 edit_quantity: edit_quantity,
+                weighing_scale_barcode: weighing_scale_barcode,
             },
             success: function (result) {
-                $("table#product_table tbody").prepend(result);
+                if (!result.success) {
+                    swal("Error", result.msg, "error");
+                    return;
+                }
+                $("table#product_table tbody").prepend(result.html_content);
                 $("input#search_product").val("");
                 $("input#search_product").focus();
                 check_for_sale_promotion();
@@ -1745,3 +1751,48 @@ if (buttonLeft !== undefined && buttonLeft !== null) {
         document.getElementById("scroll-horizontal").scrollLeft -= 50;
     };
 }
+
+$(document).ready(function () {
+    $("#weighing_scale_modal").on("shown.bs.modal", function (e) {
+        //Attach the scan event
+        onScan.attachTo(document, {
+            suffixKeyCodes: [13], // enter-key expected at the end of a scan
+            reactToPaste: true, // Compatibility to built-in scanners in paste-mode (as opposed to keyboard-mode)
+            onScan: function (sCode, iQty) {
+                console.log("Scanned: " + iQty + "x " + sCode);
+                $("input#weighing_scale_barcode").val(sCode);
+                $("button#weighing_scale_submit").trigger("click");
+            },
+            onScanError: function (oDebug) {
+                console.log(oDebug);
+            },
+            minLength: 2,
+            // onKeyDetect: function(iKeyCode){ // output all potentially relevant key events - great for debugging!
+            //     console.log('Pressed: ' + iKeyCode);
+            // }
+        });
+
+        $("input#weighing_scale_barcode").focus();
+    });
+
+    $("#weighing_scale_modal").on("hide.bs.modal", function (e) {
+        //Detach from the document once modal is closed.
+        onScan.detachFrom(document);
+    });
+
+    $("button#weighing_scale_submit").click(function () {
+        if ($("#weighing_scale_barcode").val().length > 0) {
+            get_label_product_row(
+                null,
+                null,
+                1,
+                0,
+                $("#weighing_scale_barcode").val()
+            );
+            $("#weighing_scale_modal").modal("hide");
+            $("input#weighing_scale_barcode").val("");
+        } else {
+            $("input#weighing_scale_barcode").focus();
+        }
+    });
+});
