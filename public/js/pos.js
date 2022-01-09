@@ -1796,3 +1796,16 @@ $(document).ready(function () {
         }
     });
 });
+
+$(document).on("keyup", function () {
+    let first_tr = $("table#product_table tbody tr").first();
+    let quantity = __read_number(first_tr.find(".quantity"));
+    if (event.which == 38) {
+        quantity = quantity + 1;
+    }
+    if (event.which == 40) {
+        quantity = quantity - 1;
+    }
+    __write_number(first_tr.find(".quantity"), quantity);
+    first_tr.find(".quantity").change();
+});
