@@ -222,6 +222,7 @@ class User extends Authenticatable
                 'store_pos' => 'Pos for the stores',
                 'terms_and_conditions' => 'Terms and Conditions',
                 'modules' => 'Modules',
+                'weighing_scale_setting' => 'Weighing Scale Setting',
                 'general_settings' => 'General Settings',
             ],
 
