@@ -50,7 +50,7 @@ class ProductUtil extends Util
      *
      * @return void
      */
-    public function generateSubSku($sku, $c, $barcode_type)
+    public function generateSubSku($sku, $c, $barcode_type = 'C128')
     {
         $sub_sku = $sku . $c;
 
@@ -154,8 +154,10 @@ class ProductUtil extends Util
         $name_array = explode(" ", $name);
         $sku = '';
         foreach ($name_array as $w) {
-            if (!preg_match('/[^A-Za-z0-9]/', $w)) {
-                $sku .= $w[0];
+            if (!empty($w)) {
+                if (!preg_match('/[^A-Za-z0-9]/', $w)) {
+                    $sku .= $w[0];
+                }
             }
         }
         $sku = $sku . '-' . $number;

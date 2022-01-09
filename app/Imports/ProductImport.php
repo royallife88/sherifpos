@@ -38,19 +38,19 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
 
 
     /**
-    * @param Collection $collection
-    */
+     * @param Collection $collection
+     */
     public function collection(Collection $rows)
     {
-        foreach($rows as $row){
+        foreach ($rows as $row) {
             $unit_row = explode(',', $row['units']);
-            $unit_ids = Unit::whereIn('name', $unit_row )->pluck('id')->toArray();
+            $unit_ids = Unit::whereIn('name', $unit_row)->pluck('id')->toArray();
             $color_row = explode(',', $row['colors']);
-            $color_ids = Color::whereIn('name', $color_row )->pluck('id')->toArray();
+            $color_ids = Color::whereIn('name', $color_row)->pluck('id')->toArray();
             $sizes_row = explode(',', $row['sizes']);
-            $sizes_ids = Size::whereIn('name', $sizes_row )->pluck('id')->toArray();
+            $sizes_ids = Size::whereIn('name', $sizes_row)->pluck('id')->toArray();
             $grades_row = explode(',', $row['grades']);
-            $grades_ids = Grade::whereIn('name', $grades_row )->pluck('id')->toArray();
+            $grades_ids = Grade::whereIn('name', $grades_row)->pluck('id')->toArray();
 
             $class = ProductClass::where('name', $row['class'])->first();
             $category = Category::where('name', $row['category'])->first();
@@ -64,7 +64,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
                 'category_id' => !empty($category) ? $category->id : null,
                 'sub_category_id' => !empty($sub_category) ? $sub_category->id : null,
                 'brand_id' => !empty($brand) ? $brand->id : null,
-                'sku' => $row['sku'],
+                'sku' => $row['sku'] ?? $this->productUtil->generateSku($row['product_name']),
                 'multiple_units' => $unit_ids,
                 'multiple_colors' => $color_ids,
                 'multiple_sizes' => $sizes_ids,
@@ -99,7 +99,6 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
             $product = Product::create($product_data);
 
             $this->productUtil->createOrUpdateVariations($product, $this->request);
-
         }
     }
 
@@ -108,7 +107,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
         return [
             'product_name' => 'required',
             'class' => 'required',
-            'sku' => 'required|unique:products',
+            'sku' => 'sometimes|unique:products',
             'sell_price' => 'required|numeric',
             'purchase_price' => 'required|numeric',
         ];

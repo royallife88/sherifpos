@@ -63,90 +63,6 @@ class ProductController extends Controller
      */
     public function getProductStocks(Request $request)
     {
-        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->leftjoin('add_stock_lines', function ($join) {
-                $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
-            })
-            ->leftjoin('colors', 'variations.color_id', 'colors.id')
-            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
-            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
-            ->leftjoin('units', 'variations.unit_id', 'units.id')
-            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
-
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
-
-        if (!empty($store_id)) {
-            $products->where('product_stores.store_id', $store_id);
-        }
-
-        if (!empty(request()->product_id)) {
-            $products->where('products.id', request()->product_id);
-        }
-
-        if (!empty(request()->product_class_id)) {
-            $products->where('products.product_class_id', request()->product_class_id);
-        }
-
-        if (!empty(request()->category_id)) {
-            $products->where('products.category_id', request()->category_id);
-        }
-
-        if (!empty(request()->sub_category_id)) {
-            $products->where('products.sub_category_id', request()->sub_category_id);
-        }
-
-        if (!empty(request()->tax_id)) {
-            $products->where('products.tax_id', request()->tax_id);
-        }
-
-        if (!empty(request()->brand_id)) {
-            $products->where('products.brand_id', request()->brand_id);
-        }
-
-        if (!empty(request()->unit_id)) {
-            $products->whereJsonContains('multiple_units', request()->unit_id);
-        }
-
-        if (!empty(request()->color_id)) {
-            $products->whereJsonContains('multiple_colors', request()->color_id);
-        }
-
-        if (!empty(request()->size_id)) {
-            $products->whereJsonContains('multiple_sizes', request()->size_id);
-        }
-
-        if (!empty(request()->grade_id)) {
-            $products->whereJsonContains('multiple_grades', request()->grade_id);
-        }
-
-        if (!empty(request()->customer_type_id)) {
-            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
-        }
-
-        if (!empty(request()->customer_type_id)) {
-            $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
-        }
-
-        if (!empty(request()->created_by)) {
-            $products->where('created_by', request()->created_by);
-        }
-
-        $products->where('active', 1);
-        $products = $products->select(
-            'products.*',
-            'variations.sub_sku',
-            'colors.name as color_name',
-            'sizes.name as size_name',
-            'grades.name as grade_name',
-            'units.name as unit_name',
-            'variations.name as variation_name',
-            'variations.default_purchase_price',
-            'variations.default_sell_price',
-            'add_stock_lines.expiry_date as exp_date',
-            DB::raw('SUM(product_stores.qty_available) as current_stock'),
-        )
-            ->groupBy('products.id')
-            ->get();
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
@@ -164,7 +80,6 @@ class ProductController extends Controller
         $page = 'product_stock';
 
         return view('product.index')->with(compact(
-            'products',
             'users',
             'product_classes',
             'categories',

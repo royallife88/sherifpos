@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
-                        <h4>@lang('lang.add_stock')</h4>
+                        <h4>@lang('lang.edit_stock')</h4>
                     </div>
                     {!! Form::open(['url' => action('AddStockController@update', $add_stock->id), 'method' => 'put',
                     'id' =>

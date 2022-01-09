@@ -113,9 +113,7 @@
                         </div>
                     </div>
                     <div class="col-md-3">
-                        {{-- <button type="submit" class="btn btn-primary mt-4">@lang('lang.filter')</button> --}}
                         <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
-
                     </div>
                 </div>
         </div>
@@ -125,45 +123,43 @@
             <button type="button" value="0"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
             <button type="button" value="3"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.barcode')</button>
-            <button type="button" value="4"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
-            <button type="button" value="5"
+            <button type="button" value="4"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
-            <button type="button" value="6"
+            <button type="button" value="5"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
-            <button type="button" value="7"
+            <button type="button" value="6"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
-            <button type="button" value="8"
+            <button type="button" value="7"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
-            <button type="button" value="9"
+            <button type="button" value="8"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
-            <button type="button" value="10"
+            <button type="button" value="9"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
-            <button type="button" value="11"
+            <button type="button" value="1"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
-            <button type="button" value="12"
+            <button type="button" value="11"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
-            <button type="button" value="13"
+            <button type="button" value="12"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
-            <button type="button" value="14"
+            <button type="button" value="13"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
-            <button type="button" value="15"
+            <button type="button" value="14"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
             @if(empty($page))
-            <button type="button" value="16"
+            <button type="button" value="15"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
             @endif
-            <button type="button" value="17"
+            <button type="button" value="16"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
-            <button type="button" value="18"
+            <button type="button" value="17"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
-            <button type="button" value="19"
+            <button type="button" value="18"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
-            <button type="button" value="20"
+            <button type="button" value="19"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
             @can('product_module.purchase_price.view')
-            <button type="button" value="21"
+            <button type="button" value="20"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
             @endcan
         </div>
@@ -178,7 +174,6 @@
                 <th>@lang('lang.image')</th>
                 <th>@lang('lang.name')</th>
                 <th>@lang('lang.product_code')</th>
-                <th>@lang('lang.barcode')</th>
                 <th>@lang('lang.class')</th>
                 <th>@lang('lang.category')</th>
                 <th>@lang('lang.sub_category')</th>
@@ -264,7 +259,6 @@
                 { data: 'image', name: 'image'  },
                 { data: 'variation_name', name: 'products.name'},
                 { data: 'sub_sku', name: 'variations.sub_sku'  },
-                { data: 'barcode', name: 'barcode', searchable: false, orderable: false  },
                 { data: 'product_class', name: 'product_classes.name'},
                 { data: 'category', name: 'categories.name'},
                 { data: 'sub_category', name: 'categories.name'},

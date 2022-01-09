@@ -12,21 +12,21 @@
                             <div class="form-group">
                                 {!! Form::label('store_id', __('lang.store'), []) !!}
                                 {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
-                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                                'form-control filters', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
                                 {!! Form::select('supplier_id', $suppliers, request()->supplier_id, ['class' =>
-                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                                'form-control filters', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('created_by', __('lang.added_by'), []) !!}
                                 {!! Form::select('created_by', $users, request()->created_by, ['class' =>
-                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                                'form-control filters', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
 
@@ -34,27 +34,25 @@
                             <div class="form-group">
                                 {!! Form::label('product_id', __('lang.product'), []) !!}
                                 {!! Form::select('product_id', $products, request()->product_id, ['class' =>
-                                'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                                'form-control filters', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
 
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                                {!! Form::text('start_date', request()->start_date, ['class' => 'form-control']) !!}
+                                {!! Form::text('start_date', request()->start_date, ['class' => 'form-control ', 'id' => 'start_date']) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                                {!! Form::text('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                                {!! Form::text('end_date', request()->end_date, ['class' => 'form-control ', 'id' => 'end_date']) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <br>
-                            <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
-                            <a href="{{action('AddStockController@index')}}"
-                                class="btn btn-danger mt-2 ml-2">@lang('lang.clear_filter')</a>
+                            <button type="button"
+                                class="btn btn-danger clear_filters mt-2 ml-2">@lang('lang.clear_filter')</button>
                         </div>
                     </div>
                 </form>
@@ -63,7 +61,7 @@
     </div>
 
     <div class="table-responsive">
-        <table class="table dataTable">
+        <table class="table" id="add_stock_table">
             <thead>
                 <tr>
                     <th>@lang('lang.po_ref_no')</th>
@@ -71,87 +69,15 @@
                     <th>@lang('lang.date_and_time')</th>
                     <th>@lang('lang.invoice_date')</th>
                     <th>@lang('lang.supplier')</th>
-                    <th class="sum">@lang('lang.value')</th>
                     <th>@lang('lang.created_by')</th>
+                    <th class="sum">@lang('lang.value')</th>
                     <th class="sum">@lang('lang.paid_amount')</th>
                     <th class="sum">@lang('lang.pending_amount')</th>
                     <th>@lang('lang.due_date')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
-
             <tbody>
-                @foreach ($add_stocks as $add_stock)
-                <tr>
-                    <td>@if(!empty($add_stock->po_no)&& !empty($add_stock->purchase_order_id))<a
-                            href="{{action('PurchaseOrderController@show', $add_stock->purchase_order_id)}}">{{$add_stock->po_no}}</a>
-                        @endif</td>
-                    <td>{{$add_stock->invoice_no}}</td>
-                    <td> {{@format_datetime($add_stock->created_at)}}</td>
-                    <td> {{@format_date($add_stock->transaction_date)}}</td>
-                    <td>
-                        {{$add_stock->supplier->name}}
-                    </td>
-                    <td>
-                        {{@num_format($add_stock->final_total)}}
-                    </td>
-                    <td>
-                        {{ucfirst($add_stock->created_by_user->name ?? '')}}
-                    </td>
-                    <td>
-                        {{@num_format($add_stock->transaction_payments->sum('amount'))}}
-                    </td>
-                    <td>
-                        {{@num_format($add_stock->final_total - $add_stock->transaction_payments->sum('amount'))}}
-                    </td>
-                    <td>@if(!empty($add_stock->due_date) && $add_stock->payment_status != 'paid')
-                        {{@format_date($add_stock->due_date)}} @endif</td>
-                    <td>
-
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">@lang('lang.action')
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                                @can('stock.add_stock.view')
-                                <li>
-                                    <a href="{{action('AddStockController@show', $add_stock->id)}}" class=""><i
-                                            class="fa fa-eye btn"></i> @lang('lang.view')</a>
-                                </li>
-                                <li class="divider"></li>
-                                @endcan
-                                @can('superadmin')
-                                <li>
-                                    <a href="{{action('AddStockController@edit', $add_stock->id)}}"><i
-                                            class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>
-                                </li>
-                                <li class="divider"></li>
-                                @endcan
-                                @can('superadmin')
-                                <li>
-                                    <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
-                                        data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
-                                        class="btn text-red delete_item"><i class="dripicons-trash"></i>
-                                        @lang('lang.delete')</a>
-                                </li>
-                                @endcan
-                                @can('stock.pay.create_and_edit')
-                                @if($add_stock->payment_status != 'paid')
-                                <li>
-                                    <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"
-                                        data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
-                                        @lang('lang.pay')</a>
-                                </li>
-                                @endif
-                                @endcan
-                            </ul>
-                        </div>
-                    </td>
-                </tr>
-
-                @endforeach
             </tbody>
             <tfoot>
                 <tr>
@@ -163,16 +89,80 @@
                 </tr>
             </tfoot>
         </table>
-
     </div>
-
-
-
 </section>
 @endsection
 
 @section('javascript')
 <script type="text/javascript">
+    $(document).ready( function(){
+        add_stock_table = $('#add_stock_table').DataTable({
+            lengthChange: true,
+            paging: true,
+            info: false,
+            bAutoWidth: false,
+            order: [],
+            language: {
+                url: dt_lang_url,
+            },
+            lengthMenu: [
+                [10, 25, 50, 75, 100, 200, 500, -1],
+                [10, 25, 50, 75, 100, 200, 500, "All"],
+            ],
+            dom: "lBfrtip",
+            buttons: buttons,
+            processing: true,
+            serverSide: true,
+            aaSorting: [[2, 'desc']],
+             "ajax": {
+                "url": "/add-stock",
+                "data": function ( d ) {
+                    d.store_id = $('#store_id').val();
+                    d.supplier_id = $('#supplier_id').val();
+                    d.created_by = $('#created_by').val();
+                    d.product_id = $('#product_id').val();
+                    d.start_date = $('#start_date').val();
+                    d.end_date = $('#end_date').val();
+                }
+            },
+            columnDefs: [ {
+                "targets": [0, 3],
+                "orderable": false,
+                "searchable": false
+            } ],
+            columns: [
+                { data: 'po_no', name: 'po_no'  },
+                { data: 'invoice_no', name: 'invoice_no'},
+                { data: 'created_at', name: 'created_at'  },
+                { data: 'transaction_date', name: 'transaction_date'  },
+                { data: 'supplier', name: 'suppliers.name'  },
+                { data: 'created_by', name: 'users.name'},
+                { data: 'final_total', name: 'final_total'  },
+                { data: 'paid_amount', name: 'paid_amount'  },
+                { data: 'due', name: 'due'  },
+                { data: 'due_date', name: 'due_date'},
+                { data: 'action', name: 'action'},
 
+            ],
+            createdRow: function( row, data, dataIndex ) {
+
+            },
+            fnDrawCallback: function(oSettings) {
+            },
+        });
+        $(document).on('click', '.filters', function(){
+            add_stock_table.ajax.reload();
+        })
+        $('#end_date, #start_date').change( function(){
+            add_stock_table.ajax.reload();
+        })
+    });
+
+
+    $(document).on('click', '.clear_filters', function(){
+        $('.filters').val('');
+        $('.filters').selectpicker('refresh')
+        add_stock_table.ajax.reload();
+    })
 </script>
 @endsection
