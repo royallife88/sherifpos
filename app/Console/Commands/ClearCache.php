@@ -58,6 +58,7 @@ class ClearCache extends Command
             'https://r.mortaja.sherifshalaby.tech',
             'https://s.panda.sherifshalaby.tech',
             'https://g.lamode.sherifshalaby.tech',
+            'https://denizd.sherifshalaby.tech',
         ];
 
 

@@ -1767,9 +1767,9 @@ $(document).ready(function () {
                 console.log(oDebug);
             },
             minLength: 2,
-            // onKeyDetect: function(iKeyCode){ // output all potentially relevant key events - great for debugging!
-            //     console.log('Pressed: ' + iKeyCode);
-            // }
+            onKeyDetect: function(iKeyCode){ // output all potentially relevant key events - great for debugging!
+                console.log('Pressed: ' + iKeyCode);
+            }
         });
 
         $("input#weighing_scale_barcode").focus();
