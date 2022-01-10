@@ -375,10 +375,16 @@
                 <li><a href="#cash" aria-expanded="false" data-toggle="collapse"> <i
                             class="fa fa-money"></i><span>{{__('lang.cash')}}</span><span></a>
                     <ul id="cash"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash', 'cash-out'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['cash', 'cash-out', 'cash-in'])) show @endif">
                         @can('cash.view_details.view')
                         <li class="@if(request()->segment(1) == 'cash' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('CashController@index')}}">{{__('lang.cash')}}</a>
+                        </li>
+                        @endcan
+                        @can('cash.add_cash_in.view')
+                        <li
+                            class="@if(request()->segment(1) == 'cash-in' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('CashInController@index')}}">{{__('lang.cash_in')}}</a>
                         </li>
                         @endcan
                         @can('cash.add_cash_out.view')

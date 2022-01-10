@@ -98,7 +98,9 @@ class CashRegisterController extends Controller
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $initial_amount, 'cash_out', 'debit', $request->source_id, $request->notes);
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $initial_amount, 'cash_out', 'credit', $user_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+                $cash_register_transaction->save();
             }
             if ($request->has('image')) {
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');

@@ -13,7 +13,7 @@
 
         <div class="modal-body">
             <div class="row">
-                @if(session('system_mode') == 'pos')
+                @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
@@ -69,7 +69,7 @@
                         => __('lang.sku')]) !!}
                     </div>
                 </div>
-                @if(session('system_mode') == 'pos')
+                @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('multiple_units', __('lang.unit'), []) !!}
@@ -98,7 +98,7 @@
 
                     </div>
                 </div>
-                @if(session('system_mode') == 'pos')
+                @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('multiple_grades', __('lang.grade'), []) !!}
@@ -122,7 +122,7 @@
                         <textarea name="product_details" id="product_details" class="form-control" rows="3"></textarea>
                     </div>
                 </div>
-                @if(session('system_mode') == 'pos')
+                @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}
@@ -142,10 +142,10 @@
                 @can('product_module.purchase_price.create_and_edit')
                 <div class="col-md-4">
                     <div class="form-group">
-                        {!! Form::label('purchase_price', session('system_mode') == 'pos' ? __('lang.purchase_price') :
+                        {!! Form::label('purchase_price', session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') :
                         __('lang.cost') . ' *', []) !!}
                         {!! Form::text('purchase_price', null, ['class' => 'form-control', 'placeholder' =>
-                        session('system_mode') == 'pos' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
+                        session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket' ? __('lang.purchase_price') : __('lang.cost'), 'required']) !!}
                     </div>
                 </div>
                 @endcan

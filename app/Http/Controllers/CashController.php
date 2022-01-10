@@ -157,11 +157,12 @@ class CashController extends Controller
             DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
+            $user_id = $register->user_id;
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $user_id, $request->notes, $cash_register_transaction->id);
                 $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
                 $cash_register_transaction->save();
             }
@@ -220,11 +221,12 @@ class CashController extends Controller
             DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
-            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'debit', $request->source_id, $request->notes);
+            $user_id = $register->user_id;
+            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $request->source_id, $request->notes);
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
                 $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
                 $cash_register_transaction->save();
             }

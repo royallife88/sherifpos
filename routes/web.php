@@ -210,6 +210,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('cash/save-add-cash-in', 'CashController@saveAddCashIn');
     Route::resource('cash', CashController::class);
     Route::resource('cash-out', CashOutController::class);
+    Route::resource('cash-in', CashInController::class);
 
 
     Route::get('cash-in-adjustment/get-cash-details/{user_id}', 'CashInAdjustmentController@getCashDetails');

@@ -1010,4 +1010,6 @@ return [
     'prefix_did_not_match' => 'Prefix did not match',
     'weighing_scale' => 'Weighing Scale',
     'enable' => 'Enable',
+    'sender' => 'Sender',
+    'sender_title' => 'Sender Title',
 ];

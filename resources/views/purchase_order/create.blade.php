@@ -75,7 +75,7 @@
                                     <thead>
                                         <tr>
                                             <th style="width: 25%" class="col-sm-8">@lang( 'lang.products' )</th>
-                                            @if(session('system_mode') == 'pos')
+                                            @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             @endif
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>

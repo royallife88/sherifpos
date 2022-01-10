@@ -313,7 +313,7 @@
             </div>
 
             <!-- product list -->
-            <div class="@if(session('system_mode') == 'pos') col-md-5 @else col-md-6 @endif">
+            <div class="@if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
                 <!-- navbar-->
                 <header class="header">
                     <nav class="navbar">

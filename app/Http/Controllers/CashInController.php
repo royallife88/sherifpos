@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class CashOutController extends Controller
+class CashInController extends Controller
 {
     /**
      * All Utils instance.
@@ -56,7 +56,7 @@ class CashOutController extends Controller
             $query->whereDate('created_at', '<=', request()->end_date);
         }
 
-        $query->where('transaction_type', 'cash_out');
+        $query->where('transaction_type', 'cash_in');
         $cash_registers = $query->select(
             'cash_register_transactions.*',
             'cash_registers.user_id',
@@ -65,7 +65,7 @@ class CashOutController extends Controller
         )
             ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
 
-        return view('cash_out.index')->with(compact(
+        return view('cash_in.index')->with(compact(
             'cash_registers'
         ));
     }
@@ -110,11 +110,11 @@ class CashOutController extends Controller
      */
     public function edit($id)
     {
-        $cash_out = CashRegisterTransaction::find($id);
+        $cash_in = CashRegisterTransaction::find($id);
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
-        return view('cash_out.edit')->with(compact(
-            'cash_out',
+        return view('cash_in.edit')->with(compact(
+            'cash_in',
             'users'
         ));
     }
@@ -136,14 +136,14 @@ class CashOutController extends Controller
             DB::begintransaction();
             $referenced_id = $cr_transaction->referenced_id;
 
-            $cash_register_transaction = $this->cashRegisterUtil->updateCashRegisterTransaction($id, $register, $amount, 'cash_out', 'credit', $request->source_id, $request->notes);
+            $cash_register_transaction = $this->cashRegisterUtil->updateCashRegisterTransaction($id, $register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
             $refercene_transaction = CashRegisterTransaction::where('id', $referenced_id)->first();
 
             if (!empty($request->source_id)) {
                 $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_in = $this->cashRegisterUtil->updateCashRegisterTransaction($refercene_transaction->id, $register, $amount, 'cash_in', 'debit',  $user_id, $request->notes, $cash_register_transaction->id);
-                $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
+                $cash_register_transaction_out = $this->cashRegisterUtil->updateCashRegisterTransaction($refercene_transaction->id, $register, $amount, 'cash_out', 'credit', $user_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
                 $cash_register_transaction->save();
             }
             DB::commit();

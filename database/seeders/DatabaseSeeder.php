@@ -9,6 +9,7 @@ use App\Models\JobType;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
+use App\Models\Unit;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
@@ -118,6 +119,23 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
+        if (env('SYSTEM_MODE') == 'pos' || env('SYSTEM_MODE') == 'supermarket') {
+            Unit::insert([
+                ['name' => 'g', 'is_active' => 1],
+                ['name' => 'L', 'is_active' => 1],
+                ['name' => 'cm', 'is_active' => 1],
+                ['name' => 'Piece', 'is_active' => 1],
+                ['name' => 'Carton', 'is_active' => 1],
+            ]);
+        }
+
+        if (env('SYSTEM_MODE') == 'restaurant') {
+            Unit::insert([
+                ['name' => 'Piece', 'is_active' => 1],
+                ['name' => 'One Person', 'is_active' => 1],
+                ['name' => 'Two Person', 'is_active' => 1],
+            ]);
+        }
 
         //call the permission and currencies seeder
         $this->call([
