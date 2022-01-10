@@ -8,13 +8,14 @@
             <h4>@lang('lang.weighing_scale_setting')</h4>
         </div>
         <div class="card-body">
-            {!! Form::open(['url' => action('SettingController@postWeighingScaleSetting'), 'method' => 'post', 'enctype' =>
+            {!! Form::open(['url' => action('SettingController@postWeighingScaleSetting'), 'method' => 'post', 'enctype'
+            =>
             'multipart/form-data']) !!}
             <div class="row">
                 <div class="col-sm-3">
                     <div class="i-checks" style="margin-top: 30px;">
-                        <input id="enable" name="weighing_scale_setting[enable]" type="checkbox"
-                            @if( !empty($weighing_scale_setting['enable']) ) checked @endif value="1"
+                        <input id="enable" name="weighing_scale_setting[enable]" type="checkbox" @if(
+                            !empty($weighing_scale_setting['enable']) ) checked @endif value="1"
                             class="form-control-custom">
                         <label for="enable"><strong>{{__('lang.enable')}}</strong></label>
                     </div>
@@ -56,6 +57,16 @@
                         isset($weighing_scale_setting['qty_length_decimal']) ?
                         $weighing_scale_setting['qty_length_decimal'] : 2, ['class' => 'form-control select2', 'style'
                         => 'width: 100%;', 'id' => 'qty_length_decimal']); !!}
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        {!! Form::label('last_digits_type', __('lang.last_digits_type') . ':') !!}
+                        {!! Form::select('weighing_scale_setting[last_digits_type]', ['price' => __('lang.price'),
+                        'quantity' => __('lang.quantity')],
+                        isset($weighing_scale_setting['last_digits_type']) ?
+                        $weighing_scale_setting['last_digits_type'] : 'quantity', ['class' => 'form-control select2', 'style'
+                        => 'width: 100%;', 'id' => 'last_digits_type', 'required']); !!}
                     </div>
                 </div>
             </div>

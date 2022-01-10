@@ -792,18 +792,28 @@ class SellPosController extends Controller
         if ((strlen($scale_setting['label_prefix']) == 0) || Str::startsWith($scale_barcode, $scale_setting['label_prefix'])) {
             $scale_barcode = substr($scale_barcode, strlen($scale_setting['label_prefix']));
             //Get product sku, trim left side 0
-            $sku = ltrim(substr($scale_barcode, 0, $scale_setting['product_sku_length'] + 1), '0');
+            $sku = substr($scale_barcode, 0, $scale_setting['product_sku_length'] + 1);
+
+            $last_digits_type = $scale_setting['last_digits_type'];
+            $qty = 0;
 
             //Get quantity integer
-            $qty_int = substr($scale_barcode, $scale_setting['product_sku_length'] + 1, $scale_setting['qty_length'] + 1);
+            $integer_part = substr($scale_barcode, $scale_setting['product_sku_length'] + 1, $scale_setting['qty_length'] + 1);
 
             //Get quantity decimal
-            $qty_decimal = '0.' . substr($scale_barcode, $scale_setting['product_sku_length'] + $scale_setting['qty_length'] + 2, $scale_setting['qty_length_decimal'] + 1);
-
-            $qty = (float)$qty_int + (float)$qty_decimal;
-
+            $decimal_part = '0.' . substr($scale_barcode, $scale_setting['product_sku_length'] + $scale_setting['qty_length'] + 2, $scale_setting['qty_length_decimal'] + 1);
             //Find the variation id
             $result = $this->productUtil->filterProduct($sku, ['sub_sku'], 'like')->first();
+
+            if ($last_digits_type == 'quantity') {
+                $qty = (float)$integer_part + (float)$decimal_part;
+            }
+            if ($last_digits_type == 'price') {
+                $price = (float)$integer_part + (float)$decimal_part;
+                $sell_price = $result->default_sell_price;
+                $qty = $price / $sell_price;
+            }
+
 
             if (!empty($result)) {
                 return [
