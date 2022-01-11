@@ -53,7 +53,8 @@
                     <thead>
                         <tr>
                             <th>@lang('lang.date_and_time')</th>
-                            <th>@lang('lang.cashier')</th>
+                            <th>@lang('lang.user')</th>
+                            <th>@lang('lang.pos')</th>
                             <th>@lang('lang.notes')</th>
                             <th>@lang('lang.status')</th>
                             <th class="sum">@lang('lang.cash_sales')</th>
@@ -71,6 +72,7 @@
                         <tr>
                             <td>{{@format_datetime($cash_register->created_at)}}</td>
                             <td>{{ucfirst($cash_register->cashier->name ?? '')}}</td>
+                            <td>{{ucfirst($cash_register->cashier->employee->store_pos ?? '')}}</td>
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash)}}

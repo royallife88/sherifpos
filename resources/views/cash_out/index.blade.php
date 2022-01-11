@@ -38,7 +38,8 @@
                     <thead>
                         <tr>
                             <th>@lang('lang.date_and_time')</th>
-                            <th>@lang('lang.cashier')</th>
+                            <th>@lang('lang.user')</th>
+                            <th>@lang('lang.pos')</th>
                             <th>@lang('lang.job_title')</th>
                             <th>@lang('lang.receiver')</th>
                             <th>@lang('lang.receiver_title')</th>
@@ -53,6 +54,10 @@
                         <tr>
                             <td>{{@format_datetime($cash_register->created_at)}}</td>
                             <td>{{ucfirst($cash_register->cashier_name)}}</td>
+                            @php
+                            $employee = App\Models\Employee::find($cash_register->employee_id);
+                            @endphp
+                            <td>{{ucfirst($employee->store_pos ?? '')}}</td>
                             <td>{{ucfirst($cash_register->job_title ?? '')}}</td>
                             <td>{{ucfirst($cash_register->source->name ?? '')}}</td>
                             <td>{{ucfirst($cash_register->source->employee->job_type->job_title ?? '')}}</td>

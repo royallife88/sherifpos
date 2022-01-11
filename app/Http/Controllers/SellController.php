@@ -63,6 +63,7 @@ class SellController extends Controller
      */
     public function index(Request $request)
     {
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         if (request()->ajax()) {
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
@@ -127,12 +128,14 @@ class SellController extends Controller
                         return '';
                     }
                 })
-                ->addColumn('method', function ($row) {
-                    if (!empty($row->transaction_payments[0]->method)) {
-                        return ucfirst($row->transaction_payments[0]->method);
-                    } else {
-                        return '';
+                ->addColumn('method', function ($row) use ($payment_types) {
+                    $methos = '';
+                    foreach ($row->transaction_payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methos .= $payment_types[$payment->method] . '<br>';
+                        }
                     }
+                    return $methos;
                 })
                 ->addColumn('store_name', '{{$store_name}}')
                 ->addColumn('ref_number', function ($row) {
@@ -260,6 +263,7 @@ class SellController extends Controller
                 )
                 ->rawColumns([
                     'action',
+                    'method',
                     'payment_status',
                     'transaction_date',
                     'final_total',
@@ -270,7 +274,6 @@ class SellController extends Controller
                 ->make(true);
         }
 
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();

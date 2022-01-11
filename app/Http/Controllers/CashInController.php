@@ -61,6 +61,7 @@ class CashInController extends Controller
             'cash_register_transactions.*',
             'cash_registers.user_id',
             'cashier.name as cashier_name',
+            'employees.id as employee_id',
             'job_types.job_title'
         )
             ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
