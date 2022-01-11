@@ -540,7 +540,7 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/onscan.min.js')}}"></script>
+{{-- <script src="{{asset('js/onscan.min.js')}}"></script> --}}
 <script src="{{asset('js/pos.js')}}"></script>
 <script>
 

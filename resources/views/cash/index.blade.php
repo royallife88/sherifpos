@@ -59,6 +59,9 @@
                             <th class="sum">@lang('lang.cash_sales')</th>
                             <th class="sum">@lang('lang.cash_in')</th>
                             <th class="sum">@lang('lang.cash_out')</th>
+                            <th class="sum">@lang('lang.purchases')</th>
+                            <th class="sum">@lang('lang.expenses')</th>
+                            <th class="sum">@lang('lang.current_cash')</th>
                             <th class="sum">@lang('lang.closing_cash')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
@@ -70,9 +73,15 @@
                             <td>{{ucfirst($cash_register->cashier->name ?? '')}}</td>
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
-                            <td>{{@num_format($cash_register->total_cash_sales)}}</td>
+                            <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash)}}
+                            </td>
                             <td>{{@num_format($cash_register->total_cash_in)}}</td>
                             <td>{{@num_format($cash_register->total_cash_out)}}</td>
+                            <td>{{@num_format($cash_register->total_purchases)}}</td>
+                            <td>{{@num_format($cash_register->total_expenses)}}</td>
+                            <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash +
+                                $cash_register->total_cash_in - $cash_register->total_cash_out -
+                                $cash_register->total_purchases -$cash_register->total_expenses)}}</td>
                             <td>{{@num_format($cash_register->closing_amount)}}</td>
                             <td>
                                 <div class="btn-group">
@@ -128,6 +137,9 @@
                     <tfoot>
                         <tr>
                             <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                             <td></td>
                             <td></td>

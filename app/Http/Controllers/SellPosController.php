@@ -411,7 +411,7 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // try {
             DB::beginTransaction();
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
@@ -472,8 +472,8 @@ class SellPosController extends Controller
                             $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                         }
                         $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
                     }
+                    $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
                 }
 
 
@@ -507,13 +507,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return $output;
     }

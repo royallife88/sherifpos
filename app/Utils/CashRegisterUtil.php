@@ -9,6 +9,7 @@ use App\Models\Supplier;
 use App\Models\Transaction;
 use App\Notifications\PurchaseOrderToSupplierNotification;
 use App\Utils\Util;
+use Illuminate\Support\Facades\DB;
 use Notification;
 
 class CashRegisterUtil extends Util
@@ -112,12 +113,12 @@ class CashRegisterUtil extends Util
      *
      * @return boolean
      */
-    public function addPayments($transaction, $payment, $type = 'credit')
+    public function addPayments($transaction, $payment, $type = 'credit', $user_id = null)
     {
-        $user_id = auth()->user()->id;
-        $register =  CashRegister::where('user_id', $user_id)
-            ->where('status', 'open')
-            ->first();
+        if (empty($user_id)) {
+            $user_id = auth()->user()->id;
+        }
+        $register =  $this->getCurrentCashRegisterOrCreate($user_id);
 
 
         $payments_formatted[] = new CashRegisterTransaction([
@@ -150,20 +151,54 @@ class CashRegisterUtil extends Util
      *
      * @return boolean
      */
-    public function updateSellPayments($status_before, $transaction, $payments)
+    public function updateAddStockAndExpensePayments($transaction, $payment, $type, $user_id = null)
+    {
+        if (empty($user_id)) {
+            $user_id = auth()->user()->id;
+        }
+        $register =  $this->getCurrentCashRegisterOrCreate($user_id);
+
+        $cash_register_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)
+            ->where('transaction_type', $transaction->type)
+            ->first();
+        if (!empty($cash_register_transaction)) {
+            $cash_register_transaction->update([
+                'cash_register_id' => $register->id,
+                'amount' => $this->num_uf($payment['amount']),
+                'pay_method' => $payment['method'],
+                'type' => $type,
+                'transaction_type' => $transaction->type,
+                'transaction_id' => $transaction->id
+            ]);
+        } else {
+            CashRegisterTransaction::create([
+                'cash_register_id' => $register->id,
+                'amount' => $this->num_uf($payment['amount']),
+                'pay_method' => $payment['method'],
+                'type' => $type,
+                'transaction_type' => $transaction->type,
+                'transaction_id' => $transaction->id
+            ]);
+        }
+
+
+        return true;
+    }
+    /**
+     * Adds sell payments to currently opened cash register
+     *
+     * @param object/int $transaction
+     * @param array $payments
+     *
+     * @return boolean
+     */
+    public function updateSellPayments($transaction, $payments)
     {
         $user_id = auth()->user()->id;
         $register =  CashRegister::where('user_id', $user_id)
             ->where('status', 'open')
             ->first();
-        //If draft -> final then add all
-        //If final -> draft then refund all
-        //If final -> final then update payments
-        if ($status_before == 'draft' && $transaction->status == 'final') {
-            $this->addSellPayments($transaction, $payments);
-        } elseif ($status_before == 'final' && $transaction->status == 'draft') {
-            $this->refundSell($transaction);
-        } elseif ($status_before == 'final' && $transaction->status == 'final') {
+        if ($transaction->status == 'final') {
             $prev_payments = CashRegisterTransaction::where('transaction_id', $transaction->id)
                 ->select(
                     DB::raw("SUM(IF(pay_method='cash', IF(type='credit', amount, -1 * amount), 0)) as total_cash"),
@@ -177,10 +212,7 @@ class CashRegisterUtil extends Util
                     'card' => $prev_payments->total_card,
                     'cheque' => $prev_payments->total_cheque,
                     'bank_transfer' => $prev_payments->total_bank_transfer,
-                    'other' => $prev_payments->total_other,
-                    'custom_pay_1' => $prev_payments->total_custom_pay_1,
-                    'custom_pay_2' => $prev_payments->total_custom_pay_2,
-                    'custom_pay_3' => $prev_payments->total_custom_pay_3,
+
                 ];
 
                 foreach ($payments as $payment) {

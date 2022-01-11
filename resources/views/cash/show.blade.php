@@ -24,7 +24,7 @@
                     </tr>
                     <tr>
                         <td><b>@lang('lang.total_cash_sale')</b></td>
-                        <td>{{@num_format($cash_register->total_cash_sales)}}</td>
+                        <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash)}}</td>
                     </tr>
                     <tr>
                         <td><b>@lang('lang.total_card_sale')</b></td>

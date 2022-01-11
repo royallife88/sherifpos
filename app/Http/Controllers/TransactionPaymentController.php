@@ -198,6 +198,12 @@ class TransactionPaymentController extends Controller
                 }
             }
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+            if ($transaction->type == 'sell') {
+                $payments[] = $payment_data;
+                $this->cashRegisterUtil->updateSellPayments($transaction, $payments);
+            }
+
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')

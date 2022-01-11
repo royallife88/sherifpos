@@ -6,6 +6,7 @@ use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\StorePos;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\User;
@@ -76,6 +77,7 @@ class ExpenseController extends Controller
             $expense_query->where('store_id', request()->store_id);
         }
         $expenses = $expense_query->select('transactions.*', 'users.name as created_by')
+            ->orderBy('transaction_date', 'desc')
             ->get();
 
         $expense_categories = ExpenseCategory::pluck('name', 'id');
@@ -166,7 +168,18 @@ class ExpenseController extends Controller
 
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
-            $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit');
+
+            $user_id = null;
+            if (!empty($request->source_id)) {
+                if ($request->source_type == 'pos') {
+                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                }
+                if ($request->source_type == 'user') {
+                    $user_id = $request->source_id;
+                }
+            }
+            $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
+
             DB::commit();
 
             $output = [
@@ -277,6 +290,18 @@ class ExpenseController extends Controller
 
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
+
+            $user_id = null;
+            if (!empty($request->source_id)) {
+                if ($request->source_type == 'pos') {
+                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                }
+                if ($request->source_type == 'user') {
+                    $user_id = $request->source_id;
+                }
+            }
+            $this->cashRegisterUtil->updateAddStockAndExpensePayments($expense, $payment_data, 'debit', $user_id);
+
             DB::commit();
 
             $output = [

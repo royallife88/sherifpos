@@ -116,7 +116,6 @@ $(document).on("change", "#store_id", function () {
 });
 
 $(document).on("change", "input[name=restaurant_filter]", function () {
-    console.log($(this).val());
     let product_class_id = null;
     if ($(this).val() === "all") {
         $(".sale_promo_filter").prop("checked", false);
@@ -1767,9 +1766,10 @@ $(document).ready(function () {
                 console.log(oDebug);
             },
             minLength: 2,
-            onKeyDetect: function(iKeyCode){ // output all potentially relevant key events - great for debugging!
-                console.log('Pressed: ' + iKeyCode);
-            }
+            onKeyDetect: function (iKeyCode) {
+                // output all potentially relevant key events - great for debugging!
+                console.log("Pressed: " + iKeyCode);
+            },
         });
 
         $("input#weighing_scale_barcode").focus();
@@ -1802,10 +1802,12 @@ $(document).on("keyup", function () {
     let quantity = __read_number(first_tr.find(".quantity"));
     if (event.which == 38) {
         quantity = quantity + 1;
+        __write_number(first_tr.find(".quantity"), quantity);
+        first_tr.find(".quantity").change();
     }
     if (event.which == 40) {
         quantity = quantity - 1;
+        __write_number(first_tr.find(".quantity"), quantity);
+        first_tr.find(".quantity").change();
     }
-    __write_number(first_tr.find(".quantity"), quantity);
-    first_tr.find(".quantity").change();
 });
