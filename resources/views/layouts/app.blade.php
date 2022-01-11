@@ -142,11 +142,13 @@
                             placeholder: "Type your password",
                             type: "password",
                             autocomplete: "off",
+                            autofocus: true,
                         },
                     },
                     inputAttributes: {
                         autocapitalize: 'off'
                     },
+                    focusConfirm:true
                 }).then((result) => {
                     if (result) {
                     $.ajax({
@@ -292,6 +294,7 @@
         });
         window.location = href;
     })
+    $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     </script>
 </body>
 
