@@ -141,6 +141,7 @@
                         attributes: {
                             placeholder: "Type your password",
                             type: "password",
+                            autocomplete: "off",
                         },
                     },
                     inputAttributes: {

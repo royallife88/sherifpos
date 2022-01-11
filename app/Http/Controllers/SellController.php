@@ -128,25 +128,46 @@ class SellController extends Controller
                         return '';
                     }
                 })
-                ->addColumn('method', function ($row) use ($payment_types) {
-                    $methos = '';
-                    foreach ($row->transaction_payments as $payment) {
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
                         if (!empty($payment->method)) {
-                            $methos .= $payment_types[$payment->method] . '<br>';
+                            $methods .= $payment_types[$payment->method] . '<br>';
                         }
                     }
-                    return $methos;
+                    return $methods;
                 })
                 ->addColumn('store_name', '{{$store_name}}')
-                ->addColumn('ref_number', function ($row) {
-                    if (!empty($row->transaction_payments[0]->ref_number)) {
-                        return $row->transaction_payments[0]->ref_number;
+                ->addColumn('ref_number', function ($row) use ($request) {
+                    $ref_numbers = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
                     } else {
-                        return '';
+                        $payments = $row->transaction_payments;
                     }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->ref_number)) {
+                            $ref_numbers .= $payment->ref_number . '<br>';
+                        }
+                    }
+                    return $ref_numbers;
                 })
-                ->addColumn('paid', function ($row) {
-                    return $this->commonUtil->num_f($row->transaction_payments->sum('amount'));
+                ->addColumn('paid', function ($row) use ($request) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    return $this->commonUtil->num_f($amount_paid);
                 })
                 ->addColumn('due', function ($row) {
                     $paid = $row->transaction_payments->sum('amount');
@@ -264,6 +285,7 @@ class SellController extends Controller
                 ->rawColumns([
                     'action',
                     'method',
+                    'ref_number',
                     'payment_status',
                     'transaction_date',
                     'final_total',

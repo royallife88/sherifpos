@@ -662,20 +662,24 @@ class TransactionUtil extends Util
      *
      * @return int
      */
-    public function getTicketNumber()
+    public function getTicketNumber($number = 1)
     {
-        $last_ticket = Transaction::whereDate('transaction_date', Carbon::now()->format('Y-m-d'))
+        $ticket_count = Transaction::whereDate('transaction_date', Carbon::now()->format('Y-m-d'))
             ->where('type', 'sell')
             ->orderBy('created_at', 'desc')
-            ->first();
+            ->count();
+        $ticket_number = $ticket_count + $number;
 
-        if (!empty($last_ticket)) {
-            $ticket_number = $last_ticket->ticket_number + 1;
+        $ticket_exist = Transaction::whereDate('transaction_date', Carbon::now()->format('Y-m-d'))
+            ->where('type', 'sell')
+            ->where('ticket_number', $ticket_number)
+            ->exists();
+
+        if (!empty($ticket_exist)) {
+            return $this->getTicketNumber($number + 1);
         } else {
-            $ticket_number = 1;
+            return $ticket_number;
         }
-
-        return $ticket_number;
     }
 
     /**
