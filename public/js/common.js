@@ -284,6 +284,12 @@ var datatable_params = {
         [10, 25, 50, 75, 100, 200, 500, -1],
         [10, 25, 50, 75, 100, 200, 500, "All"],
     ],
+
+    columnDefs: [{
+        "targets": 'date',
+        "type":"date-eu"
+    }],
+
     dom: "lBfrtip",
     buttons: buttons,
     footerCallback: function (row, data, start, end, display) {

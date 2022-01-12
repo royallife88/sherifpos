@@ -66,10 +66,10 @@
         </div>
     </div>
     <div class="table-responsive no-print">
-        <table id="sales_table" class="table dataTable">
+        <table id="sell_return_table" class="table dataTable">
             <thead>
                 <tr>
-                    <th>@lang('lang.date')</th>
+                    <th class="date">@lang('lang.date')</th>
                     <th>@lang('lang.reference')</th>
                     <th>@lang('lang.customer')</th>
                     <th>@lang('lang.payment_status')</th>

@@ -68,8 +68,8 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                 <div class="accordion-group pci_class_level level">
                                     <div class="row">
                                         <input id="product_class_selected{{$class->id}}"
-                                            name="pci[product_class_selected][]" type="checkbox"
-                                            value="{{$class->id}}" @if(in_array($class->id, $product_class_selected))
+                                            name="pci[product_class_selected][]" type="checkbox" value="{{$class->id}}"
+                                            @if(in_array($class->id, $product_class_selected))
                                         checked @endif
                                         class="pci-my-new-checkbox">
 
@@ -102,8 +102,8 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                 <div class="accordion-group  pci_category_level level">
                                                     <div class="row">
                                                         <input id="category_selected{{$category->id}}"
-                                                            name="pci[category_selected][]"
-                                                            type="checkbox" @if(in_array($category->id,
+                                                            name="pci[category_selected][]" type="checkbox"
+                                                            @if(in_array($category->id,
                                                         $category_selected)) checked
                                                         @endif
                                                         value="{{$category->id}}" class="pci-my-new-checkbox">
@@ -218,7 +218,8 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                             $class->id);
 
                                             $products = $query->select('products.id',
-                                            'products.name')->groupBy('products.id')->get();
+                                            'products.name', 'products.sku',
+                                            'products.sell_price')->groupBy('products.id')->get();
                                             @endphp
                                             @foreach ($products as
                                             $product)
@@ -226,9 +227,8 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                 <div class="accordion-group  product_level level">
                                                     <div class="row">
                                                         <input id="product_selected{{$product->id}}"
-                                                            name="pci[product_selected][]"
-                                                            type="checkbox" value="{{$product->id}}"
-                                                            @if(in_array($product->id,
+                                                            name="pci[product_selected][]" type="checkbox"
+                                                            value="{{$product->id}}" @if(in_array($product->id,
                                                         $product_selected)) checked @endif
                                                         class="pci-my-new-checkbox pci_product_checkbox">
                                                         <div class="accordion-heading" style="width: 80%">
@@ -236,9 +236,52 @@ $product_selected = !empty($pci_data['product_selected']) ? $pci_data['product_s
                                                                 data-id="{{$product->name}}"
                                                                 data-parent="#{{$product->name}}"
                                                                 href="#pci-collapse{{$product->name}}">
-                                                                <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                                    alt="photo" width="50" height="50">
-                                                                {{$product->name}}
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                                            alt="photo" width="50" height="50">
+                                                                        {{$product->name}}
+                                                                    </div>
+                                                                    @php
+                                                                    $expiry_date =
+                                                                    App\Models\AddStockLine::where('product_id',
+                                                                    $product->id)->whereDate('expiry_date', '>=',
+                                                                    date('Y-m-d'))->select('expiry_date')->orderBy('expiry_date',
+                                                                    'asc')->first();
+                                                                    $current_stock =
+                                                                    App\Models\ProductStore::where('product_id',
+                                                                    $product->id)->select(DB::raw('SUM(product_stores.qty_available)
+                                                                    as current_stock'))->first();
+                                                                    @endphp
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.sku'):
+                                                                                        {{$product->sku}}</label>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.expiry'):
+                                                                                        @if(!empty($expiry_date)){{@format_date($expiry_date->expiry_date)}}@else{{'N/A'}}@endif</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.stock'):
+                                                                                        @if(!empty($current_stock)){{@num_format($current_stock->current_stock)}}@endif</label>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.price'):
+                                                                                        {{@num_format($product->sell_price)}}</label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </a>
                                                         </div>
                                                     </div>

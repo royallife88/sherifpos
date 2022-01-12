@@ -214,7 +214,8 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                             $class->id);
 
                                             $products = $query->select('products.id',
-                                            'products.name')->groupBy('products.id')->get();
+                                            'products.name', 'products.sku',
+                                            'products.sell_price')->groupBy('products.id')->get();
                                             @endphp
                                             @foreach ($products as
                                             $product)
@@ -231,9 +232,45 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                 data-id="{{$product->name}}"
                                                                 data-parent="#{{$product->name}}"
                                                                 href="#collapse{{$product->name}}">
-                                                                <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                                    alt="photo" width="50" height="50">
-                                                                {{$product->name}}
+                                                                <div class="row">
+                                                                    <div class="col-md-6">
+                                                                        <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                                                            alt="photo" width="50" height="50">
+                                                                        {{$product->name}}
+                                                                    </div>
+                                                                    @php
+                                                                        $expiry_date = App\Models\AddStockLine::where('product_id', $product->id)->whereDate('expiry_date', '>=', date('Y-m-d'))->select('expiry_date')->orderBy('expiry_date', 'asc')->first();
+                                                                        $current_stock = App\Models\ProductStore::where('product_id', $product->id)->select(DB::raw('SUM(product_stores.qty_available) as current_stock'))->first();
+                                                                    @endphp
+                                                                    <div class="col-md-6">
+                                                                        <div class="row">
+                                                                            <div class="col-md-6">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.sku'):
+                                                                                        {{$product->sku}}</label>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.expiry'):
+                                                                                        @if(!empty($expiry_date)){{@format_date($expiry_date->expiry_date)}}@else{{'N/A'}}@endif</label>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="col-md-6">
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.stock'):
+                                                                                        @if(!empty($current_stock)){{@num_format($current_stock->current_stock)}}@endif</label>
+                                                                                </div>
+                                                                                <div class="col-md-12">
+                                                                                    <label
+                                                                                        style="color: #222;">@lang('lang.price'):
+                                                                                        {{@num_format($product->sell_price)}}</label>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
                                                             </a>
                                                         </div>
                                                     </div>
