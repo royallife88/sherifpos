@@ -120,6 +120,16 @@ class SellController extends Controller
 
             return DataTables::of($sales)
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('invoice_no', function ($row) {
+                    $string = $row->invoice_no . ' ';
+                    if (!empty($row->return_parent)) {
+                        $string .= '<a
+                        data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>';
+                    }
+
+                    return $string;
+                })
                 ->editColumn('final_total', '{{@num_format($final_total)}}')
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -285,6 +295,7 @@ class SellController extends Controller
                 ->rawColumns([
                     'action',
                     'method',
+                    'invoice_no',
                     'ref_number',
                     'payment_status',
                     'transaction_date',

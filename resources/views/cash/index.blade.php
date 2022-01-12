@@ -75,7 +75,7 @@
                             <td>{{ucfirst($cash_register->cashier->employee->store_pos ?? '')}}</td>
                             <td>{{ucfirst($cash_register->notes)}}</td>
                             <td>{{ucfirst($cash_register->status)}}</td>
-                            <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash)}}
+                            <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash - $cash_register->total_sell_return)}}
                             </td>
                             <td>{{@num_format($cash_register->total_cash_in)}}</td>
                             <td>{{@num_format($cash_register->total_cash_out)}}</td>
@@ -83,7 +83,7 @@
                             <td>{{@num_format($cash_register->total_expenses)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash +
                                 $cash_register->total_cash_in - $cash_register->total_cash_out -
-                                $cash_register->total_purchases -$cash_register->total_expenses)}}</td>
+                                $cash_register->total_purchases -$cash_register->total_expenses - $cash_register->total_sell_return)}}</td>
                             <td>{{@num_format($cash_register->closing_amount)}}</td>
                             <td>
                                 <div class="btn-group">

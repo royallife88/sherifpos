@@ -12,6 +12,14 @@
             value="{{$product->product_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][variation_id]" class="variation_id"
             value="{{$product->variation_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][price_hidden]" class="price_hidden"
+            value="@if(isset($product->sell_price)){{@num_format($product->sell_price)}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount]"
+            class="coupon_discount_value" value="{{$product->coupon_discount_value}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_type]"
+            class="coupon_discount_type" value="{{$product->coupon_discount_type}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_amount]"
+            class="coupon_discount_amount" value="{{$product->coupon_discount_amount}}">
 
     </td>
     <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
@@ -26,6 +34,17 @@
     <td style="width: 20%">
         <input type="text" class="form-control sell_price" name="transaction_sell_line[{{$loop->index}}][sell_price]"
             required value="@if(isset($product->sell_price)){{@num_format($product->sell_price)}}@else{{0}}@endif">
+    </td>
+    <td style="width: 20%">
+        <input type="hidden" class="form-control product_discount_type"
+            name="transaction_sell_line[{{$loop->index}}][product_discount_type]"
+            value="@if(!empty($product->product_discount_type)){{$product->product_discount_type}}@else{{0}}@endif">
+        <input type="hidden" class="form-control product_discount_value"
+            name="transaction_sell_line[{{$loop->index}}][product_discount_value]"
+            value="@if(!empty($product->product_discount_value)){{@num_format($product->product_discount_value)}}@else{{0}}@endif">
+        <input type="text" class="form-control product_discount_amount"
+            name="transaction_sell_line[{{$loop->index}}][product_discount_amount]" readonly
+            value="@if(!empty($product->product_discount_amount)){{@num_format($product->product_discount_amount)}}@else{{0}}@endif">
     </td>
     <td style="width: 10%">
         <span class="sub_total_span">{{@num_format(0)}}</span>

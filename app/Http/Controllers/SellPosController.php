@@ -913,6 +913,16 @@ class SellPosController extends Controller
 
             return DataTables::of($transactions)
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('invoice_no', function ($row) {
+                    $string = $row->invoice_no . ' ';
+                    if (!empty($row->return_parent)) {
+                        $string .= '<a
+                        data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>';
+                    }
+
+                    return $string;
+                })
                 ->editColumn('final_total', '{{@num_format($final_total)}}')
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -1003,6 +1013,7 @@ class SellPosController extends Controller
                 ->rawColumns([
                     'action',
                     'transaction_date',
+                    'invoice_no',
                     'final_total',
                     'status',
                     'created_by',

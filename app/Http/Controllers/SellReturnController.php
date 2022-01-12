@@ -83,7 +83,8 @@ class SellReturnController extends Controller
             $query->where('store_pos_id', $pos_id);
         }
 
-        $sale_returns = $query->orderBy('invoice_no', 'desc')->get();
+        $sale_returns = $query->orderBy('transaction_date', 'desc')->get();
+
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();

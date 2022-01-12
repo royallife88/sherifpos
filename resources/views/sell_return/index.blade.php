@@ -187,9 +187,5 @@
         __print_receipt("receipt_section");
     }
 
-    table
-    .column( '0:visible' )
-    .order( 'desc' )
-    .draw();
 </script>
 @endsection

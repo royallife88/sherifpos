@@ -85,10 +85,48 @@ function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
     var total = 0;
     var item_count = 0;
+    var product_discount_total = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
-        let sub_total = sell_price * quantity;
+        let price_hidden = __read_number($(tr).find(".price_hidden"));
+        let sub_total = 0;
+
+        if (sell_price > price_hidden) {
+            let price_discount = (sell_price - price_hidden) * quantity;
+            $(tr).find(".product_discount_type").val("surplus");
+            __write_number(
+                $(tr).find(".product_discount_value"),
+                price_discount
+            );
+            __write_number(
+                $(tr).find(".product_discount_amount"),
+                price_discount
+            );
+            $(tr).find(".plus_sign_text").text("+");
+            sub_total = sell_price * quantity;
+        } else if (sell_price < price_hidden) {
+            let price_discount = (price_hidden - sell_price) * quantity;
+            $(tr).find(".product_discount_type").val("fixed");
+            __write_number(
+                $(tr).find(".product_discount_value"),
+                price_discount
+            );
+            __write_number(
+                $(tr).find(".product_discount_amount"),
+                price_discount
+            );
+            $(tr).find(".plus_sign_text").text("-");
+            sub_total = price_hidden * quantity;
+        } else {
+            sub_total = price_hidden * quantity;
+        }
+
+
+        __write_number($(tr).find(".sub_total"), sub_total);
+        let product_discount = calculate_product_discount(tr);
+          product_discount_total += product_discount;
+        sub_total -= product_discount;
 
         grand_total += sub_total;
         $(".grand_total_span").text(
@@ -116,12 +154,32 @@ function calculate_sub_totals() {
     let discount_amount = get_discount_amount(total);
     total -= discount_amount;
 
+    let delivery_cost = __read_number($("#delivery_cost"));
+    total += delivery_cost;
+
     __write_number($("#final_total"), total);
     $("#final_total").change();
 
     $(".final_total_span").text(__currency_trans_from_en(total, false));
 }
+function calculate_product_discount(tr) {
+    let discount = 0;
 
+    let value = __read_number($(tr).find(".product_discount_value"));
+    let type = $(tr).find(".product_discount_type").val();
+    let sub_total = __read_number($(tr).find(".sub_total"));
+    if (type == "fixed" || type == "surplus") {
+        discount = value;
+    }
+    if (type == "percentage") {
+        discount = __get_percent_value(sub_total, value);
+    }
+    __write_number($(tr).find(".product_discount_amount"), discount);
+    if (type == "surplus") {
+        discount = 0;
+    }
+    return discount;
+}
 $("#discount_btn").click(function () {
     calculate_sub_totals();
 });

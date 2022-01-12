@@ -46,6 +46,7 @@
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.returned_quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -83,6 +84,14 @@
 
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            {!! Form::label('delivery_cost', __('lang.delivery_cost'), []) !!}
+                            {!! Form::text('delivery_cost', @num_format($sale->delivery_cost), ['class' =>
+                            'form-control']) !!}
+                        </div>
+                    </div>
+                    <br>
                     <div class="row">
                         <div class="col-md-12">
                             @if(!empty($sell_return))

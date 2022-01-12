@@ -25,8 +25,8 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('paid_on', __('lang.payment_date'). ':', []) !!} <br>
-            {!! Form::text('paid_on', !empty($payment) ? \Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d') :
-            date('Y-m-d'), ['class' => 'form-control datepicker',
+            {!! Form::text('paid_on', !empty($payment) ? @format_date($payment->paid_on) :
+            @format_date(date('Y-m-d')), ['class' => 'form-control datepicker',
             'placeholder' => __('lang.payment_date')]) !!}
         </div>
     </div>

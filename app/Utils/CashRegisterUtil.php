@@ -122,7 +122,7 @@ class CashRegisterUtil extends Util
 
 
         $payments_formatted[] = new CashRegisterTransaction([
-            'amount' => ($transaction->is_return) ? (-1 * $this->num_uf($payment['amount'])) : $this->num_uf($payment['amount']),
+            'amount' => $this->num_uf($payment['amount']),
             'pay_method' => $payment['method'],
             'type' => $type,
             'transaction_type' => $transaction->type,
