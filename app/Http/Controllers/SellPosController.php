@@ -869,6 +869,8 @@ class SellPosController extends Controller
     public function getRecentTransactions(Request $request)
     {
         if (request()->ajax()) {
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
             $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -931,12 +933,19 @@ class SellPosController extends Controller
                         return '';
                     }
                 })
-                ->addColumn('method', function ($row) {
-                    if (!empty($row->transaction_payments[0]->method)) {
-                        return ucfirst($row->transaction_payments[0]->method);
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
                     } else {
-                        return '';
+                        $payments = $row->transaction_payments;
                     }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methods .= $payment_types[$payment->method] . '<br>';
+                        }
+                    }
+                    return $methods;
                 })
                 ->addColumn('ref_number', function ($row) {
                     if (!empty($row->transaction_payments[0]->ref_number)) {
@@ -958,6 +967,18 @@ class SellPosController extends Controller
                     } else {
                         return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
                     }
+                })
+                ->addColumn('paid', function ($row) use ($request) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    return $this->commonUtil->num_f($amount_paid);
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->addColumn(
@@ -1013,6 +1034,8 @@ class SellPosController extends Controller
                 ->rawColumns([
                     'action',
                     'transaction_date',
+                    'paid',
+                    'method',
                     'invoice_no',
                     'final_total',
                     'status',

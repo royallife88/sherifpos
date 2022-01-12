@@ -103,7 +103,6 @@ function calculate_sub_totals() {
                 $(tr).find(".product_discount_amount"),
                 price_discount
             );
-            $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
         } else if (sell_price < price_hidden) {
             let price_discount = (price_hidden - sell_price) * quantity;
@@ -116,7 +115,6 @@ function calculate_sub_totals() {
                 $(tr).find(".product_discount_amount"),
                 price_discount
             );
-            $(tr).find(".plus_sign_text").text("-");
             sub_total = price_hidden * quantity;
         } else {
             sub_total = price_hidden * quantity;

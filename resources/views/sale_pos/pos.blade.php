@@ -258,7 +258,6 @@
                                     class="dripicons-flag"></i>
                                 @lang('lang.view_draft')</button>
                         </div>
-                        @if(session('system_mode') != 'restaurant')
                         <div class="column-5">
                             <button data-method="cheque" style="background-color: #fd7272" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -270,7 +269,6 @@
                                 id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                 @lang('lang.bank_transfer')</button>
                         </div>
-                        @endif
                         <div class="column-5">
                             <button data-method="pay-later" style="background-color: #cf2929" type="button"
                                 class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
@@ -540,7 +538,7 @@
 @endsection
 
 @section('javascript')
-{{-- <script src="{{asset('js/onscan.min.js')}}"></script> --}}
+<script src="{{asset('js/onscan.min.js')}}"></script>
 <script src="{{asset('js/pos.js')}}"></script>
 <script>
 
