@@ -139,7 +139,7 @@ class SellReturnController extends Controller
         $sell_return = Transaction::where('type', 'sell_return')
             ->where('return_parent_id', $id)
             ->first();
-            $stores = Store::getDropdown();
+        $stores = Store::getDropdown();
 
         return view('sell_return.create')->with(compact(
             'sell_return',
@@ -165,8 +165,9 @@ class SellReturnController extends Controller
      */
     public function store(Request $request)
     {
-        try {
+        // try {
             if (!empty($request->transaction_sell_line)) {
+                $sell_transaction = Transaction::find($request->transaction_id);
                 $sell_return = Transaction::where('type', 'sell_return')
                     ->where('return_parent_id', $request->transaction_id)
                     ->first();
@@ -181,7 +182,7 @@ class SellReturnController extends Controller
                     'final_total' => $this->commonUtil->num_uf($request->final_total),
                     'grand_total' => $this->commonUtil->num_uf($request->grand_total),
                     'transaction_date' => Carbon::now(),
-                    'invoice_no' => $this->productUtil->getNumberByType('sell_return'),
+                    'invoice_no' => $this->transactionUtil->createReturnTransactionInvoiceNoFromInvoice($sell_transaction->invoice_no),
                     'payment_status' => 'pending',
                     'status' => 'final',
                     'is_return' => 1,
@@ -239,13 +240,13 @@ class SellReturnController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->to('/sale-return')->with('status', $output);
     }

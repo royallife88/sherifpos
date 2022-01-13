@@ -902,4 +902,17 @@ class TransactionUtil extends Util
         }
         $customer->save();
     }
+
+    /**
+     * generate return invoice no from sell transaction invoice number
+     *
+     * @param string $transaction_invoice_number
+     * @return string
+     */
+    public function createReturnTransactionInvoiceNoFromInvoice($transaction_invoice_number)
+    {
+        $number_only = substr($transaction_invoice_number, 3);
+
+        return 'Rets' . $number_only;
+    }
 }
