@@ -6,6 +6,7 @@ use App\Models\Store;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
 class SendSaleDataMall extends Command
 {
@@ -68,6 +69,8 @@ class SendSaleDataMall extends Command
                 ->get();
 
             $data_string = '{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : ' . $sales_total->sum('final_total') . '}';
+            Log::info($data_string);
+
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
