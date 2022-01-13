@@ -55,6 +55,11 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(Transaction::class, 'return_parent_id', 'id');
     }
+
+    public function return_parent()
+    {
+        return $this->hasOne(Transaction::class, 'return_parent_id');
+    }
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);
@@ -121,11 +126,6 @@ class Transaction extends Model  implements HasMedia
     public function transaction_payments()
     {
         return $this->hasMany(TransactionPayment::class);
-    }
-
-    public function return_parent()
-    {
-        return $this->hasOne(Transaction::class, 'return_parent_id');
     }
 
     public function add_stock_parent()

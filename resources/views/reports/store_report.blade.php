@@ -431,10 +431,7 @@
                                         <td>{{$return->invoice_no}}</td>
                                         <td>@if(!empty($return->customer)){{$return->customer->name}}@endif</td>
                                         <td>
-                                            @php
-                                            $parent_return = App\Models\Transaction::find($return->return_parent_id);
-                                            @endphp
-                                            @foreach ($parent_return->transaction_sell_lines as $line)
+                                            @foreach ($return->transaction_sell_lines as $line)
                                             @if($line->quantity_returned == 0)
                                             @continue
                                             @endif

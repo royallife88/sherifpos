@@ -430,16 +430,14 @@
                                         <td>{{$return->invoice_no}}</td>
                                         <td>@if(!empty($return->customer)){{$return->customer->name}}@endif</td>
                                         <td>
-                                            @php
-                                            $parent_return = App\Models\Transaction::find($return->return_parent_id);
-                                            @endphp
-                                            @foreach ($parent_return->transaction_sell_lines as $line)
+                                            @foreach ($return->transaction_sell_lines as $line)
                                             @if($line->quantity_returned == 0)
                                             @continue
                                             @endif
                                             ({{@num_format($line->quantity)}})
                                             @if(!empty($line->product)){{$line->product->name}}@endif <br>
                                             @endforeach
+
                                         </td>
                                         <td>{{@num_format($return->final_total)}}</td>
                                         <td>{{@num_format($return->transaction_payments->sum('amount'))}}</td>
