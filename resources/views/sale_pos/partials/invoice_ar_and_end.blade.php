@@ -175,7 +175,8 @@
                     @endif
                     @if($transaction->total_sp_discount != 0)
                     <tr>
-                        <th colspan="3">@lang('lang.sales_promotion', [], $invoice_lang)</th>
+                        <th colspan="3">{{__('lang.sales_promotion',[], 'ar')}} <br>
+                            @lang('lang.sales_promotion' , [], 'en')</th>
                         <th style="text-align:right">{{@num_format($transaction->total_sp_discount)}}</th>
                     </tr>
                     @endif

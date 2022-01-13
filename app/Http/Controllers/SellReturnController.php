@@ -165,7 +165,7 @@ class SellReturnController extends Controller
      */
     public function store(Request $request)
     {
-        // try {
+        try {
             if (!empty($request->transaction_sell_line)) {
                 $sell_transaction = Transaction::find($request->transaction_id);
                 $sell_return = Transaction::where('type', 'sell_return')
@@ -240,13 +240,13 @@ class SellReturnController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->to('/sale-return')->with('status', $output);
     }
