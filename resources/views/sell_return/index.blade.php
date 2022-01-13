@@ -42,16 +42,30 @@
                                 'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_date', __('lang.start_date'), []) !!}
                                 {!! Form::text('start_date', request()->start_date, ['class' => 'form-control']) !!}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                {!! Form::label('start_time', __('lang.start_time'), []) !!}
+                                {!! Form::text('start_time', request()->start_time, ['class' => 'form-control
+                                time_picker sale_filter']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_date', __('lang.end_date'), []) !!}
                                 {!! Form::text('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                {!! Form::label('end_time', __('lang.end_time'), []) !!}
+                                {!! Form::text('end_time', request()->end_time, ['class' => 'form-control time_picker
+                                sale_filter']) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -69,7 +83,7 @@
         <table id="sell_return_table" class="table dataTable">
             <thead>
                 <tr>
-                    <th class="date">@lang('lang.date')</th>
+                    <th class="date">@lang('lang.date_and_time')</th>
                     <th>@lang('lang.reference')</th>
                     <th>@lang('lang.customer')</th>
                     <th>@lang('lang.payment_status')</th>
@@ -83,7 +97,7 @@
             <tbody>
                 @foreach($sale_returns as $sale)
                 <tr>
-                    <td>{{@format_date($sale->transaction_date)}}</td>
+                    <td>{{@format_datetime($sale->transaction_date)}}</td>
                     <td>{{$sale->invoice_no}}</td>
                     <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                     <td>@if(!empty($payment_status_array[$sale->payment_status])){{$payment_status_array[$sale->payment_status]}}@endif

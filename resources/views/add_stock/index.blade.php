@@ -38,16 +38,28 @@
                             </div>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_date', __('lang.start_date'), []) !!}
                                 {!! Form::text('start_date', request()->start_date, ['class' => 'form-control ', 'id' => 'start_date']) !!}
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                {!! Form::label('start_time', __('lang.start_time'), []) !!}
+                                {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_date', __('lang.end_date'), []) !!}
                                 {!! Form::text('end_date', request()->end_date, ['class' => 'form-control ', 'id' => 'end_date']) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                {!! Form::label('end_time', __('lang.end_time'), []) !!}
+                                {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -122,7 +134,9 @@
                     d.created_by = $('#created_by').val();
                     d.product_id = $('#product_id').val();
                     d.start_date = $('#start_date').val();
+                    d.start_time = $("#start_time").val();
                     d.end_date = $('#end_date').val();
+                    d.end_time = $("#end_time").val();
                 }
             },
             columnDefs: [ {
@@ -157,7 +171,9 @@
             add_stock_table.ajax.reload();
         })
     });
-
+    $('.time_picker').focusout(function (event) {
+        add_stock_table.ajax.reload();
+    });
 
     $(document).on('click', '.clear_filters', function(){
         $('.filters').val('');

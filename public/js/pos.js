@@ -436,6 +436,9 @@ function check_for_sale_promotion() {
                         );
                         if (product_ids.includes(product_id)) {
                             $(tr).find(".sell_price").attr("readonly", true);
+                            //neglect all other discount for this product if any
+                            $(tr).find(".promotion_discount_value").val(0);
+                            $(tr).find(".product_discount_value").val(0);
                         }
                     });
                     __write_number($("#total_sp_discount"), discount);

@@ -16,6 +16,7 @@ use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,12 @@ class QuotationController extends Controller
         }
         if (!empty(request()->end_date)) {
             $query->whereDate('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
 
         $sales = $query->orderBy('invoice_no', 'desc')->get();
@@ -359,6 +366,12 @@ class QuotationController extends Controller
         }
         if (!empty(request()->end_date)) {
             $query->whereDate('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
 
         $sales = $query->orderBy('invoice_no', 'desc')->get();

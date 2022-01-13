@@ -70,6 +70,12 @@ class TransferController extends Controller
         if (!auth()->user()->can('stock.internal_stock_request.view')) {
             $query->where('is_internal_stock_transfer', 0);
         }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
 
         $permitted_stores = array_keys($stores);
         if(!session('is_superadmin')){

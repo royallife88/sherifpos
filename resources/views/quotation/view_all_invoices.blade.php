@@ -25,16 +25,30 @@
                         </div>
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <div class="form-group">
                             {!! Form::label('start_date', __('lang.start_date'), []) !!}
                             {!! Form::text('start_date', request()->start_date, ['class' => 'form-control']) !!}
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            {!! Form::label('start_time', __('lang.start_time'), []) !!}
+                            {!! Form::text('start_time', request()->start_time, ['class' => 'form-control
+                            time_picker sale_filter']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-2">
                         <div class="form-group">
                             {!! Form::label('end_date', __('lang.end_date'), []) !!}
                             {!! Form::text('end_date', request()->end_date, ['class' => 'form-control']) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            {!! Form::label('end_time', __('lang.end_time'), []) !!}
+                            {!! Form::text('end_time', request()->end_time, ['class' => 'form-control time_picker
+                            sale_filter']) !!}
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -80,8 +94,7 @@
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                             @can('sale.sale.create_and_edit')
                             <li>
-                                <a href="{{action('SellController@edit', $sale->id)}}"
-                                     class="btn print-invoice"><i
+                                <a href="{{action('SellController@edit', $sale->id)}}" class="btn print-invoice"><i
                                         class="dripicons-document"></i> @lang('lang.create_invoice')</a>
                             </li>
                             <li class="divider"></li>
@@ -90,16 +103,15 @@
                             <li>
 
                                 <a data-href="{{action('QuotationController@show', $sale->id)}}"
-                                    data-container=".view_modal" class="btn btn-modal"><i
-                                        class="fa fa-eye"></i> @lang('lang.view')</a>
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                    @lang('lang.view')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
                             @can('squotation_for_customers.quotation.create_and_edit')
                             <li>
 
-                                <a href="{{action('QuotationController@edit', $sale->id)}}"
-                                     class="btn"><i
+                                <a href="{{action('QuotationController@edit', $sale->id)}}" class="btn"><i
                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                             </li>
                             <li class="divider"></li>

@@ -71,6 +71,12 @@ class RemoveStockController extends Controller
         if (!empty(request()->end_date)) {
             $query->where('transaction_date', '<=', request()->end_date);
         }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
 
         $remove_stocks = $query->where('status', 'compensated')->orderBy('compensated_at', 'desc')->get();
 

@@ -67,6 +67,12 @@ class ExpenseController extends Controller
         if (!empty(request()->end_date)) {
             $expense_query->whereDate('paid_on', '<=', request()->end_date);
         }
+        if (!empty(request()->start_time)) {
+            $expense_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $expense_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty(request()->expense_category_id)) {
             $expense_query->where('expense_category_id', request()->expense_category_id);
         }

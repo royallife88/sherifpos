@@ -7,6 +7,7 @@ use App\Models\CashRegisterTransaction;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -50,10 +51,16 @@ class CashInController extends Controller
         }
 
         if (!empty(request()->start_date)) {
-            $query->whereDate('created_at', '>=', request()->start_date);
+            $query->whereDate('cash_registers.created_at', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->whereDate('created_at', '<=', request()->end_date);
+            $query->whereDate('cash_registers.created_at', '<=', request()->end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $query->where('cash_registers.created_at', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('cash_registers.created_at', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
 
         $query->where('transaction_type', 'cash_in');
