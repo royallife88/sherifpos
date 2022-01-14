@@ -46,7 +46,6 @@ class UserContactUsNotification extends Notification
         $mail = (new MailMessage)
             ->from($data['from'], $data['site_title'])
             ->subject($data['subject'])
-            // ->attach($data['attachment'], ['as' => $data['attachment_name']])
             ->view(
                 'notification_template.plain_html',
                 ['content' => $data['email_body']]
