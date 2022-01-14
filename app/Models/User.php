@@ -66,6 +66,7 @@ class User extends Authenticatable
     public static function modulePermissionArray()
     {
         return [
+            'dashboard' => 'Dashboard',
             'product_module' => 'Product Module',
             'customer_module' => 'Customer Module',
             'supplier_module' => 'Supplier Module',
@@ -90,6 +91,9 @@ class User extends Authenticatable
     public static function subModulePermissionArray()
     {
         return [
+            'dashboard' => [
+                'profit' => 'Profit',
+            ],
             'product_module' => [
                 'product' => 'Product',
                 'product_class' => 'Class',

@@ -56,20 +56,25 @@
                 <td class="">
                     {!! Form::checkbox('checked_all', 1, false, ['class' => 'checked_all']) !!}
                 </td>
+                @php
+                $view_permission = $key_module.'.'.$key_sub_module.'.view';
+                $create_and_edit_permission = $key_module.'.'.$key_sub_module.'.create_and_edit';
+                $delete_permission = $key_module.'.'.$key_sub_module.'.delete';
+                @endphp
+                @if(Spatie\Permission\Models\Permission::where('name', $view_permission)->first())
                 <td class="">
-                    @php
-                    $view_permission = $key_module.'.'.$key_sub_module.'.view';
-                    $create_and_edit_permission = $key_module.'.'.$key_sub_module.'.create_and_edit';
-                    $delete_permission = $key_module.'.'.$key_sub_module.'.delete';
-                    @endphp
                     {!! Form::checkbox('permissions['.$view_permission.']', 1, !empty($user) &&
                     !empty($user->hasPermissionTo($view_permission)) ? true : false, ['class' => 'check_box']) !!}
                 </td>
+                @endif
+                @if(Spatie\Permission\Models\Permission::where('name', $create_and_edit_permission)->first())
                 <td class="">
                     {!! Form::checkbox('permissions['.$create_and_edit_permission.']', 1, !empty($user) &&
                     !empty($user->hasPermissionTo($create_and_edit_permission)) ? true : false, ['class' =>
                     'check_box']) !!}
                 </td>
+                @endif
+                @if(Spatie\Permission\Models\Permission::where('name', $delete_permission)->first())
                 <td class="">
                     @if($delete_permission != 'sale.pos.delete' && $delete_permission != 'sale.sale.delete' &&
                     $delete_permission != 'stock.add_stock.delete')
@@ -77,6 +82,7 @@
                     !empty($user->hasPermissionTo($delete_permission)) ? true : false, ['class' => 'check_box']) !!}
                     @endif
                 </td>
+                @endif
             </tr>
 
             @endforeach

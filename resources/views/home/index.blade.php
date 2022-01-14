@@ -77,6 +77,7 @@
                     </div>
                 </div>
                 <!-- Count item widget-->
+                @can('dashboard.profit.view')
                 <div class="col-sm-3">
                     <div class="wrapper count-title text-center">
                         <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i></div>
@@ -84,6 +85,7 @@
                         <div class="count-number profit-data">{{@num_format($dashboard_data['profit'])}}</div>
                     </div>
                 </div>
+                @endcan
             </div>
         </div>
     </div>
