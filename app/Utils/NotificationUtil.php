@@ -15,6 +15,7 @@ use App\Notifications\ContactUsNotification;
 use App\Notifications\PurchaseOrderToSupplierNotification;
 use App\Notifications\QuotationToCustomerNotification;
 use App\Notifications\RemoveStockToSupplierNotification;
+use App\Notifications\UserContactUsNotification;
 use App\Utils\Util;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -410,5 +411,26 @@ class NotificationUtil extends Util
 
         Notification::route('mail', $email_data['email'])
             ->notify(new ContactUsNotification($email_data));
+    }
+    /**
+     * send user contact us details
+     *
+     * @param array $data
+     * @return void
+     */
+    public function sendUserContactUs($data)
+    {
+        $email_data = array(
+            'site_title' => $data['site_title'],
+            'email' => env('COMPANY_EMAIL'),
+            'subject' => 'User Contact Us',
+            'email_body' => $data['email_body'],
+            'from' => $data['email'],
+            'attachment' => $data['attachment'],
+            'attachment_name' => $data['attachment_name'],
+        );
+
+        Notification::route('mail', $email_data['email'])
+            ->notify(new UserContactUsNotification($email_data));
     }
 }

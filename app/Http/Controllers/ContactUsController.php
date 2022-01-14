@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\ContactUsDetail;
+use App\Models\System;
 use App\Utils\NotificationUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class ContactUsController extends Controller
@@ -83,6 +85,56 @@ class ContactUsController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
+
+        return redirect()->back()->with('status', $output);
+    }
+
+    /**
+     * get contact us email only logged in user
+     *
+     * @return void
+     */
+    public function getUserContactUs()
+    {
+        return view('contact_us.user_contact_us');
+    }
+
+    /**
+     * send contact us email only logged in user
+     *
+     * @return void
+     */
+    public function sendUserContactUs(Request $request)
+    {
+        // try {
+
+        $data['site_title'] = System::getProperty('site_title');
+        $data['user_name'] = Auth::user()->name;
+        $data['email'] = $request->email ?? Auth::user()->email;
+        $data['phone_number'] = $request->phone_number;
+        $data['message'] = $request->message;
+        $data['email_body'] = view('contact_us.form_data')->with(compact(
+            'data'
+        ))->render();
+
+
+        $data['attachment'] =  $request->file;
+        $data['attachment_name'] = !empty($request->file) ? $request->file->getClientOriginalName() : null;
+
+        $this->notificationUtil->sendUserContactUs($data);
+
+
+        $output = [
+            'success' => true,
+            'msg' => __('lang.your_message_sent_sccuessfully')
+        ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }

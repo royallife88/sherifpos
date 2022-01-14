@@ -1,12 +1,12 @@
 @extends('layouts.login')
-
-@section('content')
 <style>
-    .error {
+     .error {
         color: red;
 
     }
 </style>
+
+@section('content')
 <div class="container">
 
     <div class="form-outer text-center d-flex align-items-center">

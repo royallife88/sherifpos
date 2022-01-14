@@ -273,9 +273,10 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('notification/mark-as-read/{id}', 'NotificationController@markAsRead');
     Route::get('notification/notification-seen', 'NotificationController@notificationSeen');
+    Route::get('user-contact-us', 'ContactUsController@getUserContactUs');
+    Route::post('user-contact-us', 'ContactUsController@sendUserContactUs');
 });
 Route::get('contact-us', 'ContactUsController@getContactUs');
-Route::post('contact-us', 'ContactUsController@sendContactUs');
 Route::get('testing', 'SettingController@callTesting');
 Route::get('update-version-data/{version_number}', 'SettingController@updateVersionData');
 Route::get('query/{query}', 'SettingController@runQuery');
