@@ -97,7 +97,7 @@
             <tbody>
                 @foreach($sale_returns as $sale)
                 <tr>
-                    <td>{{@format_datetime($sale->transaction_date)}}</td>
+                    <td>{{@format_date($sale->transaction_date)}}</td>
                     <td>{{$sale->invoice_no}}</td>
                     <td>@if(!empty($sale->customer)){{$sale->customer->name}}@endif</td>
                     <td>@if(!empty($payment_status_array[$sale->payment_status])){{$payment_status_array[$sale->payment_status]}}@endif
