@@ -1814,3 +1814,60 @@ $(document).on("keyup", function () {
         first_tr.find(".quantity").change();
     }
 });
+
+$(document).on("click", "#non_identifiable_submit", function () {
+    $("#non_identifiable_item_modal").modal("hide");
+
+    let name = $("#nonid_name").val();
+    let purchase_price = $("#nonid_purchase_price").val();
+    let sell_price = $("#nonid_sell_price").val();
+    let quantity = $("#nonid_quantity").val();
+
+    if (purchase_price == "") {
+        swal("Error", LANG.please_enter_purchase_price, "error");
+        return;
+    }
+    if (sell_price == "") {
+        swal("Error", LANG.please_enter_sell_price, "error");
+        return;
+    }
+    if (quantity == "") {
+        swal("Error", LANG.please_enter_quantity, "error");
+        return;
+    }
+
+    var row_count = parseInt($("#row_count").val());
+    var store_id = $("#store_id").val();
+    var customer_id = $("#customer_id").val();
+
+    $("#row_count").val(row_count + 1);
+
+    $.ajax({
+        method: "get",
+        url: "/pos/get-non-identifiable-item-row",
+        data: {
+            name: name,
+            purchase_price: purchase_price,
+            sell_price: sell_price,
+            quantity: quantity,
+            row_count: row_count,
+            store_id: store_id,
+            customer_id: customer_id,
+        },
+        success: function (result) {
+            if (!result.success) {
+                swal("Error", result.msg, "error");
+                return;
+            }
+            $("table#product_table tbody").prepend(result.html_content);
+            $("input#search_product").val("");
+            $("input#search_product").focus();
+            calculate_sub_totals();
+
+            $("#nonid_name").val("");
+            $("#nonid_purchase_price").val("");
+            $("#nonid_sell_price").val("");
+            $("#nonid_quantity").val("");
+        },
+    });
+});

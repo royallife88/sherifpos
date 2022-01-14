@@ -152,7 +152,7 @@ class SellPosController extends Controller
     public function store(Request $request)
     {
 
-        // try {
+        try {
             $transaction_data = [
                 'store_id' => $request->store_id,
                 'customer_id' => $request->customer_id,
@@ -336,13 +336,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
         if ($request->action == 'send') {
             return redirect()->back()->with('status', $output);
         }
@@ -412,101 +412,101 @@ class SellPosController extends Controller
     public function update(Request $request, $id)
     {
         // try {
-            DB::beginTransaction();
-            $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
+        DB::beginTransaction();
+        $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
-            if ($transaction->status == 'final') {
-                //if transaction is final then calculate the reward points
-                $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
-                $transaction->rp_earned = $points_earned;
-                if ($request->is_redeem_points) {
-                    // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
-                    $transaction->rp_redeemed_value = $request->rp_redeemed_value;
-                    $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
-                    $transaction->rp_redeemed = $rp_redeemed;
-                }
-                $transaction->total_sp_discount = $request->total_sp_discount;
-                $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
-                $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
-                $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
-
-                $transaction->save();
-
-                $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
-
-                //update customer deposit balance if any
-                $customer = Customer::find($transaction->customer_id);
-                if ($request->used_deposit_balance > 0) {
-                    $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
-                }
-                if ($request->add_to_deposit > 0) {
-                    $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
-                }
-                $customer->save();
+        if ($transaction->status == 'final') {
+            //if transaction is final then calculate the reward points
+            $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
+            $transaction->rp_earned = $points_earned;
+            if ($request->is_redeem_points) {
+                // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
+                $transaction->rp_redeemed_value = $request->rp_redeemed_value;
+                $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
+                $transaction->rp_redeemed = $rp_redeemed;
             }
+            $transaction->total_sp_discount = $request->total_sp_discount;
+            $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
+            $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
+            $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
 
-            if ($transaction->status != 'draft') {
-                if (!empty($request->payments)) {
-                    foreach ($request->payments as $payment) {
+            $transaction->save();
 
-                        $amount = $this->commonUtil->num_uf($payment['amount']);
-                        $payment_data = [
-                            'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
-                            'transaction_id' => $transaction->id,
-                            'amount' => $amount,
-                            'method' => $payment['method'],
-                            'paid_on' => $transaction->transaction_date,
-                            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
-                            'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
-                            'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
-                            'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
-                            'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
-                            'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
-                            'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
-                            'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
-                            'gift_card_number' => $request->gift_card_number,
-                            'amount_to_be_used' => $request->amount_to_be_used,
-                            'payment_note' => $request->payment_note,
-                        ];
-                        if ($amount > 0) {
-                            $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-                        }
-                        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+            $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+
+            //update customer deposit balance if any
+            $customer = Customer::find($transaction->customer_id);
+            if ($request->used_deposit_balance > 0) {
+                $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
+            }
+            if ($request->add_to_deposit > 0) {
+                $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
+            }
+            $customer->save();
+        }
+
+        if ($transaction->status != 'draft') {
+            if (!empty($request->payments)) {
+                foreach ($request->payments as $payment) {
+
+                    $amount = $this->commonUtil->num_uf($payment['amount']);
+                    $payment_data = [
+                        'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
+                        'transaction_id' => $transaction->id,
+                        'amount' => $amount,
+                        'method' => $payment['method'],
+                        'paid_on' => $transaction->transaction_date,
+                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                        'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
+                        'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
+                        'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                        'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
+                        'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                        'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
+                        'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
+                        'gift_card_number' => $request->gift_card_number,
+                        'amount_to_be_used' => $request->amount_to_be_used,
+                        'payment_note' => $request->payment_note,
+                    ];
+                    if ($amount > 0) {
+                        $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                     }
-                    $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                 }
-
-
-                if (!empty($transaction->coupon_id)) {
-                    Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
-                }
-
-                if (!empty($transaction->gift_card_id)) {
-                    $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
-                    $used = 0;
-                    if ($remaining_balance == 0) {
-                        $used = 1;
-                    }
-                    GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
-                }
-                $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
             }
 
 
-            DB::commit();
+            if (!empty($transaction->coupon_id)) {
+                Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+            }
+
+            if (!empty($transaction->gift_card_id)) {
+                $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
+                $used = 0;
+                if ($remaining_balance == 0) {
+                    $used = 1;
+                }
+                GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
+            }
+            $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+        }
 
 
-            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-            $html_content = view('sale_pos.partials.invoice')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
+        DB::commit();
 
-            $output = [
-                'success' => true,
-                'html_content' => $html_content,
-                'msg' => __('lang.success')
-            ];
+
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $html_content = view('sale_pos.partials.invoice')->with(compact(
+            'transaction',
+            'payment_types'
+        ))->render();
+
+        $output = [
+            'success' => true,
+            'html_content' => $html_content,
+            'msg' => __('lang.success')
+        ];
         // } catch (\Exception $e) {
         //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
         //     $output = [
@@ -775,6 +775,53 @@ class SellPosController extends Controller
             }
             return  $output;
         }
+    }
+
+    /**
+     * get the row for non identifiable products
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getNonIdentifiableItemRow(Request $request)
+    {
+        $name = !empty($request->name) ? $request->name : 'Non-Identifiable Item';
+        $sell_price = $request->sell_price;
+        $purchase_price = $request->purchase_price;
+        $quantity = $request->quantity;
+        $index = $request->row_count;
+        $store_id = $request->store_id;
+        $customer_id = $request->customer_id;
+
+        $product_details = $this->productUtil->getNonIdentifiableProductDetails($name, $sell_price, $purchase_price, $request);
+        if (!empty($product_details)) {
+            $product_id = $product_details->product_id;
+            $variation_id = $product_details->variation_id;
+            $quantity = $quantity;
+            $edit_quantity = $quantity;
+        } else {
+            $output['success'] = false;
+            $output['msg'] = $product_details['msg'];
+            return $output;
+        }
+
+        if (!empty($product_id)) {
+            $index = $request->input('row_count');
+            $products = $this->productUtil->getDetailsFromProductByStore($product_id, $variation_id, $store_id);
+
+            $product_discount_details = $this->productUtil->getProductDiscountDetails($product_id, $customer_id);
+            // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
+            $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
+            $html_content =  view('sale_pos.partials.product_row')
+                ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'))->render();
+
+            $output['success'] = true;
+            $output['html_content'] = $html_content;
+        } else {
+            $output['success'] = false;
+            $output['msg'] = __('lang.sku_no_match');
+        }
+        return  $output;
     }
 
     /**

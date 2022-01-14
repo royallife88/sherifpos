@@ -55,7 +55,7 @@ function pciToggleAccordianTillItem(product) {
         .find(".pci-accordion-toggle")
         .data("id");
     let brand_level = $(product)
-        .closest(".brand_level")
+        .closest(".pci_brand_level")
         .find(".pci-accordion-toggle")
         .data("id");
     let top_accordion = $(product)

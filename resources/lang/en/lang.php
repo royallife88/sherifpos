@@ -1013,4 +1013,5 @@ return [
     'sender' => 'Sender',
     'sender_title' => 'Sender Title',
     'last_digits_type' => 'Last Digits Type',
+    'non_identifiable_item' => 'Non-Identifiable Item',
 ];

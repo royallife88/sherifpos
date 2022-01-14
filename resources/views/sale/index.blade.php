@@ -62,7 +62,7 @@
                         {!! Form::text('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('start_time', __('lang.start_time'), []) !!}
                         {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
@@ -74,7 +74,7 @@
                         {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
-                <div class="col-md-1">
+                <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('end_time', __('lang.end_time'), []) !!}
                         {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}

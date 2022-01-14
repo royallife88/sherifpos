@@ -95,6 +95,7 @@ class SendSaleDataMall extends Command
 
             curl_close($curl);
             echo $response;
+            Log::info($response);
         }
     }
 }

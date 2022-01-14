@@ -22,6 +22,7 @@ use App\Models\Variation;
 use App\Utils\Util;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ProductUtil extends Util
@@ -1438,5 +1439,72 @@ class ProductUtil extends Util
         $query->groupBy('variations.id');
         return $query
             ->get();
+    }
+
+    public function getNonIdentifiableProductDetails($name, $sell_price, $purchase_price, $request)
+    {
+        $product_exist = Product::where('name', $name)->first();
+
+        if (!empty($product_exist)) {
+            $product_exist->purchase_price = $purchase_price;
+            $product_exist->sell_price = $sell_price;
+
+            $product_exist->save();
+            $variation = Variation::where('product_id', $product_exist->id)->first();
+            $variation->default_purchase_price = $purchase_price;
+            $variation->default_sell_price = $sell_price;
+            $variation->save();
+        } else {
+            $product_data = [
+                'name' => $name,
+                'sku' => !empty($sku) ? $sku : $this->generateSku($name),
+                'multiple_units' => [],
+                'multiple_colors' => [],
+                'multiple_sizes' => [],
+                'multiple_grades' => [],
+                'is_service' => 1,
+                'product_details' => null,
+                'barcode_type' => 'C128',
+                'alert_quantity' => 0,
+                'purchase_price' => $purchase_price,
+                'sell_price' => $sell_price,
+                'tax_id' => null,
+                'tax_method' => null,
+                'discount_type' => 'fixed',
+                'discount_customer_types' => [],
+                'discount_customers' => [],
+                'discount' => 0,
+                'discount_start_date' => null,
+                'discount_end_date' => null,
+                'show_to_customer' => 0,
+                'show_to_customer_types' => 0,
+                'different_prices_for_stores' => 0,
+                'this_product_have_variant' => 0,
+                'type' => 'single',
+                'active' => 0,
+                'created_by' => Auth::user()->id
+            ];
+            $product = Product::create($product_data);
+
+            $this->createOrUpdateVariations($product, $request);
+        }
+
+        $query = Product::join('variations', 'products.id', '=', 'variations.product_id')
+            ->whereNull('variations.deleted_at')
+            ->where('products.name', $name);
+
+        $query->select(
+            'products.id as product_id',
+            'products.name',
+            'products.type',
+            'variations.id as variation_id',
+            'variations.name as variation',
+            'variations.default_sell_price',
+            'variations.sub_sku',
+        );
+
+        $query->groupBy('variations.id');
+        return $query
+            ->first();
     }
 }

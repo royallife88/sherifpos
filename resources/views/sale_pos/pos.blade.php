@@ -50,7 +50,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('customer_id', $customers,
@@ -81,6 +81,13 @@
                                         <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
                                             <span class="customer_balance">{{@num_format(0)}}</span></label>
                                     </div>
+                                    @if(session('system_mode') == 'pos')
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-xs pull-right"
+                                            style="margin-top: 38px;" data-toggle="modal"
+                                            data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
+                                    </div>
+                                    @endif
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -305,13 +312,15 @@
                 @include('sale_pos.partials.coupon_modal')
                 @include('sale_pos.partials.contact_details_modal')
                 @include('sale_pos.partials.weighing_scale_modal')
+                @include('sale_pos.partials.non_identifiable_item_modal')
 
 
                 {!! Form::close() !!}
             </div>
 
             <!-- product list -->
-            <div class="@if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
+            <div
+                class="@if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
                 <!-- navbar-->
                 <header class="header">
                     <nav class="navbar">
