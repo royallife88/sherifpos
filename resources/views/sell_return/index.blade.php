@@ -83,7 +83,7 @@
         <table id="sell_return_table" class="table dataTable">
             <thead>
                 <tr>
-                    <th class="date">@lang('lang.date_and_time')</th>
+                    <th class="date">@lang('lang.date')</th>
                     <th>@lang('lang.reference')</th>
                     <th>@lang('lang.customer')</th>
                     <th>@lang('lang.payment_status')</th>
