@@ -199,6 +199,7 @@
                 @can('product_module.purchase_price.view')
                 <th>@lang('lang.purchase_price')</th>
                 @endcan
+                <th>@lang('lang.supplier')</th>
                 <th>@lang('lang.created_by')</th>
                 <th>@lang('lang.edited_by')</th>
                 <th class="notexport">@lang('lang.action')</th>
@@ -284,6 +285,7 @@
                 @can('product_module.purchase_price.view')
                 { data: 'default_purchase_price', name: 'default_purchase_price', searchable: false},
                 @endcan
+                { data: 'supplier', name: 'supplier'},
                 { data: 'created_by', name: 'users.name'},
                 { data: 'edited_by_name', name: 'edited.name'},
                 { data: 'action', name: 'action'},

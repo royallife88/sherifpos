@@ -15,6 +15,7 @@ use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
+use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
@@ -112,6 +113,9 @@ class ProductController extends Controller
                 ->leftjoin('add_stock_lines', function ($join) {
                     $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
                 })
+                ->leftjoin('transactions', function ($join) {
+                    $join->on('add_stock_lines.transaction_id', 'transactions.id');
+                })
                 ->leftjoin('colors', 'variations.color_id', 'colors.id')
                 ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
                 ->leftjoin('grades', 'variations.grade_id', 'grades.id')
@@ -188,6 +192,7 @@ class ProductController extends Controller
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',
+                'transactions.supplier_id',
                 'variations.sub_sku',
                 'product_classes.name as product_class',
                 'categories.name as category',
@@ -251,6 +256,16 @@ class ProductController extends Controller
                 ->editColumn('discount', '{{@num_format($discount)}}')
                 ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->addColumn('supplier', function ($row) {
+                    return $row->supplier_id;
+                    if (!empty(!empty($row->supplier_id))) {
+                        $supplier = Supplier::find($row->supplier_id);
+                        if (!empty($supplier)) {
+                            return $supplier->name;
+                        }
+                    }
+                    return '';
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -885,12 +900,12 @@ class ProductController extends Controller
         ]);
         // try {
 
-            Excel::import(new ProductImport($this->productUtil, $request), $request->file);
+        Excel::import(new ProductImport($this->productUtil, $request), $request->file);
 
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
         // } catch (\Exception $e) {
         //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
         //     $output = [
