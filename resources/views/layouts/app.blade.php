@@ -57,7 +57,7 @@
     </div>
     <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn"
         style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; z-index: 999999999; padding-top: 8px; padding-bottom: 8px;"
-        class="btn btn-success"><i class="fa fa-envelope"></i></a>
+        class="btn btn-success no-print"><i class="fa fa-envelope"></i></a>
     <script type="text/javascript">
         base_path = "{{url('/')}}";
     </script>
