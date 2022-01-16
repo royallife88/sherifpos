@@ -158,7 +158,7 @@
                                                     class="btn btn-link btn-sm" data-toggle="modal"
                                                     data-target="#delivery-cost-modal"><i
                                                         class="dripicons-document-edit"></i></button></span><span
-                                                id="delivery-cost">0.00</span>
+                                                id="delivery-cost">@if(!empty($transaction)) {{@num_format($transaction->delivery_cost)}} @else 0.00 @endif</span>
                                         </div>
                                     </div>
                                 </div>

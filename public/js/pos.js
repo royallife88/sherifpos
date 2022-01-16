@@ -1233,7 +1233,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount"
+        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -1331,6 +1331,9 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
+        initComplete: function() {
+            $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+        },
         ajax: {
             url: "/pos/get-recent-transactions",
             data: function (d) {
@@ -1413,6 +1416,9 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
+        initComplete: function() {
+            $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+        },
         ajax: {
             url: "/pos/get-draft-transactions",
             data: function (d) {
@@ -1662,6 +1668,7 @@ function pos_print(receipt) {
     __print_receipt("receipt_section");
 }
 
+
 $(document).on("click", ".remove_draft", function (e) {
     e.preventDefault();
     swal({
@@ -1675,7 +1682,7 @@ $(document).on("click", ".remove_draft", function (e) {
             var data = $(this).serialize();
 
             swal({
-                title: "Please Enter Your Password",
+                title: "Please Enter Your Passwordasd asdff",
                 content: {
                     element: "input",
                     attributes: {
@@ -1685,6 +1692,7 @@ $(document).on("click", ".remove_draft", function (e) {
                 },
                 inputAttributes: {
                     autocapitalize: "off",
+                    autocorrect: "off",
                 },
             }).then((result) => {
                 if (result) {

@@ -313,6 +313,7 @@
                 @include('sale_pos.partials.contact_details_modal')
                 @include('sale_pos.partials.weighing_scale_modal')
                 @include('sale_pos.partials.non_identifiable_item_modal')
+                @include('sale_pos.partials.customer_sizes_modal')
 
 
                 {!! Form::close() !!}

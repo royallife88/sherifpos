@@ -2,7 +2,7 @@
     <table id="draft_table" class="table">
         <thead>
             <tr>
-                <th>@lang('lang.date_and_time')</th>
+                <th>@lang('lang.date')</th>
                 <th>@lang('lang.value')</th>
                 <th>@lang('lang.customer_type')</th>
                 <th>@lang('lang.customer_name')</th>

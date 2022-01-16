@@ -113,9 +113,6 @@ class ProductController extends Controller
                 ->leftjoin('add_stock_lines', function ($join) {
                     $join->on('variations.id', 'add_stock_lines.variation_id')->where('add_stock_lines.expiry_date', '>=', date('Y-m-d'));
                 })
-                ->leftjoin('transactions', function ($join) {
-                    $join->on('add_stock_lines.transaction_id', 'transactions.id');
-                })
                 ->leftjoin('colors', 'variations.color_id', 'colors.id')
                 ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
                 ->leftjoin('grades', 'variations.grade_id', 'grades.id')
@@ -192,7 +189,6 @@ class ProductController extends Controller
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',
-                'transactions.supplier_id',
                 'variations.sub_sku',
                 'product_classes.name as product_class',
                 'categories.name as category',
@@ -257,14 +253,14 @@ class ProductController extends Controller
                 ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->addColumn('supplier', function ($row) {
-                    return $row->supplier_id;
-                    if (!empty(!empty($row->supplier_id))) {
-                        $supplier = Supplier::find($row->supplier_id);
-                        if (!empty($supplier)) {
-                            return $supplier->name;
-                        }
-                    }
-                    return '';
+                    $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+                        ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
+                        ->where('transactions.type', 'add_stock')
+                        ->where('add_stock_lines.product_id', $row->id)
+                        ->select('suppliers.name')
+                        ->orderBy('transactions.id', 'desc')
+                        ->first();
+                    return $query->name ?? '';
                 })
                 ->addColumn(
                     'action',

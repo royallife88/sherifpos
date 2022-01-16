@@ -292,7 +292,9 @@ var datatable_params = {
         "targets": 'date',
         "type":"date-eu"
     }],
-
+    initComplete: function() {
+        $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+    },
     dom: "lBfrtip",
     buttons: buttons,
     footerCallback: function (row, data, start, end, display) {

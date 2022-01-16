@@ -522,9 +522,9 @@ class TransactionUtil extends Util
             'discount_value' => $this->num_f($request->discount_value),
             'discount_amount' => $this->num_f($request->discount_amount),
             'total_sp_discount' => $this->num_f($request->total_sp_discount),
-            'tax_id' => $request->tax_id,
             'block_qty' => 0,
             'block_for_days' => 0,
+            'tax_id' => $request->tax_id_hidden ?? null,
             'total_tax' => $this->num_f($request->total_tax),
             'sale_note' => $request->sale_note,
             'staff_note' => $request->staff_note,
@@ -546,7 +546,9 @@ class TransactionUtil extends Util
         }
         if ($transaction->status == 'draft' && $request->status == 'final') {
             $transaction_data['transaction_date'] = Carbon::now();
-            $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
+            if(empty($transaction->invoice_no)){
+                $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
+            }
         }
         $transaction_status = $transaction->status;
         $is_block_qty = $transaction->block_qty;

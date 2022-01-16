@@ -35,7 +35,7 @@
                                 data-live-search="true">
                                 <option value="" selected>@lang('lang.please_select')</option>
                                 @foreach ($deliverymen as $key => $name)
-                                <option value="{{$key}}">{{$name}}</option>
+                                <option @if(!empty($transaction) && $transaction->deliveryman_id == $key) selected @endif value="{{$key}}">{{$name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -43,12 +43,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="delivery_cost">@lang('lang.delivery_cost'):</label>
-                        {!! Form::text('delivery_cost', null, ['class' => 'form-control', 'id' => 'delivery_cost']) !!}
+                        {!! Form::text('delivery_cost', !empty($transaction) ? $transaction->delivery_cost : null, ['class' => 'form-control', 'id' => 'delivery_cost']) !!}
                     </div>
                     <div class="col-md-6">
                         <label class="checkbox-inline">
                             <input type="checkbox" class="delivery_cost_paid_by_customer"
-                                name="delivery_cost_paid_by_customer" checked value="1"
+                                name="delivery_cost_paid_by_customer" @if(!empty($transaction) && $transaction->delivery_cost_paid_by_customer == 0) @else checked @endif value="1"
                                 id="delivery_cost_paid_by_customer">
                             @lang('lang.delivery_cost_paid_by_customer')
                         </label>

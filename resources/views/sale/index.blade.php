@@ -158,6 +158,9 @@
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
+        initComplete: function() {
+            $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+        },
         ajax: {
             url: "/sale",
             data: function (d) {
@@ -174,6 +177,10 @@
             },
         },
         columnDefs: [
+            {
+                targets: "date",
+                type: "date-eu",
+            },
             {
                 targets: [13],
                 orderable: false,
