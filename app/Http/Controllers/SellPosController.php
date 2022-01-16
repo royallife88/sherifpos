@@ -449,7 +449,7 @@ class SellPosController extends Controller
                 if (!empty($request->payments)) {
                     foreach ($request->payments as $payment) {
 
-                        $amount = $this->commonUtil->num_uf($payment['amount']);
+                        $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
                         $payment_data = [
                             'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
                             'transaction_id' => $transaction->id,
