@@ -20,6 +20,8 @@
                         'PUT', 'files' =>
                         true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
+                        <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
+                            value="{{$transaction->customer_size_id}}">
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
                             value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
                         <input type="hidden" name="row_count" id="row_count"
@@ -27,7 +29,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('customer_id', $customers,
@@ -49,10 +51,28 @@
                                             data-toggle="modal"
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
-                                    <div class="col-md-4">
+                                    @if(session('system_mode') == 'garments')
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger" style="margin-top: 30px;"
+                                            data-toggle="modal"
+                                            data-target="#customer_sizes_modal">@lang('lang.customer_size')</button>
+                                    </div>
+                                    @endif
+                                    <div class="col-md-3">
                                         <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span
                                                 class="customer_type_name"></span></label>
                                     </div>
+                                    <div class="col-md-2">
+                                        <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
+                                            <span class="customer_balance">{{@num_format(0)}}</span></label>
+                                    </div>
+                                    @if(session('system_mode') == 'pos')
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger btn-xs pull-right"
+                                            style="margin-top: 38px;" data-toggle="modal"
+                                            data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
+                                    </div>
+                                    @endif
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -158,7 +178,8 @@
                                                     class="btn btn-link btn-sm" data-toggle="modal"
                                                     data-target="#delivery-cost-modal"><i
                                                         class="dripicons-document-edit"></i></button></span><span
-                                                id="delivery-cost">@if(!empty($transaction)) {{@num_format($transaction->delivery_cost)}} @else 0.00 @endif</span>
+                                                id="delivery-cost">@if(!empty($transaction))
+                                                {{@num_format($transaction->delivery_cost)}} @else 0.00 @endif</span>
                                         </div>
                                     </div>
                                 </div>
@@ -277,6 +298,7 @@
             @include('sale_pos.partials.coupon_modal')
             @include('sale_pos.partials.contact_details_modal')
             @include('sale_pos.partials.weighing_scale_modal')
+            @include('sale_pos.partials.customer_sizes_modal')
 
 
 

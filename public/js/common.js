@@ -23,21 +23,20 @@ $(document).ready(function () {
 
     $("input[name='start_date']").datepicker({
         language: __language,
-        format: 'yyyy-mm-dd',
-        todayHighlight: true
+        format: "yyyy-mm-dd",
+        todayHighlight: true,
     });
     $("input[name='end_date']").datepicker({
         language: __language,
-        format: 'yyyy-mm-dd',
-        todayHighlight: true
+        format: "yyyy-mm-dd",
+        todayHighlight: true,
     });
-    $("input[name='start_date']").attr('autocomplete', 'off');
-    $("input[name='end_date']").attr('autocomplete', 'off');
-
+    $("input[name='start_date']").attr("autocomplete", "off");
+    $("input[name='end_date']").attr("autocomplete", "off");
 
     $(".datepicker").datepicker({
         language: __language,
-        todayHighlight: true
+        todayHighlight: true,
     });
 });
 
@@ -288,12 +287,19 @@ var datatable_params = {
         [10, 25, 50, 75, 100, 200, 500, "All"],
     ],
 
-    columnDefs: [{
-        "targets": 'date',
-        "type":"date-eu"
-    }],
-    initComplete: function() {
-        $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+    columnDefs: [
+        {
+            targets: "date",
+            type: "date-eu",
+        },
+    ],
+    initComplete: function () {
+        $(this.api().table().container())
+            .find("input")
+            .parent()
+            .wrap("<form>")
+            .parent()
+            .attr("autocomplete", "off");
     },
     dom: "lBfrtip",
     buttons: buttons,
@@ -374,4 +380,29 @@ $(document).on("change", "#terms_and_condition_id", function () {
             },
         });
     }
+});
+$(document).on("click", ".print-btn", function () {
+    $(".modal").modal("hide");
+    $.ajax({
+        method: "get",
+        url: $(this).data("href"),
+        data: {},
+        success: function (result) {
+            if (result.success) {
+                print_section(result.html_content);
+            }
+        },
+    });
+});
+function print_section(receipt) {
+    $("#print_section").html(receipt);
+    $("#print_section").printThis({
+        importCSS: true,
+        importStyle: true,
+        loadCSS: "vendor/bootstrap/css/bootstrap.min.css",
+    });
+}
+
+$(document).on("click", ".close-btn", function () {
+    $(".modal").modal("hide");
 });

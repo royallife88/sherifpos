@@ -113,7 +113,8 @@ class User extends Authenticatable
             'customer_module' => [
                 'customer' => 'Customer',
                 'customer_type' => 'Customer Type',
-                'add_payment' => 'Add Payment'
+                'add_payment' => 'Add Payment',
+                'customer_sizes' => 'Customer Sizes'
             ],
             'supplier_module' => [
                 'supplier' => 'Supplier',

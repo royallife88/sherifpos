@@ -22,7 +22,8 @@
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
                             value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
                         <input type="hidden" name="row_count" id="row_count" value="0">
-
+                        <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
+                        value="">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -72,6 +73,13 @@
                                             data-toggle="modal"
                                             data-target="#contact_details_modal">@lang('lang.details')</button>
                                     </div>
+                                    @if(session('system_mode') == 'garments')
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-danger" style="margin-top: 30px;"
+                                            data-toggle="modal"
+                                            data-target="#customer_sizes_modal">@lang('lang.customer_size')</button>
+                                    </div>
+                                    @endif
                                     <div class="col-md-3">
                                         <label for="customer_type_name"
                                             style="margin-top: 40px;">@lang('lang.customer_type'): <span
@@ -227,7 +235,7 @@
                     </div>
 
                     <div class="payment-options"
-                        style=" width: @if(session('system_mode') == 'pos') 100%; @else 50%; @endif">
+                        style=" width: @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
                         <div class="column-5">
                             <button data-method="card" style="background: #0984e3" type="button"
                                 class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"

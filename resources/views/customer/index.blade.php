@@ -32,14 +32,19 @@
                 <td>@if(!empty($customer->customer_type)){{$customer->customer_type->name}}@endif</td>
                 <td>{{$customer->name}}</td>
                 <td><img src="@if(!empty($customer->getFirstMediaUrl('customer_photo'))){{$customer->getFirstMediaUrl('customer_photo')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                    alt="photo" width="50" height="50">
+                        alt="photo" width="50" height="50">
                 </td>
                 <td>{{$customer->mobile_number}}</td>
                 <td>{{$customer->address}}</td>
-                <td class="@if($balances[$customer->id] < 0) text-red @endif">{{@num_format($balances[$customer->id])}}</td>
-                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=purchases" class="btn">{{@num_format($customer->total_purchase)}}</a></td>
-                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=discounts" class="btn">{{@num_format($customer->total_sp_discount + $customer->total_product_discount +$customer->total_coupon_discount)}}</a></td>
-                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=points" class="btn">{{@num_format($customer->total_rp)}}</a></td>
+                <td class="@if($balances[$customer->id] < 0) text-red @endif">{{@num_format($balances[$customer->id])}}
+                </td>
+                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=purchases"
+                        class="btn">{{@num_format($customer->total_purchase)}}</a></td>
+                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=discounts"
+                        class="btn">{{@num_format($customer->total_sp_discount + $customer->total_product_discount
+                        +$customer->total_coupon_discount)}}</a></td>
+                <td><a href="{{action('CustomerController@show', $customer->id)}}?show=points"
+                        class="btn">{{@num_format($customer->total_rp)}}</a></td>
                 <td>{{@format_date($customer->created_at)}}</td>
                 <td>{{$customer->created_by_user->name ?? ''}}</td>
                 <td>
@@ -67,7 +72,8 @@
                             @can('customer_module.add_payment.create_and_edit')
                             @if($balances[$customer->id] > 0)
                             <li>
-                                <a data-href="{{action('TransactionPaymentController@getCustomerDue', $customer->id)}}" class="btn-modal" data-container=".view_modal"><i
+                                <a data-href="{{action('TransactionPaymentController@getCustomerDue', $customer->id)}}"
+                                    class="btn-modal" data-container=".view_modal"><i
                                         class="fa fa-money btn"></i>@lang('lang.pay_customer_due')</a>
                             </li>
                             <li class="divider"></li>
@@ -84,11 +90,27 @@
                             <li>
 
                                 <a href="{{action('CustomerPointAdjustmentController@create', ['customer_id' => $customer->id])}}"
-                                     class="btn"><i
-                                        class="fa fa-adjust"></i> @lang('lang.adjust_customer_points')</a>
+                                    class="btn"><i class="fa fa-adjust"></i> @lang('lang.adjust_customer_points')</a>
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @if(session('system_mode') == 'garments')
+                            @can('customer_module.customer_sizes.create_and_edit')
+                            <li>
+                                <a data-href="{{action('CustomerSizeController@add', $customer->id)}}" class="btn-modal"
+                                    data-container=".view_modal"><i
+                                        class="fa fa-plus btn"></i>@lang('lang.add_size')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @can('customer_module.customer_sizes.view')
+                            <li>
+                                <a href="{{action('CustomerController@show', $customer->id)}}?show=sizes" class=""><i
+                                        class="fa fa-user-secret btn"></i>@lang('lang.view_sizes')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @endif
                             @if($customer->is_default == 0)
                             @can('customer_module.customer.delete')
                             <li>

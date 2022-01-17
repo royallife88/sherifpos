@@ -528,6 +528,11 @@ class TransactionUtil extends Util
             'total_tax' => $this->num_f($request->total_tax),
             'sale_note' => $request->sale_note,
             'staff_note' => $request->staff_note,
+            'customer_size_id' => $request->customer_size_id_hidden ?? null,
+            'fabric_name' => $request->fabric_name ?? null,
+            'fabric_squatch' => $request->fabric_squatch ?? null,
+            'prova_datetime' => $request->prova_datetime ?? null,
+            'delivery_datetime' => $request->delivery_datetime ?? null,
             'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
             'deliveryman_id' => $request->deliveryman_id,
             'delivery_cost' => $this->num_f($request->delivery_cost),
@@ -546,7 +551,7 @@ class TransactionUtil extends Util
         }
         if ($transaction->status == 'draft' && $request->status == 'final') {
             $transaction_data['transaction_date'] = Carbon::now();
-            if(empty($transaction->invoice_no)){
+            if (empty($transaction->invoice_no)) {
                 $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
             }
         }

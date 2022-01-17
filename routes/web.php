@@ -72,6 +72,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('customer/pay-customer-due/{customer_id}', 'CustomerController@postPayContactDue');
     Route::get('customer/pay-customer-due/{customer_id}', 'CustomerController@getPayContactDue');
     Route::resource('customer', CustomerController::class);
+
+    Route::get('customer-sizes/print/{id}', 'CustomerSizeController@print');
+    Route::get('customer-sizes/add/{customer_id}', 'CustomerSizeController@add');
+    Route::get('customer-sizes/get-dropdown', 'CustomerSizeController@getDropdown');
+    Route::resource('customer-sizes', CustomerSizeController::class);
+
     Route::get('customer-type/get-dropdown', 'CustomerTypeController@getDropdown');
     Route::get('customer-type/get-product-discount-row', 'CustomerTypeController@getProductDiscountRow');
     Route::get('customer-type/get-product-point-row', 'CustomerTypeController@getProductPointRow');

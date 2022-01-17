@@ -113,6 +113,16 @@ $invoice_lang = request()->session()->get('language');
                 @lang('lang.mobile_number', [], $invoice_lang): {{$transaction->customer->mobile_number}} <br>
                 @endif
             </p>
+            @if(session('system_mode') == 'garments')
+            <p>
+                @if(!empty($transaction->customer_size))@lang('lang.customer_size'): {{$transaction->customer_size->name}}  <br>@endif
+                @if(!empty($transaction->fabric_name))@lang('lang.fabric_name'): {{$transaction->fabric_name}}  <br> @endif
+                @if(!empty($transaction->fabric_squatch))@lang('lang.fabric_squatch'): {{$transaction->fabric_squatch}} <br> @endif
+                @if(!empty($transaction->prova_datetime))@lang('lang.prova'): {{@format_datetime($transaction->prova_datetime)}} <br> @endif
+                @if(!empty($transaction->delivery_datetime))@lang('lang.delivery'): {{@format_datetime($transaction->delivery_datetime)}} <br>@endif
+
+            </p>
+            @endif
         </div>
         @if(session('system_mode') == 'restaurant')
         <div style="width: 30%; float:right; text-align:center;">

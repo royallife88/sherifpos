@@ -1,5 +1,5 @@
 <!-- order_tax modal -->
-<div id="tax_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+<div id="tax_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
     class="modal fade text-left">
     <div role="document" class="modal-dialog">
         <div class="modal-content">

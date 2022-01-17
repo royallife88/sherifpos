@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
+use App\Models\CustomerSize;
 use App\Models\CustomerType;
 use App\Models\Transaction;
 use App\Utils\TransactionUtil;
@@ -206,6 +207,7 @@ class CustomerController extends Controller
             'transactions.*'
         )->groupBy('transactions.id')->get();
 
+        $customer_sizes = CustomerSize::where('customer_id', $customer_id)->get();
 
         $customers = Customer::pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
@@ -217,6 +219,7 @@ class CustomerController extends Controller
             'discounts',
             'customers',
             'customer',
+            'customer_sizes',
             'balance'
         ));
     }

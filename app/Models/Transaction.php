@@ -21,17 +21,17 @@ class Transaction extends Model  implements HasMedia
     {
         $source_type = $this->source_type;
         $source_id = $this->source_id;
-        if(empty($source_id)){
+        if (empty($source_id)) {
             return '';
         }
 
-        if($source_type == 'pos'){
+        if ($source_type == 'pos') {
             $source = StorePos::where('id', $source_id)->first();
         }
-        if($source_type == 'user'){
+        if ($source_type == 'user') {
             $source = User::where('id', $source_id)->first();
         }
-        if($source_type == 'store'){
+        if ($source_type == 'store') {
             $source = Store::where('id', $source_id)->first();
         }
 
@@ -121,6 +121,10 @@ class Transaction extends Model  implements HasMedia
     public function expense_beneficiary()
     {
         return $this->belongsTo(ExpenseBeneficiary::class)->withDefault(['name' => '']);
+    }
+    public function customer_size()
+    {
+        return $this->belongsTo(CustomerSize::class)->withDefault(['name' => '']);
     }
 
     public function transaction_payments()

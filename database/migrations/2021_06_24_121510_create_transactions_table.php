@@ -81,6 +81,11 @@ class CreateTransactionsTable extends Migration
             $table->text('staff_note')->nullable();
             $table->text('notes')->nullable();
             $table->string('source_type')->nullable();
+            $table->unsignedBigInteger('customer_size_id')->nullable();
+            $table->string('fabric_name')->nullable();
+            $table->string('fabric_squatch')->nullable();
+            $table->string('prova_datetime')->nullable();
+            $table->string('delivery_datetime')->nullable();
             $table->unsignedBigInteger('source_id')->nullable();
             $table->unsignedBigInteger('terms_and_condition_id')->nullable();
             $table->decimal('compensated_value', 15, 4)->default(0);

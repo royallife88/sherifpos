@@ -110,8 +110,17 @@
                 @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}}
                 {{__('lang.mobile_number',[], 'ar')}}<br>
                 @endif
+            </p>
+            @if(session('system_mode') == 'garments')
+            <p>
+                @if(!empty($transaction->customer_size))@lang('lang.customer_size',[], 'en'): {{$transaction->customer_size->name}} {{__('lang.customer_size',[], 'ar')}} <br>@endif
+                @if(!empty($transaction->fabric_name))@lang('lang.fabric_name',[], 'en'): {{$transaction->fabric_name}} {{__('lang.fabric_name',[], 'ar')}} <br>@endif
+                @if(!empty($transaction->fabric_squatch))@lang('lang.fabric_squatch',[], 'en'): {{$transaction->fabric_squatch}} {{__('lang.fabric_squatch',[], 'ar')}} <br>@endif
+                @if(!empty($transaction->prova_datetime))@lang('lang.prova',[], 'en'): {{@format_datetime($transaction->prova_datetime)}} {{__('lang.prova',[], 'ar')}} <br>@endif
+                @if(!empty($transaction->delivery_datetime))@lang('lang.delivery',[], 'en'): {{@format_datetime($transaction->delivery_datetime)}} {{__('lang.delivery',[], 'ar')}} <br>@endif
 
             </p>
+            @endif
         </div>
         @if(session('system_mode') == 'restaurant')
         <div style="width: 30%; float:right; text-align:center;">

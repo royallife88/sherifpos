@@ -1331,8 +1331,13 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
-        initComplete: function() {
-            $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
         },
         ajax: {
             url: "/pos/get-recent-transactions",
@@ -1416,8 +1421,13 @@ $(document).ready(function () {
         processing: true,
         serverSide: true,
         aaSorting: [[0, "desc"]],
-        initComplete: function() {
-            $(this.api().table().container()).find('input').parent().wrap('<form>').parent().attr('autocomplete', 'off');
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
         },
         ajax: {
             url: "/pos/get-draft-transactions",
@@ -1513,6 +1523,32 @@ $(document).on("change", "#customer_id", function () {
         },
     });
     getCustomerPointDetails();
+    getCustomerSizes(customer_id);
+});
+
+function getCustomerSizes(customer_id) {
+    $.ajax({
+        method: "get",
+        url: "/customer-sizes/get-dropdown",
+        data: { customer_id },
+        success: function (result) {
+            $("#customer_size_id").html(result);
+            $("#customer_size_id").val("");
+            $("#customer_size_id").selectpicker("refresh");
+
+            // for edit page
+            if (
+                $("#customer_size_id_hidden").length > 0 &&
+                $("#customer_size_id_hidden").val() != ""
+            ) {
+                $("#customer_size_id").val($("#customer_size_id_hidden").val());
+                $("#customer_size_id").selectpicker("refresh");
+            }
+        },
+    });
+}
+$(document).on("change", "#customer_size_id", function () {
+    $("#customer_size_id_hidden").val($(this).val());
 });
 
 $(document).on("click", ".use_it_deposit_balance", function () {
@@ -1667,7 +1703,6 @@ function pos_print(receipt) {
     __currency_convert_recursively($("#receipt_section"));
     __print_receipt("receipt_section");
 }
-
 
 $(document).on("click", ".remove_draft", function (e) {
     e.preventDefault();
