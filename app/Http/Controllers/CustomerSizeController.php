@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerSize;
+use App\Models\TransactionCustomerSize;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -266,6 +267,35 @@ class CustomerSizeController extends Controller
                 'msg' => __('lang.something_went_wrong')
             ];
         }
+
+        return $output;
+    }
+
+    public function getCustomerSizeDetailsForm($customer_size_id)
+    {
+        $customer_size = CustomerSize::find($customer_size_id);
+        if (!empty(request()->transaction_id)) {
+            $transaction_customer_size = TransactionCustomerSize::leftjoin('transactions', 'transaction_customer_sizes.transaction_id', 'transactions.id')
+                ->where('customer_size_id', $customer_size_id)
+                ->where('transaction_id', request()->transaction_id)
+                ->first();
+            if (!empty($transaction_customer_size)) {
+                $customer_size = $transaction_customer_size;
+            }
+        }
+        $getAttributeListArray = CustomerSize::getAttributeListArray();
+
+        $html_content = view('customer_size.partial.size_details_form')->with(compact(
+            'customer_size',
+            'getAttributeListArray',
+        ))->render();
+
+
+        $output = [
+            'success' => true,
+            'html_content' => $html_content,
+            'msg' => __('lang.success')
+        ];
 
         return $output;
     }

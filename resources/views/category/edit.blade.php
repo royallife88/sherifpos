@@ -17,8 +17,9 @@
                 !!}
             </div>
             <div class="form-group">
-                {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
-                {!! Form::file('image', ['class' => '' ]) !!}
+                {!! Form::label('description', __( 'lang.description' ) . ':') !!}
+                {!! Form::text('description', $category->description, ['class' => 'form-control','placeholder' =>
+                __( 'lang.description' )]); !!}
             </div>
             @if(empty($category->parent_id))
             <div class="form-group hide">
@@ -36,6 +37,8 @@
                 'style' =>'width: 100%' , 'placeholder' => __('lang.please_select')]) !!}
             </div>
             @endif
+            @include('layouts.partials.image_crop', ['image_url' => $category->getFirstMediaUrl('category') ??
+            null])
         </div>
 
         <div class="modal-footer">

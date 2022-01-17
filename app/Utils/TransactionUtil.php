@@ -18,6 +18,7 @@ use App\Models\Store;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\TransactionCustomerSize;
 use App\Models\TransactionPayment;
 use App\Models\TransactionSellLine;
 use App\Models\Variation;
@@ -541,7 +542,6 @@ class TransactionUtil extends Util
         ];
 
 
-
         $transaction = Transaction::find($id);
         if ($transaction->is_quotation && $transaction->status == 'draft') {
             $transaction_data['ref_no'] = $transaction->invoice_no;
@@ -921,5 +921,41 @@ class TransactionUtil extends Util
         $number_only = substr($transaction_invoice_number, 3);
 
         return 'Rets' . $number_only;
+    }
+
+    /**
+     * create of update the transaction customersize
+     *
+     * @param object $transaction
+     * @param array $customer_size_details
+     * @return void
+     */
+    public function createOrUpdateTransactionCustomerSize($transaction, $customer_size_details)
+    {
+        $transaction_customer_size = TransactionCustomerSize::firstOrNew(['transaction_id' => $transaction->id]);
+
+        $transaction_customer_size->yoke = $customer_size_details['yoke'];
+        $transaction_customer_size->neck_round = $customer_size_details['neck_round'];
+        $transaction_customer_size->neck_width = $customer_size_details['neck_width'];
+        $transaction_customer_size->neck_deep = $customer_size_details['neck_deep'];
+        $transaction_customer_size->front_neck = $customer_size_details['front_neck'];
+        $transaction_customer_size->back_neck = $customer_size_details['back_neck'];
+        $transaction_customer_size->upper_bust = $customer_size_details['upper_bust'];
+        $transaction_customer_size->bust = $customer_size_details['bust'];
+        $transaction_customer_size->low_bust = $customer_size_details['low_bust'];
+        $transaction_customer_size->shoulder_er = $customer_size_details['shoulder_er'];
+        $transaction_customer_size->arm_hole = $customer_size_details['arm_hole'];
+        $transaction_customer_size->arm_round = $customer_size_details['arm_round'];
+        $transaction_customer_size->wrist_round = $customer_size_details['wrist_round'];
+        $transaction_customer_size->lenght_of_sleeve = $customer_size_details['lenght_of_sleeve'];
+        $transaction_customer_size->waist = $customer_size_details['waist'];
+        $transaction_customer_size->low_waist = $customer_size_details['low_waist'];
+        $transaction_customer_size->hips = $customer_size_details['hips'];
+        $transaction_customer_size->thigh = $customer_size_details['thigh'];
+        $transaction_customer_size->knee_round = $customer_size_details['knee_round'];
+        $transaction_customer_size->calf_round = $customer_size_details['calf_round'];
+        $transaction_customer_size->ankle = $customer_size_details['ankle'];
+
+        $transaction_customer_size->save();
     }
 }

@@ -1,5 +1,5 @@
 <div class="modal fade" role="dialog" id="customer_sizes_modal">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog" role="document" style="width: 75%;">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">@lang('lang.customer_size')</h5>
@@ -45,6 +45,18 @@
                         </div>
                     </div>
                 </div>
+               <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-1" style="display: flex; align-items: center;">
+                        <i style="vertical-align: middle; font-size: 60px; margin: auto;" class="fa fa-angle-left hide" id="size_prev"></i>
+                    </div>
+                    <div class="col-md-10" id="customer_size_detail_section">
+                    </div>
+                    <div class="col-md-1" style="display: flex; align-items: center;">
+                        <i style="vertical-align: middle; font-size: 60px; margin: auto;" class="fa fa-angle-right hide" id="size_next"></i>
+                    </div>
+                </div>
+               </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal" id="customer_size_submit">@lang('lang.submit')</button>

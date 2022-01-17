@@ -48,6 +48,14 @@
                                         'form-control', 'data-live-search' => 'true']) !!}
                                     </div>
                                 </div>
+                                @if(session('system_mode') == 'garments')
+                                <div class="col-md-2">
+                                    <button type="button" class="btn btn-danger" style="margin-top: 30px;"
+                                        data-toggle="modal" data-target="#customer_sizes_modal"><i
+                                            class="fa fa-user-secret" data-toggle="tooltip"
+                                            title="@lang('lang.customer_size')"></i></button>
+                                </div>
+                                @endif
                                 <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -75,7 +83,8 @@
                                             @include('sale.partials.edit_product_row', ['products' =>
                                             $sale->transaction_sell_lines])
                                         </tbody>
-                                        <input type="hidden" name="row_count" id="row_count" value="{{$sale->transaction_sell_lines->count()}}">
+                                        <input type="hidden" name="row_count" id="row_count"
+                                            value="{{$sale->transaction_sell_lines->count()}}">
                                         <tfoot>
                                             <tr>
                                                 <td></td>
@@ -208,7 +217,7 @@
                                     name="staff_note">{{$sale->staff_note}}</textarea>
                             </div>
                             <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
-                            value="{{$sale->terms_and_condition_id}}">
+                                value="{{$sale->terms_and_condition_id}}">
                             <div class="col-md-4">
                                 {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
                                 <div class="input-group my-group">
@@ -228,7 +237,9 @@
                             <button id="submit-btn" type="button" class="btn btn-danger">@lang('lang.print')</button>
                         </div>
                     </div>
-
+                    <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
+                        value="{{$sale->customer_size_id}}">
+                    @include('sale_pos.partials.customer_sizes_modal', ['transaction' => $sale])
                     {!! Form::close() !!}
                 </div>
             </div>
@@ -246,42 +257,5 @@
     $(document).ready(function(){
         $('.method').change()
     })
-    // $(document).on('click', '#pos-edit-sale', function(){
-    //     $.ajax({
-    //             method: "POST",
-    //             url: url,
-    //             data: data,
-    //             dataType: "json",
-    //             success: function (result) {
-    //                 if (result.success == 1) {
-    //                     if ($("#is_quotation").val()) {
-    //                         if ($("#submit_type").val() === "print") {
-    //                             pos_print(result.html_content);
-    //                         } else {
-    //                             swal("success", result.msg, "Success");
-    //                             location.reload();
-    //                         }
-    //                         return false;
-    //                     }
-    //                     $("#add-payment").modal("hide");
-    //                     toastr.success(result.msg);
-
-    //                     if (
-    //                         $("#print_the_transaction").prop("checked") &&
-    //                         $("#status").val() !== "draft"
-    //                     ) {
-    //                         pos_print(result.html_content);
-    //                     }
-
-    //                     reset_pos_form();
-    //                     getFilterProductRightSide();
-    //                     get_recent_transactions();
-    //                 } else {
-    //                     toastr.error(result.msg);
-    //                 }
-
-    //             },
-    //         });
-    // });
 </script>
 @endsection

@@ -12,12 +12,12 @@ class GeneralController extends Controller
         $collection_name = request()->collection_name;
 
         $path = 'App\Models';
-        $fooModel = app($path . '\\'. $model_name);
+        $fooModel = app($path . '\\' . $model_name);
         $item = $fooModel::find($model_id);
 
         $uploaded_files = [];
         if (!empty($item)) {
-            if(!empty($collection_name)){
+            if (!empty($collection_name)) {
                 $uploaded_files[] = $item->getFirstMediaUrl($collection_name);
             }
         }
@@ -29,9 +29,27 @@ class GeneralController extends Controller
         ));
     }
 
-    public function switchLanguage($lang){
+    public function switchLanguage($lang)
+    {
         session()->put('language', $lang);
 
         return redirect()->back();
+    }
+
+
+    public function uploadImageTemp(Request $request)
+    {
+        $image = $request->image;
+
+
+
+        //upload base64 image in laravel
+        $image_name = time() . '.' . explode('/', explode(':', substr($image, 0, strpos($image, ';')))[1])[1];
+        \Image::make($image)->save(public_path('temp/' . $image_name));
+
+
+
+
+        return ['success' => true, 'url' => url('/temp/' . $image_name), 'filename' => $image_name];
     }
 }

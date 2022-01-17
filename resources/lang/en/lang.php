@@ -1049,5 +1049,7 @@ return [
     'customer_size' => 'Customer Size',
     'fabric_name' => 'Fabric Name',
     'fabric_squatch' => 'Fabric Squatch',
+    'select_image' => 'Select Image',
+    'customer_size_details' => 'Customer Size Details',
 
 ];

@@ -22,8 +22,7 @@
                         <input type="hidden" name="default_customer_id" id="default_customer_id"
                             value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
                         <input type="hidden" name="row_count" id="row_count" value="0">
-                        <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
-                        value="">
+                        <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden" value="">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
@@ -77,7 +76,7 @@
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-danger" style="margin-top: 30px;"
                                             data-toggle="modal"
-                                            data-target="#customer_sizes_modal">@lang('lang.customer_size')</button>
+                                            data-target="#customer_sizes_modal"><i class="fa fa-user-secret" data-toggle="tooltip" title="@lang('lang.customer_size')"></i></button>
                                     </div>
                                     @endif
                                     <div class="col-md-3">

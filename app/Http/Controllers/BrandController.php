@@ -8,6 +8,7 @@ use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class BrandController extends Controller
 {
@@ -38,7 +39,7 @@ class BrandController extends Controller
         $brands = Brand::get();
 
         return view('brand.index')->with(compact(
-             'brands'
+            'brands'
         ));
     }
 
@@ -87,11 +88,14 @@ class BrandController extends Controller
 
         try {
             $data = $request->except('_token', 'quick_add');
-
             DB::beginTransaction();
             $brand = Brand::create($data);
-            if ($request->has('image')) {
-                $brand->addMedia($request->image)->toMediaCollection('brand');
+
+
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $brand->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('brand');
+                }
             }
 
             $brand_id = $brand->id;
@@ -167,9 +171,12 @@ class BrandController extends Controller
             $brand = Brand::find($id);
 
             $brand->update($data);
-            if ($request->has('image')) {
-                $brand->clearMediaCollection('brand');
-                $brand->addMedia($request->image)->toMediaCollection('brand');
+
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $brand->clearMediaCollection('brand');
+                    $brand->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('brand');
+                }
             }
 
             DB::commit();

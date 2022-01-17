@@ -15,7 +15,7 @@
             <p style="padding: 0px; margin-bottom: 0px; margin-top: 168px; margin-left: 53px"><span
                     class="neck_deep_span">@if(!empty($customer_size)){{@num_format($customer_size->neck_deep['cm'])}}@endif</span></p>
             <p style="padding: 0px; margin-bottom: 0px; margin-top: 17px;"><span class="upper_bust_span">@if(!empty($customer_size)){{@num_format($customer_size->upper_bust['cm'])}}@endif</span></p>
-            <p style="padding: 0px; margin-bottom: 0px; margin-top: -7px;"><span class="bust_span">@if(!empty($customer_size)){{@num_format($customer_size->bust['cm'])}}@endif</span></p>
+            <p style="padding: 0px; margin-bottom: 0px; margin-top: 0px;"><span class="bust_span">@if(!empty($customer_size)){{@num_format($customer_size->bust['cm'])}}@endif</span></p>
             <p style="padding: 0px; margin-bottom: 0px; margin-top: 21px;"><span class="low_bust_span">@if(!empty($customer_size)){{@num_format($customer_size->low_bust['cm'])}}@endif</span></p>
             <p style="padding: 0px; margin-bottom: 0px; margin-top: 11px;"><span class="waist_span">@if(!empty($customer_size)){{@num_format($customer_size->waist['cm'])}}@endif</span></p>
             <p style="padding: 0px; margin-bottom: 0px; margin-top: 27px;"><span class="low_waist_span">@if(!empty($customer_size)){{@num_format($customer_size->low_waist['cm'])}}@endif</span></p>

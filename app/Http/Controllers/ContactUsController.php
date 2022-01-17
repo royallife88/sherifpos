@@ -106,37 +106,34 @@ class ContactUsController extends Controller
      */
     public function sendUserContactUs(Request $request)
     {
-        // try {
+        try {
 
-        $data['site_title'] = System::getProperty('site_title');
-        $data['user_name'] = Auth::user()->name;
-        $data['email'] = $request->email ?? Auth::user()->email;
-        $data['phone_number'] = $request->phone_number;
-        $data['message'] = $request->message;
-        $data['email_body'] = view('contact_us.form_data')->with(compact(
-            'data'
-        ))->render();
-
-
-        $data['files'] = $request->file('files', []);
-        // print_r($data['files']); die();
-        // $data['attachment'] =  $request->file;
-        // $data['attachment_name'] = !empty($request->file) ? $request->file->getClientOriginalName() : null;
-
-        $this->notificationUtil->sendUserContactUs($data);
+            $data['site_title'] = System::getProperty('site_title');
+            $data['user_name'] = Auth::user()->name;
+            $data['email'] = $request->email ?? Auth::user()->email;
+            $data['phone_number'] = $request->phone_number;
+            $data['message'] = $request->message;
+            $data['email_body'] = view('contact_us.form_data')->with(compact(
+                'data'
+            ))->render();
 
 
-        $output = [
-            'success' => true,
-            'msg' => __('lang.your_message_sent_sccuessfully')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+            $data['files'] = $request->file('files', []);
+
+            $this->notificationUtil->sendUserContactUs($data);
+
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.your_message_sent_sccuessfully')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }

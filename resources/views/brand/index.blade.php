@@ -8,8 +8,8 @@
         <div class="card">
             <div class="card-header d-flex align-items-center">
                 @can('product_module.brand.create_and_edit')
-                <a style="color: white" data-href="{{action('BrandController@create')}}"
-                    data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
+                <a style="color: white" data-href="{{action('BrandController@create')}}" data-container=".view_modal"
+                    class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
                     @lang('lang.add_brand')</a>
                 @endcan
             </div>
@@ -27,7 +27,7 @@
                             @foreach($brands as $brand)
                             <tr>
                                 <td><img src="@if(!empty($brand->getFirstMediaUrl('brand'))){{$brand->getFirstMediaUrl('brand')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                    alt="photo" width="50" height="50">
+                                        alt="photo" width="50" height="50">
                                 </td>
                                 <td>{{$brand->name}}</td>
 
@@ -74,5 +74,7 @@
 @endsection
 
 @section('javascript')
+<script>
 
+</script>
 @endsection

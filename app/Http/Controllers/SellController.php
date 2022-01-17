@@ -8,6 +8,7 @@ use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
+use App\Models\CustomerSize;
 use App\Models\Employee;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -377,10 +378,12 @@ class SellController extends Controller
     {
         $sale = Transaction::find($id);
         $payment_type_array = $this->commonUtil->getPaymentTypeArrayForPos();
+        $getAttributeListArray = CustomerSize::getAttributeListArray();
 
         return view('sale.show')->with(compact(
             'sale',
-            'payment_type_array'
+            'payment_type_array',
+            'getAttributeListArray'
         ));
     }
 

@@ -19,6 +19,7 @@
                         {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' =>
                         'PUT', 'files' =>
                         true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
+                        <input type="hidden" name="transaction_id" id="transaction_id" value="{{$transaction->id}}">
                         <input type="hidden" name="store_id" id="store_id" value="{{$store_pos->store_id}}">
                         <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
                             value="{{$transaction->customer_size_id}}">
@@ -54,8 +55,9 @@
                                     @if(session('system_mode') == 'garments')
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-danger" style="margin-top: 30px;"
-                                            data-toggle="modal"
-                                            data-target="#customer_sizes_modal">@lang('lang.customer_size')</button>
+                                            data-toggle="modal" data-target="#customer_sizes_modal"><i
+                                                class="fa fa-user-secret" data-toggle="tooltip"
+                                                title="@lang('lang.customer_size')"></i></button>
                                     </div>
                                     @endif
                                     <div class="col-md-3">
@@ -73,6 +75,8 @@
                                             data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                     </div>
                                     @endif
+
+
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
@@ -148,7 +152,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-12 totals" style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
+                                <div class="col-md-12 totals" style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <span class="totals-title">{{__('lang.items')}}</span><span
@@ -165,7 +169,6 @@
                                                         class="dripicons-document-edit"></i></button></span><span
                                                 id="discount">0.00</span>
                                         </div>
-
                                         <div class="col-sm-4">
                                             <span class="totals-title">{{__('lang.tax')}} <button type="button"
                                                     class="btn btn-link btn-sm" data-toggle="modal"
@@ -181,15 +184,16 @@
                                                 id="delivery-cost">@if(!empty($transaction))
                                                 {{@num_format($transaction->delivery_cost)}} @else 0.00 @endif</span>
                                         </div>
+
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        @include('sale_pos.partials.customer_sizes_modal')
                     </div>
                     <div class="payment-amount">
                         <h2>{{__('lang.grand_total')}} <span class="final_total_span">0.00</span></h2>
                     </div>
-
                     <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
                         value="{{$transaction->terms_and_condition_id}}">
                     <div class="row">
@@ -298,7 +302,6 @@
             @include('sale_pos.partials.coupon_modal')
             @include('sale_pos.partials.contact_details_modal')
             @include('sale_pos.partials.weighing_scale_modal')
-            @include('sale_pos.partials.customer_sizes_modal')
 
 
 
@@ -428,7 +431,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="recent_transaction_div col-md-12">
+                            <div class="col-md-12">
+                                @include('sale_pos.partials.recent_transactions')
                             </div>
                         </div>
 

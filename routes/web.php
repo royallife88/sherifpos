@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('get-chart-and-table-section', 'HomeController@getChartAndTableSection');
     Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
+    Route::post('general/upload-image-temp', 'GeneralController@uploadImageTemp');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
@@ -76,6 +77,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer-sizes/print/{id}', 'CustomerSizeController@print');
     Route::get('customer-sizes/add/{customer_id}', 'CustomerSizeController@add');
     Route::get('customer-sizes/get-dropdown', 'CustomerSizeController@getDropdown');
+    Route::get('customer-sizes/get-customer-size-details-form/{customer_size_id}', 'CustomerSizeController@getCustomerSizeDetailsForm');
     Route::resource('customer-sizes', CustomerSizeController::class);
 
     Route::get('customer-type/get-dropdown', 'CustomerTypeController@getDropdown');
@@ -270,6 +272,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('settings/modules', 'SettingController@updateModuleSettings');
 
     Route::resource('settings', SettingController::class);
+
 
 
 

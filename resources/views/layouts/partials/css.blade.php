@@ -33,6 +33,7 @@ type="text/css">
 <link rel="stylesheet" href="{{asset('vendor/toastr/toastr.min.css')}}" id="theme-stylesheet" type="text/css">
 <link rel="stylesheet" href="{{asset('css/style.default.css')}}" id="theme-stylesheet" type="text/css">
 <link rel="stylesheet" href="{{asset('css/dropzone.css')}}">
+<link rel="stylesheet" href="{{asset('vendor/cropperjs/cropper.min.css') }}">
 <link rel="stylesheet" href="{{asset('css/bootstrap-treeview.css')}}">
 <link rel="stylesheet" href="{{asset('css/style.css')}}">
 

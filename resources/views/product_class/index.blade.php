@@ -18,6 +18,7 @@
                     <table id="store_table" class="table dataTable">
                         <thead>
                             <tr>
+                                <th>@lang('lang.image')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.description')</th>
                                 <th class="notexport">@lang('lang.action')</th>
@@ -26,6 +27,8 @@
                         <tbody>
                             @foreach($product_classes as $product_class)
                             <tr>
+                                <td><img src="@if(!empty($product_class->getFirstMediaUrl('product_class'))){{$product_class->getFirstMediaUrl('product_class')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                                    alt="photo" width="50" height="50">
                                 <td>{{$product_class->name}}</td>
                                 <td>{{$product_class->description}}</td>
 

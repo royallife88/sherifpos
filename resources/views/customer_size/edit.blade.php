@@ -36,12 +36,12 @@
                                     <label for="">{{$value}}</label>
                                 </td>
                                 <td>
-                                    <input type="number" name="{{$key}}[cm]" class="form-control cm_size" step="any"
+                                    <input type="number" data-name="{{$key}}" name="{{$key}}[cm]" class="form-control cm_size" step="any"
                                         value="{{@num_format($customer_size->$key['cm'])}}"
                                         placeholder="@lang('lang.cm')">
                                 </td>
                                 <td>
-                                    <input type="number" name="{{$key}}[inches]" class="form-control inches_size"
+                                    <input type="number" data-name="{{$key}}" name="{{$key}}[inches]" class="form-control inches_size"
                                         step="any" value="{{@num_format($customer_size->$key['inches'])}}"
                                         placeholder="@lang('lang.inches')">
                                 </td>

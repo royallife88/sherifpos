@@ -109,6 +109,54 @@
             </div>
             <br>
             <br>
+            @if(!empty($sale->transaction_customer_size))
+            @php
+                $customer_size = $sale->transaction_customer_size;
+            @endphp
+            <div class="row text-center">
+                <div class="col-md-12">
+                    <h4>@lang('lang.customer_size_details')</h4>
+                </div>
+            </div>
+            <div class="col-md-12">
+                    @if(!empty($sale->customer_size))<label for=""><b>@lang('lang.customer_size'): {{$sale->customer_size->name}}  </b></label><br>@endif
+                    @if(!empty($sale->fabric_name))<label for=""><b>@lang('lang.fabric_name'): {{$sale->fabric_name}}  </b></label><br> @endif
+                    @if(!empty($sale->fabric_squatch))<label for=""><b>@lang('lang.fabric_squatch'): {{$sale->fabric_squatch}} </b></label><br> @endif
+                    @if(!empty($sale->prova_datetime))<label for=""><b>@lang('lang.prova'): {{@format_datetime($sale->prova_datetime)}} </b></label><br> @endif
+                    @if(!empty($sale->delivery_datetime))<label for=""><b>@lang('lang.delivery'): {{@format_datetime($sale->delivery_datetime)}} </b></label><br>@endif
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr class="">
+                                <th>@lang('lang.length_of_the_dress')</th>
+                                <th>@lang('lang.cm')</th>
+                                <th>@lang('lang.inches')</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($getAttributeListArray as $key => $value)
+                            <tr>
+                                <td>
+                                    <label for="">{{$value}}</label>
+                                </td>
+                                <td>
+                                    {{@num_format($customer_size->$key['cm'])}}
+                                </td>
+                                <td>
+                                    {{@num_format($customer_size->$key['inches'])}}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    @include('customer_size.partial.body_graph', ['customer_size' => $customer_size])
+                </div>
+            </div>
+            @endif
             @include('transaction_payment.partials.payment_table', ['payments' => $sale->transaction_payments])
 
             <br>

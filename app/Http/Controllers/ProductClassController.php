@@ -84,6 +84,12 @@ class ProductClassController extends Controller
 
             $class = ProductClass::create($data);
 
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $class->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('product_class');
+                }
+            }
+
             $output = [
                 'success' => true,
                 'id' => $class->id,
@@ -146,10 +152,16 @@ class ProductClassController extends Controller
         );
 
         try {
-            $data = $request->except('_token', '_method');
+            $data = $request->only('name', 'description');
+            $class = ProductClass::where('id', $id)->first();
+            $class->update($data);
 
-            $class = ProductClass::where('id', $id)->update($data);
-
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $class->clearMediaCollection('product_class');
+                    $class->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('product_class');
+                }
+            }
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')

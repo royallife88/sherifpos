@@ -19,10 +19,7 @@
                 !!}
             </div>
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
-            <div class="form-group">
-                {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
-                {!! Form::file('image', ['class' => '' ]) !!}
-            </div>
+            @include('layouts.partials.image_crop')
         </div>
 
         <div class="modal-footer">

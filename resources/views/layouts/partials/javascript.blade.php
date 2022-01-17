@@ -63,5 +63,7 @@ $moment_time_format = App\Models\System::getProperty('time_format') == '12' ? 'h
 </script>
 <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap.min.js">
 </script>
+<script type="text/javascript" src="{{asset('vendor/cropperjs/cropper.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/printThis.js') }}"></script>
 <script type="text/javascript" src="{{asset('js/common.js') }}"></script>
+<script type="text/javascript" src="{{asset('js/cropper.js') }}"></script>

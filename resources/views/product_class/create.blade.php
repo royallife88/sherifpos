@@ -19,6 +19,7 @@
           {!! Form::label('description', __( 'lang.description' ) . ':') !!}
             {!! Form::text('description', null, ['class' => 'form-control','placeholder' => __( 'lang.description' )]); !!}
         </div>
+        @include('layouts.partials.image_crop')
       </div>
 
       <div class="modal-footer">

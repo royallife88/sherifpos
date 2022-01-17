@@ -17,10 +17,7 @@
                 !!}
             </div>
 
-            <div class="form-group">
-                {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
-                {!! Form::file('image', ['class' => '' ]) !!}
-            </div>
+            @include('layouts.partials.image_crop', ['image_url' => $brand->getFirstMediaUrl('brand') ?? null])
         </div>
 
         <div class="modal-footer">

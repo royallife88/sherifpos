@@ -60,6 +60,10 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->hasOne(Transaction::class, 'return_parent_id');
     }
+    public function transaction_customer_size()
+    {
+        return $this->hasOne(TransactionCustomerSize::class);
+    }
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);

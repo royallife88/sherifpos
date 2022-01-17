@@ -14,20 +14,23 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required'
+                ]);
                 !!}
             </div>
-            <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
-                {!! Form::label('image', __( 'lang.image' ) . ':') !!} <br>
-                {!! Form::file('image', ['class' => '' ]) !!}
+                {!! Form::label('description', __( 'lang.description' ) . ':') !!}
+                {!! Form::text('description', null, ['class' => 'form-control','placeholder' =>
+                __( 'lang.description' )]); !!}
             </div>
+            <input type="hidden" name="quick_add" value="{{$quick_add }}">
             @if($type == 'category')
             <div class="form-group hide">
                 {!! Form::label('product_class_id', __( 'lang.class' ) . ':') !!}
                 {!! Form::select('product_class_id', $product_classes,
                 false, ['class' => 'form-control', 'data-live-search'=>"true",
-                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'required', 'id' => 'cat_product_class_id']) !!}
+                'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'required', 'id' =>
+                'cat_product_class_id']) !!}
             </div>
             @endif
             @if($type == 'sub_category')
@@ -38,6 +41,8 @@
                 'style' =>'width: 100%' , 'placeholder' => __('lang.please_select'), 'id' => 'parent_id']) !!}
             </div>
             @endif
+
+            @include('layouts.partials.image_crop')
         </div>
 
         <div class="modal-footer">

@@ -111,8 +111,11 @@ class CategoryController extends Controller
 
             DB::beginTransaction();
             $category = Category::create($data);
-            if ($request->has('image')) {
-                $category->addMedia($request->image)->toMediaCollection('category');
+
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $category->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('category');
+                }
             }
 
             $category_id = $category->id;
@@ -197,8 +200,11 @@ class CategoryController extends Controller
             $category = Category::find($id);
 
             $category->update($data);
-            if ($request->has('image')) {
-                $category->addMedia($request->image)->toMediaCollection('category');
+            if ($request->has('uploaded_image_name')) {
+                if (!empty($request->input('uploaded_image_name'))) {
+                    $category->clearMediaCollection('category');
+                    $category->addMediaFromDisk($request->input('uploaded_image_name'), 'temp')->toMediaCollection('category');
+                }
             }
 
             DB::commit();

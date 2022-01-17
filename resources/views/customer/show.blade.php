@@ -413,7 +413,7 @@
                         </table>
                     </div>
                 </div>
-
+                @if(session('system_mode') == 'garments')
                 <div role="tabpanel" class="tab-pane fade @if(request()->show == 'sizes') show active @endif"
                     id="store-sizes">
                     @can('customer_module.customer_sizes.create_and_edit')
@@ -499,7 +499,7 @@
                         </table>
                     </div>
                 </div>
-
+                @endif
             </div>
         </div>
     </div>

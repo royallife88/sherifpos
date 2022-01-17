@@ -1233,7 +1233,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount"
+        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -1256,6 +1256,7 @@ function reset_pos_form() {
     $(first_row).find(".change_text").text("Pending Amount :");
     $(first_row).find(".change_text").text("Change :");
     $(first_row).nextAll().remove();
+    $("#customer_size_detail_section").empty();
 }
 $(document).ready(function () {
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
@@ -1527,6 +1528,8 @@ $(document).on("change", "#customer_id", function () {
 });
 
 function getCustomerSizes(customer_id) {
+    $("#size_next").removeClass("hide");
+    $("#size_prev").removeClass("hide");
     $.ajax({
         method: "get",
         url: "/customer-sizes/get-dropdown",
@@ -1914,3 +1917,72 @@ $(document).on("click", "#non_identifiable_submit", function () {
         },
     });
 });
+$(document).ready(function () {
+    let customer_size_id = $("#customer_size_id_hidden").val();
+    console.log(customer_size_id, "customer_size_id");
+    get_customer_size_details(customer_size_id);
+});
+$(document).on("change", "#customer_size_id", function () {
+    var customer_size_id = $("#customer_size_id").val();
+    get_customer_size_details(customer_size_id);
+});
+function get_customer_size_details(customer_size_id) {
+    $.ajax({
+        method: "GET",
+        url:
+            "/customer-sizes/get-customer-size-details-form/" +
+            customer_size_id,
+        data: {
+            transaction_id: $("#transaction_id").val(),
+        },
+        success: function (result) {
+            if (!result.success) {
+                swal("Error", result.msg, "error");
+                return;
+            } else {
+                $("#customer_size_detail_section").html(result.html_content);
+            }
+        },
+    });
+}
+$(document).on("click", "#size_next", function () {
+    let next_item_value = $("#customer_size_id option:selected").next().val();
+    if (next_item_value) {
+        $("#customer_size_id").selectpicker("val", next_item_value);
+        $("#customer_size_id").change();
+    }
+});
+$(document).on("click", "#size_prev", function () {
+    let prev_item_value = $("#customer_size_id option:selected").prev().val();
+    if (prev_item_value) {
+        $("#customer_size_id").selectpicker("val", prev_item_value);
+        $("#customer_size_id").change();
+    }
+});
+
+$(document).on("change", ".cm_size", function () {
+    let row = $(this).closest("tr");
+    let cm_size = __read_number(row.find(".cm_size"));
+    let inches_size = cm_size * 0.393701;
+
+    __write_number(row.find(".inches_size"), inches_size);
+
+    let name = $(this).data("name");
+    show_value(row, name);
+});
+$(document).on("change", ".inches_size", function () {
+    let row = $(this).closest("tr");
+    let inches_size = __read_number(row.find(".inches_size"));
+    let cm_size = inches_size * 2.54;
+
+    __write_number(row.find(".cm_size"), cm_size);
+
+    let name = $(this).data("name");
+    show_value(row, name);
+});
+
+function show_value(row, name) {
+    let cm_size = __read_number(row.find(".cm_size"));
+
+    $("." + name + "_span").text(cm_size);
+}
