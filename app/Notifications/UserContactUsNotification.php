@@ -51,8 +51,14 @@ class UserContactUsNotification extends Notification
                 ['content' => $data['email_body']]
             );
 
-        if (isset($data['attachment']) && isset($data['attachment_name'])) {
-            $mail = $mail->attach($data['attachment'], ['as' => $data['attachment_name']]);
+        if (isset($data['files'])) {
+            foreach ($data['files'] as $file) {
+                $attachment =  $file;
+                $attachment_name = !empty($file) ? $file->getClientOriginalName() : null;
+                if (!empty($attachment) && $attachment_name) {
+                    $mail->attach($attachment, ['as' => $attachment_name]);
+                }
+            }
         }
 
         return $mail;

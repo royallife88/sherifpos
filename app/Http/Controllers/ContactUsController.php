@@ -118,8 +118,10 @@ class ContactUsController extends Controller
         ))->render();
 
 
-        $data['attachment'] =  $request->file;
-        $data['attachment_name'] = !empty($request->file) ? $request->file->getClientOriginalName() : null;
+        $data['files'] = $request->file('files', []);
+        // print_r($data['files']); die();
+        // $data['attachment'] =  $request->file;
+        // $data['attachment_name'] = !empty($request->file) ? $request->file->getClientOriginalName() : null;
 
         $this->notificationUtil->sendUserContactUs($data);
 

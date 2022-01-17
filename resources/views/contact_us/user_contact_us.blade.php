@@ -53,7 +53,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <input type="file" name="file" id="file">
+                                        <input type="file" name="files[]" id="files" multiple>
                                     </div>
                                 </div>
                             </div>

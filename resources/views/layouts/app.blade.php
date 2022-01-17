@@ -56,8 +56,10 @@
         </div>
     </div>
     <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn"
-        style="position: fixed; bottom: 20px; right: 20px; border-radius: 50%; z-index: 999999999; padding-top: 8px; padding-bottom: 8px;"
-        class="btn btn-success no-print"><i class="fa fa-envelope"></i></a>
+        style="background-image: url('{{asset('images/handshake.jpg')}}');"
+        class="btn no-print">
+        <p>@lang('lang.contact_us')</p>
+    </a>
     <script type="text/javascript">
         base_path = "{{url('/')}}";
     </script>

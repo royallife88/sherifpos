@@ -426,8 +426,9 @@ class NotificationUtil extends Util
             'subject' => 'User Contact Us',
             'email_body' => $data['email_body'],
             'from' => $data['email'],
-            'attachment' => $data['attachment'],
-            'attachment_name' => $data['attachment_name'],
+            'files' => $data['files'],
+            // 'attachment' => $data['attachment'],
+            // 'attachment_name' => $data['attachment_name'],
         );
 
         Notification::route('mail', $email_data['email'])
