@@ -46,5 +46,54 @@
             !!}
         </div>
     </div>
+    @if(session('system_mode') == 'garments')
+    <div class="col-md-12">
+        <button type="button" class="add_size_btn btn btn-primary mb-5">@lang('lang.add_size')</button>
+    </div>
+    <div class="col-md-12 mb-5 add_size_div hide">
+        @can('customer_module.customer_sizes.create_and_edit')
+        <div class="form-group">
+            {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
+            {!! Form::text('size_data[name]', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ),
+            'required'
+            ]);
+            !!}
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table">
+                    <thead>
+                        <tr class="">
+                            <th>@lang('lang.length_of_the_dress')</th>
+                            <th>@lang('lang.cm')</th>
+                            <th>@lang('lang.inches')</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($getAttributeListArray as $key => $value)
+                        <tr>
+                            <td>
+                                <label for="">{{$value}}</label>
+                            </td>
+                            <td>
+                                <input type="number" data-name="{{$key}}" name="size_data[{{$key}}][cm]"
+                                    class="form-control cm_size" step="any" placeholder="@lang('lang.cm')">
+                            </td>
+                            <td>
+                                <input type="number" data-name="{{$key}}" name="size_data[{{$key}}][inches]"
+                                    class="form-control inches_size" step="any" placeholder="@lang('lang.inches')">
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                @include('customer_size.partial.body_graph')
+            </div>
+        </div>
+        @endcan
+    </div>
+    @endif
 </div>
 <input type="hidden" name="quick_add" value="{{$quick_add}}">

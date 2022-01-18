@@ -41,6 +41,35 @@
         if($(this).valid()){
             $(this).submit();
         }
+    });
+    $('.add_size_btn').click(function(){
+        $('.add_size_div').removeClass('hide');
+    });
+    $(document).on('change', '.cm_size', function(){
+        let row = $(this).closest('tr');
+        let cm_size = __read_number(row.find('.cm_size'));
+        let inches_size = cm_size * 0.393701;
+
+        __write_number(row.find('.inches_size'), inches_size);
+
+        let name = $(this).data('name');
+        show_value(row, name)
     })
+    $(document).on('change', '.inches_size', function(){
+        let row = $(this).closest('tr');
+        let inches_size = __read_number(row.find('.inches_size'));
+        let cm_size = inches_size * 2.54;
+
+        __write_number(row.find('.cm_size'), cm_size);
+
+        let name = $(this).data('name');
+        show_value(row, name)
+    })
+
+    function show_value(row, name){
+        let cm_size = __read_number(row.find('.cm_size'));
+
+        $('.'+name+'_span').text(cm_size);
+    }
 </script>
 @endsection

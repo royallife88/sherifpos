@@ -1051,5 +1051,7 @@ return [
     'fabric_squatch' => 'Fabric Squatch',
     'select_image' => 'Select Image',
     'customer_size_details' => 'Customer Size Details',
+    'crop' => 'Crop',
+    'crop_image_before_upload' => 'Crop Image Before Upload',
 
 ];

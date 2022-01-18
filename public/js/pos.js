@@ -1919,7 +1919,6 @@ $(document).on("click", "#non_identifiable_submit", function () {
 });
 $(document).ready(function () {
     let customer_size_id = $("#customer_size_id_hidden").val();
-    console.log(customer_size_id, "customer_size_id");
     get_customer_size_details(customer_size_id);
 });
 $(document).on("change", "#customer_size_id", function () {
@@ -1986,3 +1985,7 @@ function show_value(row, name) {
 
     $("." + name + "_span").text(cm_size);
 }
+$(document).on("click", ".add_size_btn", function () {
+    console.log('adfasdfsfsdfsfd');
+    $(".add_size_div").removeClass("hide");
+});

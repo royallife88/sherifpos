@@ -106,6 +106,17 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
     }
 });
 
+// transform cropper dataURI output to a Blob which Dropzone accepts
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(",")[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: "image/jpeg" });
+}
+
 Dropzone.autoDiscover = false;
 myDropzone = new Dropzone("div#my-dropzone", {
     addRemoveLinks: true,
@@ -188,6 +199,57 @@ myDropzone = new Dropzone("div#my-dropzone", {
     reset: function () {
         this.removeAllFiles(true);
     },
+});
+
+var modalTemplate = $("#product_cropper_modal");
+
+myDropzone.on("thumbnail", function (file) {
+    if (file.cropped) return;
+
+    var cachedFilename = file.name;
+    myDropzone.removeFile(file);
+
+    var $cropperModal = $(modalTemplate);
+    var $uploadCrop = $cropperModal.find("#product_crop");
+
+    $cropperModal.find(".product_preview_div").empty();
+
+    var $img = document.getElementById("product_sample_image");
+
+    var reader = new FileReader();
+    reader.onloadend = function () {
+        $($img).attr("src", reader.result);
+        $cropperModal.modal("show");
+        modalTemplate.on("shown.bs.modal", function () {
+            cropper = new Cropper($img, {
+                initialAspectRatio: 1,
+                viewMode: 3,
+                preview: ".product_preview_div",
+            });
+        });
+    };
+    reader.readAsDataURL(file);
+
+    $uploadCrop.on("click", function () {
+        var blob = cropper.getCroppedCanvas().toDataURL();
+        var newFile = dataURItoBlob(blob);
+        newFile.cropped = true;
+        newFile.name = cachedFilename;
+
+        myDropzone.addFile(newFile);
+        $cropperModal.modal("hide");
+        cropper.destroy();
+        cropper = null;
+    });
+});
+modalTemplate.on("hidden.bs.modal", function () {
+    console.log(cropper);
+    if (typeof cropper !== "undefined") {
+        if (copper !== null) {
+            // cropper.destroy();
+            cropper = null;
+        }
+    }
 });
 
 $(document).on("submit", "form#quick_add_product_class_form", function (e) {
@@ -552,8 +614,10 @@ $("#expiry_date").change(function () {
 });
 
 $(document).on("change", "#sell_price", function () {
-    let sell_price = __read_number($('#sell_price'));
-    let default_purchase_price_percentage =__read_number($("#default_purchase_price_percentage"));
+    let sell_price = __read_number($("#sell_price"));
+    let default_purchase_price_percentage = __read_number(
+        $("#default_purchase_price_percentage")
+    );
     let purchase_price_percentage =
         (sell_price * default_purchase_price_percentage) / 100;
     __write_number($("#purchase_price"), purchase_price_percentage);

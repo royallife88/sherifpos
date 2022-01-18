@@ -76,16 +76,19 @@ class CustomerController extends Controller
         $customer_types = CustomerType::pluck('name', 'id');
 
         $quick_add = request()->quick_add ?? null;
+        $getAttributeListArray = CustomerSize::getAttributeListArray();
 
         if ($quick_add) {
             return view('customer.quick_add')->with(compact(
                 'customer_types',
+                'getAttributeListArray',
                 'quick_add'
             ));
         }
 
         return view('customer.create')->with(compact(
             'customer_types',
+            'getAttributeListArray',
             'quick_add'
         ));
     }
@@ -105,7 +108,7 @@ class CustomerController extends Controller
         );
 
         try {
-            $data = $request->except('_token', 'quick_add');
+            $data = $request->except('_token', 'quick_add', 'size_data');
             $data['created_by'] = Auth::user()->id;
 
             DB::beginTransaction();
@@ -113,6 +116,15 @@ class CustomerController extends Controller
 
             if ($request->has('image')) {
                 $customer->addMedia($request->image)->toMediaCollection('customer_photo');
+            }
+
+            $size_data = $request->size_data;
+            // print_r($size_data); die();
+            if (!empty($size_data)) {
+                $size_data['customer_id'] = $customer->id;
+                $size_data['created_by'] = Auth::user()->id;
+
+                $customer_size = CustomerSize::create($size_data);
             }
 
             $customer_id = $customer->id;

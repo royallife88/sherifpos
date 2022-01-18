@@ -74,9 +74,12 @@
                                     </div>
                                     @if(session('system_mode') == 'garments')
                                     <div class="col-md-2">
-                                        <button type="button" class="btn btn-danger" style="margin-top: 30px;"
-                                            data-toggle="modal"
-                                            data-target="#customer_sizes_modal"><i class="fa fa-user-secret" data-toggle="tooltip" title="@lang('lang.customer_size')"></i></button>
+                                        <button type="button" class="btn btn-default" style="margin-top: 30px;"
+                                            data-toggle="modal" data-target="#customer_sizes_modal"><img
+                                                style="width: 20px; height: 25px;"
+                                                src="{{asset('images/269 Garment Icon.png')}}"
+                                                alt="@lang('lang.customer_size')" data-toggle="tooltip"
+                                                title="@lang('lang.customer_size')"></button>
                                     </div>
                                     @endif
                                     <div class="col-md-3">

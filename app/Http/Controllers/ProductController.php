@@ -222,11 +222,6 @@ class ProductController extends Controller
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
                 ->editColumn('sub_sku', '{{$sub_sku}}')
-                ->addColumn('barcode', '<p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">
-                @if($variation_name != "Default"){{$variation_name}} @else {{$name}}
-                @endif</p><img class="center-block"
-                style="width:250px; !important;height: {{2*0.24}}in !important;"
-                src="data:image/png;base64,{{DNS1D::getBarcodePNG($sub_sku,$barcode_type??"C128", 3,30,array(39, 48, 54), true)}}">')
                 ->addColumn('product_class', '{{$product_class}}')
                 ->addColumn('category', '{{$category}}')
                 ->addColumn('sub_category', '{{$sub_category}}')
@@ -316,7 +311,6 @@ class ProductController extends Controller
                     'image',
                     'variation_name',
                     'sku',
-                    'barcode',
                     'product_class',
                     'category',
                     'sub_category',

@@ -49,7 +49,7 @@
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title">Crop Image Before Upload</h5>
+                      <h5 class="modal-title">@lang('lang.crop_image_before_upload')</h5>
                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                       </button>
@@ -61,13 +61,13 @@
                                   <img src="" id="sample_image" />
                               </div>
                               <div class="col-md-4">
-                                  <div class="preview"></div>
+                                  <div class="preview_div"></div>
                               </div>
                           </div>
                       </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" id="crop" class="btn btn-primary">Crop</button>
+                        <button type="button" id="crop" class="btn btn-primary">@lang('lang.crop')</button>
                       <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     </div>
               </div>

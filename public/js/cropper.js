@@ -25,9 +25,9 @@ $(document).ready(function () {
     $modal
         .on("shown.bs.modal", function () {
             cropper = new Cropper(image, {
-                aspectRatio: 1,
+                initialAspectRatio: 1,
                 viewMode: 3,
-                preview: ".preview",
+                preview: ".preview_div",
             });
         })
         .on("hidden.bs.modal", function () {

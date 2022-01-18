@@ -121,7 +121,8 @@ img {
     max-width: 100%;
 }
 
-.preview {
+.preview_div,
+.product_preview_div {
     overflow: hidden;
     width: 160px;
     height: 160px;
@@ -161,3 +162,7 @@ img {
     transform: translate(-50%, -50%);
     text-align: center;
 } */
+.img-container img {
+    /* This is important */
+    width: 100%;
+}
