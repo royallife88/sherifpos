@@ -209,12 +209,17 @@ class AddStockController extends Controller
         $taxes = Tax::pluck('name', 'id');
         $users = User::pluck('name', 'id');
 
+        $variation_id = request()->get('variation_id');
+        $product_id = request()->get('product_id');
+
         return view('add_stock.create')->with(compact(
             'suppliers',
             'status_array',
             'payment_status_array',
             'payment_type_array',
             'stores',
+            'variation_id',
+            'product_id',
             'po_nos',
             'taxes',
             'users',

@@ -282,6 +282,12 @@ class ProductController extends Controller
                             target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('stock.add_stock.create_and_edit')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . action('AddStockController@create', ['variation_id' => $row->variation_id, 'product_id' => $row->id]) . '" class="btn"
+                            target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
+                        }
+                        $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.product.delete')) {
                             $html .=
                                 '<li>

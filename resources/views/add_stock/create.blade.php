@@ -232,6 +232,11 @@
 @section('javascript')
 <script src="{{asset('js/add_stock.js')}}"></script>
 <script type="text/javascript">
+@if(!empty($product_id) && !empty($variation_id))
+$(document).ready(function(){
+    get_label_product_row({{$product_id}},{{$variation_id}});
+})
+@endif
     $('#po_no').change(function () {
         let po_no = $(this).val();
 

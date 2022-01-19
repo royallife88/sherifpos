@@ -106,17 +106,6 @@ $(document).on("click", ".variant_different_prices_for_stores", function () {
     }
 });
 
-// transform cropper dataURI output to a Blob which Dropzone accepts
-function dataURItoBlob(dataURI) {
-    var byteString = atob(dataURI.split(",")[1]);
-    var ab = new ArrayBuffer(byteString.length);
-    var ia = new Uint8Array(ab);
-    for (var i = 0; i < byteString.length; i++) {
-        ia[i] = byteString.charCodeAt(i);
-    }
-    return new Blob([ab], { type: "image/jpeg" });
-}
-
 Dropzone.autoDiscover = false;
 myDropzone = new Dropzone("div#my-dropzone", {
     addRemoveLinks: true,
@@ -251,6 +240,18 @@ modalTemplate.on("hidden.bs.modal", function () {
         }
     }
 });
+
+// transform cropper dataURI output to a Blob which Dropzone accepts
+function dataURItoBlob(dataURI) {
+    var byteString = atob(dataURI.split(",")[1]);
+    var ab = new ArrayBuffer(byteString.length);
+    var ia = new Uint8Array(ab);
+    for (var i = 0; i < byteString.length; i++) {
+        ia[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([ab], { type: "image/jpeg" });
+}
+
 
 $(document).on("submit", "form#quick_add_product_class_form", function (e) {
     e.preventDefault();

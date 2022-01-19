@@ -997,8 +997,6 @@ return [
     'edited_by' => 'Edited By',
     'out_of_stock' => 'Out of Stock',
 
-
-
     'new_price' => 'New Price',
     'weighing_scale_setting' => 'Weighting Scale Setting',
     'weighing_barcode_prefix' => 'Prefix',
@@ -1015,7 +1013,6 @@ return [
     'last_digits_type' => 'Last Digits Type',
     'non_identifiable_item' => 'Non-Identifiable Item',
     'time' => 'Time',
-
     'yoke' => 'Yoke',
     'neck_round' => 'Neck Round',
     'neck_width' => 'Neck Width',

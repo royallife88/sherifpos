@@ -141,7 +141,7 @@
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
             <button type="button" value="9"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
-            <button type="button" value="1"
+            <button type="button" value="10"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
             <button type="button" value="11"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
