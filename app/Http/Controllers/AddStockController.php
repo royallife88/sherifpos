@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\AddStockLineImport;
 use App\Models\AddStockLine;
+use App\Models\CashRegisterTransaction;
 use App\Models\Email;
 use App\Models\Product;
 use App\Models\Store;
@@ -561,7 +562,7 @@ class AddStockController extends Controller
             }
 
             $add_stock->delete();
-
+            CashRegisterTransaction::where('transaction_id', $id)->delete();
 
             DB::commit();
 

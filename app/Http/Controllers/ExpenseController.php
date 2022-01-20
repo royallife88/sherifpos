@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegister;
+use App\Models\CashRegisterTransaction;
 use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
 use App\Models\Product;
@@ -55,17 +57,15 @@ class ExpenseController extends Controller
     {
         $expense_query = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'expense');
-
-
+            ->where('transactions.type', 'expense');
         if (!empty(request()->expense_id)) {
             $expense_query->where('transactions.id', request()->expense_id);
         }
         if (!empty(request()->start_date)) {
-            $expense_query->whereDate('paid_on', '>=', request()->start_date);
+            $expense_query->whereDate('transaction_date', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $expense_query->whereDate('paid_on', '<=', request()->end_date);
+            $expense_query->whereDate('transaction_date', '<=', request()->end_date);
         }
         if (!empty(request()->start_time)) {
             $expense_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
@@ -82,7 +82,10 @@ class ExpenseController extends Controller
         if (!empty(request()->store_id)) {
             $expense_query->where('store_id', request()->store_id);
         }
-        $expenses = $expense_query->select('transactions.*', 'users.name as created_by')
+        $expenses = $expense_query->select(
+            'transactions.*',
+             'users.name as created_by',
+              )
             ->orderBy('transaction_date', 'desc')
             ->get();
 
@@ -129,8 +132,8 @@ class ExpenseController extends Controller
 
 
             $expense_data = [
-                'grand_total' => $data['amount'],
-                'final_total' => $data['amount'],
+                'grand_total' => $this->commonUtil->num_uf($data['amount']),
+                'final_total' => $this->commonUtil->num_uf($data['amount']),
                 'store_id' => $data['store_id'],
                 'type' => 'expense',
                 'status' => 'final',
@@ -255,8 +258,8 @@ class ExpenseController extends Controller
 
 
             $expense_data = [
-                'grand_total' => $data['amount'],
-                'final_total' => $data['amount'],
+                'grand_total' => $this->commonUtil->num_uf($data['amount']),
+                'final_total' => $this->commonUtil->num_uf($data['amount']),
                 'type' => 'expense',
                 'status' => 'final',
                 'expense_category_id' => $data['expense_category_id'],
@@ -337,6 +340,7 @@ class ExpenseController extends Controller
 
             Transaction::where('id', $id)->delete();
             TransactionPayment::where('transaction_id', $id)->delete();
+            CashRegisterTransaction::where('transaction_id', $id)->delete();
 
             $output = [
                 'success' => true,

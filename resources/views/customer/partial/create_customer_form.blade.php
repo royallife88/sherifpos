@@ -47,11 +47,11 @@
         </div>
     </div>
     @if(session('system_mode') == 'garments')
+    @can('customer_module.customer_sizes.create_and_edit')
     <div class="col-md-12">
         <button type="button" class="add_size_btn btn btn-primary mb-5">@lang('lang.add_size')</button>
     </div>
     <div class="col-md-12 mb-5 add_size_div hide">
-        @can('customer_module.customer_sizes.create_and_edit')
         <div class="form-group">
             {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
             {!! Form::text('size_data[name]', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ),
@@ -92,8 +92,8 @@
                 @include('customer_size.partial.body_graph')
             </div>
         </div>
-        @endcan
     </div>
+    @endcan
     @endif
 </div>
 <input type="hidden" name="quick_add" value="{{$quick_add}}">
