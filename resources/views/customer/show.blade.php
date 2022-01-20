@@ -452,7 +452,7 @@
                                             </button>
                                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                 user="menu">
-                                                @can('product_module.customer_size.view')
+                                                @can('customer_module.customer_sizes.view')
                                                 <li>
 
                                                     <a data-href="{{action('CustomerSizeController@print', $customer_size->id)}}"
@@ -461,7 +461,7 @@
                                                 </li>
                                                 <li class="divider"></li>
                                                 @endcan
-                                                @can('product_module.customer_size.view')
+                                                @can('customer_module.customer_sizes.view')
                                                 <li>
 
                                                     <a data-href="{{action('CustomerSizeController@show', $customer_size->id)}}"
@@ -470,7 +470,7 @@
                                                 </li>
                                                 <li class="divider"></li>
                                                 @endcan
-                                                @can('product_module.customer_size.create_and_edit')
+                                                @can('customer_module.customer_sizes.create_and_edit')
                                                 <li>
 
                                                     <a data-href="{{action('CustomerSizeController@edit', $customer_size->id)}}"
@@ -479,7 +479,7 @@
                                                 </li>
                                                 <li class="divider"></li>
                                                 @endcan
-                                                @can('product_module.customer_size.delete')
+                                                @can('customer_module.customer_sizes.delete')
                                                 <li>
                                                     <a data-href="{{action('CustomerSizeController@destroy', $customer_size->id)}}"
                                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
