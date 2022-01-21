@@ -60,6 +60,7 @@ class ClearCache extends Command
             'https://g.lamode.sherifshalaby.tech',
             'https://denizd.sherifshalaby.tech',
             'https://r.drnuts.sherifshalaby.tech',
+            'https://r.hw.sherifshalaby.tech',
         ];
 
 
