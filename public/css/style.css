@@ -90,24 +90,14 @@ input[type="number"] {
     border: 1px solid #d1cece;
 }
 
-#contact_us_btn p {
-    margin-top: -32px;
-    margin-left: -26px;
-    font-size: 17px;
-    font-weight: 900;
-    color: #000;
-}
 #contact_us_btn {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 999999999;
+
     padding-top: 8px;
     padding-bottom: 8px;
     border-radius: 50%;
     background-size: 120px;
-    height: 70px;
-    width: 70px;
+    height: 50px;
+    width: 50px;
     background-repeat: no-repeat;
     background-position: center;
 }

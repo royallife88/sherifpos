@@ -74,6 +74,11 @@ class AddStockController extends Controller
                 $query->where('transactions.store_id', $store_id);
             }
 
+            if (!empty(request()->is_raw_material)) {
+                $query->where('transactions.is_raw_material', 1);
+            } else {
+                $query->where('transactions.is_raw_material', 0);
+            }
             if (!empty(request()->supplier_id)) {
                 $query->where('transactions.supplier_id', request()->supplier_id);
             }
@@ -154,7 +159,7 @@ class AddStockController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('stock.pay.create_and_edit')) {
-                            if (empty($row->payment_status != 'paid')) {
+                            if ($row->payment_status != 'paid') {
                                 $html .=
                                     '<li>
                                     <a data-href="' . action('TransactionPaymentController@addPayment', ['id' => $row->id]) . '"
@@ -213,7 +218,10 @@ class AddStockController extends Controller
         $variation_id = request()->get('variation_id');
         $product_id = request()->get('product_id');
 
+        $is_raw_material = request()->segment(1) == 'raw-material' ? true : false;
+
         return view('add_stock.create')->with(compact(
+            'is_raw_material',
             'suppliers',
             'status_array',
             'payment_status_array',
@@ -266,6 +274,7 @@ class AddStockController extends Controller
                 'created_by' => Auth::user()->id,
                 'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
                 'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
+                'is_raw_material' => !empty($data['is_raw_material']) ? 1 : 0,
             ];
 
             DB::beginTransaction();

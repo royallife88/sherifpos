@@ -12,12 +12,34 @@
         </div>
 
         <div class="modal-body">
+            <input type="hidden" name="is_raw_material_unit"
+                value="@if(!empty($is_raw_material_unit)){{1}}@else{{0}}@endif">
             <input type="hidden" name="quick_add" value="{{$quick_add }}">
             <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required' ]);
+                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required'
+                ]);
                 !!}
             </div>
+            @if(!empty($is_raw_material_unit))
+            <div class="form-group">
+                {!! Form::label('info', __( 'lang.info' ). ':') !!}
+                {!! Form::textarea('description', null, ['class' => 'form-control', 'placeholder' => __( 'lang.info' ),
+                'rows' => 3 ]);
+                !!}
+            </div>
+            <div class="form-group">
+                {!! Form::label('base_unit_multiplier', __( 'lang.times_of' ). ':') !!}
+                {!! Form::text('base_unit_multiplier', null, ['class' => 'form-control', 'placeholder' => __(
+                'lang.times_of' ) ]);
+                !!}
+            </div>
+            <div class="form-group">
+                {!! Form::label('base_unit_id', __( 'lang.base_unit' ). ':') !!}
+                {!! Form::select('base_unit_id', $units, false, ['class' => 'form-control selectpicker', 'placeholder'
+                => __('lang.select_base_unit'), 'data-live-search' => 'true']) !!}
+            </div>
+            @endif
 
         </div>
 
@@ -30,3 +52,7 @@
 
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
+
+<script>
+    $('.selectpicker').selectpicker('render');
+</script>

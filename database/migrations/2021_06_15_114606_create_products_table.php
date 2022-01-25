@@ -32,6 +32,7 @@ class CreateProductsTable extends Migration
             $table->text('product_details')->nullable();
             $table->string('barcode_type');
             $table->integer('alert_quantity')->nullable();
+            $table->unsignedBigInteger('alert_quantity_unit_id')->nullable();
             $table->decimal('purchase_price', 15, 4);
             $table->decimal('sell_price', 15, 4);
             $table->unsignedBigInteger('tax_id')->nullable();
@@ -48,6 +49,9 @@ class CreateProductsTable extends Migration
             $table->boolean('this_product_have_variant')->default(0);
             $table->enum('type', ['single', 'variable'])->default('single');
             $table->boolean('active')->default(1);
+            $table->boolean('price_based_on_raw_material')->default(0);
+            $table->boolean('is_raw_material')->default(1);
+            $table->boolean('automatic_consumption')->default(0);
             $table->unsignedBigInteger('edited_by')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();

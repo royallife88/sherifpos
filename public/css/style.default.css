@@ -321,7 +321,7 @@ nav.navbar a.menu-btn {
 .brand-big {
     position: absolute;
     transform: translateX(-50%);
-    left: 50%;
+    left: 35%;
 }
 
 .brand-big h1 {

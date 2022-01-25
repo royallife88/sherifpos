@@ -13,7 +13,12 @@ $site_title = App\Models\System::getProperty('site_title');
                     </a></span>
 
                 <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
-                    <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"><i
+                    <li class="nav-item">
+                        <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                            style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
+                        </a>
+                    </li>
+                    <li class="nav-item"><button class="btn-danger btn-sm hide" id="power_off_btn"  data-toggle="tooltip" data-title="@lang('lang.shut_down')"><i
                                 class="fa fa-power-off"></i></button></li>
                     @can('sale.pos.create_and_edit')
                     <li class="nav-item"><a class="dropdown-item btn-pos btn-sm"

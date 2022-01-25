@@ -1,6 +1,6 @@
 @php
-    $module_settings = App\Models\System::getProperty('module_settings');
-    $module_settings = !empty($module_settings) ? json_decode($module_settings, true) : [];
+$module_settings = App\Models\System::getProperty('module_settings');
+$module_settings = !empty($module_settings) ? json_decode($module_settings, true) : [];
 @endphp
 <!-- Side Navbar -->
 <nav class="side-navbar no-print @if(request()->segment(1) == 'pos') shrink @endif">
@@ -19,7 +19,7 @@
                 <li><a href="#product" aria-expanded="false" data-toggle="collapse"> <i
                             class="fa fa-cubes"></i><span>{{__('lang.product')}}</span><span></a>
                     <ul id="product"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['product', 'product-classification-tree', 'barcode'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['product', 'product-classification-tree', 'barcode', 'raw-material', 'consumption'])) show @endif">
                         @can('product_module.product.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'product' && request()->segment(2) == 'create') active @endif">
@@ -44,6 +44,49 @@
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
                             <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
+                        </li>
+                        @endcan
+                        @endif
+                        @if(session('system_mode') == 'restaurant')
+                        @can('product_module.raw_material.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'create')) active @endif">
+                            <a href="{{action('RawMaterialController@create')}}">{{__('lang.add_new_raw_material')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.raw_material.view')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-material' && empty(request()->segment(2))) active @endif">
+                            <a
+                                href="{{action('RawMaterialController@index')}}">{{__('lang.view_all_raw_materials')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.consumption.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'consumption' && request()->segment(2) == 'create')) active @endif">
+                            <a
+                                href="{{action('ConsumptionController@create')}}">{{__('lang.add_manual_consumption')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.consumption.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'consumption' && empty(request()->segment(2))) active @endif">
+                            <a
+                                href="{{action('ConsumptionController@index')}}">{{__('lang.list_view_the_consumption_of_raw_material')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.add_stock_for_raw_material.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && request()->segment(3) == 'create') active @endif">
+                            <a
+                                href="/raw-material/add-stock/create">{{__('lang.add_stock_for_raw_material')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.add_stock_for_raw_material.view')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && empty(request()->segment(3))) active @endif">
+                            <a
+                                href="/raw-material/add-stock">{{__('lang.view_all_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
                         @endif
@@ -1050,7 +1093,8 @@
                         @can('settings.weighing_scale_setting.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'settings' && request()->segment(2) == 'get-weighing-scale-setting') active @endif">
-                            <a href="{{action('SettingController@getWeighingScaleSetting')}}">{{__('lang.weighing_scale_setting')}}</a>
+                            <a
+                                href="{{action('SettingController@getWeighingScaleSetting')}}">{{__('lang.weighing_scale_setting')}}</a>
                         </li>
                         @endcan
                         @can('settings.general_settings.view')

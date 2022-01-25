@@ -406,3 +406,25 @@ function print_section(receipt) {
 $(document).on("click", ".close-btn", function () {
     $(".modal").modal("hide");
 });
+
+$(document).on("click", "table.ajax_view tbody tr", function (e) {
+    if (
+        !$(e.target).is("td.selectable_td input[type=checkbox]") &&
+        !$(e.target).is("td.selectable_td") &&
+        !$(e.target).is("td.clickable_td") &&
+        !$(e.target).is("a") &&
+        !$(e.target).is("button") &&
+        !$(e.target).hasClass("label") &&
+        !$(e.target).is("li") &&
+        $(this).data("href") &&
+        !$(e.target).is("i")
+    ) {
+        $.ajax({
+            url: $(this).data("href"),
+            dataType: "html",
+            success: function (result) {
+                $(".view_modal").html(result).modal("show");
+            },
+        });
+    }
+});

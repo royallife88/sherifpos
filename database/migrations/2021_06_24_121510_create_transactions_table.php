@@ -31,6 +31,7 @@ class CreateTransactionsTable extends Migration
             $table->enum('payment_status', ['paid', 'pending', 'partial'])->nullable();
             $table->string('invoice_no')->nullable();
             $table->string('po_no')->nullable();
+            $table->boolean('is_raw_material')->default(0);
             $table->boolean('is_direct_sale')->default(0);
             $table->boolean('is_return')->default(0);
             $table->boolean('is_quotation')->default(0);

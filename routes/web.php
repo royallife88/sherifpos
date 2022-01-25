@@ -36,6 +36,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::post('general/upload-image-temp', 'GeneralController@uploadImageTemp');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
+    Route::get('product/get-raw-material-details/{raw_material_id}', 'ProductController@getRawMaterialDetail');
+    Route::get('product/get-raw-material-row', 'ProductController@getRawMaterialRow');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
     Route::get('product/get-products', 'ProductController@getProducts');
     Route::get('product/get-purchase-history/{id}', 'ProductController@getPurchaseHistory');
@@ -45,6 +47,13 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('product-stocks', 'ProductController@getProductStocks');
     Route::get('product/delete-product-image/{id}', 'ProductController@deleteProductImage');
     Route::resource('product', ProductController::class);
+    Route::get('raw-material/add-stock/create', 'AddStockController@create');
+    Route::get('raw-material/add-stock', 'AddStockController@index');
+    Route::get('raw-material/add-product-row', 'RawMaterialController@addProductRow');
+    Route::resource('raw-material', RawMaterialController::class);
+    Route::get('consumption/get-raw-material-details', 'ConsumptionController@getConsumptionDetailRow');
+    Route::get('consumption/add-row', 'ConsumptionController@addRow');
+    Route::resource('consumption', ConsumptionController::class);
     Route::get('product-class/get-dropdown', 'ProductClassController@getDropdown');
     Route::resource('product-class', ProductClassController::class);
     Route::get('category/get-sub-category-dropdown', 'CategoryController@getSubCategoryDropdown');
@@ -53,6 +62,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('category', CategoryController::class);
     Route::get('brand/get-dropdown', 'BrandController@getDropdown');
     Route::resource('brand', BrandController::class);
+    Route::get('unit/get-unit-details/{unit_id}', 'UnitController@getUnitDetails');
     Route::get('unit/get-dropdown', 'UnitController@getDropdown');
     Route::resource('unit', UnitController::class);
     Route::get('color/get-dropdown', 'ColorController@getDropdown');

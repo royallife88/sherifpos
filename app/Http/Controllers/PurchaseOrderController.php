@@ -370,6 +370,11 @@ class PurchaseOrderController extends Controller
             if (!empty(request()->store_id)) {
                 $q->where('product_stores.store_id', request()->store_id);
             }
+            if (!empty(request()->is_raw_material)) {
+                $q->where('products.is_raw_material', 1);
+            } else {
+                $q->where('products.is_raw_material', 0);
+            }
             $products = $q->groupBy('variation_id')->get();
 
             $products_array = [];
@@ -377,7 +382,7 @@ class PurchaseOrderController extends Controller
                 $products_array[$product->product_id]['name'] = $product->name;
                 $products_array[$product->product_id]['sku'] = $product->sub_sku;
                 $products_array[$product->product_id]['type'] = $product->type;
-                $products_array[$product->product_id]['image'] = !empty($product->getFirstMediaUrl('product')) ? $product->getFirstMediaUrl('product') : asset('/uploads/'.session('logo'));
+                $products_array[$product->product_id]['image'] = !empty($product->getFirstMediaUrl('product')) ? $product->getFirstMediaUrl('product') : asset('/uploads/' . session('logo'));
                 $products_array[$product->product_id]['variations'][]
                     = [
                         'variation_id' => $product->variation_id,

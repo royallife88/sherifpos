@@ -208,12 +208,47 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    @if(session('system_mode' ) == 'restaurant')
+                                    {!! Form::label('recipe', __('lang.recipe'), []) !!}
+                                    @else
                                     <label>@lang('lang.product_details')</label>
+                                    @endif
                                     <textarea name="product_details" id="product_details" class="form-control"
                                         rows="3">{{$product->product_details}}</textarea>
                                 </div>
                             </div>
-                            @if(session('system_mode') == 'pos')
+                            @if(session('system_mode' ) == 'restaurant')
+                            <div class="col-md-4">
+                                <div class="i-checks">
+                                    <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox" @if($product->price_based_on_raw_material == 1) checked @endif value="1" class="form-control-custom">
+                                    <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <table class="table table-bordered" id="consumption_table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 30%;">@lang('lang.raw_materials')</th>
+                                            <th style="width: 30%;">@lang('lang.used_amount')</th>
+                                            <th style="width: 30%;">@lang('lang.unit')</th>
+                                            <th style="width: 10%;"><button class="btn btn-xs btn-success add_raw_material_row" type="button"><i
+                                                        class="fa fa-plus"></i></button></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $first_variation = $product->variations->first();
+                                            $consumption_products = App\Models\ConsumptionProduct::where('variation_id', $first_variation->id)->get();
+                                        @endphp
+                                        @foreach ($consumption_products as $consumption_product)
+                                        @include('product.partial.raw_material_row', ['row_id' => $loop->index, 'consumption_product' => $consumption_product])
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                                <input type="hidden" name="raw_material_row_index" id="raw_material_row_index" value="1">
+                            </div>
+                            @endif
+                            @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('barcode_type', __('lang.barcode_type') . ' *', []) !!}

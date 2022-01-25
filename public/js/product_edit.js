@@ -621,7 +621,7 @@ $(document).on("change", "#sell_price", function () {
 $(document).on("click", ".delete-image", function () {
     let url = $(this).attr("data-href");
     let images_div = $(this).parent(".images_div");
-    console.log(url);
+
     $.ajax({
         method: "get",
         url: url,
@@ -629,7 +629,6 @@ $(document).on("click", ".delete-image", function () {
         success: function (result) {
             if (result.success) {
                 swal("Success", result.msg, "success");
-                console.log();
                 $(images_div).remove();
             }
             if (!result.success) {
@@ -638,3 +637,59 @@ $(document).on("click", ".delete-image", function () {
         },
     });
 });
+$(document).on("change", "select.raw_material_id", function () {
+    let tr = $(this).closest("tr");
+    let raw_material_id = $(this).val();
+
+    $.ajax({
+        method: "get",
+        url: "/product/get-raw-material-details/" + raw_material_id,
+        data: {},
+        success: function (result) {
+            tr.find(".raw_material_price").val(
+                result.raw_material.purchase_price
+            );
+        },
+    });
+});
+
+$(document).on("click", ".add_raw_material_row", function () {
+    let row_id = parseInt($("#raw_material_row_index").val());
+    $("#raw_material_row_index").val(row_id + 1);
+
+    $.ajax({
+        method: "get",
+        url: "/product/get-raw-material-row",
+        data: { row_id: row_id },
+        success: function (result) {
+            $("#consumption_table > tbody").append(result);
+            $(".selectpicker").selectpicker("refresh");
+        },
+    });
+});
+$(document).on(
+    "change",
+    ".raw_material_quantity, .raw_material_id, .raw_material_unit_id, #price_based_on_raw_material ",
+    function () {
+        calculate_price_base_on_raw_material();
+    }
+);
+function calculate_price_base_on_raw_material() {
+    if ($("#price_based_on_raw_material").prop("checked")) {
+        let total_raw_material_price = 0;
+        $("#consumption_table > tbody > tr").each(function () {
+            let raw_material_price = __read_number(
+                $(this).find(".raw_material_price")
+            );
+            let raw_material_quantity = __read_number(
+                $(this).find(".raw_material_quantity")
+            );
+            let raw_material_total = raw_material_price * raw_material_quantity;
+            total_raw_material_price += raw_material_total;
+        });
+        __write_number($("#purchase_price"), total_raw_material_price);
+    } else {
+        __write_number($("#purchase_price"), 0);
+    }
+    $("#purchase_price").change()
+}

@@ -47,14 +47,6 @@
                             <label style="font-weight: bold;" for="">@lang('lang.is_service'): </label>
                             @if(!empty($product->is_service))@lang('lang.yes')@else @lang('lang.no') @endif<br>
                         </div>
-                        {{-- <div class="col-md-12">
-                            <label style="font-weight: bold;" for="">@lang('lang.barcode'): </label><br>
-                            <div class="col-md-6" style="width: auto">
-                                <p class="text-center" style="line-height: 15px; padding-bottom: 2px; margin: 0">{{$product->name}}</p>
-                            <img class="center-block" style="width:auto; !important;height: {{2*0.24}}in !important;"
-                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($product->sku,$product->barcode_type, 3,30,array(39, 48, 54), true)}}">
-                            </div>
-                        </div> --}}
                     </div>
 
                 </div>
@@ -71,7 +63,7 @@
                     <br>
                     <br>
                     <h4>@lang('lang.stock_details')</h4>
-                    <table class="table">
+                    <table class="table table-bordered">
                         <thead>
                             <tr class="bg-success text-white">
                                 <th>@lang('lang.name')</th>

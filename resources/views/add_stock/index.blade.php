@@ -1,5 +1,9 @@
 @extends('layouts.app')
+@if(request()->segment(1) == 'raw-material')
+@section('title', __('lang.view_all_stock_for_raw_material'))
+@else
 @section('title', __('lang.add_stock'))
+@endif
 
 @section('content')
 <section class="">
@@ -7,6 +11,7 @@
         <div class="card">
             <div class="card-body">
                 <form action="">
+                    <input type="hidden" name="is_raw_material" id="is_raw_material" value="@if(request()->segment(1) == 'raw-material'){{1}}@else{{0}}@endif">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -129,6 +134,7 @@
              "ajax": {
                 "url": "/add-stock",
                 "data": function ( d ) {
+                    d.is_raw_material = $('#is_raw_material').val();
                     d.store_id = $('#store_id').val();
                     d.supplier_id = $('#supplier_id').val();
                     d.created_by = $('#created_by').val();

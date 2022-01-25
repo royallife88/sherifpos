@@ -109,6 +109,9 @@ class User extends Authenticatable
                 'barcode' => 'Barcode',
                 'purchase_price' => 'Purchase Price',
                 'sell_price' => 'Sell Price',
+                'raw_material' => 'Raw Material',
+                'consumption' => 'Consumption',
+                'add_consumption_for_others' => 'Add consumption for others',
             ],
             'customer_module' => [
                 'customer' => 'Customer',

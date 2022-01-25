@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -215,6 +216,20 @@ class Employee extends Model implements HasMedia
             $employees = $query->pluck('users.name', 'users.id');
         } else {
             $employees = $query->pluck('users.name', 'employees.id');
+        }
+        return $employees->toArray();
+    }
+
+    public static function getDropdownChefs()
+    {
+        $query = Employee::leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
+            ->leftjoin('users', 'employees.user_id', 'users.id')
+            ->where('job_types.job_title', 'chef');
+
+        if (!auth()->user()->can('product_module.add_consumption_for_others.create_and_edit') && !auth()->user()->can('superadmin')) {
+            $employees = $query->where('users.id', Auth::user()->id)->pluck('users.name', 'users.id');
+        } else {
+            $employees = $query->pluck('users.name', 'users.id');
         }
         return $employees->toArray();
     }

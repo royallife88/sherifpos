@@ -5,6 +5,7 @@ namespace App\Utils;
 use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\ConsumptionProduct;
 use App\Models\Customer;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
@@ -21,7 +22,6 @@ use App\Models\TransferLine;
 use App\Models\Variation;
 use App\Utils\Util;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -312,6 +312,86 @@ class ProductUtil extends Util
         return true;
     }
 
+    /**
+     * create or update product consumption data
+     *
+     * @param object $raw_material
+     * @param array $consumption_details
+     * @return boolean
+     */
+    public function createOrUpdateRawMaterialToProduct($variation_id, $consumption_details)
+    {
+        $keep_consumption_product = [];
+        if (!empty($consumption_details)) {
+            foreach ($consumption_details as $v) {
+                if (!empty($v['id'])) {
+                    $consumtion_product = ConsumptionProduct::find($v['id']);
+                    $consumtion_product->raw_material_id = $v['raw_material_id'];
+                    $consumtion_product->variation_id = $variation_id;
+                    $consumtion_product->amount_used = $this->num_uf($v['amount_used']);
+                    $consumtion_product->unit_id = $v['unit_id'];
+
+                    $consumtion_product->save();
+                    $keep_consumption_product[] = $v['id'];
+                } else {
+                    $consumtion_product_data['raw_material_id'] = $v['raw_material_id'];
+                    $consumtion_product_data['variation_id'] = $variation_id;
+                    $consumtion_product_data['amount_used'] = $v['amount_used'];
+                    $consumtion_product_data['unit_id'] = $v['unit_id'];
+                    $consumtion_product = ConsumptionProduct::create($consumtion_product_data);
+                    $keep_consumption_product[] = $consumtion_product->id;
+                }
+            }
+        }
+
+        if (!empty($keep_consumption_product)) {
+            //delete the consumption product removed by user
+            ConsumptionProduct::where('variation_id', $variation_id)->whereNotIn('id', $keep_consumption_product)->delete();
+        }
+
+        return true;
+    }
+    /**
+     * create or update product consumption data
+     *
+     * @param object $raw_material
+     * @param array $consumption_details
+     * @return boolean
+     */
+    public function createOrUpdateConsumptionProducts($raw_material, $consumption_details)
+    {
+        $keep_consumption_product = [];
+        if (!empty($consumption_details)) {
+            foreach ($consumption_details as $v) {
+                if (!empty($v['id'])) {
+                    $consumtion_product = ConsumptionProduct::find($v['id']);-
+
+                    $consumtion_product->raw_material_id = $raw_material->id;
+                    $consumtion_product->variation_id = $v['variation_id'];
+                    $consumtion_product->amount_used = $this->num_uf($v['amount_used']);
+                    $consumtion_product->unit_id = $v['unit_id'];
+
+                    $consumtion_product->save();
+                    $keep_consumption_product[] = $v['id'];
+                } else {
+                    $consumtion_product_data['raw_material_id'] = $raw_material->id;
+                    $consumtion_product_data['variation_id'] = $v['variation_id'];
+                    $consumtion_product_data['amount_used'] = $v['amount_used'];
+                    $consumtion_product_data['unit_id'] = $v['unit_id'];
+                    $consumtion_product = ConsumptionProduct::create($consumtion_product_data);
+                    $keep_consumption_product[] = $consumtion_product->id;
+                }
+            }
+        }
+
+        if (!empty($keep_consumption_product)) {
+            //delete the consumption product removed by user
+            ConsumptionProduct::where('raw_material_id', $raw_material->id)->whereNotIn('id', $keep_consumption_product)->delete();
+        }
+
+        return true;
+    }
+
     public function getProductClassificationTreeObject()
     {
         $classes = ProductClass::select('name', 'id')->get();
@@ -439,7 +519,7 @@ class ProductUtil extends Util
      * @param int $product_id
      * @param int $variation_id = null
      *
-     * @return Obj
+     * @return object
      */
     public function getDetailsFromProductTransfer($sender_store_id, $product_id, $variation_id = null)
     {

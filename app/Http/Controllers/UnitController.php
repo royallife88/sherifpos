@@ -49,11 +49,13 @@ class UnitController extends Controller
     public function create()
     {
         $quick_add = request()->quick_add ?? null;
+        $is_raw_material_unit = request()->is_raw_material_unit ?? 0;
 
         $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('unit.create')->with(compact(
             'quick_add',
+            'is_raw_material_unit',
             'units'
         ));
     }
@@ -74,6 +76,7 @@ class UnitController extends Controller
 
         try {
             $data = $request->except('_token', 'quick_add');
+            $data['base_unit_multiplier'] = !empty($data['base_unit_multiplier']) ? $this->commonUtil->num_uf($data['base_unit_multiplier']) : 1;
 
             DB::beginTransaction();
             $unit = Unit::create($data);
@@ -123,8 +126,11 @@ class UnitController extends Controller
     {
         $unit = Unit::find($id);
 
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+
         return view('unit.edit')->with(compact(
-            'unit'
+            'unit',
+            'units'
         ));
     }
 
@@ -144,6 +150,7 @@ class UnitController extends Controller
 
         try {
             $data = $request->except('_token', '_method');
+            $data['base_unit_multiplier'] = !empty($data['base_unit_multiplier']) ? $this->commonUtil->num_uf($data['base_unit_multiplier']) : 1;
 
             DB::beginTransaction();
             Unit::where('id', $id)->update($data);
@@ -190,11 +197,28 @@ class UnitController extends Controller
         return $output;
     }
 
+    /**
+     * get unit drop down list
+     *
+     * @return void
+     */
     public function getDropdown()
     {
         $unit = Unit::orderBy('name', 'asc')->pluck('name', 'id');
         $unit_dp = $this->commonUtil->createDropdownHtml($unit, 'Please Select');
 
         return $unit_dp;
+    }
+
+    /**
+     * get unit details
+     *
+     * @param int $id
+     * @return void
+     */
+    public function getUnitDetails($id)
+    {
+        $unit = Unit::find($id);
+        return ['unit' => $unit];
     }
 }

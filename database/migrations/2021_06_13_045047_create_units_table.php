@@ -16,7 +16,11 @@ class CreateUnitsTable extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description')->nullable();
             $table->boolean('is_active')->default(1);
+            $table->unsignedBigInteger('base_unit_id');
+            $table->decimal('base_unit_multiplier');
+            $table->boolean('is_raw_material_unit')->default(0);
             $table->timestamps();
         });
     }

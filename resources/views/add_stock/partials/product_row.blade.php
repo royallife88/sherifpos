@@ -24,6 +24,9 @@ $i = $index;
             value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif">
     </td>
     <td>
+        {{$product->units->pluck('name')[0]??''}}
+    </td>
+    <td>
         <input type="text" class="form-control purchase_price" name="add_stock_lines[{{$i}}][purchase_price]" required
             value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price)}}@else{{0}}@endif">
     </td>

@@ -1,5 +1,9 @@
 @extends('layouts.app')
+@if(!empty($is_raw_material))
+@section('title', __('lang.add_stock_for_raw_material'))
+@else
 @section('title', __('lang.add_stock'))
+@endif
 
 @section('content')
 <section class="forms">
@@ -8,10 +12,15 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header d-flex align-items-center">
+                        @if(!empty($is_raw_material))
+                        <h4>@lang('lang.add_stock_for_raw_material')</h4>
+                        @else
                         <h4>@lang('lang.add_stock')</h4>
+                        @endif
                     </div>
                     {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' =>
                     'add_stock_form', 'enctype' => 'multipart/form-data' ]) !!}
+                    <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{$is_raw_material}}">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -83,6 +92,7 @@
                                             <th style="width: 20%" class="col-sm-8">@lang( 'lang.products' )</th>
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.quantity' )</th>
+                                            <th style="width: 20%" class="col-sm-4">@lang( 'lang.unit' )</th>
                                             <th style="width: 20%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 10%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                             <th style="width: 10%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
@@ -232,7 +242,7 @@
 @section('javascript')
 <script src="{{asset('js/add_stock.js')}}"></script>
 <script type="text/javascript">
-@if(!empty($product_id) && !empty($variation_id))
+    @if(!empty($product_id) && !empty($variation_id))
 $(document).ready(function(){
     get_label_product_row({{$product_id}},{{$variation_id}});
 })

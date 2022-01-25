@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            {!! Form::label('name', __( 'lang.size_name' )) !!}: <b>{{$customer_size->name}}</b>
+                            {!! Form::label('name', __( 'lang.size_name' )) !!}: <b>{{$customer_size->name ?? ''}}</b>
                         </div>
                     </div>
                 </div>

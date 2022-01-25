@@ -97,4 +97,25 @@ class Product extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'edited_by', 'id')->withDefault(['name' => '']);
     }
+
+    public function consumption_products()
+    {
+        return $this->hasMany(ConsumptionProduct::class, 'raw_material_id', 'id');
+    }
+
+    public static function getProductVariationDropDown($is_raw_material = false)
+    {
+        $variations = Variation::get();
+        $variation_dropdown = [];
+
+        foreach ($variations as $variation) {
+            $name = $variation->product->name ?? '';
+            if ($variation->name != 'Default') {
+                $name .= ' - ' . $variation->name;
+            }
+            $variation_dropdown[$variation->id] = $name;
+        }
+
+        return $variation_dropdown;
+    }
 }

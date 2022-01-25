@@ -85,11 +85,7 @@
             class="modal fade text-left">
         </div>
     </div>
-    <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn"
-        style="background-image: url('{{asset('images/handshake.jpg')}}');"
-        class="btn no-print">
-        <p>@lang('lang.contact_us')</p>
-    </a>
+
     <script type="text/javascript">
         base_path = "{{url('/')}}";
     </script>

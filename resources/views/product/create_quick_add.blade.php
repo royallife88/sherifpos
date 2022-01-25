@@ -118,7 +118,11 @@
 
                 <div class="col-md-12">
                     <div class="form-group">
+                        @if(session('system_mode' ) == 'restaurant')
+                        {!! Form::label('recipe', __('lang.recipe'), []) !!}
+                        @else
                         <label>@lang('lang.product_details')</label>
+                        @endif
                         <textarea name="product_details" id="product_details" class="form-control" rows="3"></textarea>
                     </div>
                 </div>

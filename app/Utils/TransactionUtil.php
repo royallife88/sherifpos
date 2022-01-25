@@ -6,6 +6,9 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Consumption;
+use App\Models\ConsumptionDetail;
+use App\Models\ConsumptionProduct;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\EarningOfPoint;
@@ -21,6 +24,7 @@ use App\Models\Transaction;
 use App\Models\TransactionCustomerSize;
 use App\Models\TransactionPayment;
 use App\Models\TransactionSellLine;
+use App\Models\Unit;
 use App\Models\Variation;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -957,5 +961,114 @@ class TransactionUtil extends Util
         $transaction_customer_size->ankle = $customer_size_details['ankle'];
 
         $transaction_customer_size->save();
+    }
+
+    /**
+     * create of update the transaction customersize
+     *
+     * @param object $transaction
+     * @param array $customer_size_details
+     * @return double
+     */
+    public function createOrUpdateConsumptionDetail($consumption_detail_array,  $consumption_id)
+    {
+        $consumption = Consumption::find($consumption_id);
+        $raw_material = Product::find($consumption->raw_material_id);
+        $keep_details = [];
+        $total_quantity = 0;
+        $old_qty = 0;
+
+        foreach ($consumption_detail_array as $consumption_detail_data) {
+            $id = $consumption_detail_data['id'] ?? null;
+
+            $old_qty = 0;
+            $consumption_detail_exist = ConsumptionDetail::where(['consumption_id' => $consumption->id, 'variation_id' => $consumption_detail_data['variation_id']])->first();
+            if (!empty($consumption_detail_exist)) {
+                $old_qty = $consumption_detail_exist->quantity;
+            }
+
+            $consumption_detail = ConsumptionDetail::firstOrNew(['consumption_id' => $id]);
+
+            $variation = Variation::find($consumption_detail_data['variation_id']);
+            $consumption_detail->consumption_id = $consumption_id;
+            $consumption_detail->product_id = $variation->product_id;
+            $consumption_detail->variation_id = $consumption_detail_data['variation_id'];
+            $consumption_detail->unit_id = $consumption_detail_data['unit_id'];
+            $consumption_detail->quantity = $this->num_uf($consumption_detail_data['quantity']);
+
+            $consumption_detail->save();
+
+            $raw_material_unit = Unit::find($raw_material->units->pluck('id')[0]);
+            $consumption_unit = Unit::find($consumption_detail_data['unit_id']);
+            $base_unit_multiplier = 1;
+            if ($raw_material_unit->id != $consumption_unit->id) {
+                $base_unit_multiplier = $consumption_unit->base_unit_multiplier;
+            }
+            $total_quantity += $consumption_detail->quantity * $base_unit_multiplier;
+            $old_qty = $old_qty * $base_unit_multiplier;
+            $keep_details[] = $consumption_detail->id;
+        }
+
+        ConsumptionDetail::where('consumption_id', $consumption_id)->whereNotIn('id', $keep_details)->delete();
+
+
+        return ['total_quantity' => $total_quantity, 'old_qty' => $old_qty];
+    }
+
+    /**
+     * create or update raw material consumption
+     *
+     * @param object $transaction
+     * @return void
+     */
+    public function createOrUpdateRawMaterialConsumption($transaction)
+    {
+        $sell_lines = $transaction->transaction_sell_lines;
+
+        foreach ($sell_lines as $line) {
+            $consumption_products = ConsumptionProduct::where('variation_id', $line->variation_id)->get();
+            foreach ($consumption_products as $consumption_product) {
+                $raw_material = Product::find($consumption_product->raw_material_id);
+
+                if ($raw_material->automatic_consumption == 1) {
+                    $consumption = Consumption::firstOrNew(['transaction_id' => $transaction->id, 'raw_material_id' => $raw_material->id]);
+                    $consumption->store_id = $transaction->store_id;
+                    $consumption->transaction_id = $transaction->id;
+                    $consumption->raw_material_id = $raw_material->id;
+                    $consumption->consumption_no = uniqid('CONA');
+                    $consumption->date_and_time = $transaction->transaction_date;
+                    $consumption->created_by = Auth::user()->id;
+                    $consumption->save();
+
+                    $old_qty = 0;
+                    $total_quantity = 0;
+                    $consumption_detail_exist = ConsumptionDetail::where(['consumption_id' => $consumption->id, 'variation_id' => $line->variation_id])->first();
+                    if (!empty($consumption_detail_exist)) {
+                        $old_qty = $consumption_detail_exist->quantity;
+                    }
+
+                    $consumption_detail = ConsumptionDetail::firstOrNew(['consumption_id' => $consumption->id, 'variation_id' => $line->variation_id]);
+                    $consumption_detail->consumption_id = $consumption->id;
+                    $consumption_detail->product_id = $line->product_id;
+                    $consumption_detail->variation_id = $line->variation_id;
+                    $consumption_detail->unit_id = $consumption_product->unit_id;
+                    $consumption_detail->quantity = $consumption_product->amount_used * $line->quantity;
+
+                    $consumption_detail->save();
+
+                    $raw_material_unit = Unit::find($raw_material->units->pluck('id')[0]);
+                    $consumption_unit = Unit::find($consumption_product->unit_id);
+                    $base_unit_multiplier = 1;
+                    if ($raw_material_unit->id != $consumption_unit->id) {
+                        $base_unit_multiplier = $consumption_unit->base_unit_multiplier;
+                    }
+                    $total_quantity = $line->quantity * $consumption_product->amount_used * $base_unit_multiplier;
+                    $old_qty = $old_qty * $base_unit_multiplier;
+
+                    $variation_rw = Variation::where('product_id', $raw_material->id)->first();
+                    $this->productUtil->decreaseProductQuantity($raw_material->id, $variation_rw->id, $transaction->store_id, $total_quantity, $old_qty);
+                }
+            }
+        }
     }
 }

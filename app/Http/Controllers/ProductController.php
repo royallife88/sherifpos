@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Imports\ProductImport;
-use App\Models\AddStockLine;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Color;
@@ -15,10 +14,8 @@ use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
-use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Transaction;
-use App\Models\TransactionSellLine;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\Variation;
@@ -68,7 +65,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -185,7 +182,7 @@ class ProductController extends Controller
             if (!empty(request()->created_by)) {
                 $products->where('products.created_by', request()->created_by);
             }
-            $products->where('active', 1);
+            $products->where('active', 1)->where('is_raw_material', 0);
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',
@@ -391,7 +388,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -402,10 +399,14 @@ class ProductController extends Controller
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
         $quick_add = request()->quick_add;
+        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
 
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
                 'quick_add',
+                'raw_materials',
+                'raw_material_units',
                 'product_classes',
                 'categories',
                 'sub_categories',
@@ -423,6 +424,8 @@ class ProductController extends Controller
         }
 
         return view('product.create')->with(compact(
+            'raw_materials',
+            'raw_material_units',
             'product_classes',
             'categories',
             'sub_categories',
@@ -489,6 +492,7 @@ class ProductController extends Controller
                 'show_to_customer_types' => $request->show_to_customer_types,
                 'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+                'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'created_by' => Auth::user()->id
@@ -500,6 +504,13 @@ class ProductController extends Controller
             $product = Product::create($product_data);
 
             $this->productUtil->createOrUpdateVariations($product, $request);
+
+            if (!empty($request->consumption_details)) {
+                $variations = $product->variations()->get();
+                foreach ($variations as $variation) {
+                    $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
+                }
+            }
 
 
             if ($request->images) {
@@ -576,7 +587,7 @@ class ProductController extends Controller
         $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
-        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::where('is_raw_material_unit', 0)->orderBy('name', 'asc')->pluck('name', 'id');
         $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
@@ -586,8 +597,13 @@ class ProductController extends Controller
         $discount_customer_types = CustomerType::pluck('name', 'id');
         $stores  = Store::all();
 
+        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+
 
         return view('product.edit')->with(compact(
+            'raw_materials',
+            'raw_material_units',
             'product',
             'product_classes',
             'categories',
@@ -656,6 +672,7 @@ class ProductController extends Controller
                 'show_to_customer_types' => $request->show_to_customer_types,
                 'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
+                'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'edited_by' => Auth::user()->id,
             ];
@@ -667,6 +684,15 @@ class ProductController extends Controller
             $product->update($product_data);
 
             $this->productUtil->createOrUpdateVariations($product, $request);
+
+
+            if (!empty($request->consumption_details)) {
+                $variations = $product->variations()->get();
+                foreach ($variations as $variation) {
+                    $this->productUtil->createOrUpdateRawMaterialToProduct($variation->id, $request->consumption_details);
+                }
+            }
+
 
             if ($request->images) {
                 $product->clearMediaCollection('product');
@@ -958,5 +984,36 @@ class ProductController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get raw material row
+     *
+     * @return void
+     */
+    public function getRawMaterialRow()
+    {
+        $row_id = request()->row_id ?? 0;
+        $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+
+        return view('product.partial.raw_material_row')->with(compact(
+            'row_id',
+            'raw_materials',
+            'raw_material_units',
+        ));
+    }
+
+    /**
+     * get raw material details
+     *
+     * @param int $raw_material_id
+     * @return void
+     */
+    public function getRawMaterialDetail($raw_material_id)
+    {
+        $raw_material = Product::find($raw_material_id);
+
+        return ['raw_material' => $raw_material];
     }
 }
