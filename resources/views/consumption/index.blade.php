@@ -3,10 +3,10 @@
 
 @section('content')
 <div class="container-fluid">
-    @can('product_module.raw_material.create_and_edit')
+    @can('product_module.consumption.create_and_edit')
     <a style="color: white" href="{{action('ConsumptionController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
-        @lang('lang.add_manual_consumptio')</a>
+        @lang('lang.add_manual_consumption')</a>
 
     @endcan
 
