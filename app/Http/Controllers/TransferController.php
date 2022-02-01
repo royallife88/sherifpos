@@ -52,11 +52,11 @@ class TransferController extends Controller
         $stores = Store::getDropdown();
         $query = Transaction::where('type', 'transfer');
 
-        if (!empty(request()->sender_store)) {
-            $query->where('sender_store', request()->sender_store);
+        if (!empty(request()->sender_store_id)) {
+            $query->where('sender_store_id', request()->sender_store_id);
         }
-        if (!empty(request()->receiver_store)) {
-            $query->where('receiver_store', request()->receiver_store);
+        if (!empty(request()->receiver_store_id)) {
+            $query->where('receiver_store_id', request()->receiver_store_id);
         }
         if (!empty(request()->invoice_no)) {
             $query->where('invoice_no', request()->invoice_no);

@@ -50,7 +50,7 @@
                         <input type="file" name="upload_documents[]" id="upload_documents" multiple>
                     </div>
                 </div>
-                <div class="col-md-4 not_cash_fields hide">
+                <div class="col-md-4 not_cash_fields card_field hide">
                     <div class="form-group">
                         {!! Form::label('ref_number', __('lang.ref_number'). ':', []) !!} <br>
                         {!! Form::text('ref_number', null, ['class' => 'form-control not_cash',
@@ -110,8 +110,8 @@
         var method = $(this).val();
 
         if(method === 'card'){
-            $('.card_field').removeClass('hide');
             $('.not_cash_fields').addClass('hide');
+            $('.card_field').removeClass('hide');
             $('.not_cash').attr('required', false);
         }
         else if(method === 'cash'){

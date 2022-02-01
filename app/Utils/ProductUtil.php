@@ -624,6 +624,8 @@ class ProductUtil extends Util
                     //if end date set then check for expiry
                     if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
                         return $product;
+                    }else{
+                        return false;
                     }
                 }
                 return $product;

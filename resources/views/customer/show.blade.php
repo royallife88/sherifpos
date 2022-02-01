@@ -51,10 +51,12 @@
                             role="tab" data-toggle="tab">@lang('lang.points')</a>
                     </li>
                     @if(session('system_mode') == 'garments')
+                    @can('customer_module.customer_sizes.view')
                     <li class="nav-item">
                         <a class="nav-link @if(request()->show == 'sizes') active @endif" href="#store-sizes" role="tab"
                             data-toggle="tab">@lang('lang.sizes')</a>
                     </li>
+                    @endcan
                     @endif
 
                 </ul>

@@ -1077,5 +1077,15 @@ return [
     'shut_down' => 'Shut Down',
     'edit_consumption' => 'Edit Consumption',
     'price_based_on_raw_material' => 'Price based on Raw Material Cost',
+    'customer_sizes' => 'Customer Sizes',
+    'leave_types' => 'Leave Types',
+    'leaves' => 'Leaves',
+    'wages_and_compensation' => 'Wages and Compensation',
+    'payment' => 'Payment',
+    'sell_return_pay' => 'Sell Return Payment',
+    'purchase_return_pay' => 'Purchase Return Payment',
+    'setting' => 'Setting',
+    'store_pos' => 'Store POS',
+    'add_consumption_for_others' => 'Add Compensation for Others',
 
 ];

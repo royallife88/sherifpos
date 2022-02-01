@@ -128,7 +128,7 @@ class Transaction extends Model  implements HasMedia
     }
     public function customer_size()
     {
-        return $this->belongsTo(CustomerSize::class)->withDefault(['name' => '']);
+        return $this->belongsTo(CustomerSize::class);
     }
 
     public function transaction_payments()

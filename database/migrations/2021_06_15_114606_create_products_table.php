@@ -50,7 +50,7 @@ class CreateProductsTable extends Migration
             $table->enum('type', ['single', 'variable'])->default('single');
             $table->boolean('active')->default(1);
             $table->boolean('price_based_on_raw_material')->default(0);
-            $table->boolean('is_raw_material')->default(1);
+            $table->boolean('is_raw_material')->default(0);
             $table->boolean('automatic_consumption')->default(0);
             $table->unsignedBigInteger('edited_by')->nullable();
             $table->unsignedBigInteger('created_by');

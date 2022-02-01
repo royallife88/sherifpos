@@ -38,30 +38,7 @@ class ClearCache extends Command
      */
     public function handle()
     {
-        $system_urls = [
-            'https://pos.sherifshalaby.tech',
-            'https://hawana.sherifshalaby.tech',
-            'https://twaaq.sherifshalaby.tech',
-            'https://rm.sherifshalaby.tech',
-            'https://cy.sherifshalaby.tech',
-            'https://as.sherifshalaby.tech',
-            'https://nana.sherifshalaby.tech',
-            'https://elaga.sherifshalaby.tech',
-            'https://ha.sherifshalaby.tech',
-            'https://pos.g.sherifshalaby.tech',
-            'https://pos.r.sherifshalaby.tech',
-            'https://g.evet.sherifshalaby.tech',
-            'https://r.fries.sherifshalaby.tech',
-            'https://s.albutul.sherifshalaby.tech',
-            'https://s.albutul.sherifshalaby.tech',
-            'https://g.rakeya.sherifshalaby.tech',
-            'https://r.mortaja.sherifshalaby.tech',
-            'https://s.panda.sherifshalaby.tech',
-            'https://g.lamode.sherifshalaby.tech',
-            'https://denizd.sherifshalaby.tech',
-            'https://r.drnuts.sherifshalaby.tech',
-            'https://r.hw.sherifshalaby.tech',
-        ];
+        $system_urls = config('systems.urls');
 
 
         foreach ($system_urls as $url) {
