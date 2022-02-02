@@ -197,12 +197,14 @@
                         <br>
                         <h4>@lang('lang.payments'):</h4>
                         <div class="row">
-                            <div class="payment_rows">
-                                @foreach ($sale->transaction_payments as $payment)
+                            <div class="payment_rows" style="width: 100%;">
+                                @forelse ($sale->transaction_payments as $payment)
                                 @include('sale.partials.edit_payment_row', ['payment' => $payment, 'index' =>
                                 $loop->index])
                                 <hr>
-                                @endforeach
+                                @empty
+                                @include('sale.partials.edit_payment_row', ['payment' => null, 'index' => 0])
+                                @endforelse
                             </div>
                         </div>
 

@@ -13,6 +13,7 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' =>
                     true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
+                    <input type="hidden" name="row_count" id="row_count" value="0">
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
 

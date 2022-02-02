@@ -19,6 +19,10 @@
                         <td>{{@num_format($cash_register->total_cash_in)}}</td>
                     </tr>
                     <tr>
+                        <td><b>@lang('lang.cash_out')</b></td>
+                        <td>{{@num_format($cash_register->total_cash_out)}}</td>
+                    </tr>
+                    <tr>
                         <td><b>@lang('lang.total_sales')</b></td>
                         <td>{{@num_format($cash_register->total_sale)}}</td>
                     </tr>
@@ -58,7 +62,8 @@
                         <td><b>@lang('lang.current_cash')</b></td>
                         <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash +
                             $cash_register->total_cash_in - $cash_register->total_cash_out -
-                            $cash_register->total_purchases -$cash_register->total_expenses - $cash_register->total_sell_return)}}</td>
+                            $cash_register->total_purchases -$cash_register->total_expenses -
+                            $cash_register->total_sell_return)}}</td>
                     </tr>
                 </table>
             </div>

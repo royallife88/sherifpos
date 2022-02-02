@@ -179,12 +179,13 @@
                         <div class="col-md-3 mt-1 payment_fields hide">
                             <label>@lang('lang.paying_amount') *</label>
                             <input type="text" name="paying_amount" class="form-control numkey" id="paying_amount"
-                                step="any">
+                            step="any">
                         </div>
-                        <div class="col-md-3 mt-1 payment_fields hide">
-                            <label>@lang('lang.change') : </label>
-                            <p id="change" class="ml-2">0.00</p>
-                        </div>
+                        <input type="hidden" name="payments[0][change_amount]" class="change_amount" value="0">
+                        {{-- <div class="col-md-3 mt-1 payment_fields hide">
+                            <label class="change_text">@lang('lang.change') : </label>
+                            <span class="change" class="ml-2">0.00</span>
+                        </div> --}}
 
                         <div class="col-md-12 hide">
                             <div class="i-checks">
