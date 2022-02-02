@@ -26,7 +26,11 @@
                             </div>
 
                             <div class="col-md-4">
+                                @if(session('system_mode') == 'restaurant')
+                                {!! Form::label('product_class_id', __('lang.category') . ' *', []) !!}
+                                @else
                                 {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
+                                @endif
                                 <div class="input-group my-group">
                                     {!! Form::select('product_class_id', $product_classes,
                                     $product->product_class_id, ['class' => 'selectpicker form-control',
@@ -220,6 +224,15 @@
                             @if(session('system_mode' ) == 'restaurant')
                             <div class="col-md-4">
                                 <div class="i-checks">
+                                    <input id="automatic_consumption" name="automatic_consumption" type="checkbox"
+                                        @if(!empty($product) && $product->automatic_consumption == 1)
+                                    checked @endif value="1" class="form-control-custom">
+                                    <label
+                                        for="automatic_consumption"><strong>@lang('lang.automatic_consumption')</strong></label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="i-checks">
                                     <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox" @if($product->price_based_on_raw_material == 1) checked @endif value="1" class="form-control-custom">
                                     <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
                                 </div>
@@ -359,7 +372,7 @@
                                     {!! Form::select('discount_customer_types[]', $discount_customer_types,
                                     $product->discount_customer_types, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true",
-                                    'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true"]) !!}
+                                    'style' =>'width: 80%', 'multiple', "data-actions-box"=>"true", 'id' => 'discount_customer_types']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

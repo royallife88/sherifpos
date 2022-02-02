@@ -13,7 +13,11 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
         </div>
     </div>
     <div class="col-md-4">
+        @if(session('system_mode') == 'restaurant')
+        {!! Form::label('product_class_id', __('lang.category') . ' *', []) !!}
+        @else
         {!! Form::label('product_class_id', __('lang.class') . ' *', []) !!}
+        @endif
         <div class="input-group my-group">
             {!! Form::select('product_class_id', $product_classes,
             !empty($recent_product) ? $recent_product->product_class_id : false, ['class' => 'selectpicker
@@ -187,6 +191,13 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
     </div>
     @if(session('system_mode' ) == 'restaurant')
     @if(env('ENALBE_RAW_MATERIAL'))
+    <div class="col-md-4">
+        <div class="i-checks">
+            <input id="automatic_consumption" name="automatic_consumption" type="checkbox" value="1"
+                class="form-control-custom">
+            <label for="automatic_consumption"><strong>@lang('lang.automatic_consumption')</strong></label>
+        </div>
+    </div>
     <div class="col-md-4">
         <div class="i-checks">
             <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox"

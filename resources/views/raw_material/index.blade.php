@@ -31,14 +31,6 @@
                         selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
-                        {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control
-                        filter_product
-                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
-                    </div>
-                </div>
 
                 <div class="col-md-3">
                     <div class="form-group">
@@ -162,7 +154,6 @@
                 "data": function ( d ) {
                     d.variation_id = $('#variation_id').val();
                     d.brand_id = $('#brand_id').val();
-                    d.unit_id = $('#unit_id').val();
                     d.store_id = $('#store_id').val();
                     d.created_by = $('#created_by').val();
                 }
@@ -187,7 +178,7 @@
                 { data: 'edited_by_name', name: 'edited.name'},
                 { data: 'products_view', name: 'products_view', searchable: false, sortable:false},
                 @can('product_module.purchase_price.view')
-                { data: 'default_purchase_price', name: 'default_purchase_price', searchable: false},
+                { data: 'default_purchase_price', name: 'variations.default_purchase_price'},
                 @endcan
                 { data: 'action', name: 'action'},
 

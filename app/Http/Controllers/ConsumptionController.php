@@ -140,7 +140,8 @@ class ConsumptionController extends Controller
                     return $html;
                 })
                 ->addColumn('remaining_qty_sufficient_for', function ($row) {
-                    return '';
+                    return '<a data-href="' . action('ConsumptionController@getSufficientSuggestions', $row->raw_material_id) . '?store_id=' . $row->store_id . '"
+                            data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                 })
                 ->addColumn(
                     'action',
@@ -196,6 +197,7 @@ class ConsumptionController extends Controller
                 ->rawColumns([
                     'products',
                     'created_by',
+                    'remaining_qty_sufficient_for',
                     'action',
                 ])
                 ->make(true);
@@ -509,6 +511,20 @@ class ConsumptionController extends Controller
             'consumption_products',
             'raw_material_details',
             'current_stock'
+        ));
+    }
+
+    public function getSufficientSuggestions($raw_material_id)
+    {
+        $raw_material = Product::findOrFail($raw_material_id);
+        $current_stock = $this->productUtil->getCurrentStockDataByProduct($raw_material_id, request()->store_id)['current_stock'];
+
+        $consumption_products = ConsumptionProduct::where('raw_material_id', $raw_material_id)->get();
+
+        return view('consumption.sufficient_suggestions')->with(compact(
+            'raw_material',
+            'current_stock',
+            'consumption_products'
         ));
     }
 }

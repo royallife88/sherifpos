@@ -23,11 +23,21 @@ $("#different_prices_for_stores").change(function () {
 $(".this_product_have_variant_div").slideUp();
 $("#this_product_have_variant").change(function () {
     if ($(this).prop("checked")) {
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').selectpicker('val', '');
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', true).selectpicker('refresh');
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        ).selectpicker("val", "");
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        )
+            .attr("disabled", true)
+            .selectpicker("refresh");
         $(".this_product_have_variant_div").slideDown();
     } else {
-        $('#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades').attr('disabled', false).selectpicker('refresh');
+        $(
+            "#multiple_units, #multiple_colors, #multiple_sizes, #multiple_grades"
+        )
+            .attr("disabled", false)
+            .selectpicker("refresh");
         $(".this_product_have_variant_div").slideUp();
     }
 });
@@ -48,7 +58,7 @@ $(document).on("click", ".remove_row", function () {
 
 $(document).on("click", ".add_row", function () {
     var row_id = parseInt($("#row_id").val());
-    console.log(row_id, 'row_id');
+    console.log(row_id, "row_id");
     $.ajax({
         method: "get",
         url: "/product/get-variation-row?row_id=" + row_id,
@@ -170,7 +180,6 @@ myDropzone = new Dropzone("div#my-dropzone", {
     },
 });
 
-
 var modalTemplate = $("#product_cropper_modal");
 
 myDropzone.on("thumbnail", function (file) {
@@ -231,7 +240,6 @@ function dataURItoBlob(dataURI) {
     }
     return new Blob([ab], { type: "image/jpeg" });
 }
-
 
 $(document).on("submit", "form#quick_add_product_class_form", function (e) {
     e.preventDefault();
@@ -691,5 +699,16 @@ function calculate_price_base_on_raw_material() {
     } else {
         __write_number($("#purchase_price"), 0);
     }
-    $("#purchase_price").change()
+    $("#purchase_price").change();
 }
+$(document).ready(function () {
+    $("#discount").change();
+});
+$(document).on("change", "#discount", function () {
+    let discount = __read_number($(this));
+    if (discount > 0) {
+        $("select#discount_customer_types").attr("required", true);
+    } else {
+        $("select#discount_customer_types").attr("required", false);
+    }
+});

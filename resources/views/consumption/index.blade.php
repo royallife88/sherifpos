@@ -106,10 +106,6 @@
 
         </tbody>
         <tfoot>
-            {{-- <tr>
-                <th colspan="7" style="text-align: right">@lang('lang.total')</th>
-                <td></td>
-            </tr> --}}
         </tfoot>
     </table>
 </div>

@@ -149,15 +149,7 @@
                                 </div>
                             </div>
                             @endcan
-                            <div class="col-md-4" style="margin-top: 40px;">
-                                <div class="i-checks">
-                                    <input id="automatic_consumption" name="automatic_consumption" type="checkbox"
-                                        @if(!empty($raw_material) && $raw_material->automatic_consumption == 1)
-                                    checked @endif value="1" class="form-control-custom">
-                                    <label
-                                        for="automatic_consumption"><strong>@lang('lang.automatic_consumption')</strong></label>
-                                </div>
-                            </div>
+
                             <div class="col-md-12">
                                 <table class="table table-bordered" id="consumption_table">
                                     <thead>

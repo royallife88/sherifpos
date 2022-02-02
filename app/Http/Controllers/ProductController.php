@@ -460,7 +460,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        try {
+        // try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
 
             $product_data = [
@@ -493,6 +493,7 @@ class ProductController extends Controller
                 'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
+                'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'created_by' => Auth::user()->id
@@ -525,13 +526,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return $output;
     }
@@ -673,6 +674,7 @@ class ProductController extends Controller
                 'different_prices_for_stores' => !empty($request->different_prices_for_stores) ? 1 : 0,
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
+                'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'edited_by' => Auth::user()->id,
             ];

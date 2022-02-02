@@ -324,22 +324,24 @@ class ProductUtil extends Util
         $keep_consumption_product = [];
         if (!empty($consumption_details)) {
             foreach ($consumption_details as $v) {
-                if (!empty($v['id'])) {
-                    $consumtion_product = ConsumptionProduct::find($v['id']);
-                    $consumtion_product->raw_material_id = $v['raw_material_id'];
-                    $consumtion_product->variation_id = $variation_id;
-                    $consumtion_product->amount_used = $this->num_uf($v['amount_used']);
-                    $consumtion_product->unit_id = $v['unit_id'];
+                if (!empty($v['raw_material_id'])) {
+                    if (!empty($v['id'])) {
+                        $consumtion_product = ConsumptionProduct::find($v['id']);
+                        $consumtion_product->raw_material_id = $v['raw_material_id'];
+                        $consumtion_product->variation_id = $variation_id;
+                        $consumtion_product->amount_used = $this->num_uf($v['amount_used']);
+                        $consumtion_product->unit_id = $v['unit_id'];
 
-                    $consumtion_product->save();
-                    $keep_consumption_product[] = $v['id'];
-                } else {
-                    $consumtion_product_data['raw_material_id'] = $v['raw_material_id'];
-                    $consumtion_product_data['variation_id'] = $variation_id;
-                    $consumtion_product_data['amount_used'] = $v['amount_used'];
-                    $consumtion_product_data['unit_id'] = $v['unit_id'];
-                    $consumtion_product = ConsumptionProduct::create($consumtion_product_data);
-                    $keep_consumption_product[] = $consumtion_product->id;
+                        $consumtion_product->save();
+                        $keep_consumption_product[] = $v['id'];
+                    } else {
+                        $consumtion_product_data['raw_material_id'] = $v['raw_material_id'];
+                        $consumtion_product_data['variation_id'] = $variation_id;
+                        $consumtion_product_data['amount_used'] = $v['amount_used'];
+                        $consumtion_product_data['unit_id'] = $v['unit_id'];
+                        $consumtion_product = ConsumptionProduct::create($consumtion_product_data);
+                        $keep_consumption_product[] = $consumtion_product->id;
+                    }
                 }
             }
         }
@@ -364,9 +366,8 @@ class ProductUtil extends Util
         if (!empty($consumption_details)) {
             foreach ($consumption_details as $v) {
                 if (!empty($v['id'])) {
-                    $consumtion_product = ConsumptionProduct::find($v['id']);-
-
-                    $consumtion_product->raw_material_id = $raw_material->id;
+                    $consumtion_product = ConsumptionProduct::find($v['id']);
+                    -$consumtion_product->raw_material_id = $raw_material->id;
                     $consumtion_product->variation_id = $v['variation_id'];
                     $consumtion_product->amount_used = $this->num_uf($v['amount_used']);
                     $consumtion_product->unit_id = $v['unit_id'];
@@ -624,7 +625,7 @@ class ProductUtil extends Util
                     //if end date set then check for expiry
                     if ($product->discount_start_date <= date('Y-m-d') && $product->discount_end_date >= date('Y-m-d')) {
                         return $product;
-                    }else{
+                    } else {
                         return false;
                     }
                 }
@@ -1588,5 +1589,17 @@ class ProductUtil extends Util
         $query->groupBy('variations.id');
         return $query
             ->first();
+    }
+
+    public function getCurrentStockDataByProduct($product_id, $store_id = null)
+    {
+        $query = ProductStore::where('product_id', $product_id);
+
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+
+        $current_Stock = $query->sum('qty_available');
+        return ['current_stock' => $current_Stock];
     }
 }

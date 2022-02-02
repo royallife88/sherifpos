@@ -698,3 +698,12 @@ function calculate_price_base_on_raw_material() {
     }
     $("#purchase_price").change()
 }
+
+$(document).on("change", "#discount", function () {
+    let discount = __read_number($(this));
+    if(discount > 0){
+        $('#discount_customer_types').attr('required', true);
+    }else{
+        $('#discount_customer_types').attr('required', false);
+    }
+})

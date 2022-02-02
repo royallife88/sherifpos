@@ -291,7 +291,6 @@ class RawMaterialController extends Controller
                 'sell_price' => $request->sell_price ?? 0,
                 'alert_quantity_unit_id' => $request->alert_quantity_unit_id ?? null,
                 'is_raw_material' => 1,
-                'automatic_consumption' => $request->automatic_consumption ?? 0,
                 'type' => 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'created_by' => Auth::user()->id
@@ -425,7 +424,6 @@ class RawMaterialController extends Controller
                 'sell_price' => $request->sell_price ?? 0,
                 'alert_quantity_unit_id' => $request->alert_quantity_unit_id ?? null,
                 'is_raw_material' => 1,
-                'automatic_consumption' => $request->automatic_consumption ?? 0,
                 'type' => 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'edited_by' => Auth::user()->id

@@ -28,6 +28,8 @@
                             {{$product->batch_number}}<br>
                             <label style="font-weight: bold;" for="">@lang('lang.selling_price'): </label>
                             {{@num_format($product->sell_price)}}<br>
+                            <label style="font-weight: bold;" for="">@lang('lang.automatic_consumption'): </label>
+                            @if(!empty($product->automatic_consumption)){{__('lang.yes')}}@else{{__('lang.no')}}@endif<br>
                         </div>
                         <div class="col-md-6">
                             <label style="font-weight: bold;" for="">@lang('lang.tax'): </label>

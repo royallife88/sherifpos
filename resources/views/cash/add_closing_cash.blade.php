@@ -21,7 +21,7 @@
                             {!! Form::label('current_cash', __( 'lang.current_cash' ) . ':*') !!}
                             {!! Form::text('current_cash', @num_format($total_cash), ['class' => 'form-control', 'placeholder' =>
                             __(
-                            'lang.current_cash' ), 'readonly' ]);
+                            'lang.current_cash' ), 'readonly', 'id' => 'closing_current_cash' ]);
                             !!}
                         </div>
                     </div>
@@ -30,7 +30,7 @@
                             {!! Form::label('amount', __( 'lang.amount' ) . ':*') !!}
                             {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder' =>
                             __(
-                            'lang.amount' ), 'required' ]);
+                            'lang.amount' ), 'required', 'id' => 'closing_amount' ]);
                             !!}
                         </div>
                     </div>
@@ -68,9 +68,9 @@
 </div><!-- /.modal-dialog -->
 <script>
     $('.selectpicker').selectpicker('render');
-    $(document).on('change', '#amount', function(){
-        let amount = parseFloat($(this).val());
-        let current_cash = parseFloat($('#current_cash').val());
+    $(document).on('change', '#closing_amount', function(){
+        let amount = __read_number($(this));
+        let current_cash = __read_number($('#closing_current_cash'));
 
         let discrepancy = amount - current_cash;
 

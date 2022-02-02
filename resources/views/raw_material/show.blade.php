@@ -18,8 +18,6 @@
                             {{$product->sku}} <br>
                             <label style="font-weight: bold;" for="">@lang('lang.brand'): </label>
                             @if(!empty($product->brand)){{$product->brand->name}}@endif<br>
-                            <label style="font-weight: bold;" for="">@lang('lang.automatic_consumption'): </label>
-                            @if(!empty($product->automatic_consumption)){{__('lang.yes')}}@else{{__('lang.no')}}@endif<br>
 
                         </div>
                         <div class="col-md-6">
