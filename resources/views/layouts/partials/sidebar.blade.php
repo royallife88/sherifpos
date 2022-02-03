@@ -79,15 +79,13 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         @can('product_module.add_stock_for_raw_material.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && request()->segment(3) == 'create') active @endif">
-                            <a
-                                href="/raw-material/add-stock/create">{{__('lang.add_stock_for_raw_material')}}</a>
+                            <a href="/raw-material/add-stock/create">{{__('lang.add_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
                         @can('product_module.add_stock_for_raw_material.view')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && empty(request()->segment(3))) active @endif">
-                            <a
-                                href="/raw-material/add-stock">{{__('lang.view_all_stock_for_raw_material')}}</a>
+                            <a href="/raw-material/add-stock">{{__('lang.view_all_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
                         @endif
@@ -1107,6 +1105,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
                     </ul>
+                </li>
+                <li class="@if(request()->segment(1) == 'tutorials' && empty(request()->segment(2))) active @endif">
+                    <a href="{{action('TutorialController@getTutorialsGuide')}}"><i
+                            class="fa fa-info-circle"></i><span>{{__('lang.tutorials')}}</span></a>
                 </li>
                 @endif
             </ul>

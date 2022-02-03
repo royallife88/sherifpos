@@ -1088,4 +1088,12 @@ return [
     'store_pos' => 'Store POS',
     'add_consumption_for_others' => 'Add Compensation for Others',
 
+
+    'other_expenses' => 'Other expenses',
+    'tutorial' => 'Tutorial',
+    'tutorials' => 'Tutorials',
+    'add_tutorial' => 'Add Tutorial',
+    'video' => 'Video',
+    'thumbnail' => 'Thumbnail',
+
 ];

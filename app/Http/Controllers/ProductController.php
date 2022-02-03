@@ -460,7 +460,7 @@ class ProductController extends Controller
             ['sell_price' => ['required', 'max:25', 'decimal']],
         );
 
-        // try {
+        try {
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
 
             $product_data = [
@@ -526,13 +526,13 @@ class ProductController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }

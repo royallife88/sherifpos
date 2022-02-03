@@ -665,6 +665,16 @@ class TransactionUtil extends Util
             ))->render();
         }
 
+        if ($transaction->is_direct_sale == 1) {
+            $sale = $transaction;
+            $payment_type_array = $payment_types;
+            $html_content = view('sale_pos.partials.commercial_invoice')->with(compact(
+                'sale',
+                'payment_type_array',
+                'invoice_lang'
+            ))->render();
+        }
+
         return $html_content;
     }
 

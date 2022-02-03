@@ -24,6 +24,7 @@ Route::get('/', function () {
 Route::group(['middleware' => ['language']], function () {
     Auth::routes();
 });
+Route::get('tutorials/get-tutorials-data-array', 'TutorialController@getTutorialsDataArray');
 
 Route::get('general/switch-language/{lang}', 'GeneralController@switchLanguage');
 Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']], function () {
@@ -295,7 +296,13 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('notification/notification-seen', 'NotificationController@notificationSeen');
     Route::get('user-contact-us', 'ContactUsController@getUserContactUs');
     Route::post('user-contact-us', 'ContactUsController@sendUserContactUs');
+
+
+    Route::get('guide/tutorials/', 'TutorialController@getTutorialsGuide');
+    Route::resource('tutorials', TutorialController::class);
 });
+
+
 Route::get('contact-us', 'ContactUsController@getContactUs');
 Route::post('contact-us', 'ContactUsController@sendContactUs');
 Route::get('testing', 'SettingController@callTesting');

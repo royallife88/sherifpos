@@ -1084,4 +1084,5 @@ return [
     'setting' => 'جلسة',
     'store_pos' => 'تخزين نقاط البيع',
     'add_consumption_for_others' => 'أضف تعويضات للآخرين',
+    'other_expenses' => 'مصروفات أخرى',
 ];
