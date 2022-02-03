@@ -10,7 +10,6 @@
                 <a style="color: white" data-href="{{action('TutorialController@create')}}" data-container=".view_modal"
                     class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
                     @lang('lang.add_tutorial')</a>
-                    <a href="{{action('TutorialController@getTutorialsDataArray')}}">asdasdf</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

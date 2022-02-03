@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\System;
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -191,30 +192,16 @@ class TutorialController extends Controller
     public function getTutorialsGuide()
     {
         $tutorials = Tutorial::get();
+        $tutorialsDataArray = [];
 
-        $url = 'http://127.0.0.1:8000';
+        $url = System::getProperty('tutorial_guide_url');
 
-        // $tutorialsDataArray = Http::get($url . '/api/tutorials/get-tutorials-data-array');
-        // print_r($tutorialsDataArray);
-        // die();
+        $client = new \GuzzleHttp\Client();
+        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array');
 
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'http://localhost/sherifpos/api/tutorials/get-tutorials-data-array',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);
-        echo $response; die();
+        if ($res->getStatusCode() == 200) {
+            $tutorialsDataArray = json_decode($res->getBody(), true);
+        }
 
         return view('tutorial.guide')->with(compact(
             'tutorialsDataArray'

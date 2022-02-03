@@ -1090,8 +1090,8 @@ return [
 
 
     'other_expenses' => 'Other expenses',
-    'tutorial' => 'Tutorial',
     'tutorials' => 'Tutorials',
+    'tutorial' => 'Tutorial',
     'add_tutorial' => 'Add Tutorial',
     'video' => 'Video',
     'thumbnail' => 'Thumbnail',

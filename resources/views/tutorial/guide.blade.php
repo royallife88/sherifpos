@@ -11,7 +11,7 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    @foreach ($tutorialsDataArray as $item)
+                    @forelse ($tutorialsDataArray as $item)
                     <div class="col-md-3">
                         <div class="card video_thumb" style="width: 18rem;" data-video_src="{{$item['video']}}"
                             data-thumbnail_src="{{$item['thumbnail']}}" data-name="{{$item['name']}}"
@@ -25,7 +25,12 @@
                             </div>
                         </div>
                     </div>
-                    @endforeach
+
+                    @empty
+                    <div class="col-md-12 text-center">
+                        <p class="text-center">@lang('lang.no_item_found')</p>
+                    </div>
+                    @endforelse
                 </div>
 
             </div>
@@ -37,7 +42,8 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-body">
-                <video id="my-video" title="asdfasfsafd" class="video-js vjs-big-play-centered" controls preload="auto" poster="">
+                <video id="my-video" title="asdfasfsafd" class="video-js vjs-big-play-centered" controls preload="auto"
+                    poster="">
                 </video>
 
             </div>

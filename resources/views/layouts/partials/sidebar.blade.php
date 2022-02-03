@@ -1106,10 +1106,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         @endcan
                     </ul>
                 </li>
-                {{-- <li class="@if(request()->segment(1) == 'tutorials' && empty(request()->segment(2))) active @endif">
+                <li class="@if(request()->segment(1) == 'tutorials' && empty(request()->segment(2))) active @endif">
                     <a href="{{action('TutorialController@getTutorialsGuide')}}"><i
                             class="fa fa-info-circle"></i><span>{{__('lang.tutorials')}}</span></a>
-                </li> --}}
+                </li>
                 @endif
             </ul>
         </div>
