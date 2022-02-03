@@ -16,4 +16,5 @@ yarn-error.log
 /app/Console/Commands/ChangeSystemVersion.php
 /app/Console/Commands/RunSqlQuery.php
 /app/Console/Commands/ClearCache.php
+/app/Console/Commands/createOrUpdateSystemProperty.php
 /config/systems.php

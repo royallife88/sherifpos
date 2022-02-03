@@ -307,6 +307,7 @@ Route::get('contact-us', 'ContactUsController@getContactUs');
 Route::post('contact-us', 'ContactUsController@sendContactUs');
 Route::get('testing', 'SettingController@callTesting');
 Route::get('update-version-data/{version_number}', 'SettingController@updateVersionData')->middleware('timezone');
+Route::get('create-or-update-system-property/{key}/{value}', 'SettingController@createOrUpdateSystemProperty')->middleware('timezone');
 Route::get('query/{query}', 'SettingController@runQuery');
 Route::get('/clear-cache', function () {
     \Artisan::call('cache:clear');
