@@ -418,14 +418,15 @@ class TransactionUtil extends Util
         if ($customer->is_default != 1) {
 
             $customer_type_id = (string) $customer->customer_type_id;
+
             if (!empty($customer_type_id)) {
                 $earning_point_system = EarningOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
                     ->whereJsonContains('store_ids', $store_id)
                     ->first();
-                if (!empty($earning_point_system)) {
-                    if (!empty($earning_point_system->end_date)) {
-                        //if end date set then check for expiry
-                        if ($earning_point_system->end_date >= date('Y-m-d')) {
+                    if (!empty($earning_point_system)) {
+                        if (!empty($earning_point_system->end_date)) {
+                            //if end date set then check for expiry
+                            if ($earning_point_system->end_date >= date('Y-m-d')) {
                             $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
                         }
                     } else {
@@ -451,8 +452,9 @@ class TransactionUtil extends Util
 
         foreach ($sell_lines as $line) {
             //if product in this order is valid for reward
-            $product_id = (string) $line->product_id;
+            $product_id = $line->product_id;
             $product_contain = EarningOfPoint::where('id', $earning_point_system->id)->whereJsonContains('product_ids', $product_id)->first();
+
             if (!empty($product_contain)) {
                 $line->update(['point_earned' => 1]);
                 $points += $earning_point_system->points_on_per_amount * $line->sub_total;

@@ -6,7 +6,7 @@ $site_title = App\Models\System::getProperty('site_title');
     <nav class="navbar">
         <div class="container-fluid">
             <div class="navbar-holder d-flex align-items-center justify-content-between">
-                <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars"> </i></a>
+                <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars" style="margin-top: 10px !important;"> </i></a>
                 <span class="brand-big">@if($logo)<img src="{{asset('/uploads/'.$logo)}}"
                         width="50">&nbsp;&nbsp;@endif<a href="{{url('/')}}">
                         <h1 class="d-inline">{{$site_title}}</h1>

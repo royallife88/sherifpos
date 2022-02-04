@@ -11,7 +11,8 @@
                     </div>
                     <div class="card-body">
                         <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
-                        {!! Form::open(['url' => action('RedemptionOfPointController@store'), 'id' => 'customer-type-form',
+                        {!! Form::open(['url' => action('RedemptionOfPointController@store'), 'id' =>
+                        'customer-type-form',
                         'method' =>
                         'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                         <div class="row">
@@ -25,7 +26,8 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
-                                    {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' => 'selectpicker
+                                    {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' =>
+                                    'selectpicker
                                     form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
                                 </div>
                             </div>
@@ -34,31 +36,33 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    {!! Form::label('value_of_1000_points', __( 'lang.value_of_1000_points' ) . ':*') !!}
-                                    {!! Form::text('value_of_1000_points', 1, ['class' => 'form-control', 'required']) !!}
+                                    {!! Form::label('value_of_1000_points', __( 'lang.value_of_1000_points' ) . ':*')
+                                    !!}
+                                    {!! Form::text('value_of_1000_points', 1, ['class' => 'form-control', 'required'])
+                                    !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('start_date', __( 'lang.start_date' ) . ':') !!}
-                                    {!! Form::text('start_date', 1, ['class' => 'form-control']) !!}
+                                    {!! Form::text('start_date', null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('end_date', __( 'lang.end_date' ) . ':') !!}
-                                    {!! Form::text('end_date', 1, ['class' => 'form-control']) !!}
+                                    {!! Form::text('end_date', null, ['class' => 'form-control']) !!}
                                 </div>
                             </div>
                         </div>
                         <br>
                         <div class="row">
-                           <div class="col-md-12">
-                            <div class="form-group">
-                                <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
-                                    class="btn btn-primary">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
+                                        class="btn btn-primary">
+                                </div>
                             </div>
-                           </div>
                         </div>
                         {!! Form::close() !!}
                     </div>
@@ -72,6 +76,6 @@
 @section('javascript')
 <script src="{{asset('js/product_selection_tree.js')}}"></script>
 <script type="text/javascript">
-   $('.selectpicker').selectpicker('selectAll');
+    $('.selectpicker').selectpicker('selectAll');
 </script>
 @endsection

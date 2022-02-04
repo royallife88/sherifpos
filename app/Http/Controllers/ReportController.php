@@ -110,9 +110,7 @@ class ReportController extends Controller
         if (!empty(request()->end_time)) {
             $purchase_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
-        if (!empty($request->customer_type_id)) {
-            $purchase_query->where('customer_type_id', $request->customer_type_id);
-        }
+
         if (!empty($store_id)) {
             $purchase_query->where('store_id', $store_id);
         }
@@ -139,9 +137,7 @@ class ReportController extends Controller
         if (!empty(request()->end_time)) {
             $expense_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
-        if (!empty($request->customer_type_id)) {
-            $expense_query->where('customer_type_id', $request->customer_type_id);
-        }
+
         if (!empty($store_id)) {
             $expense_query->where('store_id', $store_id);
         }

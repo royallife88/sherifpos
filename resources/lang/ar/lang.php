@@ -180,7 +180,7 @@ return [
     'view_all_supplier' => 'عرض كل الموردين',
     'product_classification_tree' => 'شجرة تصنيف المنتج',
     'print_barcode' => 'طباعة الباركود',
-    'enter_product_name_to_print_labels' => 'أدخل اسم المنتج لطباعة الباركود',
+    'enter_product_name_to_print_labels' => 'استخدم الماسح الضوئي أو أكتب أول ثلاثة أحرف من المنتج أو أول الباركو',
     'products' => 'منتجات',
     'no_of_labels' => 'عدد الملصقات',
     'product_name' => 'اسم المنتج',
