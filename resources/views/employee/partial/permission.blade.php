@@ -49,6 +49,15 @@
             @endphp
             @endif
             @endif
+            @if(session('system_mode') != 'restaurant')
+            @if($key_module == 'product_module')
+            @php
+            unset($sub_module_permission_array['raw_material']);
+            unset($sub_module_permission_array['consumption']);
+            unset($sub_module_permission_array['add_consumption_for_others']);
+            @endphp
+            @endif
+            @endif
             @foreach ( $sub_module_permission_array as $key_sub_module => $sub_module)
             <tr class="sub_module_permission_{{$key_module}}">
                 <td class=""></td>

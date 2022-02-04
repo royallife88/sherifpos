@@ -21,11 +21,11 @@
                         <div class="col-md-8">
                             <div class="row">
                                 <div class="col-sm-6">
-                                    <label for="fname">@lang('lang.full_name'): </label> {{$employee->name}}
+                                    <label for="fname">@lang('lang.full_name'): </label> {{$employee->name ?? ''}}
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="store_id">@lang('lang.store'): </label> @if(!empty($employee->store))
-                                    {{$employee->store->name ?? ''}} @endif
+                                    {{implode(',', $employee->store->pluck('name')->toArray())}} @endif
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="email">@lang('lang.email'): </label> {{$employee->email}}
@@ -65,7 +65,7 @@
                         <div class="col-sm-6">
                             <div class="i-checks">
                                 <label
-                                    for="number_of_leaves{{$number_of_leave->id}}"><strong>{{$number_of_leave->name}}</strong></label>
+                                    for="number_of_leaves{{$number_of_leave->id}}"><strong>{{$number_of_leave->name ?? ''}}</strong></label>
                                 {{$number_of_leave->number_of_days}}
                             </div>
                         </div>
@@ -198,25 +198,51 @@
                                             <td></td>
                                             </tr>
                                             @if(!empty($subModulePermissionArray[$key_module]))
-                                            @foreach ( $subModulePermissionArray[$key_module] as $key_sub_module =>
+                                            @php
+                                            $sub_module_permission_array = $subModulePermissionArray[$key_module];
+                                            @endphp
+                                            @if(session('system_mode') == 'restaurant')
+                                            @if($key_module == 'product_module')
+                                            @php
+                                            unset($sub_module_permission_array['category']);
+                                            unset($sub_module_permission_array['sub_category']);
+                                            unset($sub_module_permission_array['brand']);
+                                            unset($sub_module_permission_array['color']);
+                                            unset($sub_module_permission_array['grade']);
+                                            @endphp
+                                            @endif
+                                            @endif
+                                            @if(session('system_mode') != 'restaurant')
+                                            @if($key_module == 'product_module')
+                                            @php
+                                            unset($sub_module_permission_array['raw_material']);
+                                            unset($sub_module_permission_array['consumption']);
+                                            unset($sub_module_permission_array['add_consumption_for_others']);
+                                            @endphp
+                                            @endif
+                                            @endif
+                                            @foreach ( $sub_module_permission_array as $key_sub_module =>
                                             $sub_module)
                                             <tr class="sub_module_permission_{{$key_module}}">
                                                 <td class=""></td>
                                                 <td>{{$sub_module}}</td>
 
+                                                @php
+                                                $view_permission = $key_module.'.'.$key_sub_module.'.view';
+                                                $create_and_edit_permission =
+                                                $key_module.'.'.$key_sub_module.'.create_and_edit';
+                                                $delete_permission = $key_module.'.'.$key_sub_module.'.delete';
+                                                @endphp
+                                                @if(Spatie\Permission\Models\Permission::where('name', $view_permission)->first())
                                                 <td class="">
-                                                    @php
-                                                    $view_permission = $key_module.'.'.$key_sub_module.'.view';
-                                                    $create_and_edit_permission =
-                                                    $key_module.'.'.$key_sub_module.'.create_and_edit';
-                                                    $delete_permission = $key_module.'.'.$key_sub_module.'.delete';
-                                                    @endphp
                                                     {!! Form::checkbox('permissions['.$view_permission.']', 1,
                                                     !empty($user)
                                                     &&
                                                     !empty($user->hasPermissionTo($view_permission)) ? true : false,
                                                     ['class' => 'check_box', 'disabled']) !!}
                                                 </td>
+                                                @endif
+                                                @if(Spatie\Permission\Models\Permission::where('name', $create_and_edit_permission)->first())
                                                 <td class="">
                                                     {!! Form::checkbox('permissions['.$create_and_edit_permission.']',
                                                     1,
@@ -225,12 +251,15 @@
                                                     false, ['class' =>
                                                     'check_box', 'disabled']) !!}
                                                 </td>
+                                                @endif
+                                                @if(Spatie\Permission\Models\Permission::where('name', $delete_permission)->first())
                                                 <td class="">
                                                     {!! Form::checkbox('permissions['.$delete_permission.']', 1,
                                                     !empty($user) &&
                                                     !empty($user->hasPermissionTo($delete_permission)) ? true : false,
                                                     ['class' => 'check_box', 'disabled']) !!}
                                                 </td>
+                                                @endif
                                             </tr>
 
                                             @endforeach
