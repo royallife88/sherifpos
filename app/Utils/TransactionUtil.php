@@ -11,6 +11,7 @@ use App\Models\ConsumptionDetail;
 use App\Models\ConsumptionProduct;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
+use App\Models\CustomerImportantDate;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -1094,6 +1095,27 @@ class TransactionUtil extends Util
                     $this->productUtil->decreaseProductQuantity($raw_material->id, $variation_rw->id, $transaction->store_id, $total_quantity, $old_qty);
                 }
             }
+        }
+    }
+    /**
+     * create of update the customer important dates
+     *
+     * @param int $customer_id
+     * @param array $customer_important_dates
+     * @return void
+     */
+    public function createOrUpdateCustomerImportantDate($customer_id, $customer_important_dates)
+    {
+        foreach ($customer_important_dates as $key => $value) {
+            $id = !empty($value['id']) ? $value['id'] : null;
+            $customer_important_date = CustomerImportantDate::firstOrNew(['customer_id' => $customer_id, 'id' => $id]);
+            $customer_important_date->customer_id = $customer_id;
+            $customer_important_date->details = $value['details'];
+            $customer_important_date->date = !empty($value['date']) ? $this->uf_date($value['date']) : null;
+            $customer_important_date->notify_before_days = $value['notify_before_days'] ?? 0;
+            $customer_important_date->created_by = Auth::user()->id;
+
+            $customer_important_date->save();
         }
     }
 }

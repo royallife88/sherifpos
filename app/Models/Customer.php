@@ -20,6 +20,10 @@ class Customer extends Model implements HasMedia
     protected $guarded = ['id'];
 
 
+    public function customer_important_dates()
+    {
+        return $this->hasMany(CustomerImportantDate::class);
+    }
     public function customer_type()
     {
         return $this->belongsTo(CustomerType::class);

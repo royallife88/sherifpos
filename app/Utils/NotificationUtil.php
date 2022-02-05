@@ -354,6 +354,8 @@ class NotificationUtil extends Util
     {
         ModelsNotification::create([
             'user_id' => $data['user_id'],
+            'customer_id' => !empty($data['customer_id']) ? $data['customer_id'] : null,
+            'message' => !empty($data['message']) ? $data['message'] : null,
             'transaction_id' => !empty($data['transaction_id']) ? $data['transaction_id'] : null,
             'product_id' => !empty($data['product_id']) ? $data['product_id'] : null,
             'qty_available' => !empty($data['qty_available']) ? $data['qty_available'] : 0,

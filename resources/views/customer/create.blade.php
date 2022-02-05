@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
+                                    <input type="submit" value="{{trans('lang.save')}}" id="submit-btn"
                                         class="btn btn-primary">
                                 </div>
                             </div>
@@ -71,5 +71,20 @@
 
         $('.'+name+'_span').text(cm_size);
     }
+    $(document).on('click', '.add_date', function(){
+        let index = __read_number($('#important_date_index'));
+        console.log(index);
+        $('#important_date_index').val(index+1);
+
+        $.ajax({
+            method: 'GET',
+            url: '/customer/get-important-date-row',
+            data: { index: index },
+            success: function(result) {
+                $('#important_date_table tbody').append(result);
+                $('.datepicker').datepicker()
+            },
+        });
+    })
 </script>
 @endsection

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Notification extends Model
+class CustomerImportantDate extends Model
 {
     use HasFactory;
 
@@ -18,16 +18,9 @@ class Notification extends Model
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class)->withDefault(['name' => '']);
+        return $this->belongsTo(Customer::class);
     }
-    public function transaction()
-    {
-        return $this->belongsTo(Transaction::class);
-    }
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
+
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);

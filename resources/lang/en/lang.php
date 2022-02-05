@@ -1096,5 +1096,7 @@ return [
     'video' => 'Video',
     'thumbnail' => 'Thumbnail',
     'final_cost' => 'Final Cost',
+    'important_dates' => 'Important Dates',
+    'important_date' => 'Important Date',
 
 ];

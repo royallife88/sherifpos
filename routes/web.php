@@ -84,6 +84,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer/get-customer-balance/{customer_id}', 'CustomerController@getCustomerBalance');
     Route::post('customer/pay-customer-due/{customer_id}', 'CustomerController@postPayContactDue');
     Route::get('customer/pay-customer-due/{customer_id}', 'CustomerController@getPayContactDue');
+    Route::get('customer/get-important-date-row', 'CustomerController@getImportantDateRow');
     Route::resource('customer', CustomerController::class);
 
     Route::get('customer-sizes/print/{id}', 'CustomerSizeController@print');

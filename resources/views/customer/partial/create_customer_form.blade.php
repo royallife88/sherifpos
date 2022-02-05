@@ -95,5 +95,30 @@
     </div>
     @endcan
     @endif
+
+    @if(empty($quick_add))
+    <div class="col-md-12">
+        <h3>@lang('lang.important_dates')</h3>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered" id="important_date_table">
+                <thead>
+                    <tr>
+                        <th>@lang('lang.important_date')</th>
+                        <th>@lang('lang.date')</th>
+                        <th>@lang('lang.notify_before_days')</th>
+                        <th><button type="button" class="add_date btn btn-success btn-xs"><i
+                                    class="fa fa-plus"></i></button></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <input type="hidden" name="important_date_index" id="important_date_index" value="0">
+    @endif
 </div>
 <input type="hidden" name="quick_add" value="{{$quick_add}}">

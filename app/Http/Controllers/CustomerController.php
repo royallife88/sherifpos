@@ -119,7 +119,7 @@ class CustomerController extends Controller
             }
 
             $size_data = $request->size_data;
-            // print_r($size_data); die();
+
             if (!empty($size_data)) {
                 $size_data['customer_id'] = $customer->id;
                 $size_data['created_by'] = Auth::user()->id;
@@ -128,6 +128,10 @@ class CustomerController extends Controller
             }
 
             $customer_id = $customer->id;
+
+            if (!empty($request->important_dates)) {
+                $this->transactionUtil->createOrUpdateCustomerImportantDate($customer_id, $request->important_dates);
+            }
 
             DB::commit();
             $output = [
@@ -282,6 +286,9 @@ class CustomerController extends Controller
                 $customer->addMedia($request->image)->toMediaCollection('customer_photo');
             }
 
+            if (!empty($request->important_dates)) {
+                $this->transactionUtil->createOrUpdateCustomerImportantDate($id, $request->important_dates);
+            }
 
             DB::commit();
             $output = [
@@ -434,5 +441,14 @@ class CustomerController extends Controller
         }
 
         return redirect()->back()->with(['status' => $output]);
+    }
+
+    public function getImportantDateRow()
+    {
+        $index = request()->index ?? 0;
+
+        return view('customer.partial.important_date_row')->with(compact(
+            'index'
+        ));
     }
 }

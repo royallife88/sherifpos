@@ -62,7 +62,7 @@ class ExpenseDueNotify extends Command
                     'days' => $days,
                     'type' => 'expense_due',
                     'status' => 'unread',
-                    'created_by' => 0,
+                    'created_by' => 1,
                 ];
                 $this->notificationUtil->createNotification($notification_data);
             }

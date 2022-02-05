@@ -68,7 +68,7 @@ class CreateQuantityAlertNotification extends Command
                     'alert_quantity' => $item->alert_quantity,
                     'type' => 'quantity_alert',
                     'status' => 'unread',
-                    'created_by' => 0,
+                    'created_by' => 1,
                 ];
                 $notification_exist = Notification::where('user_id', $user->id)->where('type', 'quantity_alert')->where('product_id',$item->id )->where('status', 'unread')->first();
                 if(empty($notification_exist)){

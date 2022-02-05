@@ -83,7 +83,7 @@ class CreateExpiryProductNotification extends Command
                             'days' => $days,
                             'type' => 'expiry_alert',
                             'status' => 'unread',
-                            'created_by' => 0,
+                            'created_by' => 1,
                         ];
                         $this->notificationUtil->createNotification($notification_data);
                     }
@@ -97,7 +97,7 @@ class CreateExpiryProductNotification extends Command
                             'days' => $days,
                             'type' => 'expired',
                             'status' => 'unread',
-                            'created_by' => 0,
+                            'created_by' => 1,
                         ];
                         $this->notificationUtil->createNotification($notification_data);
                     }
