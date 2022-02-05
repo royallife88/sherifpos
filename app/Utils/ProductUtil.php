@@ -1340,7 +1340,8 @@ class ProductUtil extends Util
     public function getCurrentStockValueByStore($store_id = null)
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->where('is_service', 0);
         if (!empty($store_id)) {
             $query->where('product_stores.store_id', $store_id);
         }

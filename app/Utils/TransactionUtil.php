@@ -568,6 +568,9 @@ class TransactionUtil extends Util
             if (empty($transaction->invoice_no)) {
                 $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
             }
+            if ($transaction->is_quotation) {
+                $transaction_data['invoice_no'] = $this->productUtil->getNumberByType('sell');
+            }
         }
         $transaction_status = $transaction->status;
         $is_block_qty = $transaction->block_qty;

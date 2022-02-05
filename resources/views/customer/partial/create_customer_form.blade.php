@@ -100,15 +100,15 @@
     <div class="col-md-12">
         <h3>@lang('lang.important_dates')</h3>
     </div>
-    <div class="row">
-        <div class="col-md-12">
-            <table class="table table-bordered" id="important_date_table">
+    <div class="col-md-12">
+        <div class="row">
+            <table class="table table-bordered" id="important_date_table" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th>@lang('lang.important_date')</th>
-                        <th>@lang('lang.date')</th>
-                        <th>@lang('lang.notify_before_days')</th>
-                        <th><button type="button" class="add_date btn btn-success btn-xs"><i
+                        <th style="width: 25%;">@lang('lang.important_date')</th>
+                        <th style="width: 25%;">@lang('lang.date')</th>
+                        <th style="width: 25%;">@lang('lang.notify_before_days')</th>
+                        <th style="width: 25%;"><button type="button" class="add_date btn btn-success btn-xs"><i
                                     class="fa fa-plus"></i></button></th>
                     </tr>
                 </thead>
