@@ -75,6 +75,13 @@
                             'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                         </div>
                     </div>
+                    {{-- <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('profit_type', __('lang.profit'), []) !!}
+                            {!! Form::select('profit_type', ['purchase_price' => __('lang.purchase_price'), 'final_cost' => __('lang.final_cost')], request()->profit_type, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div> --}}
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="">@lang('lang.wages_type')</label>

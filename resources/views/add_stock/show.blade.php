@@ -45,6 +45,7 @@
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.sku' )</th>
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.quantity' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.final_cost' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.batch_number' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.manufacturing_date' )
@@ -83,6 +84,9 @@
                                                 @if(isset($line->purchase_price)){{@num_format($line->purchase_price)}}@else{{0}}@endif
                                             </td>
                                             <td>
+                                                @if(isset($line->final_cost)){{@num_format($line->final_cost)}}@else{{0}}@endif
+                                            </td>
+                                            <td>
                                                 {{@num_format($line->sub_total)}}
                                             </td>
                                             <td>{{$line->batch_number}}</td>
@@ -111,8 +115,8 @@
                         <br>
                         <div class="row">
                             <div class="col-md-3">
-                                {!! Form::label('total_tax', __('lang.tax'), []) !!}:
-                                <b>{{@num_format($add_stock->total_tax)}}</b>
+                                {!! Form::label('other_expenses', __('lang.other_expenses'), []) !!}:
+                                <b>{{@num_format($add_stock->other_expenses)}}</b>
                             </div>
                             <div class="col-md-3">
                                 {!! Form::label('discount_amount', __('lang.discount'), []) !!}:

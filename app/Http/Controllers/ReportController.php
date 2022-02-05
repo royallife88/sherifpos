@@ -94,9 +94,11 @@ class ReportController extends Controller
             DB::raw('SUM(transactions.final_total) as total_amount')
         )->groupBy('stores.id')->get();
 
-        $purchase_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('transactions.type', 'add_stock')
-            ->where('transactions.status', 'received');
+        $purchase_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
+            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+            ->where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
 
         if (!empty($request->start_date)) {
             $purchase_query->whereDate('transaction_date', '>=', $request->start_date);
@@ -116,8 +118,8 @@ class ReportController extends Controller
         }
 
         $purchases = $purchase_query->select(
-            DB::raw('SUM(transactions.final_total) as total_amount')
-        )->groupBy('transactions.id')->first();
+            DB::raw('SUM(products.purchase_price * transaction_sell_lines.quantity) as total_amount')
+        )->first();
 
 
         $expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')

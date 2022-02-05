@@ -166,6 +166,12 @@ $invoice_lang = request()->session()->get('language');
                         <th colspan="3">@lang('lang.total', [], $invoice_lang)</th>
                         <th style="text-align:right">{{@num_format($transaction->grand_total)}}</th>
                     </tr>
+                    @if($transaction->total_item_tax != 0)
+                    <tr>
+                        <th colspan="3">@lang('lang.tax', [], $invoice_lang)</th>
+                        <th style="text-align:right">{{@num_format($transaction->total_item_tax)}}</th>
+                    </tr>
+                    @endif
                     @if($transaction->total_tax != 0)
                     <tr>
                         <th colspan="3">@lang('lang.order_tax', [], $invoice_lang)</th>

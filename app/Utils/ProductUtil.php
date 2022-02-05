@@ -565,7 +565,9 @@ class ProductUtil extends Util
     public function getDetailsFromProductByStore($product_id, $variation_id = null, $store_id = null)
     {
         $product = Product::leftjoin('variations as v', 'products.id', '=', 'v.product_id')
+            ->leftjoin('taxes', 'products.tax_id', '=', 'taxes.id')
             ->leftjoin('product_stores', 'v.id', '=', 'product_stores.variation_id')
+
             ->whereNull('v.deleted_at');
 
         if (!is_null($variation_id) && $variation_id !== '0') {
@@ -582,8 +584,11 @@ class ProductUtil extends Util
             'products.name as product_name',
             'products.is_service',
             'products.alert_quantity',
+            'products.tax_id',
+            'products.tax_method',
             'product_stores.qty_available',
             'products.sell_price',
+            'taxes.rate as tax_rate',
             'v.id as variation_id',
             'v.name as variation_name',
             'v.default_purchase_price',
@@ -922,6 +927,7 @@ class ProductUtil extends Util
                 $old_qty = $add_stock->quantity;
                 $add_stock->quantity = $this->num_uf($line['quantity']);
                 $add_stock->purchase_price = $this->num_uf($line['purchase_price']);
+                $add_stock->final_cost = $this->num_uf($line['final_cost']);
                 $add_stock->sub_total = $this->num_uf($line['sub_total']);
                 $add_stock->batch_number = $line['batch_number'];
                 $add_stock->manufacturing_date = !empty($line['manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null;
@@ -938,6 +944,7 @@ class ProductUtil extends Util
                     'variation_id' => $line['variation_id'],
                     'quantity' => $this->num_uf($line['quantity']),
                     'purchase_price' => $this->num_uf($line['purchase_price']),
+                    'final_cost' => $this->num_uf($line['final_cost']),
                     'sub_total' => $this->num_uf($line['sub_total']),
                     'batch_number' => $line['batch_number'],
                     'manufacturing_date' => !empty($line['manufacturing_date']) ? $this->uf_date($line['manufacturing_date']) : null,

@@ -244,7 +244,7 @@ class AddStockController extends Controller
     public function store(Request $request)
     {
 
-        try {
+        // try {
             $data = $request->except('_token');
 
             if (!empty($data['po_no'])) {
@@ -262,9 +262,9 @@ class AddStockController extends Controller
                 'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,
                 'grand_total' => $this->productUtil->num_uf($data['grand_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
-                'total_tax' => $this->productUtil->num_uf($data['total_tax']),
                 'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
                 'other_payments' => $this->productUtil->num_uf($data['other_payments']),
+                'other_expenses' => $this->productUtil->num_uf($data['other_expenses']),
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
@@ -345,13 +345,13 @@ class AddStockController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -440,9 +440,9 @@ class AddStockController extends Controller
                 'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
                 'grand_total' => $this->productUtil->num_uf($data['grand_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
-                'total_tax' => $this->productUtil->num_uf($data['total_tax']),
                 'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
                 'other_payments' => $this->productUtil->num_uf($data['other_payments']),
+                'other_expenses' => $this->productUtil->num_uf($data['other_expenses']),
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,

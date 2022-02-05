@@ -111,7 +111,7 @@
             <br>
             @if(!empty($sale->transaction_customer_size))
             @php
-                $customer_size = $sale->transaction_customer_size;
+            $customer_size = $sale->transaction_customer_size;
             @endphp
             <div class="row text-center">
                 <div class="col-md-12">
@@ -119,11 +119,16 @@
                 </div>
             </div>
             <div class="col-md-12">
-                    @if(!empty($sale->customer_size))<label for=""><b>@lang('lang.customer_size'): {{$sale->customer_size->name}}  </b></label><br>@endif
-                    @if(!empty($sale->fabric_name))<label for=""><b>@lang('lang.fabric_name'): {{$sale->fabric_name}}  </b></label><br> @endif
-                    @if(!empty($sale->fabric_squatch))<label for=""><b>@lang('lang.fabric_squatch'): {{$sale->fabric_squatch}} </b></label><br> @endif
-                    @if(!empty($sale->prova_datetime))<label for=""><b>@lang('lang.prova'): {{@format_datetime($sale->prova_datetime)}} </b></label><br> @endif
-                    @if(!empty($sale->delivery_datetime))<label for=""><b>@lang('lang.delivery'): {{@format_datetime($sale->delivery_datetime)}} </b></label><br>@endif
+                @if(!empty($sale->customer_size))<label for=""><b>@lang('lang.customer_size'):
+                        {{$sale->customer_size->name}} </b></label><br>@endif
+                @if(!empty($sale->fabric_name))<label for=""><b>@lang('lang.fabric_name'): {{$sale->fabric_name}}
+                    </b></label><br> @endif
+                @if(!empty($sale->fabric_squatch))<label for=""><b>@lang('lang.fabric_squatch'):
+                        {{$sale->fabric_squatch}} </b></label><br> @endif
+                @if(!empty($sale->prova_datetime))<label for=""><b>@lang('lang.prova'):
+                        {{@format_datetime($sale->prova_datetime)}} </b></label><br> @endif
+                @if(!empty($sale->delivery_datetime))<label for=""><b>@lang('lang.delivery'):
+                        {{@format_datetime($sale->delivery_datetime)}} </b></label><br>@endif
             </div>
             <div class="row">
                 <div class="col-md-6">
@@ -176,7 +181,7 @@
                     <table class="table table-bordered">
                         <tr>
                             <th>@lang('lang.total_tax'):</th>
-                            <td>{{@num_format($sale->total_tax)}}</td>
+                            <td>{{@num_format($sale->total_tax + $sale->total_item_tax)}}</td>
                         </tr>
                         <tr>
                             <th>@lang('lang.discount'):</th>

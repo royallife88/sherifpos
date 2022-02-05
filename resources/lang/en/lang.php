@@ -1095,5 +1095,6 @@ return [
     'add_tutorial' => 'Add Tutorial',
     'video' => 'Video',
     'thumbnail' => 'Thumbnail',
+    'final_cost' => 'Final Cost',
 
 ];

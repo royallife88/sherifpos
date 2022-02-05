@@ -123,6 +123,9 @@
                                                 <input type="text" class="form-control purchase_price"
                                                     name="add_stock_lines[{{$loop->index}}][purchase_price]" required
                                                     value="@if(isset($product->purchase_price)){{@num_format($product->purchase_price)}}@else{{0}}@endif">
+                                                <input class="final_cost" type="hidden"
+                                                    name="add_stock_lines[{{$loop->index}}][final_cost]"
+                                                    value="@if(isset($product->final_cost)){{@num_format($product->final_cost)}}@else{{0}}@endif">
                                             </td>
                                             <td>
                                                 <span class="sub_total_span">{{@num_format($product->sub_total)}}</span>
@@ -178,7 +181,8 @@
                                         class="final_total_span">{{@num_format($add_stock->final_total)}}</span> </h3>
                                 <input type="hidden" name="final_total" id="final_total"
                                     value="{{$add_stock->final_total}}">
-                                <input type="hidden" name="grand_total" id="grand_total" value="{{$add_stock->grand_total}}">
+                                <input type="hidden" name="grand_total" id="grand_total"
+                                    value="{{$add_stock->grand_total}}">
                             </div>
                         </div>
                         <br>
@@ -199,22 +203,25 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('total_tax', __('lang.tax'), []) !!} <br>
-                                    {!! Form::text('total_tax', @num_format($add_stock->total_tax), ['class' => 'form-control', 'placeholder' =>
-                                    __('lang.tax'), 'id' => 'total_tax']) !!}
+                                    {!! Form::label('other_expenses', __('lang.other_expenses'), []) !!} <br>
+                                    {!! Form::text('other_expenses', @num_format($add_stock->other_expenses), ['class'
+                                    => 'form-control', 'placeholder' =>
+                                    __('lang.other_expenses'), 'id' => 'other_expenses']) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('discount_amount', __('lang.discount'), []) !!} <br>
-                                    {!! Form::text('discount_amount', @num_format($add_stock->discount_amount), ['class' => 'form-control', 'placeholder' =>
+                                    {!! Form::text('discount_amount', @num_format($add_stock->discount_amount), ['class'
+                                    => 'form-control', 'placeholder' =>
                                     __('lang.discount'), 'id' => 'discount_amount']) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     {!! Form::label('other_payments', __('lang.other_payments'), []) !!} <br>
-                                    {!! Form::text('other_payments', @num_format($add_stock->other_payments), ['class' => 'form-control', 'placeholder' =>
+                                    {!! Form::text('other_payments', @num_format($add_stock->other_payments), ['class'
+                                    => 'form-control', 'placeholder' =>
                                     __('lang.other_payments'), 'id' => 'other_payments']) !!}
                                 </div>
                             </div>
@@ -234,7 +241,8 @@
                                     {!! Form::select('source_id', $users,
                                     $add_stock->source_id, ['class' => 'selectpicker form-control',
                                     'data-live-search'=>"true", 'required',
-                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'source_id']) !!}
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' =>
+                                    'source_id']) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">

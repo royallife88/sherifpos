@@ -166,6 +166,13 @@
                         <th colspan="2" style="text-align:right">{{__('lang.total',[], 'ar')}} <br>
                             @lang('lang.total',[], 'en') </th>
                     </tr>
+                    @if($transaction->total_item_tax != 0)
+                    <tr>
+                        <th colspan="2" style="text-align:left">{{@num_format($transaction->total_item_tax)}}</th>
+                        <th colspan="2" style="text-align:right">{{__('lang.tax',[], 'ar')}} <br>
+                            @lang('lang.tax',[], 'en') </th>
+                    </tr>
+                    @endif
                     @if($transaction->total_tax != 0)
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->total_tax)}}</th>

@@ -183,6 +183,7 @@ class SellPosController extends Controller
                 'add_to_deposit' => $this->commonUtil->num_f($request->add_to_deposit),
                 'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
                 'total_tax' => $this->commonUtil->num_f($request->total_tax),
+                'total_item_tax' => $this->commonUtil->num_f($request->total_item_tax),
                 'sale_note' => $request->sale_note,
                 'staff_note' => $request->staff_note,
                 'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,

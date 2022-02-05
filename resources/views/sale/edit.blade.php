@@ -110,6 +110,8 @@
                                             value="{{$sale->gift_card_id}}" />
                                         <input type="hidden" id="coupon_id" name="coupon_id"
                                             value="{{$sale->coupon_id}}">
+                                        <input type="hidden" id="total_item_tax" name="total_item_tax"
+                                            value="{{$sale->total_item_tax}}">
                                         <input type="hidden" id="total_tax" name="total_tax"
                                             value="{{$sale->total_tax}}">
                                         <input type="hidden" id="is_direct_sale" name="is_direct_sale"

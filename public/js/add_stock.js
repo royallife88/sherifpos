@@ -112,18 +112,45 @@ function calculate_sub_totals() {
     });
     __write_number($("#grand_total"), total);
 
-    var total_tax = __read_number($("#total_tax"));
+    var other_expenses = __read_number($("#other_expenses"));
     var discount_amount = __read_number($("#discount_amount"));
     var other_payments = __read_number($("#other_payments"));
 
-    total = total + total_tax - discount_amount + other_payments;
+    total = total + other_expenses - discount_amount + other_payments;
     __write_number($("#final_total"), total);
     __write_number($("#amount"), total);
     $(".final_total_span").text(__currency_trans_from_en(total, false));
+
+    calculate_final_cost_for_products();
+}
+
+function calculate_final_cost_for_products() {
+    var total_qauntity = 0;
+    $("#product_table > tbody  > tr").each((ele, tr) => {
+        let quantity = __read_number($(tr).find(".quantity"));
+        total_qauntity += quantity;
+    });
+
+    let unit_other_expenses =
+        __read_number($("#other_expenses")) / total_qauntity;
+    let unit_discount_amount =
+        __read_number($("#discount_amount")) / total_qauntity;
+    let unit_other_payments =
+        __read_number($("#other_payments")) / total_qauntity;
+
+    $("#product_table > tbody  > tr").each((ele, tr) => {
+        let purchase_price = __read_number($(tr).find(".purchase_price"));
+        let final_cost =
+            purchase_price +
+            unit_other_expenses -
+            unit_discount_amount +
+            unit_other_payments;
+        __write_number($(tr).find(".final_cost"), final_cost);
+    });
 }
 $(document).on(
     "change",
-    "#total_tax, #discount_amount, #other_payments",
+    "#other_expenses, #discount_amount, #other_payments",
     function () {
         calculate_sub_totals();
     }

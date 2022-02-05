@@ -141,6 +141,7 @@
                                             <input type="hidden" id="grand_total" name="grand_total" />
                                             <input type="hidden" id="gift_card_id" name="gift_card_id" />
                                             <input type="hidden" id="coupon_id" name="coupon_id">
+                                            <input type="hidden" id="total_item_tax" name="total_item_tax" value="0.00">
                                             <input type="hidden" id="total_tax" name="total_tax" value="0.00">
 
                                             <input type="hidden" id="store_pos_id" name="store_pos_id"

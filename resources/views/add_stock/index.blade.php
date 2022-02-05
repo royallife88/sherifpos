@@ -11,7 +11,8 @@
         <div class="card">
             <div class="card-body">
                 <form action="">
-                    <input type="hidden" name="is_raw_material" id="is_raw_material" value="@if(request()->segment(1) == 'raw-material'){{1}}@else{{0}}@endif">
+                    <input type="hidden" name="is_raw_material" id="is_raw_material"
+                        value="@if(request()->segment(1) == 'raw-material'){{1}}@else{{0}}@endif">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
@@ -46,25 +47,29 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_date', __('lang.start_date'), []) !!}
-                                {!! Form::text('start_date', request()->start_date, ['class' => 'form-control ', 'id' => 'start_date']) !!}
+                                {!! Form::text('start_date', request()->start_date, ['class' => 'form-control ', 'id' =>
+                                'start_date']) !!}
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_time', __('lang.start_time'), []) !!}
-                                {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                                {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter'])
+                                !!}
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_date', __('lang.end_date'), []) !!}
-                                {!! Form::text('end_date', request()->end_date, ['class' => 'form-control ', 'id' => 'end_date']) !!}
+                                {!! Form::text('end_date', request()->end_date, ['class' => 'form-control ', 'id' =>
+                                'end_date']) !!}
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_time', __('lang.end_time'), []) !!}
-                                {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                                {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter'])
+                                !!}
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -168,6 +173,37 @@
 
             },
             fnDrawCallback: function(oSettings) {
+                var intVal = function (i) {
+                    return typeof i === "string"
+                        ? i.replace(/[\$,]/g, "") * 1
+                        : typeof i === "number"
+                        ? i
+                        : 0;
+                };
+
+                this.api()
+                    .columns(".sum", { page: "current" })
+                    .every(function () {
+                        var column = this;
+                        if (column.data().count()) {
+                            var sum = column.data().reduce(function (a, b) {
+                                a = intVal(a);
+                                if (isNaN(a)) {
+                                    a = 0;
+                                }
+
+                                b = intVal(b);
+                                if (isNaN(b)) {
+                                    b = 0;
+                                }
+
+                                return a + b;
+                            });
+                            $(column.footer()).html(
+                                __currency_trans_from_en(sum, false)
+                            );
+                        }
+                    });
             },
         });
         $(document).on('click', '.filters', function(){
@@ -177,6 +213,30 @@
             add_stock_table.ajax.reload();
         })
     });
+
+    pdfMake.fonts = {
+        arabic: {
+            normal: 'http://127.0.0.1:8000/fonts/ar/LateefRegOT.ttf',
+            // bold: 'https://example.com/fonts/fontFile2.ttf',
+            // italics: 'https://example.com/fonts/fontFile3.ttf',
+            // bolditalics: 'https://example.com/fonts/fontFile4.ttf'
+        },
+
+        // download default Roboto font from cdnjs.com
+        Roboto: {
+            normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Regular.ttf',
+            bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Medium.ttf',
+            italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-Italic.ttf',
+            bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.66/fonts/Roboto/Roboto-MediumItalic.ttf'
+        },
+
+        // example of usage fonts in collection
+        // PingFangSC: {
+        //     normal: ['https://example.com/fonts/pingfang.ttc', 'PingFangSC-Regular'],
+        //     bold: ['https://example.com/fonts/pingfang.ttc', 'PingFangSC-Semibold'],
+        // }
+    }
+
     $('.time_picker').focusout(function (event) {
         add_stock_table.ajax.reload();
     });

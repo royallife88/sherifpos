@@ -48,6 +48,8 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('tax_id')->nullable();
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
             $table->decimal('total_tax', 15, 4)->nullable();
+            $table->decimal('total_item_tax', 15, 4)->default(0);
+            $table->decimal('other_expenses', 15, 4)->default(0);
             $table->decimal('other_payments', 15, 4)->default(0);
             $table->string('discount_type')->nullable();
             $table->decimal('discount_value', 15, 4)->default(0)->comment('discount value applied by user');

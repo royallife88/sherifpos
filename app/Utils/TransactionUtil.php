@@ -159,6 +159,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
+                $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
+                $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
             } else {
@@ -178,6 +181,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
+                $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
+                $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
             }
@@ -423,10 +429,10 @@ class TransactionUtil extends Util
                 $earning_point_system = EarningOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
                     ->whereJsonContains('store_ids', $store_id)
                     ->first();
-                    if (!empty($earning_point_system)) {
-                        if (!empty($earning_point_system->end_date)) {
-                            //if end date set then check for expiry
-                            if ($earning_point_system->end_date >= date('Y-m-d')) {
+                if (!empty($earning_point_system)) {
+                    if (!empty($earning_point_system->end_date)) {
+                        //if end date set then check for expiry
+                        if ($earning_point_system->end_date >= date('Y-m-d')) {
                             $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
                         }
                     } else {
@@ -533,6 +539,7 @@ class TransactionUtil extends Util
             'block_for_days' => 0,
             'tax_id' => $request->tax_id_hidden ?? null,
             'total_tax' => $this->num_f($request->total_tax),
+            'total_item_tax' => $this->num_f($request->total_item_tax),
             'sale_note' => $request->sale_note,
             'staff_note' => $request->staff_note,
             'customer_size_id' => $request->customer_size_id_hidden ?? null,
@@ -589,7 +596,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
-
+                $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
+                $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
                 $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $old_qty);
@@ -614,6 +623,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
+                $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
+                $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
                 $keep_sell_lines[] = $transaction_sell_line->id;
                 $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity']);

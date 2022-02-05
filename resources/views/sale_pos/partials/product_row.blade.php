@@ -14,6 +14,12 @@
             value="{{$product->variation_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
             value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_id]" class="tax_id"
+            value="{{$product->tax_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_rate]" class="tax_rate"
+            value="@if($product->tax_method == 'exclusive'){{@num_format($product->tax_rate)}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][item_tax]" class="item_tax"
+            value="0">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount]"
             class="coupon_discount_value" value="0"> <!-- value is percentage or fixed value from coupon data -->
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount_type]"
@@ -43,7 +49,7 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-            <input type="number" class="form-control quantity  qty numkey input-number" min="0.01"  autocomplete="off"
+            <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" autocomplete="off"
                 @if(!$product->is_service)max="{{$product->qty_available}}"@endif
             name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
             required
@@ -59,8 +65,9 @@
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 16% @else 15% @endif">
         <input type="text" class="form-control sell_price"
-            name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @endif
-            value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
+            name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
+            @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @endif
+        value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 13% @else 15% @endif">
         <input type="hidden" class="form-control product_discount_type"
@@ -88,7 +95,7 @@
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
         <button type="button" class="btn btn-danger btn-sx remove_row"><i class="fa fa-times"></i></button>
-        @if(session('system_mode')  != 'restaurant')
+        @if(session('system_mode') != 'restaurant')
         <button type="button" class="btn btn-danger btn-sx quick_add_purchase_order"
             title="@lang('lang.add_draft_purchase_order')"
             data-href="{{action('PurchaseOrderController@quickAddDraft')}}?variation_id={{$product->variation_id}}&product_id={{$product->product_id}}"><i

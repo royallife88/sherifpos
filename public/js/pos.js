@@ -454,6 +454,7 @@ function calculate_sub_totals() {
     var item_count = 0;
     var product_discount_total = 0;
     var product_surplus_total = 0;
+    var total_item_tax = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
@@ -514,6 +515,11 @@ function calculate_sub_totals() {
 
         calculate_promotion_discount(tr);
         product_surplus_total += calculate_product_surplus(tr);
+
+        let tax_rate = __read_number($(tr).find(".tax_rate"));
+        let item_tax = (sub_total * tax_rate) / 100;
+        __write_number($(tr).find(".item_tax"), item_tax);
+        total_item_tax += item_tax;
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -523,6 +529,9 @@ function calculate_sub_totals() {
     $(".payment_modal_surplus_text").text(
         __currency_trans_from_en(product_surplus_total, false)
     );
+
+    __write_number($("#total_item_tax"), total_item_tax);
+    total += total_item_tax;
 
     let tax_amount = get_tax_amount(total);
     __write_number($("#total_tax"), tax_amount);
@@ -1233,7 +1242,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id"
+        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -1986,6 +1995,6 @@ function show_value(row, name) {
     $("." + name + "_span").text(cm_size);
 }
 $(document).on("click", ".add_size_btn", function () {
-    console.log('adfasdfsfsdfsfd');
+    console.log("adfasdfsfsdfsfd");
     $(".add_size_div").removeClass("hide");
 });

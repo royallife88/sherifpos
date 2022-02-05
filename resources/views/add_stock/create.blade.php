@@ -130,9 +130,9 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    {!! Form::label('total_tax', __('lang.tax'), []) !!} <br>
-                                    {!! Form::text('total_tax', null, ['class' => 'form-control', 'placeholder' =>
-                                    __('lang.tax'), 'id' => 'total_tax']) !!}
+                                    {!! Form::label('other_expenses', __('lang.other_expenses'), []) !!} <br>
+                                    {!! Form::text('other_expenses', null, ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.other_expenses'), 'id' => 'other_expenses']) !!}
                                 </div>
                             </div>
                             <div class="col-md-3">
