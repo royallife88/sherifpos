@@ -9,31 +9,33 @@
 
         <div class="modal-body">
             <div class="row">
-                <div class="col-md-12">
-                    <h5>@lang('lang.invoice_no'): {{$sale->invoice_no}}</h5>
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        <h5>@lang('lang.quotation_no'): {{$sale->invoice_no}}</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <h5>@lang('lang.date'): {{@format_date($sale->transaction_date)}}</h5>
+                    </div>
+                    <div class="col-md-12">
+                        <h5>@lang('lang.store'): {{$sale->store->name ?? ''}}</h5> {{$sale->store->address ?? ''}}
+                    </div>
                 </div>
-                <div class="col-md-12">
-                    <h5>@lang('lang.date'): {{@format_date($sale->transaction_date)}}</h5>
-                </div>
-                <div class="col-md-12">
-                    <h5>@lang('lang.store'): {{$sale->store->name ?? ''}}</h5>
-                </div>
-            </div>
-            <br>
-            <div class="row">
-                <div class="col-md-12">
-                    {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
-                    <b>{{$sale->customer->name ?? ''}}</b>
-                </div>
-                <div class="col-md-12">
-                    {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
-                </div>
-                <div class="col-md-12">
-                    {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
-                    <b>{{$sale->customer->mobile_number ?? ''}}</b>
-                </div>
-                <div class="col-md-12">
-                    {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ?? ''}}</b>
+                <div class="col-md-6">
+                    <div class="col-md-12">
+                        {!! Form::label('customer_name', __('lang.customer_name'), []) !!}:
+                        <b>{{$sale->customer->name ?? ''}}</b>
+                    </div>
+                    <div class="col-md-12">
+                        {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
+                    </div>
+                    <div class="col-md-12">
+                        {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
+                        <b>{{$sale->customer->mobile_number ?? ''}}</b>
+                    </div>
+                    <div class="col-md-12">
+                        {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ??
+                            ''}}</b>
+                    </div>
                 </div>
             </div>
 
@@ -73,7 +75,8 @@
                                     {{$line->product->sku}}
                                 </td>
                                 <td>
-                                    @if(!empty($line->product->product_class)) {{$line->product->product_class->name}} @endif
+                                    @if(!empty($line->product->product_class)) {{$line->product->product_class->name}}
+                                    @endif
                                 </td>
 
                                 <td>
@@ -81,7 +84,8 @@
                                 </td>
 
                                 <td>
-                                    @if(!empty($line->product->sub_category)) {{$line->product->sub_category->name}} @endif
+                                    @if(!empty($line->product->sub_category)) {{$line->product->sub_category->name}}
+                                    @endif
                                 </td>
 
                                 <td>
@@ -120,9 +124,6 @@
                     </table>
                 </div>
             </div>
-            <br>
-            <br>
-            @include('transaction_payment.partials.payment_table', ['payments' => $sale->transaction_payments])
 
             <br>
             <br>
@@ -162,13 +163,16 @@
                     </table>
                 </div>
                 <div class="col-md-12">
-                    @lang('lang.terms_and_conditions'): @if(!empty($sale->terms_and_conditions)){{$sale->terms_and_conditions->description}} @endif
+                    @lang('lang.terms_and_conditions'):
+                    @if(!empty($sale->terms_and_conditions)){{$sale->terms_and_conditions->description}} @endif
                 </div>
             </div>
 
         </div>
 
         <div class="modal-footer">
+            <a data-href="{{action('SellController@print', $sale->id)}}"
+                class="btn btn-primary text-white print-invoice"><i class="dripicons-print"></i> @lang('lang.print')</a>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 

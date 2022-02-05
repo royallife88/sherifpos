@@ -340,7 +340,7 @@ class SellPosController extends Controller
             }
 
             if ($request->submit_type == 'send' && $transaction->is_quotation) {
-                $this->notificationUtil->sendQuotationToCustomer($transaction->id);
+                $this->notificationUtil->sendQuotationToCustomer($transaction->id, $request->emails);
             }
 
 

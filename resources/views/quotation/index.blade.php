@@ -122,6 +122,15 @@
                             @can('squotation_for_customers.quotation.view')
                             <li>
 
+                                <a data-href="{{action('SellController@print', $sale->id)}}"
+                                    class="btn print-invoice"><i class="dripicons-print"></i>
+                                    @lang('lang.print')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @can('squotation_for_customers.quotation.view')
+                            <li>
+
                                 <a data-href="{{action('QuotationController@show', $sale->id)}}"
                                     data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                     @lang('lang.view')</a>
@@ -165,6 +174,7 @@
 @section('javascript')
 <script>
     $(document).on('click', '.print-invoice', function(){
+        $('.view_modal').modal('hide');
         $.ajax({
             method: 'get',
             url: $(this).data('href'),

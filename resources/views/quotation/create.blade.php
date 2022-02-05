@@ -39,7 +39,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-3">
-                                    <label style="margin-top: 36px;">@lang('lang.customer_type'): <span class="customer_type_name"></span></label>
+                                    <label style="margin-top: 36px;">@lang('lang.customer_type'): <span
+                                            class="customer_type_name"></span></label>
                                 </div>
                                 <div class="col-md-4">
                                     {!! Form::label('store_id', __('lang.store'), []) !!}
@@ -57,6 +58,9 @@
                                         <input type="text" name="search_product" id="search_product"
                                             placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                             class="form-control ui-autocomplete-input" autocomplete="off">
+
+                                        @include('quotation.partial.product_selection')
+
                                     </div>
                                 </div>
                             </div>
@@ -175,7 +179,37 @@
                         <div class="col-md-12">
                             <button type="button" class="btn btn-primary" id="submit-btn">@lang('lang.save')</button>
                             <button type="button" class="btn btn-secondary" id="print-btn">@lang('lang.print')</button>
-                            <button type="button" class="btn btn-danger" id="send-btn">@lang('lang.send')</button>
+                            <button type="button" class="btn btn-danger" data-toggle="modal"
+                                data-target="#email_modal">@lang('lang.send')</button>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" role="dialog" id="email_modal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">@lang('lang.email')</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label for="">@lang('lang.emails')
+                                                <small>@lang('lang.separated_by_comma')</small></label>
+                                            <input type="emails" name="emails" id="emails" value=""
+                                                class="form-control">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-danger"
+                                        id="send-btn">@lang('lang.send')</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-dismiss="modal">@lang('lang.close')</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

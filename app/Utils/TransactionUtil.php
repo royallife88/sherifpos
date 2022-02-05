@@ -693,6 +693,16 @@ class TransactionUtil extends Util
             ))->render();
         }
 
+        if ($transaction->is_quotation == 1 && $transaction->status == 'draft') {
+            $sale = $transaction;
+            $payment_type_array = $payment_types;
+            $html_content = view('sale_pos.partials.commercial_invoice')->with(compact(
+                'sale',
+                'payment_type_array',
+                'invoice_lang'
+            ))->render();
+        }
+
         return $html_content;
     }
 

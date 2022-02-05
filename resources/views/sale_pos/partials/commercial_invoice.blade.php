@@ -95,7 +95,7 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-12">
-                <h5>@lang('lang.invoice_no'): {{$sale->invoice_no}}
+                <h5>@if($sale->status == 'draft' && $sale->is_quotation == 1)@lang('lang.quotation_no')@else @lang('lang.invoice_no') @endif: {{$sale->invoice_no}}
                 </h5>
             </div>
             <div class="col-md-12">
@@ -192,6 +192,7 @@
     <br>
     <br>
 
+    @if($sale->status != 'draft')
     <div class="row text-center">
         <div class="col-md-12">
             <h4>@lang('lang.payment_details')</h4>
@@ -232,6 +233,7 @@
             </table>
         </div>
     </div>
+    @endif
     <br>
     <br>
     <div class="row">
@@ -275,6 +277,7 @@
                     <th>@lang('lang.grand_total'):</th>
                     <td>{{@num_format($sale->final_total)}}</td>
                 </tr>
+                @if($sale->status == 'final')
                 <tr>
                     <th>@lang('lang.paid_amount'):</th>
                     <td>{{@num_format($sale->transaction_payments->sum('amount'))}}</td>
@@ -283,6 +286,7 @@
                     <th>@lang('lang.due'):</th>
                     <td> {{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
                 </tr>
+                @endif
             </table>
         </div>
         <div class="col-md-12">

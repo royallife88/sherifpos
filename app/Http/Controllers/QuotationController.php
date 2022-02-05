@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\Product;
+use App\Models\ProductClass;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -118,8 +120,19 @@ class QuotationController extends Controller
         $stores = Store::getDropdown();
         $tac = TermsAndCondition::where('type', 'quotation')->orderBy('name', 'asc')->pluck('name', 'id');
 
+        $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
+            ->select(
+                'products.name',
+                'products.id',
+                'variations.id as variation_id',
+                'variations.name as variation_name',
+            )->groupBy('variations.id')->get();
+        $product_classes = ProductClass::get();
+
         return view('quotation.create')->with(compact(
             'walk_in_customer',
+            'product_classes',
+            'products',
             'stores',
             'store_pos',
             'customers',

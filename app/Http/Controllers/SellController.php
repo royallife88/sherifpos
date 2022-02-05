@@ -504,18 +504,7 @@ class SellController extends Controller
                 $invoice_lang = request()->session()->get('language');
             }
 
-            if ($invoice_lang == 'ar_and_en') {
-                $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
-                    'transaction',
-                    'payment_types'
-                ))->render();
-            } else {
-                $html_content = view('sale_pos.partials.invoice')->with(compact(
-                    'transaction',
-                    'payment_types',
-                    'invoice_lang'
-                ))->render();
-            }
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
 
             $output = [
                 'success' => true,

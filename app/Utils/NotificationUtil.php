@@ -163,10 +163,9 @@ class NotificationUtil extends Util
      * @param [int] $transaction_id
      * @return void
      */
-    public function sendQuotationToCustomer($transaction_id)
+    public function sendQuotationToCustomer($transaction_id, $emails = null)
     {
         $transaction = Transaction::find($transaction_id);
-
         $customer = Customer::find($transaction->customer_id);
         $payment_types = $this->getPaymentTypeArrayForPos();
 
@@ -199,9 +198,17 @@ class NotificationUtil extends Util
         $data['attachment_name'] =  'quotation-' . $transaction->invoice_no . '.pdf';
 
 
-        $email = $customer->email;
-        Notification::route('mail', $email)
-            ->notify(new QuotationToCustomerNotification($data));
+        if (!empty($emails)) {
+            $emails = explode(',', $emails);
+            foreach ($emails as $email) {
+                Notification::route('mail', $email)
+                    ->notify(new QuotationToCustomerNotification($data));
+            }
+        } else {
+            $email = $customer->email;
+            Notification::route('mail', $email)
+                ->notify(new QuotationToCustomerNotification($data));
+        }
 
         if (file_exists($file)) {
             unlink($file);

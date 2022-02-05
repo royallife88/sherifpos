@@ -43,7 +43,7 @@ class QuotationToCustomerNotification extends Notification
     {
         $data = $this->data;
 
-        $from = System::getProperty('email');
+        $from = System::getProperty('sender_email');
         $app_name = env('APP_NAME');
 
         return (new MailMessage)
