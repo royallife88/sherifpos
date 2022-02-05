@@ -183,7 +183,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('RemoveStockController@index')}}">{{__('lang.view_all_remove_stock')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') != 'restaurant')
+
                         @can('stock.remove_stock.view')
                         <li
                             class="@if(request()->segment(1) == 'remove-stock' && request()->segment(2) == 'get-compensated') active @endif">
@@ -231,7 +231,6 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('AddStockController@getImport')}}">{{__('lang.import_add_stock')}}</a>
                         </li>
                         @endcan
-                        @endif
                     </ul>
                 </li>
                 @endif
