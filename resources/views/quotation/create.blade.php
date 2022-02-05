@@ -59,7 +59,7 @@
                                             placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                             class="form-control ui-autocomplete-input" autocomplete="off">
 
-                                        @include('quotation.partial.product_selection')
+                                        {{-- @include('quotation.partial.product_selection') --}}
 
                                     </div>
                                 </div>
