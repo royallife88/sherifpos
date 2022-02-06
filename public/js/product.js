@@ -719,6 +719,9 @@ function calculate_price_base_on_raw_material() {
     $("#purchase_price").change();
 }
 
+$(document).on("click", ".remove_raw_material_btn", function () {
+    calculate_price_base_on_raw_material();
+})
 $(document).on("change", "#discount", function () {
     let discount = __read_number($(this));
     if (discount > 0) {

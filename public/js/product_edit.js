@@ -719,7 +719,9 @@ function calculate_price_base_on_raw_material() {
     }
     $("#purchase_price").change();
 }
-
+$(document).on("click", ".remove_raw_material_btn", function () {
+    calculate_price_base_on_raw_material();
+})
 $(document).ready(function () {
     $("#discount").change();
     $("#consumption_table > tbody > tr").each(function () {

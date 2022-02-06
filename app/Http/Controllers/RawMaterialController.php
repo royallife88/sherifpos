@@ -124,6 +124,9 @@ class RawMaterialController extends Controller
                 })
                 ->editColumn('variation_name', '@if($variation_name != "Default"){{$variation_name}} @else {{$name}}
                 @endif')
+                ->editColumn('unit', function ($row) {
+                    return $row->units->pluck('name')->implode(', ');
+                })
                 ->editColumn('sub_sku', '{{$sub_sku}}')
                 ->addColumn('purchase_history', function ($row) {
                     $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->id) . '"

@@ -563,7 +563,8 @@ class SellPosController extends Controller
     public function getProductItemsByFilter(Request $request)
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
-            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id');
+            ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->where('is_raw_material', 0);
 
         if (!empty($request->product_class_id)) {
             $query->where('product_class_id', $request->product_class_id);
@@ -681,6 +682,7 @@ class SellPosController extends Controller
                     $query->orWhere('sku', 'like', '%' . $term . '%');
                     $query->orWhere('sub_sku', 'like', '%' . $term . '%');
                 })
+                ->where('is_raw_material', 0)
                 ->whereNull('variations.deleted_at')
                 ->select(
                     'products.id as product_id',

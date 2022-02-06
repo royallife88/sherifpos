@@ -22,7 +22,7 @@
         raw_material_unit_id', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select')]) !!}
     </td>
     <td> <label for="" class="cost_label"></label></td>
-    <td><button type="button" class="btn btn-xs btn-danger remove_row"><i class="fa fa-times"></i></button></td>
+    <td><button type="button" class="btn btn-xs btn-danger remove_row remove_raw_material_btn"><i class="fa fa-times"></i></button></td>
     @if(!empty(!empty($consumption_product)))
     @php
         $this_raw_material = App\Models\Product::find($consumption_product->raw_material_id);
