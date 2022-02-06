@@ -73,6 +73,10 @@ class Product extends Model implements HasMedia
         return $this->hasMany(ProductStore::class);
     }
 
+    public function alert_quantity_unit()
+    {
+        return $this->belongsTo(Unit::class, 'alert_quantity_unit_id');
+    }
     public function units()
     {
         return $this->belongsToJson(Unit::class, 'multiple_units');
@@ -105,7 +109,7 @@ class Product extends Model implements HasMedia
 
     public static function getProductVariationDropDown($is_raw_material = false)
     {
-        $variations = Variation::get();
+        $variations = Variation::join('products', 'products.id', 'variations.product_id')->select('variations.*')->groupBY('variations.id')->get();
         $variation_dropdown = [];
 
         foreach ($variations as $variation) {

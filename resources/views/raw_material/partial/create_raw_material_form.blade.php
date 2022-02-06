@@ -88,6 +88,9 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
                 </div>
             </div>
             <div class="col-md-6">
+                <label for="" class="unit_label" style="margin-top: 37px;"></label>
+            </div>
+            <div class="col-md-6 hide">
                 <div class="form-group">
                     {!! Form::label('alert_quantity_unit_id', __('lang.unit'), []) !!}
                     {!! Form::select('alert_quantity_unit_id', $units,

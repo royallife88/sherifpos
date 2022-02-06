@@ -1,5 +1,5 @@
 <!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#pctModal" style="margin-top: 30px;">
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#pctModal" style="margin-top: 14px;">
     @lang('lang.select_products')
 </button>
 <style>
@@ -133,7 +133,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
 
                                                             @endphp
                                                             @if (!empty($brands) && $brands->count() > 0)
-                                                            @include('product_classification_tree.partials.brand_inner_part_pst',
+                                                            @include('quotation.partial.brand_inner_part_pst',
                                                             ['brands' => $brands, 'brand_selected' => $brand_selected,
                                                             'product_class_id' => $class->id, 'category_id' =>
                                                             $category->id])
@@ -180,7 +180,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                             @endphp
                                                                             @if (!empty($brands) && $brands->count() >
                                                                             0)
-                                                                            @include('product_classification_tree.partials.brand_inner_part_pst',
+                                                                            @include('quotation.partial.brand_inner_part_pst',
                                                                             ['brands' => $brands, 'brand_selected' =>
                                                                             $brand_selected, 'product_class_id' =>
                                                                             $class->id, 'sub_category_id' =>
@@ -210,21 +210,21 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                         <div class="accordion-inner">
                                             @php
                                             $query =
-                                            App\Models\Product::where('product_class_id',
+                                            App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('product_class_id',
                                             $class->id);
 
                                             $products = $query->select('products.id',
-                                            'products.name', 'products.sku',
-                                            'products.sell_price')->groupBy('products.id')->get();
+                                            'products.name', 'products.sku', 'variations.id as variation_id',
+                                            'products.sell_price')->groupBy('variations.id')->get();
                                             @endphp
                                             @foreach ($products as
                                             $product)
 
                                             <div class="row product_row">
                                                 <div class="col-md-1">
-                                                    <input id="product_selected{{$product->id}}"
+                                                    <input id="product_selected{{$product->variation_id}}"  data-product_id="{{$product->id}}"
                                                         name="pct[product_selected][]" type="checkbox"
-                                                        value="{{$product->id}}" @if(in_array($product->id,
+                                                        value="{{$product->variation_id}}" @if(in_array($product->id,
                                                     $product_selected)) checked @endif
                                                     class="my-new-checkbox product_checkbox">
                                                 </div>
@@ -285,7 +285,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.next')</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.add')</button>
             </div>
         </div>
     </div>

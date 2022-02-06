@@ -18,7 +18,7 @@
                 'required' ]);
                 !!}
             </div>
-            @if(!empty($unit->is_raw_material_unit))
+            {{-- @if(!empty($unit->is_raw_material_unit)) --}}
             <div class="form-group">
                 {!! Form::label('info', __( 'lang.info' ). ':') !!}
                 {!! Form::textarea('description', $unit->description, ['class' => 'form-control', 'placeholder' => __(
@@ -26,7 +26,7 @@
                 'rows' => 3 ]);
                 !!}
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 {!! Form::label('base_unit_multiplier', __( 'lang.times_of' ). ':') !!}
                 {!! Form::text('base_unit_multiplier', @num_format($unit->base_unit_multiplier), ['class' => 'form-control',
                 'placeholder' => __(
@@ -38,8 +38,8 @@
                 {!! Form::select('base_unit_id', $units, $unit->base_unit_id, ['class' => 'form-control selectpicker',
                 'placeholder'
                 => __('lang.select_base_unit'), 'data-live-search' => 'true']) !!}
-            </div>
-            @endif
+            </div> --}}
+            {{-- @endif --}}
         </div>
 
         <div class="modal-footer">

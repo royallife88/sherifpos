@@ -234,8 +234,8 @@ class RawMaterialController extends Controller
 
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::getProductVariationDropDown(true);
-        $units = Unit::getUnitDropdown(true, true);
-        $units_all = Unit::getUnitDropdown(true, false);
+        $units = Unit::getUnitDropdown(false, true);
+        $units_all = Unit::getUnitDropdown(false, false);
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $quick_add = request()->quick_add;
@@ -365,8 +365,8 @@ class RawMaterialController extends Controller
 
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         $products = Product::getProductVariationDropDown(true);
-        $units = Unit::getUnitDropdown(true, true);
-        $units_all = Unit::getUnitDropdown(true, false);
+        $units = Unit::getUnitDropdown(false, true);
+        $units_all = Unit::getUnitDropdown(false, false);
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
@@ -479,7 +479,7 @@ class RawMaterialController extends Controller
 
         $products = Product::getProductVariationDropDown(true);
         $units = Unit::getUnitDropdown(true, false);
-        $units_all = Unit::getUnitDropdown(true, false);
+        $units_all = Unit::getUnitDropdown(false, false);
 
         return view('raw_material.partial.product_row')->with(compact(
             'products',

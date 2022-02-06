@@ -124,6 +124,9 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
+                                        <label for="" class="unit_label" style="margin-top: 37px;">{{$raw_material->alert_quantity_unit->name??''}}</label>
+                                    </div>
+                                    <div class="col-md-6 hide">
                                         <div class="form-group">
                                             {!! Form::label('alert_quantity_unit_id', __('lang.unit'), []) !!}
                                             {!! Form::select('alert_quantity_unit_id', $units,

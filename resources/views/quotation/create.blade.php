@@ -51,7 +51,7 @@
                                         'style' =>'width: 80%' , 'id' => 'store_id', 'required']) !!}
                                     </div>
                                 </div>
-                                <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
+                                <div class="col-md-8 offset-md-1" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                                 class="fa fa-search"></i></button>
@@ -59,9 +59,12 @@
                                             placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                             class="form-control ui-autocomplete-input" autocomplete="off">
 
-                                        {{-- @include('quotation.partial.product_selection') --}}
+
 
                                     </div>
+                                </div>
+                                <div class="col-md-2">
+                                    @include('quotation.partial.product_selection')
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
@@ -226,6 +229,7 @@
 
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
+<script src="{{asset('js/quotation_product_selection.js')}}"></script>
 <script>
     $('#print-btn').click(function(){
         $('#submit_type').val('print');

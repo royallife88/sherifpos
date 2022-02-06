@@ -122,11 +122,9 @@ class QuotationController extends Controller
 
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->select(
-                'products.name',
-                'products.id',
-                'variations.id as variation_id',
-                'variations.name as variation_name',
-            )->groupBy('variations.id')->get();
+                DB::raw('CONCAT(products.name, IF(variations.name != "Default", variations.name, "")) as name'),
+                'variations.id'
+            )->groupBy('variations.id')->pluck('name', 'id');
         $product_classes = ProductClass::get();
 
         return view('quotation.create')->with(compact(
