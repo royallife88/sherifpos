@@ -10,6 +10,7 @@ $(document).on("click", ".add_product_row", function () {
             $(".selectpicker").selectpicker("refresh");
             $("select.unit_id").val($('select#multiple_units').val());
             $("select.unit_id").selectpicker("refresh");
+            $("select.unit_id").change();
         },
     });
 });
@@ -22,6 +23,7 @@ $(document).on("change", "select#multiple_units", function () {
     $("select.unit_id").selectpicker("refresh");
     $("#alert_quantity_unit_id").val($(this).val());
     $("#alert_quantity_unit_id").selectpicker("refresh");
+    $("select.unit_id").change();
 });
 $(document).on("change", "select.unit_id", function () {
     let unit_id = $(this).val();
