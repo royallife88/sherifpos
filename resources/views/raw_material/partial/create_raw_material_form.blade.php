@@ -125,10 +125,9 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
                 </tr>
             </thead>
             <tbody>
-                @include('raw_material.partial.product_row', ['row_id' => 0])
             </tbody>
         </table>
     </div>
-    <input type="hidden" name="is_raw_material" id="is_raw_material" value="1">
+    <input type="hidden" name="is_raw_material" id="is_raw_material" value="0">
     <input type="hidden" name="row_id" id="row_id" value="1">
 </div>
