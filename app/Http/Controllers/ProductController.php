@@ -400,7 +400,7 @@ class ProductController extends Controller
         $stores  = Store::all();
         $quick_add = request()->quick_add;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
@@ -600,7 +600,7 @@ class ProductController extends Controller
         $stores  = Store::all();
 
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
 
         return view('product.edit')->with(compact(
@@ -999,7 +999,7 @@ class ProductController extends Controller
     {
         $row_id = request()->row_id ?? 0;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
-        $raw_material_units  = Unit::where('is_raw_material_unit', 1)->orderBy('name', 'asc')->pluck('name', 'id');
+        $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('product.partial.raw_material_row')->with(compact(
             'row_id',
