@@ -73,6 +73,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @if($customer_type->name != 'Walk in')
                             @can('customer_module.customer_type.delete')
                             <li>
                                 <a data-href="{{action('CustomerTypeController@destroy', $customer_type->id)}}"
@@ -81,6 +82,7 @@
                                     @lang('lang.delete')</a>
                             </li>
                             @endcan
+                            @endif
                         </ul>
                     </div>
                 </td>

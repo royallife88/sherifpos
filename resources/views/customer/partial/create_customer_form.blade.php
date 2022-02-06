@@ -54,8 +54,7 @@
     <div class="col-md-12 mb-5 add_size_div hide">
         <div class="form-group">
             {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
-            {!! Form::text('size_data[name]', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ),
-            'required'
+            {!! Form::text('size_data[name]', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' )
             ]);
             !!}
         </div>
