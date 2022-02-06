@@ -14,8 +14,11 @@
     </td>
     <td>
         <p class="hide info_text text-red"></p>
+        <div class="col-md-6">
+            <label for="" class="unit_label" style="margin-top: 37px;">{{!empty($consumption_product->unit) ? $consumption_product->unit->name : false}}</label>
+        </div>
         {!! Form::select('consumption_details['.$row_id.'][unit_id]', $units_all,
-        !empty($consumption_product) ? $consumption_product->unit_id : false, ['class' => 'selectpicker form-control
+        !empty($consumption_product) ? $consumption_product->unit_id : false, ['class' => 'selectpicker form-control hide
         unit_id', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select')]) !!}
     </td>
     <td><button type="button" class="btn btn-xs btn-danger remove_row"><i class="fa fa-times"></i></button></td>
