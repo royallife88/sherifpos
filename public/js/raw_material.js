@@ -6,9 +6,12 @@ $(document).on("click", ".add_product_row", function () {
         url: "/raw-material/add-product-row",
         data: { row_id: row_id },
         success: function (result) {
-            $("#consumption_table tbody").append(result);
+            $("#consumption_table tbody").prepend(result);
             $(".selectpicker").selectpicker("refresh");
-            $("select.unit_id").val($('select#multiple_units').val());
+
+            let selected_unit_text = $('select#multiple_units').find("option:selected").text();
+            $(".unit_label").text(selected_unit_text);
+            $("select.unit_id").val($("select#multiple_units").val());
             $("select.unit_id").selectpicker("refresh");
             $("select.unit_id").change();
         },
@@ -18,9 +21,9 @@ $(document).on("click", ".add_product_row", function () {
 $(document).on("change", "select#multiple_units", function () {
     let selected_unit_text = $(this).find("option:selected").text();
     $(".unit_label").text(selected_unit_text);
-    $("select.unit_id").attr('readonly', true);
-    $("select.unit_id").val($(this).val());
-    $("select.unit_id").selectpicker("refresh");
+    console.log($(this).val(), '$(this).val()');
+    $(".unit_id").val($(this).val());
+    $(".unit_id").selectpicker("refresh");
     $("#alert_quantity_unit_id").val($(this).val());
     $("#alert_quantity_unit_id").selectpicker("refresh");
     $("select.unit_id").change();
@@ -32,6 +35,8 @@ $(document).on("change", "select.unit_id", function () {
         method: "GET",
         url: "/unit/get-unit-details/" + unit_id,
         data: {},
+        dataType: 'json',
+        contentType: 'json',
         success: function (result) {
             tr.find(".info_text").removeClass("hide");
             tr.find(".info_text").text(result.unit.description);

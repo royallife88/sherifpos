@@ -33,6 +33,7 @@ class CreateProductsTable extends Migration
             $table->string('barcode_type');
             $table->integer('alert_quantity')->nullable();
             $table->unsignedBigInteger('alert_quantity_unit_id')->nullable();
+            $table->decimal('other_cost', 15, 4)->default(0);
             $table->decimal('purchase_price', 15, 4);
             $table->decimal('sell_price', 15, 4);
             $table->unsignedBigInteger('tax_id')->nullable();

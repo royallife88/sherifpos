@@ -244,6 +244,7 @@
                                             <th style="width: 30%;">@lang('lang.raw_materials')</th>
                                             <th style="width: 30%;">@lang('lang.used_amount')</th>
                                             <th style="width: 30%;">@lang('lang.unit')</th>
+                                            <th style="width: 30%;">@lang('lang.cost')</th>
                                             <th style="width: 10%;"><button class="btn btn-xs btn-success add_raw_material_row" type="button"><i
                                                         class="fa fa-plus"></i></button></th>
                                         </tr>
@@ -258,7 +259,7 @@
                                         @endforeach
                                     </tbody>
                                 </table>
-                                <input type="hidden" name="raw_material_row_index" id="raw_material_row_index" value="1">
+                                <input type="hidden" name="raw_material_row_index" id="raw_material_row_index" value="@if(!empty($consumption_products) && $consumption_products->count() > 0){{$consumption_products->count()}}@else{{0}}@endif">
                             </div>
                             @endif
                             @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
@@ -280,6 +281,13 @@
                                 </div>
                             </div>
                             @endif
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    {!! Form::label('other_cost', __('lang.other_cost'), []) !!}
+                                    {!! Form::text('other_cost', @num_format($product->other_cost), ['class' => 'form-control', 'placeholder' =>
+                                    __('lang.other_cost'), 'required']) !!}
+                                </div>
+                            </div>
                             @can('product_module.purchase_price.create_and_edit')
                             <div class="col-md-4">
                                 <div class="form-group">

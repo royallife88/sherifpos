@@ -1099,5 +1099,6 @@ return [
     'important_dates' => 'Important Dates',
     'important_date' => 'Important Date',
     'quotation_no' => 'Quotation No',
+    'other_cost' => 'Other Costs',
 
 ];

@@ -14,10 +14,14 @@
     </td>
     <td>
         <p class="hide info_text text-red"></p>
+        <div class="col-md-6">
+            <label for="" class="unit_label">{{!empty($consumption_product->unit) ? $consumption_product->unit->name : false}}</label>
+        </div>
         {!! Form::select('consumption_details['.$row_id.'][unit_id]', $raw_material_units,
-        !empty($consumption_product) ? $consumption_product->unit_id : false, ['class' => 'selectpicker form-control
+        !empty($consumption_product) ? $consumption_product->unit_id : false, ['class' => 'selectpicker form-control hide
         raw_material_unit_id', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select')]) !!}
     </td>
+    <td> <label for="" class="cost_label"></label></td>
     <td><button type="button" class="btn btn-xs btn-danger remove_row"><i class="fa fa-times"></i></button></td>
     @if(!empty(!empty($consumption_product)))
     @php

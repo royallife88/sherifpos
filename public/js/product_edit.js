@@ -456,6 +456,9 @@ $(document).on("submit", "form#quick_add_unit_form", function (e) {
                             "val",
                             multiple_units_array
                         );
+                        $("select.unit_id").empty().append(data_html);
+                        $("select.unit_id").selectpicker("refresh");
+                        $("select#multiple_units").change();
                     },
                 });
             } else {
@@ -657,6 +660,13 @@ $(document).on("change", "select.raw_material_id", function () {
             tr.find(".raw_material_price").val(
                 result.raw_material.purchase_price
             );
+            tr.find(".raw_material_unit_id").val(
+                result.raw_material.multiple_units[0]
+            );
+            tr.find(".raw_material_unit_id").selectpicker("refresh");
+            tr.find(".unit_label").text(
+                tr.find("select.raw_material_unit_id option:selected").text()
+            );
         },
     });
 });
@@ -670,20 +680,22 @@ $(document).on("click", ".add_raw_material_row", function () {
         url: "/product/get-raw-material-row",
         data: { row_id: row_id },
         success: function (result) {
-            $("#consumption_table > tbody").append(result);
+            $("#consumption_table > tbody").prepend(result);
             $(".selectpicker").selectpicker("refresh");
+            $(".raw_material_unit_id").selectpicker("refresh");
         },
     });
 });
 $(document).on(
     "change",
-    ".raw_material_quantity, .raw_material_id, .raw_material_unit_id, #price_based_on_raw_material ",
+    ".raw_material_quantity, .raw_material_id, .raw_material_unit_id, #price_based_on_raw_material, #other_cost ",
     function () {
         calculate_price_base_on_raw_material();
     }
 );
 function calculate_price_base_on_raw_material() {
     if ($("#price_based_on_raw_material").prop("checked")) {
+        $("#automatic_consumption").prop("checked", true);
         let total_raw_material_price = 0;
         $("#consumption_table > tbody > tr").each(function () {
             let raw_material_price = __read_number(
@@ -694,15 +706,35 @@ function calculate_price_base_on_raw_material() {
             );
             let raw_material_total = raw_material_price * raw_material_quantity;
             total_raw_material_price += raw_material_total;
+
+            $(this)
+                .find(".cost_label")
+                .text(__currency_trans_from_en(raw_material_total, false));
         });
+        let other_cost = __read_number($("#other_cost"));
+        total_raw_material_price += other_cost;
         __write_number($("#purchase_price"), total_raw_material_price);
     } else {
         __write_number($("#purchase_price"), 0);
     }
     $("#purchase_price").change();
 }
+
 $(document).ready(function () {
     $("#discount").change();
+    $("#consumption_table > tbody > tr").each(function () {
+        let raw_material_price = __read_number(
+            $(this).find(".raw_material_price")
+        );
+        let raw_material_quantity = __read_number(
+            $(this).find(".raw_material_quantity")
+        );
+        let raw_material_total = raw_material_price * raw_material_quantity;
+
+        $(this)
+            .find(".cost_label")
+            .text(__currency_trans_from_en(raw_material_total, false));
+    });
 });
 $(document).on("change", "#discount", function () {
     let discount = __read_number($(this));

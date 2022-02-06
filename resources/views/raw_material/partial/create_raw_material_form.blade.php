@@ -39,7 +39,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
         {!! Form::label('multiple_units', __('lang.unit'), []) !!}
         <div class="input-group my-group">
             {!! Form::select('multiple_units[]', $units,
-            !empty($recent_product) ? $recent_product->multiple_units : false, ['class' => 'selectpicker form-control',
+            false, ['class' => 'selectpicker form-control',
             'data-live-search'=>"true",
             'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' => 'multiple_units']) !!}
             <span class="input-group-btn">
