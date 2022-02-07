@@ -120,6 +120,13 @@ class DatabaseSeeder extends Seeder
                 ['job_title' => 'Chef', 'date_of_creation' => Carbon::now(), 'created_by' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()]
             ]
         );
+        if (env('SYSTEM_MODE') == 'restaurant') {
+            JobType::insert(
+                [
+                    ['job_title' => 'Chef', 'date_of_creation' => Carbon::now(), 'created_by' => 1, 'created_at' => Carbon::now(), 'updated_at' => Carbon::now()],
+                ]
+            );
+        }
 
         if (env('SYSTEM_MODE') == 'pos' || env('SYSTEM_MODE') == 'supermarket') {
             Unit::insert([

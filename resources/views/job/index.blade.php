@@ -42,7 +42,7 @@
                                             </td>
                                             <td>
 
-                                                @if(!in_array($job->job_title, ['Cashier', 'Deliveryman']) )
+                                                @if(!in_array($job->job_title, ['Cashier', 'Deliveryman', 'Chef']) )
                                                 @can('hr_management.jobs.create_and_edit')
                                                 <a data-href="{{action('JobController@edit', $job->id)}}"
                                                     data-container=".view_modal"
