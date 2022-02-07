@@ -61,6 +61,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 href="{{action('RawMaterialController@index')}}">{{__('lang.view_all_raw_materials')}}</a>
                         </li>
                         @endcan
+
                         @can('product_module.consumption.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'consumption' && request()->segment(2) == 'create')) active @endif">
