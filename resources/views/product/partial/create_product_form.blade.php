@@ -190,7 +190,6 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
         </div>
     </div>
     @if(session('system_mode' ) == 'restaurant')
-    @if(env('ENALBE_RAW_MATERIAL'))
     <div class="col-md-4">
         <div class="i-checks">
             <input id="automatic_consumption" name="automatic_consumption" type="checkbox" value="1"
@@ -224,7 +223,6 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
         </table>
         <input type="hidden" name="raw_material_row_index" id="raw_material_row_index" value="1">
     </div>
-    @endif
     @endif
     @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') ==
     'supermarket')

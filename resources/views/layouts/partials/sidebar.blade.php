@@ -48,7 +48,6 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         @endcan
                         @endif
                         @if(session('system_mode') == 'restaurant')
-                        @if(env('ENALBE_RAW_MATERIAL'))
                         @can('product_module.raw_material.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'create')) active @endif">
@@ -88,7 +87,6 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="/raw-material/add-stock">{{__('lang.view_all_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
-                        @endif
                         @endif
                     </ul>
                 </li>
