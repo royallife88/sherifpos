@@ -175,6 +175,12 @@ class RawMaterialController extends Controller
                             target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('product_module.add_stock_for_raw_material.create_and_edit')) {
+                            $html .=
+                                '<li><a target="_blank" href="' . url('/raw-material/add-stock/create?variation_id=' . $row->variation_id . '&product_id=' . $row->id) . '" class="btn"
+                            target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
+                        }
+                        $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('product_module.raw_material.delete')) {
                             $html .=
                                 '<li>
