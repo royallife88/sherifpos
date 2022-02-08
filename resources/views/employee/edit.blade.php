@@ -156,11 +156,11 @@
                                         <td>
                                             {!! Form::text('check_in['.$key.']', !empty($employee->check_in[$key]) ?
                                             $employee->check_in[$key] :
-                                            null, ['class' => 'form-control input-md time_picker']) !!}
+                                            null, ['class' => 'form-control input-md check_in time_picker ']) !!}
                                         </td>
                                         <td>
                                             {!! Form::text('check_out['.$key.']', !empty($employee->check_out[$key]) ?
-                                            $employee->check_out[$key] : null, ['class' => 'form-control input-md
+                                            $employee->check_out[$key] : null, ['class' => 'form-control input-md check_out
                                             time_picker']) !!}
                                         </td>
                                     </tr>
@@ -292,6 +292,12 @@
         if($('#edit_employee_form').valid()){
             $('form#edit_employee_form').submit();
         }
+    })
+    $(document).on('focusout', '.check_in', function(){
+        $('.check_in').val($(this).val())
+    })
+    $(document).on('focusout', '.check_out', function(){
+        $('.check_out').val($(this).val())
     })
 </script>
 @endsection
