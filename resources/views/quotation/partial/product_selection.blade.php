@@ -1,292 +1,250 @@
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-success" data-toggle="modal" data-target="#pctModal" style="margin-top: 14px;">
+<button type="button" class="btn btn-success" data-toggle="modal" data-target="#select_products_modal"
+    style="margin-top: 15px;">
     @lang('lang.select_products')
 </button>
-<style>
-    .my-new-checkbox {
-        margin-top: 22px;
-        margin-right: 10px;
-    }
-
-    .accordion-toggle {
-        color: #1391ff !important;
-        width: 100%;
-        border: 1px solid #d1cece;
-        padding: 15px;
-
-    }
-
-    .accordion-toggle:hover {
-        text-decoration: none;
-    }
-
-    .accordion-toggle:focus {
-        text-decoration: none;
-    }
-</style>
-<!-- Modal -->
-@php
-$product_class_selected = !empty($pct_data['product_class_selected']) ? $pct_data['product_class_selected'] : [];
-$category_selected = !empty($pct_data['category_selected']) ? $pct_data['category_selected'] : [];
-$sub_category_selected = !empty($pct_data['sub_category_selected']) ? $pct_data['sub_category_selected'] : [];
-$brand_selected = !empty($pct_data['brand_selected']) ? $pct_data['brand_selected'] : [];
-$product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_selected'] : [];
-
-@endphp
-<div class="modal fade" id="pctModal" tabindex="-1" role="dialog" aria-labelledby="pctModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="select_products_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle"
+    aria-hidden="true" style="width: 100%;">
+    <div class="modal-dialog modal-lg" role="document" id="select_products_modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="pctModalLabel">@lang('lang.products')</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+
+                <h4 class="modal-title">@lang( 'lang.select_products' )</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             </div>
-            <div class="modal-body" id="pct_modal_body">
-                <div class="col-md-12  no-print">
-                    <div class="card">
-                        <div class="card-header align-items-center">
+
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="card mt-3">
+                        <div class="col-md-12">
                             <div class="row">
-                                <div class="col-md-6">
-                                    <h4>@lang('lang.product_classification_tree')</h4>
-
-                                </div>
-                                <div class="col-md-6">
-                                    {!! Form::select('search_product', $products, false, ['class' => 'form-control
-                                    selectpicker', 'data-live-search' => 'true', 'placeholder' =>
-                                    __('lang.search_product'), 'id' => 'search_pct']) !!}
-
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body" id="accordian_div">
-
-                            @foreach ($product_classes as $class)
-
-
-                            <div class="accordion top_accordion" id="{{@replace_space($class->name)}}">
-                                <div class="accordion-group class_level level">
-                                    <div class="row">
-                                        <input id="product_class_selected{{$class->id}}"
-                                            name="pct[product_class_selected][]" type="checkbox" value="{{$class->id}}"
-                                            @if(in_array($class->id, $product_class_selected)) checked @endif
-                                        class="my-new-checkbox">
-
-                                        <div class="accordion-heading" style="width: 80%">
-                                            <a class="accordion-toggle" data-toggle="collapse"
-                                                data-id="{{@replace_space($class->name)}}"
-                                                data-parent="#{{@replace_space($class->name)}}"
-                                                href="#collapse{{@replace_space($class->name)}}">
-                                                <i
-                                                    class="fa fa-angle-right angle-class-{{@replace_space($class->name)}}"></i>
-                                                {{$class->name}}
-
-                                            </a>
-                                        </div>
-                                    </div>
-                                    <div id="collapse{{@replace_space($class->name)}}" class="accordion-body collapse">
-                                        @if(session('system_mode') != 'restaurant')
-                                        <div class="accordion-inner">
-                                            @php
-                                            $i = 0;
-                                            $categories = App\Models\Category::where('product_class_id',
-                                            $class->id)->whereNotNull('categories.name')->select('categories.id',
-                                            'categories.name')->groupBy('categories.id')->get();
-                                            @endphp
-                                            @foreach ($categories as $category)
-                                            <div class="accordion"
-                                                id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                style="margin-left: 20px;">
-                                                <div class="accordion-group  category_level level">
-                                                    <div class="row">
-                                                        <input id="category_selected{{$category->id}}"
-                                                            name="pct[category_selected][]" type="checkbox"
-                                                            @if(in_array($category->id, $category_selected)) checked
-                                                        @endif
-                                                        value="{{$category->id}}" class="my-new-checkbox">
-                                                        <div class="accordion-heading" style="width: 80%">
-                                                            <a class="accordion-toggle" data-toggle="collapse"
-                                                                data-id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                                data-parent="#{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                                href="#collapse{{@replace_space('category_'.$category->name.'_'.$i)}}">
-                                                                <i
-                                                                    class="fa fa-angle-right angle-class-{{@replace_space('category_'.$category->name.'_'.$i)}}"></i>
-                                                                {{$category->name}}
-
-                                                            </a>
-                                                        </div>
-
-                                                    </div>
-                                                    <div id="collapse{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                        class="accordion-body collapse in">
-                                                        <div class="accordion-inner">
-                                                            @php
-                                                            $sub_categories = App\Models\Category::where('parent_id',
-                                                            $category->id)->whereNotNull('categories.name')->select('categories.id','categories.name')->groupBy('categories.id')->get();
-
-                                                            $brands = null;
-                                                            $brands = App\Models\Product::leftjoin('brands',
-                                                            'products.brand_id',
-                                                            'brands.id')->where('products.category_id',
-                                                            $category->id)->whereNull('products.sub_category_id')->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
-                                                            'brands.name')->groupBy('brands.id')->get();
-
-                                                            @endphp
-                                                            @if (!empty($brands) && $brands->count() > 0)
-                                                            @include('quotation.partial.brand_inner_part_pst',
-                                                            ['brands' => $brands, 'brand_selected' => $brand_selected,
-                                                            'product_class_id' => $class->id, 'category_id' =>
-                                                            $category->id])
-                                                            @endif
-                                                            @foreach ($sub_categories as $sub_category)
-                                                            <div class="accordion"
-                                                                id="{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
-                                                                style="margin-left: 20px;">
-                                                                <div class="accordion-group  sub_category_level level">
-                                                                    <div class="row">
-                                                                        <input
-                                                                            id="sub_category_selected{{$sub_category->id}}"
-                                                                            name="pct[sub_category_selected][]"
-                                                                            type="checkbox"
-                                                                            value="{{$sub_category->id}}"
-                                                                            @if(in_array($sub_category->id,
-                                                                        $sub_category_selected)) checked @endif
-                                                                        class="my-new-checkbox">
-                                                                        <div class="accordion-heading"
-                                                                            style="width: 80%">
-                                                                            <a class="accordion-toggle"
-                                                                                data-toggle="collapse"
-                                                                                data-id="{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
-                                                                                data-parent="#{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
-                                                                                href="#collapse{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}">
-                                                                                <i
-                                                                                    class="fa fa-angle-right angle-class-{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"></i>
-                                                                                {{$sub_category->name}}
-
-                                                                            </a>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="collapse{{@replace_space('sub_category_'.$sub_category->name.'_'.$i)}}"
-                                                                        class="accordion-body collapse in">
-                                                                        <div class="accordion-inner">
-                                                                            @php
-                                                                            $brands = null;
-                                                                            $brands =
-                                                                            App\Models\Product::leftjoin('brands',
-                                                                            'products.brand_id',
-                                                                            'brands.id')->where('products.sub_category_id',
-                                                                            $sub_category->id)->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
-                                                                            'brands.name')->groupBy('brands.id')->get();
-                                                                            @endphp
-                                                                            @if (!empty($brands) && $brands->count() >
-                                                                            0)
-                                                                            @include('quotation.partial.brand_inner_part_pst',
-                                                                            ['brands' => $brands, 'brand_selected' =>
-                                                                            $brand_selected, 'product_class_id' =>
-                                                                            $class->id, 'sub_category_id' =>
-                                                                            $sub_category->id])
-                                                                            @endif
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-
-                                                            </div>
-                                                            @php
-                                                            $i++;
-                                                            @endphp
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                            @php
-                                            $i++;
-                                            @endphp
-                                            @endforeach
-
-                                        </div>
-                                        @else
-                                        <div class="accordion-inner">
-                                            @php
-                                            $query =
-                                            App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('product_class_id',
-                                            $class->id);
-
-                                            $products = $query->select('products.id',
-                                            'products.name', 'products.sku', 'variations.id as variation_id',
-                                            'products.sell_price')->groupBy('variations.id')->get();
-                                            @endphp
-                                            @foreach ($products as
-                                            $product)
-
-                                            <div class="row product_row">
-                                                <div class="col-md-1">
-                                                    <input id="product_selected{{$product->variation_id}}"  data-product_id="{{$product->id}}"
-                                                        name="pct[product_selected][]" type="checkbox"
-                                                        value="{{$product->variation_id}}" @if(in_array($product->id,
-                                                    $product_selected)) checked @endif
-                                                    class="my-new-checkbox product_checkbox">
-                                                </div>
-                                                <div class="col-md-5">
-                                                    <img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
-                                                        alt="photo" width="50" height="50">
-                                                    <a href="">{{$product->name}}</a>
-                                                </div>
-                                                @php
-                                                $expiry_date =
-                                                App\Models\AddStockLine::where('product_id',
-                                                $product->id)->whereDate('expiry_date', '>=',
-                                                date('Y-m-d'))->select('expiry_date')->orderBy('expiry_date',
-                                                'asc')->first();
-                                                $current_stock =
-                                                App\Models\ProductStore::where('product_id',
-                                                $product->id)->select(DB::raw('SUM(product_stores.qty_available)
-                                                as current_stock'))->first();
-                                                @endphp
-                                                <div class="col-md-6">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="col-md-12">
-                                                                <label style="color: #222;">@lang('lang.sku'):
-                                                                    {{$product->sku}}</label>
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <label style="color: #222;">@lang('lang.expiry'):
-                                                                    @if(!empty($expiry_date)){{@format_date($expiry_date->expiry_date)}}@else{{'N/A'}}@endif</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="col-md-12">
-                                                                <label style="color: #222;">@lang('lang.stock'):
-                                                                    @if(!empty($current_stock)){{@num_format($current_stock->current_stock)}}@endif</label>
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <label style="color: #222;">@lang('lang.price'):
-                                                                    {{@num_format($product->sell_price)}}</label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            @endforeach
-                                        </div>
-
-                                        @endif
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_product_class_id', __('lang.product_class') . ':', []) !!}
+                                        {!! Form::select('filter_product_class_id', $product_classes,
+                                        request()->filter_product_class_id,
+                                        ['class'
+                                        => 'form-control filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_category_id', __('lang.category') . ':', []) !!}
+                                        {!! Form::select('filter_category_id', $categories, request()->category_id, ['class' =>
+                                        'form-control filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_sub_category_id', __('lang.sub_category') . ':', []) !!}
+                                        {!! Form::select('filter_sub_category_id', $sub_categories, request()->sub_category_id,
+                                        ['class' =>
+                                        'form-control filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_brand_id', __('lang.brand') . ':', []) !!}
+                                        {!! Form::select('filter_brand_id', $brands, request()->brand_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_unit_id', __('lang.unit') . ':', []) !!}
+                                        {!! Form::select('filter_unit_id', $units, request()->unit_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_color_id', __('lang.color') . ':', []) !!}
+                                        {!! Form::select('filter_color_id', $colors, request()->color_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_size_id', __('lang.size') . ':', []) !!}
+                                        {!! Form::select('filter_size_id', $sizes, request()->size_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_grade_id', __('lang.grade') . ':', []) !!}
+                                        {!! Form::select('filter_grade_id', $grades, request()->grade_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_tax_id', __('lang.tax') . ':', []) !!}
+                                        {!! Form::select('filter_tax_id', $taxes_array, request()->tax_id, ['class' =>
+                                        'form-control
+                                        filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_store_id', __('lang.store'), []) !!}
+                                        {!! Form::select('filter_store_id', $stores, request()->store_id, ['class' =>
+                                        'form-control filter_product', 'placeholder' =>
+                                        __('lang.all'),'data-live-search'=>"true"])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_customer_type_id', __('lang.customer_type') . ':', []) !!}
+                                        {!! Form::select('filter_customer_type_id', $customer_types,
+                                        request()->customer_type_id,
+                                        ['class'
+                                        => 'form-control filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('filter_created_by', __('lang.created_by') . ':', []) !!}
+                                        {!! Form::select('filter_created_by', $users, request()->created_by, ['class'
+                                        => 'form-control filter_product
+                                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')])
+                                        !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="button"
+                                        class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
+                                </div>
                             </div>
-                            @endforeach
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" value="0"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
+                            <button type="button" value="3"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
+                            <button type="button" value="4"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
+                            <button type="button" value="5"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
+                            <button type="button" value="6"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
+                            <button type="button" value="7"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.batch_number')</button>
+                            <button type="button" value="8"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
+                            <button type="button" value="9"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
+                            <button type="button" value="10"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
+                            <button type="button" value="11"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
+                            <button type="button" value="12"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.color')</button>
+                            <button type="button" value="13"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.size')</button>
+                            <button type="button" value="14"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.grade')</button>
+                            @if(empty($page))
+                            <button type="button" value="15"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
+                            @endif
+                            <button type="button" value="16"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
+                            <button type="button" value="17"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
+                            <button type="button" value="18"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                            <button type="button" value="19"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
+                            @can('product_module.purchase_price.view')
+                            <button type="button" value="20"
+                                class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
+                            @endcan
+                        </div>
+                    </div>
+
+
                 </div>
+                <div class="table-responsive">
+                    <table id="product_selection_table" class="table" style="width: auto">
+                        <thead>
+                            <tr>
+                                <th>@lang('lang.select')</th>
+                                <th>@lang('lang.image')</th>
+                                <th>@lang('lang.name')</th>
+                                <th>@lang('lang.product_code')</th>
+                                <th>@lang('lang.class')</th>
+                                <th>@lang('lang.category')</th>
+                                <th>@lang('lang.sub_category')</th>
+                                <th>@lang('lang.purchase_history')</th>
+                                <th>@lang('lang.batch_number')</th>
+                                <th>@lang('lang.selling_price')</th>
+                                <th>@lang('lang.tax')</th>
+                                <th>@lang('lang.brand')</th>
+                                <th>@lang('lang.unit')</th>
+                                <th>@lang('lang.color')</th>
+                                <th>@lang('lang.size')</th>
+                                <th>@lang('lang.grade')</th>
+                                <th class="sum">@lang('lang.current_stock')</th>
+                                <th>@lang('lang.customer_type')</th>
+                                <th>@lang('lang.expiry_date')</th>
+                                <th>@lang('lang.manufacturing_date')</th>
+                                <th>@lang('lang.discount')</th>
+                                @can('product_module.purchase_price.view')
+                                <th>@lang('lang.purchase_price')</th>
+                                @endcan
+                                <th>@lang('lang.supplier')</th>
+                                <th>@lang('lang.created_by')</th>
+                                <th>@lang('lang.edited_by')</th>
+                                <th class="notexport">@lang('lang.action')</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="16" style="text-align: right">@lang('lang.total')</th>
+                                <td></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
             </div>
+
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">@lang('lang.add')</button>
+                <button type="button" class="btn btn-primary" id="add-selected-btn">@lang( 'lang.add' )</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
             </div>
+
         </div>
     </div>
 </div>

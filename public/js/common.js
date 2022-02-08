@@ -428,4 +428,3 @@ $(document).on("click", "table.ajax_view tbody tr", function (e) {
         });
     }
 });
-//changes

@@ -1053,7 +1053,7 @@ return [
     'raw_materials' => 'مواد أولية',
     'raw_material' => 'مواد خام',
     'used_in' => 'مستعمل في',
-    'used_amount' => 'المبلغ المستخدم',
+    'used_amount' => 'الكمية المستخدمة',
     'recipes' => 'وصفات',
     'recipe' => 'وصفة',
     'that_raw_materials_are_used_for' => 'تستخدم المواد الخام ل',

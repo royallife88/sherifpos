@@ -78,7 +78,8 @@ function get_label_product_row(product_id, variation_id) {
         });
 
     if (add_via_ajax) {
-        var row_count = $("table#product_table tbody tr").length;
+        var row_count = parseInt($("#row_count").val());
+        $("#row_count").val(row_count + 1);
         $.ajax({
             method: "GET",
             url: "/add-stock/add-product-row",

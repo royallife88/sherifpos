@@ -1100,5 +1100,7 @@ return [
     'important_date' => 'Important Date',
     'quotation_no' => 'Quotation No',
     'other_cost' => 'Other Costs',
+    'select_products' => 'Select Products',
+    'select' => 'Select',
 
 ];

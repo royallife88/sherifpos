@@ -2,10 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
 use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\Employee;
+use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
+use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -13,6 +19,8 @@ use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
+use App\Models\Unit;
+use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
@@ -117,7 +125,6 @@ class QuotationController extends Controller
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
-        $stores = Store::getDropdown();
         $tac = TermsAndCondition::where('type', 'quotation')->orderBy('name', 'asc')->pluck('name', 'id');
 
         $products = Product::leftjoin('variations', 'products.id', 'variations.product_id')
@@ -125,7 +132,22 @@ class QuotationController extends Controller
                 DB::raw('CONCAT(products.name, IF(variations.name != "Default", variations.name, "")) as name'),
                 'variations.id'
             )->groupBy('variations.id')->pluck('name', 'id');
-        $product_classes = ProductClass::get();
+
+
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('quotation.create')->with(compact(
             'walk_in_customer',
@@ -134,10 +156,22 @@ class QuotationController extends Controller
             'stores',
             'store_pos',
             'customers',
-            'taxes',
+            'taxes_array',
             'tac',
             'payment_types',
-            'payment_status_array'
+            'payment_status_array',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes',
+            'customer_types',
+            'discount_customer_types',
+            'users',
+            'stores'
         ));
     }
 
@@ -183,18 +217,44 @@ class QuotationController extends Controller
         $taxes = Tax::get();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
-        $stores = Store::getDropdown();
         $tac = TermsAndCondition::where('type', 'quotation')->orderBy('name', 'asc')->pluck('name', 'id');
 
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
+
         return view('quotation.edit')->with(compact(
-            'stores',
             'sale',
             'tac',
             'store_pos',
             'customers',
             'taxes',
             'payment_types',
-            'payment_status_array'
+            'payment_status_array',
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'discount_customer_types',
+            'users',
+            'stores'
         ));
     }
 

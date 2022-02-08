@@ -4,14 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Imports\AddStockLineImport;
 use App\Models\AddStockLine;
+use App\Models\Brand;
 use App\Models\CashRegisterTransaction;
+use App\Models\Category;
+use App\Models\Color;
+use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\Email;
+use App\Models\Grade;
 use App\Models\Product;
+use App\Models\ProductClass;
+use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Supplier;
 use App\Models\Tax;
 use App\Models\Transaction;
+use App\Models\Unit;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
@@ -206,19 +215,33 @@ class AddStockController extends Controller
     public function create()
     {
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
-        $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $payment_types = $payment_type_array;
         $taxes = Tax::pluck('name', 'id');
-        $users = User::pluck('name', 'id');
 
         $variation_id = request()->get('variation_id');
         $product_id = request()->get('product_id');
 
         $is_raw_material = request()->segment(1) == 'raw-material' ? true : false;
+
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('add_stock.create')->with(compact(
             'is_raw_material',
@@ -231,6 +254,19 @@ class AddStockController extends Controller
             'product_id',
             'po_nos',
             'taxes',
+            'product_classes',
+            'payment_types',
+            'payment_status_array',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'discount_customer_types',
             'users',
         ));
     }
@@ -244,7 +280,7 @@ class AddStockController extends Controller
     public function store(Request $request)
     {
 
-        // try {
+        try {
             $data = $request->except('_token');
 
             if (!empty($data['po_no'])) {
@@ -345,13 +381,13 @@ class AddStockController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }
@@ -390,13 +426,27 @@ class AddStockController extends Controller
     {
         $add_stock = Transaction::find($id);
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
-        $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $payment_types = $payment_type_array;
         $taxes = Tax::pluck('name', 'id');
+
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
 
         return view('add_stock.edit')->with(compact(
@@ -406,9 +456,22 @@ class AddStockController extends Controller
             'payment_status_array',
             'payment_type_array',
             'stores',
-            'users',
             'taxes',
-            'po_nos'
+            'po_nos',
+            'product_classes',
+            'payment_types',
+            'payment_status_array',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'discount_customer_types',
+            'users',
         ));
     }
 

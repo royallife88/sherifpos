@@ -20,7 +20,9 @@
                     </div>
                     {!! Form::open(['url' => action('AddStockController@store'), 'method' => 'post', 'id' =>
                     'add_stock_form', 'enctype' => 'multipart/form-data' ]) !!}
+                    <input type="hidden" name="row_count" id="row_count" value="0">
                     <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{$is_raw_material}}">
+                    <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -69,7 +71,7 @@
                         <br>
                         <br>
                         <div class="row">
-                            <div class="col-md-8 offset-md-2">
+                            <div class="col-md-8 offset-md-1">
                                 <div class="search-box input-group">
                                     <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                             class="fa fa-search"></i></button>
@@ -80,6 +82,9 @@
                                         data-href="{{action('ProductController@create')}}?quick_add=1"
                                         data-container=".view_modal"><i class="fa fa-plus"></i></button>
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                @include('quotation.partial.product_selection')
                             </div>
                         </div>
                         <br>
@@ -241,11 +246,20 @@
 
 @section('javascript')
 <script src="{{asset('js/add_stock.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script type="text/javascript">
-    @if(!empty($product_id) && !empty($variation_id))
-$(document).ready(function(){
-    get_label_product_row({{$product_id}},{{$variation_id}});
+ $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
 })
+@if(!empty($product_id) && !empty($variation_id))
+    $(document).ready(function(){
+        get_label_product_row({{$product_id}},{{$variation_id}});
+    })
 @endif
     $('#po_no').change(function () {
         let po_no = $(this).val();
@@ -265,7 +279,6 @@ $(document).ready(function(){
     });
     $(document).on("click", '#submit-btn', function (e) {
         e.preventDefault();
-        console.log('click');
         var sku = $('#sku').val();
         if ($("#product-form-quick-add").valid()) {
             tinyMCE.triggerSave();

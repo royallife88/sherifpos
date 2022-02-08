@@ -72,11 +72,12 @@
                                     <table id="product_table" style="width: 100%;" class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 30%">{{__('lang.product')}}</th>
+                                                <th style="width: 20%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
                                                 <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
+                                                <th style="width: 10%">{{__('lang.current_stock')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
                                         </thead>
@@ -229,7 +230,7 @@
 
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
-<script src="{{asset('js/quotation_product_selection.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script>
     $('#print-btn').click(function(){
         $('#submit_type').val('print');
@@ -238,6 +239,14 @@
     $('#send-btn').click(function(){
         $('#submit_type').val('send');
         pos_form_obj.submit();
+    });
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
     })
 </script>
 @endsection

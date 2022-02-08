@@ -13,6 +13,7 @@
                 <div class="card-body">
                     {!! Form::open(['url' => action('QuotationController@update', $sale->id), 'method' => 'put', 'files' =>
                     true, 'class' => 'pos-form', 'id' => 'edit_quotation_form']) !!}
+                    <input type="hidden" name="row_count" id="row_count" value="{{$sale->transaction_sell_lines->count()}}">
                     <input type="hidden" name="store_id" id="store_id" value="{{$sale->store_id}}">
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
@@ -53,7 +54,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
+                                <div class="col-md-8 offset-md-1" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                                 class="fa fa-search"></i></button>
@@ -62,15 +63,19 @@
                                             class="form-control ui-autocomplete-input" autocomplete="off">
                                     </div>
                                 </div>
+                                <div class="col-md-2">
+                                    @include('quotation.partial.product_selection')
+                                </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
                                 <div class="table-responsive transaction-list">
                                     <table id="product_table" style="width: 100% " class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th style="width: 30%">{{__('lang.product')}}</th>
+                                                <th style="width: 20%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -81,6 +86,7 @@
                                         </tbody>
                                         <tfoot>
                                             <tr>
+                                                <td></td>
                                                 <td></td>
                                                 <td></td>
                                                 <th style="text-align: right">@lang('lang.total')</th>
@@ -215,9 +221,23 @@
 
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script>
-    $(document).ready(function(){
-        // calculate_sub_totals();
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
+    })
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
     })
 </script>
 @endsection

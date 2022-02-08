@@ -13,6 +13,10 @@
                     {!! Form::open(['url' => action('AddStockController@update', $add_stock->id), 'method' => 'put',
                     'id' =>
                     'add_stock_form', 'enctype' => 'multipart/form-data' ]) !!}
+                    <input type="hidden" name="row_count" id="row_count"
+                        value="{{$add_stock->add_stock_lines->count()}}">
+                    <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
+                    <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{$add_stock->is_raw_material}}">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -61,7 +65,7 @@
                         <br>
                         <br>
                         <div class="row">
-                            <div class="col-md-8 offset-md-2">
+                            <div class="col-md-8 offset-md-1">
                                 <div class="search-box input-group">
                                     <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                             class="fa fa-search"></i></button>
@@ -72,6 +76,9 @@
                                         data-href="{{action('ProductController@create')}}?quick_add=1"
                                         data-container=".view_modal"><i class="fa fa-plus"></i></button>
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                @include('quotation.partial.product_selection')
                             </div>
                         </div>
                         <br>
@@ -87,6 +94,7 @@
                                             <th style="width: 25%" class="col-sm-4">@lang( 'lang.unit' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.purchase_price' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.sub_total' )</th>
+                                            <th style="width: 12%" class="col-sm-4">@lang( 'lang.new_stock' )</th>
                                             <th style="width: 12%" class="col-sm-4">@lang( 'lang.action' )</th>
                                         </tr>
                                     </thead>
@@ -119,6 +127,7 @@
                                                     name="add_stock_lines[{{$loop->index}}][quantity]" required
                                                     value="@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif">
                                             </td>
+                                            <td> {{$product->product->units->pluck('name')[0]??''}}</td>
                                             <td>
                                                 <input type="text" class="form-control purchase_price"
                                                     name="add_stock_lines[{{$loop->index}}][purchase_price]" required
@@ -132,6 +141,17 @@
                                                 <input type="hidden" class="form-control sub_total"
                                                     name="add_stock_lines[{{$loop->index}}][sub_total]"
                                                     value="{{$product->sub_total}}">
+                                            </td>
+                                            @php
+                                            $current_stock = App\Models\ProductStore::where('product_id',
+                                            $product->product_id)->where('store_id',
+                                            $add_stock->store_id)->sum('qty_available');
+                                            @endphp
+                                            <td>
+                                                <input type="hidden" name="current_stock" class="current_stock"
+                                                    value="@if(isset($current_stock)){{$current_stock}}@else{{0}}@endif">
+                                                <span
+                                                    class="current_stock_text">@if(isset($current_stock)){{@num_format($current_stock)}}@else{{0}}@endif</span>
                                             </td>
                                             <td>
                                                 <button type="button" class="btn btn-danger btn-sx remove_row"
@@ -384,7 +404,16 @@
 
 @section('javascript')
 <script src="{{asset('js/add_stock.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script type="text/javascript">
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
+})
     $(document).ready(function(){
         $('#payment_status').change();
     })
@@ -506,6 +535,14 @@
                 },
             });
         }
+    })
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
     })
 </script>
 @endsection

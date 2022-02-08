@@ -182,7 +182,13 @@ class ProductController extends Controller
             if (!empty(request()->created_by)) {
                 $products->where('products.created_by', request()->created_by);
             }
-            $products->where('active', 1)->where('is_raw_material', 0);
+            $products->where('active', 1);
+            if (!empty(request()->is_raw_material)) {
+                $products->where('is_raw_material', 1);
+            } else {
+                $products->where('is_raw_material', 0);
+            }
+            $is_add_stock = request()->is_add_stock;
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',
@@ -254,6 +260,19 @@ class ProductController extends Controller
                         ->first();
                     return $query->name ?? '';
                 })
+                ->addColumn('selection_checkbox', function ($row) use ($is_add_stock) {
+                    if ($row->is_service == 1 || $is_add_stock == 1) {
+                        $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                    } else {
+                        if ($row->current_stock > 0) {
+                            $html = '<input type="checkbox" name="product_selected" class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                        } else {
+                            $html = '<input type="checkbox" name="product_selected" disabled class="product_selected" value="' . $row->variation_id . '" data-product_id="' . $row->id . '" />';
+                        }
+                    }
+
+                    return $html;
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -311,6 +330,7 @@ class ProductController extends Controller
                     }
                 ])
                 ->rawColumns([
+                    'selection_checkbox',
                     'image',
                     'variation_name',
                     'sku',
