@@ -241,7 +241,7 @@ class ProductController extends Controller
                 ->editColumn('color', '{{$color}}')
                 ->editColumn('size', '{{$size}}')
                 ->editColumn('grade', '{{$grade}}')
-                ->editColumn('current_stock', '@if($is_service)-@else{{@num_format($current_stock)}}@endif')
+                ->editColumn('current_stock', '@if($is_service) @else{{@num_format($current_stock)}}@endif')
                 ->addColumn('customer_type', function ($row) {
                     return $row->customer_type;
                 })
