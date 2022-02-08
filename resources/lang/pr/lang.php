@@ -1084,4 +1084,18 @@ return [
     'setting' => 'تنظیمات',
     'store_pos' => 'فروشگاه POS',
     'add_consumption_for_others' => 'اضافه کردن Compansation برای دیگران',
+
+    'other_expenses' => 'هزینه های دیگر',
+    'tutorials' => 'آموزش ها',
+    'tutorial' => 'آموزش',
+    'add_tutorial' => 'افزودن آموزش',
+    'video' => 'ویدیو',
+    'thumbnail' => 'بند انگشتی',
+    'final_cost' => 'هزینه نهایی',
+    'important_dates' => 'تاریخ های مهم',
+    'important_date' => 'تاریخ مهم',
+    'quotation_no' => 'نقل قول شماره',
+    'other_cost' => 'دیگر هزینه ها',
+    'select_products' => 'محصولات را انتخاب کنید',
+    'select' => 'انتخاب کنید',
 ];

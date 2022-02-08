@@ -1085,4 +1085,17 @@ return [
     'store_pos' => 'PDV du magasin',
     'add_consumption_for_others' => 'Ajouter une compensation pour les autres',
 
+    'other_expenses' => 'Autres dépenses',
+    'tutorials' => 'Tutoriels',
+    'tutorial' => 'Didacticiel',
+    'add_tutorial' => 'Ajouter un tutoriel',
+    'video' => 'Vidéo',
+    'thumbnail' => 'La vignette',
+    'final_cost' => 'Coût final',
+    'important_dates' => 'Rendez-vous importants',
+    'important_date' => 'Date importante',
+    'quotation_no' => 'Devis Non',
+    'other_cost' => 'D\'autres coûts',
+    'select_products' => 'Sélectionnez des produits',
+    'select' => 'Sélectionner',
 ];

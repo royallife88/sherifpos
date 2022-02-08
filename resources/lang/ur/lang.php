@@ -1085,4 +1085,18 @@ return [
     'setting' => 'ترتیب',
     'store_pos' => 'POS اسٹور کریں۔',
     'add_consumption_for_others' => 'دوسروں کے لیے معاوضہ شامل کریں۔',
+
+    'other_expenses' => 'دوسرے اخراجات',
+    'tutorials' => 'سبق',
+    'tutorial' => 'ٹیوٹوریل',
+    'add_tutorial' => 'ٹیوٹوریل شامل کریں',
+    'video' => 'ویڈیو',
+    'thumbnail' => 'تھمب نیل',
+    'final_cost' => 'حتمی لاگت',
+    'important_dates' => 'اہم تاریخیں',
+    'important_date' => 'اہم تاریخ',
+    'quotation_no' => 'اقتباس نمبر',
+    'other_cost' => 'دیگر اخراجات',
+    'select_products' => 'مصنوعات کو منتخب کریں۔',
+    'select' => 'منتخب کریں۔',
 ];

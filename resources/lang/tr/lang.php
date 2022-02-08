@@ -1087,4 +1087,18 @@ return [
     'store_pos' => 'Mağaza POS\'u',
     'add_consumption_for_others' => 'Diğerleri için Telafi Ekle',
 
+    'other_expenses' => 'Diğer giderler',
+    'tutorials' => 'öğreticiler',
+    'tutorial' => 'öğretici',
+    'add_tutorial' => 'Öğretici Ekle',
+    'video' => 'Video',
+    'thumbnail' => 'küçük resim',
+    'final_cost' => 'Nihai Maliyet',
+    'important_dates' => 'Önemli tarihler',
+    'important_date' => 'Önemli Tarih',
+    'quotation_no' => 'Teklif No',
+    'other_cost' => 'Diğer maliyetler',
+    'select_products' => 'Ürünleri Seçin',
+    'select' => 'Seçme',
+
 ];

@@ -1088,4 +1088,18 @@ return [
     'store_pos' => 'Winkel-POS',
     'add_consumption_for_others' => 'Compansatie voor anderen toevoegen',
 
+    'other_expenses' => 'Andere uitgaven',
+    'tutorials' => 'Tutorials',
+    'tutorial' => 'zelfstudie',
+    'add_tutorial' => 'Zelfstudie toevoegen',
+    'video' => 'Video',
+    'thumbnail' => 'Miniatuur',
+    'final_cost' => 'Laatste kosten:',
+    'important_dates' => 'Belangrijke data',
+    'important_date' => 'Belangrijke datum',
+    'quotation_no' => 'Offerte nr',
+    'other_cost' => 'Andere kosten',
+    'select_products' => 'Selecteer producten',
+    'select' => 'Selecteer',
+
 ];

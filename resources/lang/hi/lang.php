@@ -1085,4 +1085,18 @@ return [
     'setting' => 'स्थापना',
     'store_pos' => 'स्टोर पीओएस',
     'add_consumption_for_others' => 'दूसरों के लिए मुआवजा जोड़ें',
+
+    'other_expenses' => 'अन्य खर्चों',
+    'tutorials' => 'ट्यूटोरियल',
+    'tutorial' => 'ट्यूटोरियल',
+    'add_tutorial' => 'ट्यूटोरियल जोड़ें',
+    'video' => 'वीडियो',
+    'thumbnail' => 'थंबनेल',
+    'final_cost' => 'अंतिम लागत',
+    'important_dates' => 'महत्वपूर्ण तिथियाँ',
+    'important_date' => 'महत्वपूर्ण तिथि',
+    'quotation_no' => 'संविदा दर संख्या',
+    'other_cost' => 'अन्य लागत',
+    'select_products' => 'उत्पादों का चयन करें',
+    'select' => 'चुनते हैं',
 ];
