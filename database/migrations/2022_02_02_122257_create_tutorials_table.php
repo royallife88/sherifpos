@@ -17,6 +17,7 @@ class CreateTutorialsTable extends Migration
             $table->id();
             $table->text('name');
             $table->text('description')->nullable();
+            $table->text('link');
 
             $table->timestamps();
         });

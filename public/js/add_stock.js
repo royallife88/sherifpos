@@ -160,7 +160,11 @@ $(document).on("change", ".quantity, .purchase_price", function () {
     let tr = $(this).closest("tr");
     let current_stock = __read_number($(tr).find(".current_stock"));
     let qty = __read_number($(tr).find(".quantity"));
+    let is_service = parseInt($(tr).find(".is_service").val());
     let new_qty = current_stock + qty;
+    if (is_service) {
+        new_qty = 0;
+    }
     $(tr)
         .find("span.current_stock_text")
         .text(__currency_trans_from_en(new_qty, false));

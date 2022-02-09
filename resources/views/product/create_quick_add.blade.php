@@ -312,7 +312,7 @@
         </div>
         <input type="hidden" name="active" value="0">
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" id="submit-btn">@lang( 'lang.save' )</button>
+            <button type="button" class="btn btn-primary" id="submit-btn-add-product">@lang( 'lang.save' )</button>
             <button type="button" class="btn btn-default" data-dismiss="modal">@lang( 'lang.close' )</button>
         </div>
 

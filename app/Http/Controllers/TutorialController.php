@@ -45,6 +45,7 @@ class TutorialController extends Controller
         try {
             $data['name'] = $request->name;
             $data['description'] = $request->description;
+            $data['link'] = $request->link;
 
             $tutorial = Tutorial::create($data);
 
@@ -105,32 +106,33 @@ class TutorialController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
-        $data['name'] = $request->name;
-        $data['description'] = $request->description;
-        $tutorial = Tutorial::where('id', $id)->first();
-        $tutorial->update($data);
+        try {
+            $data['name'] = $request->name;
+            $data['description'] = $request->description;
+            $data['link'] = $request->link;
+            $tutorial = Tutorial::where('id', $id)->first();
+            $tutorial->update($data);
 
-        if ($request->video) {
-            $tutorial->clearMediaCollection('tutorial');
-            $tutorial->addMedia($request->video)->toMediaCollection('tutorial');
-        }
-        if ($request->thumbnail) {
-            $tutorial->clearMediaCollection('thumbnail');
-            $tutorial->addMedia($request->thumbnail)->toMediaCollection('thumbnail');
-        }
+            if ($request->video) {
+                $tutorial->clearMediaCollection('tutorial');
+                $tutorial->addMedia($request->video)->toMediaCollection('tutorial');
+            }
+            if ($request->thumbnail) {
+                $tutorial->clearMediaCollection('thumbnail');
+                $tutorial->addMedia($request->thumbnail)->toMediaCollection('thumbnail');
+            }
 
-        $output = [
-            'success' => true,
-            'msg' => __('lang.success')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }
@@ -177,6 +179,7 @@ class TutorialController extends Controller
                 'id' => $tutorial->id,
                 'name' => $tutorial->name,
                 'description' => $tutorial->description,
+                'link' => $tutorial->link,
                 'video' => $tutorial->getFirstMediaUrl('tutorial'),
                 'thumbnail' => $tutorial->getFirstMediaUrl('thumbnail'),
             ];

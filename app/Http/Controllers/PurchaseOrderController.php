@@ -358,6 +358,7 @@ class PurchaseOrderController extends Controller
                     $query->orWhere('sub_sku', 'like', '%' . $term . '%');
                 })
                 ->whereNull('variations.deleted_at')
+                ->where('is_service', 0)
                 ->select(
                     'products.*',
                     'products.id as product_id',

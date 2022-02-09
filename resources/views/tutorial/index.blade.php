@@ -18,6 +18,7 @@
                             <tr>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.description')</th>
+                                <th>@lang('lang.link')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -26,6 +27,7 @@
                             <tr>
                                 <td>{{$tutorial->name}}</td>
                                 <td>{{$tutorial->description}}</td>
+                                <td>{{$tutorial->link}}</td>
 
                                 <td>
                                     <div class="btn-group">

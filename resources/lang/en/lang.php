@@ -1103,4 +1103,6 @@ return [
     'select_products' => 'Select Products',
     'select' => 'Select',
 
+
+    'link' => 'Link',
 ];

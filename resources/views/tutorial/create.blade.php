@@ -1,8 +1,8 @@
 <div class="modal-dialog" role="document">
     <div class="modal-content">
 
-        {!! Form::open(['url' => action('TutorialController@store'), 'method' => 'post', 'id' =>'tutorial_add_form', 'files' => true ]) !!}
-        !!}
+        {!! Form::open(['url' => action('TutorialController@store'), 'method' => 'post', 'id' =>'tutorial_add_form',
+        'files' => true ]) !!}
 
         <div class="modal-header">
 
@@ -26,6 +26,12 @@
                 !!}
             </div>
             <div class="form-group">
+                {!! Form::label('link', __( 'lang.link' ) . ':*') !!}
+                {!! Form::text('link', null, ['class' => 'form-control', 'placeholder' => __( 'lang.link' ), 'required'
+                ]);
+                !!}
+            </div>
+            {{-- <div class="form-group">
                 {!! Form::label('video', __( 'lang.video' ) . ':*') !!} <br>
                 {!! Form::file('video', null, ['class' => '', 'required'
                 ]);
@@ -36,7 +42,7 @@
                 {!! Form::file('thumbnail', null, ['class' => '', 'required'
                 ]);
                 !!}
-            </div>
+            </div> --}}
 
         </div>
 

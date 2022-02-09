@@ -1998,3 +1998,29 @@ $(document).on("click", ".add_size_btn", function () {
     console.log("adfasdfsfsdfsfd");
     $(".add_size_div").removeClass("hide");
 });
+$(document).on("click", "#submit-btn-add-product", function (e) {
+    e.preventDefault();
+    console.log("click");
+    var sku = $("#sku").val();
+    if ($("#product-form-quick-add").valid()) {
+        tinyMCE.triggerSave();
+        $.ajax({
+            type: "POST",
+            url: "/product",
+            data: $("#product-form-quick-add").serialize(),
+            success: function (response) {
+                if (response.success) {
+                    swal("Success", response.msg, "success");
+                    $("#search_product").val(sku);
+                    $("input#search_product").autocomplete("search");
+                    $(".view_modal").modal("hide");
+                }
+            },
+            error: function (response) {
+                if (!response.success) {
+                    swal("Error", response.msg, "error");
+                }
+            },
+        });
+    }
+});

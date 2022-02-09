@@ -29,6 +29,12 @@
                 !!}
             </div>
             <div class="form-group">
+                {!! Form::label('link', __( 'lang.link' ) . ':*') !!}
+                {!! Form::text('link', $tutorial->link, ['class' => 'form-control', 'placeholder' => __( 'lang.link' ), 'required'
+                ]);
+                !!}
+            </div>
+            {{-- <div class="form-group">
                 {!! Form::label('video', __( 'lang.video' )) !!} <br>
                 {!! Form::file('video', null, ['class' => '', 'required'
                 ]);
@@ -39,7 +45,7 @@
                 {!! Form::file('thumbnail', null, ['class' => '', 'required'
                 ]);
                 !!}
-            </div>
+            </div> --}}
 
         </div>
 

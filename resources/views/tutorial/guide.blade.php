@@ -13,17 +13,19 @@
                 <div class="row">
                     @forelse ($tutorialsDataArray as $item)
                     <div class="col-md-3">
-                        <div class="card video_thumb" style="width: 18rem;" data-video_src="{{$item['video']}}"
-                            data-thumbnail_src="{{$item['thumbnail']}}" data-name="{{$item['name']}}"
-                            data-description="{{$item['description']}}">
-                            <img class="card-img-top"
-                                src="@if(!empty($item['thumbnail'])){{$item['thumbnail']}}@else{{asset('/uploads/' . session('logo'))}}@endif"
-                                alt="{{$item['name']}}">
-                            <div class="card-body">
-                                <h5 class="card-title">{{$item['name']}}</h5>
-                                <p class="card-text">{{$item['description']}}</p>
+                        <a target="_blank" href="{{$item['link']}}">
+                            <div class="card video_thumb" style="width: 18rem;" data-video_src="{{$item['video']}}"
+                                data-thumbnail_src="{{$item['thumbnail']}}" data-name="{{$item['name']}}"
+                                data-description="{{$item['description']}}">
+                                <img class="card-img-top"
+                                    src="@if(!empty($item['thumbnail'])){{$item['thumbnail']}}@else{{asset('/uploads/' . session('logo'))}}@endif"
+                                    alt="{{$item['name']}}">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{$item['name']}}</h5>
+                                    <p class="card-text">{{$item['description']}}</p>
+                                </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
 
                     @empty

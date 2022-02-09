@@ -11,6 +11,8 @@ $i = $index;
         @else
         {{$product->product_name}}
         @endif
+        <input type="hidden" name="add_stock_lines[{{$i}}][is_service]" class="is_service"
+            value="{{$product->is_service}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][product_id]" class="product_id"
             value="{{$product->product_id}}">
         <input type="hidden" name="add_stock_lines[{{$i}}][variation_id]" class="variation_id"
@@ -37,9 +39,9 @@ $i = $index;
     </td>
     <td>
         <input type="hidden" name="current_stock" class="current_stock"
-            value="@if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif">
+            value="@if($product->is_service) {{0}} @else @if(isset($product->qty_available)){{$product->qty_available}}@else{{0}}@endif @endif">
         <span
-            class="current_stock_text">@if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif</span>
+            class="current_stock_text">@if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif</span>
     </td>
     <td rowspan="2">
         <button style="margin-top: 33px;" type="button" class="btn btn-danger btn-sx remove_row" data-index="{{$i}}"><i

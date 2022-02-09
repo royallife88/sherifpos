@@ -428,3 +428,17 @@ $(document).on("click", "table.ajax_view tbody tr", function (e) {
         });
     }
 });
+$(document).on("change", "#sku", function () {
+    let sku = $(this).val();
+
+    $.ajax({
+        method: "get",
+        url: "/product/check-sku/" + sku,
+        data: {},
+        success: function (result) {
+            if (!result.success) {
+                swal("Error", result.msg, "error");
+            }
+        },
+    });
+});

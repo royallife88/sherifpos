@@ -277,7 +277,7 @@
             });
         }
     });
-    $(document).on("click", '#submit-btn', function (e) {
+    $(document).on("click", '#submit-btn-add-product', function (e) {
         e.preventDefault();
         var sku = $('#sku').val();
         if ($("#product-form-quick-add").valid()) {

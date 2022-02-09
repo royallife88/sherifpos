@@ -90,7 +90,7 @@
     </td>
     @if(session('system_mode') != 'restaurant')
     <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
-        @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif
+        @if($product->is_service) {{'-'}} @else @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif
     </td>
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
