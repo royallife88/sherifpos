@@ -70,22 +70,22 @@
             playbackRates: [0.5, 1, 1.5, 2]
         });
     })
-    $(document).on('click', '.video_thumb', function(){
-        let video_src = $(this).data('video_src');
-        let thumbnail_src = $(this).data('thumbnail_src');
-        let name = $(this).data('name');
-        let description = $(this).data('description');
+    // $(document).on('click', '.video_thumb', function(){
+    //     let video_src = $(this).data('video_src');
+    //     let thumbnail_src = $(this).data('thumbnail_src');
+    //     let name = $(this).data('name');
+    //     let description = $(this).data('description');
 
-        player.src({
-            src: video_src,
-            type: 'video/mp4'
-        });
-        player.poster(thumbnail_src);
-        player.autoplay(false);
-        player.preload('auto');
+    //     player.src({
+    //         src: video_src,
+    //         type: 'video/mp4'
+    //     });
+    //     player.poster(thumbnail_src);
+    //     player.autoplay(false);
+    //     player.preload('auto');
 
-        $('.video_modal').modal('show');
+    //     $('.video_modal').modal('show');
 
-    })
+    // })
 </script>
 @endsection
