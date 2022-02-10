@@ -301,6 +301,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('guide/tutorials/', 'TutorialController@getTutorialsGuide');
     Route::resource('tutorials', TutorialController::class);
+    Route::resource('tutorials-category', TutorialCategoryController::class);
 });
 
 

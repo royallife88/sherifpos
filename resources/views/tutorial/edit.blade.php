@@ -7,12 +7,18 @@
 
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.add_tutorial' )</h4>
+            <h4 class="modal-title">@lang( 'lang.edit_tutorial' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
 
         <div class="modal-body">
+            <div class="form-group">
+                {!! Form::label('tutorial_category_id', __( 'lang.content' ) . ':*') !!}
+                {!! Form::select('tutorial_category_id', $tutorial_categories, $tutorial->tutorial_category_id, ['class'
+                => 'form-control
+                selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
+            </div>
             <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
                 {!! Form::text('name', $tutorial->name, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ),
@@ -30,7 +36,8 @@
             </div>
             <div class="form-group">
                 {!! Form::label('link', __( 'lang.link' ) . ':*') !!}
-                {!! Form::text('link', $tutorial->link, ['class' => 'form-control', 'placeholder' => __( 'lang.link' ), 'required'
+                {!! Form::text('link', $tutorial->link, ['class' => 'form-control', 'placeholder' => __( 'lang.link' ),
+                'required'
                 ]);
                 !!}
             </div>
@@ -60,5 +67,5 @@
 </div><!-- /.modal-dialog -->
 
 <script>
-
+  $('.selectpicker').selectpicker('refresh');
 </script>

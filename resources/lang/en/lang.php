@@ -1105,4 +1105,10 @@ return [
 
 
     'link' => 'Link',
+    'tutorail_category' => 'Tutorial Category',
+    'tutorail_categories' => 'Tutorial Categories',
+    'edit_tutorial' => 'Edit Tutorial',
+    'edit_tutorial_category' => 'Edit Tutorial Category',
+    'add_tutorial_category' => 'Add Tutorial Category',
+    'tutorial_categories' => 'Tutorial Categories',
 ];

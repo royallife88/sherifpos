@@ -2,14 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\System;
-use App\Models\Tutorial;
 use App\Models\TutorialCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class TutorialController extends Controller
+class TutorialCategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,10 +15,10 @@ class TutorialController extends Controller
      */
     public function index()
     {
-        $tutorials = Tutorial::get();
+        $tutorial_categoreis  = TutorialCategory::get();
 
-        return view('tutorial.index')->with(compact(
-            'tutorials'
+        return view('tutorial_category.index')->with(compact(
+            'tutorial_categoreis'
         ));
     }
 
@@ -32,11 +29,7 @@ class TutorialController extends Controller
      */
     public function create()
     {
-        $tutorial_categories = TutorialCategory::pluck('name', 'id');
-
-        return view('tutorial.create')->with(compact(
-            'tutorial_categories'
-        ));
+        return view('tutorial_category.create');
     }
 
     /**
@@ -50,17 +43,8 @@ class TutorialController extends Controller
         try {
             $data['name'] = $request->name;
             $data['description'] = $request->description;
-            $data['tutorial_category_id'] = $request->tutorial_category_id;
-            $data['link'] = $request->link;
 
-            $tutorial = Tutorial::create($data);
-
-            if ($request->video) {
-                $tutorial->addMedia($request->video)->toMediaCollection('tutorial');
-            }
-            if ($request->thumbnail) {
-                $tutorial->addMedia($request->thumbnail)->toMediaCollection('thumbnail');
-            }
+            $tutorial_category = TutorialCategory::create($data);
 
             $output = [
                 'success' => true,
@@ -96,12 +80,10 @@ class TutorialController extends Controller
      */
     public function edit($id)
     {
-        $tutorial = Tutorial::find($id);
-        $tutorial_categories = TutorialCategory::pluck('name', 'id');
+        $tutorial_category = TutorialCategory::find($id);
 
-        return view('tutorial.edit')->with(compact(
-            'tutorial',
-            'tutorial_categories'
+        return view('tutorial_category.edit')->with(compact(
+            'tutorial_category'
         ));
     }
 
@@ -117,19 +99,8 @@ class TutorialController extends Controller
         try {
             $data['name'] = $request->name;
             $data['description'] = $request->description;
-            $data['link'] = $request->link;
-            $data['tutorial_category_id'] = $request->tutorial_category_id;
-            $tutorial = Tutorial::where('id', $id)->first();
+            $tutorial = TutorialCategory::where('id', $id)->first();
             $tutorial->update($data);
-
-            if ($request->video) {
-                $tutorial->clearMediaCollection('tutorial');
-                $tutorial->addMedia($request->video)->toMediaCollection('tutorial');
-            }
-            if ($request->thumbnail) {
-                $tutorial->clearMediaCollection('thumbnail');
-                $tutorial->addMedia($request->thumbnail)->toMediaCollection('thumbnail');
-            }
 
             $output = [
                 'success' => true,
@@ -155,9 +126,8 @@ class TutorialController extends Controller
     public function destroy($id)
     {
         try {
-            $tutorial = Tutorial::find($id);
-            $tutorial->clearMediaCollection('tutorial');
-            $tutorial->clearMediaCollection('thumbnail');
+            $tutorial = TutorialCategory::find($id);
+
             $tutorial->delete();
             $output = [
                 'success' => true,
@@ -172,51 +142,5 @@ class TutorialController extends Controller
         }
 
         return $output;
-    }
-
-    /**
-     * get tutorials data array
-     *
-     * @return array
-     */
-    public function getTutorialsDataArray()
-    {
-        $tutorials = Tutorial::get();
-        $tutorialsDataArray = [];
-        foreach ($tutorials as $tutorial) {
-            $tutorialsDataArray[] = [
-                'id' => $tutorial->id,
-                'name' => $tutorial->name,
-                'description' => $tutorial->description,
-                'link' => $tutorial->link,
-                'video' => $tutorial->getFirstMediaUrl('tutorial'),
-                'thumbnail' => $tutorial->getFirstMediaUrl('thumbnail'),
-            ];
-        }
-        return response()->json($tutorialsDataArray, 200);
-    }
-
-    /**
-     * get tutorials data array
-     *
-     * @return array
-     */
-    public function getTutorialsGuide()
-    {
-        $tutorials = Tutorial::get();
-        $tutorialsDataArray = [];
-
-        $url = System::getProperty('tutorial_guide_url');
-
-        $client = new \GuzzleHttp\Client();
-        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array');
-
-        if ($res->getStatusCode() == 200) {
-            $tutorialsDataArray = json_decode($res->getBody(), true);
-        }
-
-        return view('tutorial.guide')->with(compact(
-            'tutorialsDataArray'
-        ));
     }
 }

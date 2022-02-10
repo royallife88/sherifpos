@@ -7,32 +7,28 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <a style="color: white" data-href="{{action('TutorialController@create')}}" data-container=".view_modal"
-                    class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
-                    @lang('lang.add_tutorial')</a>
-                <a style="color: white" href="{{action('TutorialCategoryController@index')}}" class="btn btn-info ml-2"><i
-                        class="fa fa-list"></i>
-                    @lang('lang.tutorial_categories')</a>
+                <a style="color: white" data-href="{{action('TutorialCategoryController@create')}}"
+                    data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
+                    @lang('lang.add_tutorial_category')</a>
+                <a style="color: white" href="{{action('TutorialController@index')}}"
+                    class="btn btn-info ml-2"><i class="fa fa-list"></i>
+                    @lang('lang.tutorials')</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table id="store_table" class="table dataTable">
                         <thead>
                             <tr>
-                                <th>@lang('lang.content')</th>
                                 <th>@lang('lang.name')</th>
                                 <th>@lang('lang.description')</th>
-                                <th>@lang('lang.link')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($tutorials as $tutorial)
+                            @foreach($tutorial_categoreis as $tutorial_cateogry)
                             <tr>
-                                <td>{{$tutorial->tutorial_category->name ?? ''}}</td>
-                                <td>{{$tutorial->name}}</td>
-                                <td>{{$tutorial->description}}</td>
-                                <td>{{$tutorial->link}}</td>
+                                <td>{{$tutorial_cateogry->name}}</td>
+                                <td>{{$tutorial_cateogry->description}}</td>
 
                                 <td>
                                     <div class="btn-group">
@@ -47,7 +43,7 @@
                                             @can('product_module.tutorial.delete')
                                             <li>
 
-                                                <a data-href="{{action('TutorialController@edit', $tutorial->id)}}"
+                                                <a data-href="{{action('TutorialCategoryController@edit', $tutorial_cateogry->id)}}"
                                                     data-container=".view_modal" class="btn btn-modal"><i
                                                         class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                             </li>
@@ -55,7 +51,7 @@
                                             @endcan
                                             @can('product_module.tutorial.delete')
                                             <li>
-                                                <a data-href="{{action('TutorialController@destroy', $tutorial->id)}}"
+                                                <a data-href="{{action('TutorialCategoryController@destroy', $tutorial_cateogry->id)}}"
                                                     data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                     class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                                     @lang('lang.delete')</a>

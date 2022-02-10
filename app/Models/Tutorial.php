@@ -18,4 +18,9 @@ class Tutorial extends Model implements HasMedia
      * @var array
      */
     protected $guarded = ['id'];
+
+    public function tutorial_category()
+    {
+        return $this->belongsTo(TutorialCategory::class, 'tutorial_category_id');
+    }
 }

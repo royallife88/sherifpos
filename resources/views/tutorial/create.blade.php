@@ -13,6 +13,11 @@
 
         <div class="modal-body">
             <div class="form-group">
+                {!! Form::label('tutorial_category_id', __( 'lang.content' ) . ':*') !!}
+                {!! Form::select('tutorial_category_id', $tutorial_categories, false, ['class' => 'form-control
+                selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
+            </div>
+            <div class="form-group">
                 {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
                 {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __( 'lang.name' ), 'required'
                 ]);
@@ -57,5 +62,5 @@
 </div><!-- /.modal-dialog -->
 
 <script>
-
+    $('.selectpicker').selectpicker('render');
 </script>
