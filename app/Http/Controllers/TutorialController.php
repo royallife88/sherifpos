@@ -181,7 +181,7 @@ class TutorialController extends Controller
      */
     public function getTutorialsDataArrayByCategory($category_id)
     {
-        $tutorials = Tutorial::where('tutorail_category_id', $category_id)->get();
+        $tutorials = Tutorial::where('tutorial_category_id', $category_id)->get();
         $tutorialsDataArray = [];
         foreach ($tutorials as $tutorial) {
             $tutorialsDataArray[] = [
@@ -249,7 +249,7 @@ class TutorialController extends Controller
         $url = System::getProperty('tutorial_guide_url');
 
         $client = new \GuzzleHttp\Client();
-        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array/' . $category_id);
+        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array-by-category/' . $category_id);
 
         if ($res->getStatusCode() == 200) {
             $tutorialsDataArray = json_decode($res->getBody(), true);

@@ -12,7 +12,7 @@
                 <div class="row">
                     @forelse ($tutorialsCategoryDataArray as $item)
                     <div class="col-md-3">
-                        <a target="_blank" href="{{action('TutorialCategoryController@getTutorialsGuideByCategory', $item['id'])}}">
+                        <a target="_blank" href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
                             <div class="card " style="width: 18rem;">
                                 <img class="card-img-top"
                                     src="@if(!empty($item['thumbnail'])){{$item['thumbnail']}}@else{{asset('/uploads/' . session('logo'))}}@endif"

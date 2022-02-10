@@ -1111,4 +1111,5 @@ return [
     'edit_tutorial_category' => 'Edit Tutorial Category',
     'add_tutorial_category' => 'Add Tutorial Category',
     'tutorial_categories' => 'Tutorial Categories',
+    'categories' => 'Categories',
 ];
