@@ -7,7 +7,9 @@
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4> @lang('lang.tutorials') </h4>
+                <a style="color: white" href="{{action('TutorialController@getTutorialsCategoryGuide')}}" class="btn btn-info ml-2"><i
+                    class="fa fa-arrow-left"></i>
+                @lang('lang.back')</a>
             </div>
             <div class="card-body">
                 <div class="row">

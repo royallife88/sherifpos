@@ -1112,4 +1112,5 @@ return [
     'add_tutorial_category' => 'Add Tutorial Category',
     'tutorial_categories' => 'Tutorial Categories',
     'categories' => 'Categories',
+    'back' => 'Back',
 ];
