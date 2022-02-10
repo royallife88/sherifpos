@@ -149,8 +149,8 @@ $(document).on("click", ".clear_filters", function () {
 });
 
 $(document).on("change", ".product_selected", function () {
-    let this_product_id = $(this).val();
-    let this_variation_id = $(this).data("product_id");
+    let this_variation_id = $(this).val();
+    let this_product_id = $(this).data("product_id");
     if ($(this).prop("checked")) {
         var obj = {};
         obj["product_id"] = this_product_id;

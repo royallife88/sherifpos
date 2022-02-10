@@ -64,7 +64,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md-8 offset-md-2" style="margin-top: 10px;">
+                                <div class="col-md-8 offset-md-1" style="margin-top: 10px;">
                                     <div class="search-box input-group">
                                         <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                                 class="fa fa-search"></i></button>
@@ -72,6 +72,9 @@
                                             placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                             class="form-control ui-autocomplete-input" autocomplete="off">
                                     </div>
+                                </div>
+                                <div class="col-md-2">
+                                    @include('quotation.partial.product_selection')
                                 </div>
                             </div>
                             <div class="col-md-12" style="margin-top: 20px ">
@@ -82,6 +85,7 @@
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.discount')}}</th>
                                                 <th style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -92,6 +96,7 @@
                                             <tr>
                                                 <td></td>
                                                 <td></td>
+                                                <td></td>
                                                 <th style="text-align: right">@lang('lang.total')</th>
                                                 <th><span class="grand_total_span"></span></th>
                                             </tr>
@@ -99,6 +104,8 @@
                                     </table>
                                 </div>
                             </div>
+                            <br>
+                            <br>
                             <div class="row" style="display: none;">
                                 <div class="col-md-2">
                                     <div class="form-group">
@@ -334,7 +341,16 @@
 
 @section('javascript')
 <script src="{{asset('js/pos.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script>
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
+    })
     $(document).on("change", "#method", function (e) {
     let method = $(this).val();
 

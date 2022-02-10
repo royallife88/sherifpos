@@ -568,6 +568,7 @@ return [
     'sales_list' => 'قائمة المبيعات',
     'sale_status' => 'حالة المبيعات ',
     'add_sale' => 'أضف البيع',
+    'add_sales' => 'أضف عملية بيع',
     'generate_invoice' => 'إنشاء الفاتورة',
     'total_tax' => 'مجموع الضريبة',
     'view_payments' => 'عرض المدفوعات',

@@ -6,10 +6,15 @@ use App\Imports\TransactionSellLineImport;
 use App\Models\Brand;
 use App\Models\CashRegisterTransaction;
 use App\Models\Category;
+use App\Models\Color;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerSize;
+use App\Models\CustomerType;
 use App\Models\Employee;
+use App\Models\Grade;
+use App\Models\ProductClass;
+use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -17,6 +22,8 @@ use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
+use App\Models\Unit;
+use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
@@ -338,9 +345,23 @@ class SellController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
-        $stores = Store::getDropdown();
         $store_poses = [];
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
         return view('sale.create')->with(compact(
             'walk_in_customer',
@@ -353,7 +374,19 @@ class SellController extends Controller
             'stores',
             'store_poses',
             'payment_status_array',
-            'weighing_scale_setting'
+            'weighing_scale_setting',
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'discount_customer_types',
+            'users',
         ));
     }
 
