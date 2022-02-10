@@ -18,5 +18,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::middleware('api')->get('/tutorials/get-tutorials-data-array/{category_id}', 'TutorialController@getTutorialsDataArray');
+Route::middleware('api')->get('/tutorials/get-tutorials-data-array-by-category/{category_id}', 'TutorialController@getTutorialsDataArrayByCategory');
 Route::middleware('api')->get('/tutorials/get-tutorials-categories-array', 'TutorialController@getTutorialsCategoryArray');
