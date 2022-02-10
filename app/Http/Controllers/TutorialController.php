@@ -201,15 +201,55 @@ class TutorialController extends Controller
      *
      * @return array
      */
-    public function getTutorialsGuide()
+    public function getTutorialsCategoryArray($category_id)
     {
-        $tutorials = Tutorial::get();
+        $tutorialsCategories = Tutorial::where('tutorail_category_id', $category_id)->get();
+        $tutorialsCategoriesDataArray = [];
+        foreach ($tutorialsCategories as $tutorial) {
+            $tutorialsCategoriesDataArray[] = [
+                'id' => $tutorial->id,
+                'name' => $tutorial->name,
+                'description' => $tutorial->description,
+            ];
+        }
+        return response()->json($tutorialsCategoriesDataArray, 200);
+    }
+    /**
+     * get tutorials data array
+     *
+     * @return array
+     */
+    public function getTutorialsCategoryGuide()
+    {
+        $tutorialsCategoryDataArray = [];
+
+        $url = System::getProperty('tutorial_guide_url');
+
+        $client = new \GuzzleHttp\Client();
+        $res = $client->get($url . '/api/tutorials/get-tutorials-categories-array');
+
+        if ($res->getStatusCode() == 200) {
+            $tutorialsCategoryDataArray = json_decode($res->getBody(), true);
+        }
+
+        return view('tutorial.tutorial_categories')->with(compact(
+            'tutorialsCategoryDataArray'
+        ));
+    }
+    /**
+     * get tutorials data array
+     *
+     * @return array
+     */
+    public function getTutorialsGuideByCategory($category_id)
+    {
+        $tutorials = Tutorial::where('tutorial_category_id', $category_id)->get();
         $tutorialsDataArray = [];
 
         $url = System::getProperty('tutorial_guide_url');
 
         $client = new \GuzzleHttp\Client();
-        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array');
+        $res = $client->get($url . '/api/tutorials/get-tutorials-data-array/' . $category_id);
 
         if ($res->getStatusCode() == 200) {
             $tutorialsDataArray = json_decode($res->getBody(), true);

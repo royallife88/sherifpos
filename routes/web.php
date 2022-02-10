@@ -299,7 +299,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('user-contact-us', 'ContactUsController@sendUserContactUs');
 
 
-    Route::get('guide/tutorials/', 'TutorialController@getTutorialsGuide');
+    Route::get('guide/tutorials-categories', 'TutorialController@getTutorialsCategoryGuide');
+    Route::get('guide/tutorials/{category_id}', 'TutorialController@getTutorialsGuideByCategory');
     Route::resource('tutorials', TutorialController::class);
     Route::resource('tutorials-category', TutorialCategoryController::class);
 });
