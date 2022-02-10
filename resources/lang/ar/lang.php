@@ -1098,4 +1098,17 @@ return [
     'other_cost' => 'تكاليف أخرى',
     'select_products' => 'حدد المنتجات',
     'select' => 'يختار',
+
+    'link' => 'وصلة',
+    'tutorail_category' => 'فئة البرنامج التعليمي',
+    'tutorail_categories' => 'فئات البرنامج التعليمي',
+    'edit_tutorial' => 'تحرير البرنامج التعليمي',
+    'edit_tutorial_category' => 'تحرير فئة البرنامج التعليمي',
+    'add_tutorial_category' => 'إضافة فئة البرنامج التعليمي',
+    'tutorial_categories' => 'فئات البرنامج التعليمي',
+    'categories' => 'التصنيفات',
+    'back' => 'عودة',
+    'content' => 'المحتويات',
+    'add_content' => 'إضافة محتوى',
+    'edit_content' => 'تحرير المحتوى',
 ];

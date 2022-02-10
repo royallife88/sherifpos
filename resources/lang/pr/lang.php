@@ -1098,4 +1098,17 @@ return [
     'other_cost' => 'دیگر هزینه ها',
     'select_products' => 'محصولات را انتخاب کنید',
     'select' => 'انتخاب کنید',
+
+    'link' => 'ارتباط دادن',
+    'tutorail_category' => 'دسته بندی آموزش',
+    'tutorail_categories' => 'دسته بندی های آموزشی',
+    'edit_tutorial' => 'ویرایش آموزش',
+    'edit_tutorial_category' => 'ویرایش دسته بندی آموزش',
+    'add_tutorial_category' => 'اضافه کردن دسته آموزشی',
+    'tutorial_categories' => 'دسته بندی های آموزشی',
+    'categories' => 'دسته بندی ها',
+    'back' => 'بازگشت',
+    'content' => 'محتوا',
+    'add_content' => 'اضافه کردن محتوا',
+    'edit_content' => 'ویرایش محتوا',
 ];

@@ -10,9 +10,9 @@
                 <a style="color: white" data-href="{{action('TutorialController@create')}}" data-container=".view_modal"
                     class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
                     @lang('lang.add_tutorial')</a>
-                <a style="color: white" href="{{action('TutorialCategoryController@index')}}" class="btn btn-info ml-2"><i
-                        class="fa fa-list"></i>
-                    @lang('lang.tutorial_categories')</a>
+                <a style="color: white" href="{{action('TutorialCategoryController@index')}}"
+                    class="btn btn-info ml-2"><i class="fa fa-list"></i>
+                    @lang('lang.content')</a>
             </div>
             <div class="card-body">
                 <div class="table-responsive">

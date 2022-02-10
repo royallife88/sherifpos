@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.tutorial'))
+@section('title', __('lang.content'))
 
 @section('content')
 <div class="container-fluid">
@@ -9,7 +9,7 @@
             <div class="card-header d-flex align-items-center">
                 <a style="color: white" data-href="{{action('TutorialCategoryController@create')}}"
                     data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
-                    @lang('lang.add_tutorial_category')</a>
+                    @lang('lang.add_content')</a>
                 <a style="color: white" href="{{action('TutorialController@index')}}"
                     class="btn btn-info ml-2"><i class="fa fa-list"></i>
                     @lang('lang.tutorials')</a>

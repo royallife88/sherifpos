@@ -1098,4 +1098,17 @@ return [
     'other_cost' => 'D\'autres coûts',
     'select_products' => 'Sélectionnez des produits',
     'select' => 'Sélectionner',
+
+    'link' => 'Lien',
+    'tutorail_category' => 'Catégorie de didacticiel',
+    'tutorail_categories' => 'Catégories de didacticiels',
+    'edit_tutorial' => 'Modifier le didacticiel',
+    'edit_tutorial_category' => 'Modifier la catégorie du didacticiel',
+    'add_tutorial_category' => 'Ajouter une catégorie de didacticiel',
+    'tutorial_categories' => 'Catégories de didacticiels',
+    'categories' => 'Catégories',
+    'back' => 'Retour',
+    'content' => 'Contenu',
+    'add_content' => 'Ajouter du contenu',
+    'edit_content' => 'Modifier le contenu',
 ];

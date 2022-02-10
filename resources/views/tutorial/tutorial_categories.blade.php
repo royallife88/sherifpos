@@ -1,12 +1,12 @@
 @extends('layouts.app')
-@section('title', __('lang.categories'))
+@section('title', __('lang.content'))
 @section('content')
 <div class="container-fluid">
 
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4> @lang('lang.categories') </h4>
+                <h4> @lang('lang.content') </h4>
             </div>
             <div class="card-body">
                 <div class="row">

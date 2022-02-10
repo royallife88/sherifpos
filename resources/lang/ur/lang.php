@@ -1099,4 +1099,17 @@ return [
     'other_cost' => 'دیگر اخراجات',
     'select_products' => 'مصنوعات کو منتخب کریں۔',
     'select' => 'منتخب کریں۔',
+
+    'link' => 'لنک',
+    'tutorail_category' => 'ٹیوٹوریل کیٹیگری',
+    'tutorail_categories' => 'ٹیوٹوریل زمرہ جات',
+    'edit_tutorial' => 'ٹیوٹوریل میں ترمیم کریں۔',
+    'edit_tutorial_category' => 'ٹیوٹوریل کے زمرے میں ترمیم کریں۔',
+    'add_tutorial_category' => 'ٹیوٹوریل زمرہ شامل کریں۔',
+    'tutorial_categories' => 'ٹیوٹوریل زمرہ جات',
+    'categories' => 'اقسام',
+    'back' => 'پیچھے',
+    'content' => 'مواد',
+    'add_content' => 'مواد شامل کریں۔',
+    'edit_content' => 'مواد میں ترمیم کریں۔',
 ];

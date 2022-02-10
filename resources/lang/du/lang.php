@@ -1102,4 +1102,17 @@ return [
     'select_products' => 'Selecteer producten',
     'select' => 'Selecteer',
 
+    'link' => 'Koppeling',
+    'tutorail_category' => 'Zelfstudie categorie',
+    'tutorail_categories' => 'Zelfstudiecategorieën',
+    'edit_tutorial' => 'Zelfstudie bewerken',
+    'edit_tutorial_category' => 'Zelfstudiecategorie bewerken',
+    'add_tutorial_category' => 'Zelfstudiecategorie toevoegen',
+    'tutorial_categories' => 'Zelfstudiecategorieën',
+    'categories' => 'Categorieën',
+    'back' => 'Rug',
+    'content' => 'Inhoud',
+    'add_content' => 'Content toevoegen',
+    'edit_content' => 'Inhoud bewerken',
+
 ];

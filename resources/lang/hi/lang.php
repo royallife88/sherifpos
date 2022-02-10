@@ -1099,4 +1099,17 @@ return [
     'other_cost' => 'अन्य लागत',
     'select_products' => 'उत्पादों का चयन करें',
     'select' => 'चुनते हैं',
+
+    'link' => 'संपर्क',
+    'tutorail_category' => 'ट्यूटोरियल श्रेणी',
+    'tutorail_categories' => 'ट्यूटोरियल श्रेणियाँ',
+    'edit_tutorial' => 'ट्यूटोरियल संपादित करें',
+    'edit_tutorial_category' => 'ट्यूटोरियल श्रेणी संपादित करें',
+    'add_tutorial_category' => 'ट्यूटोरियल श्रेणी जोड़ें',
+    'tutorial_categories' => 'ट्यूटोरियल श्रेणियाँ',
+    'categories' => 'श्रेणियाँ',
+    'back' => 'पीछे',
+    'content' => 'विषय',
+    'add_content' => 'सामग्री जोड़ें',
+    'edit_content' => 'सामग्री संपादित करें',
 ];

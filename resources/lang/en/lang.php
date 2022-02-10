@@ -1113,4 +1113,7 @@ return [
     'tutorial_categories' => 'Tutorial Categories',
     'categories' => 'Categories',
     'back' => 'Back',
+    'content' => 'Content',
+    'add_content' => 'Add Content',
+    'edit_content' => 'Edit Content',
 ];

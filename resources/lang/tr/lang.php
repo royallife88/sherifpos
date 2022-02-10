@@ -1101,4 +1101,17 @@ return [
     'select_products' => 'Ürünleri Seçin',
     'select' => 'Seçme',
 
+    'link' => 'Bağlantı',
+    'tutorail_category' => 'Eğitim Kategorisi',
+    'tutorail_categories' => 'Eğitim Kategorileri',
+    'edit_tutorial' => 'Eğitimi Düzenle',
+    'edit_tutorial_category' => 'Eğitim Kategorisini Düzenle',
+    'add_tutorial_category' => 'Eğitim Kategorisi Ekle',
+    'tutorial_categories' => 'Eğitim Kategorileri',
+    'categories' => 'Kategoriler',
+    'back' => 'Geri',
+    'content' => 'İçerik',
+    'add_content' => 'İçerik Ekle',
+    'edit_content' => 'İçeriği Düzenle',
+
 ];
