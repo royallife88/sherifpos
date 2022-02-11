@@ -520,7 +520,7 @@ nav.navbar a.menu-btn i[class*="icon-"] {
 
 /* Malihu Custom Scroll */
 .mCSB_scrollTools {
-    width: 8px;
+    width: 16px;
 }
 
 .mCSB_inside > .mCSB_container {

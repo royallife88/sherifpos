@@ -1303,22 +1303,6 @@ $(document).on("click", "td.filter_product_add", function () {
     }
 });
 
-$(document).on("click", "#view-draft-btn", function () {
-    $("#draftTransaction").modal("show");
-    get_draft_transactions();
-});
-$(document).ready(function () {
-    $(document).on("change", "#draft_start_date, #draft_end_date", function () {
-        get_draft_transactions();
-    });
-    $(document).on(
-        "change",
-        "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method",
-        function () {
-            get_recent_transactions();
-        }
-    );
-});
 $(document).on("click", "#recent-transaction-btn", function () {
     $("#recentTransaction").modal("show");
 });
@@ -1502,13 +1486,26 @@ $(document).ready(function () {
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
     recent_transaction_table.ajax.reload();
 });
+$(document).on("click", "#view-draft-btn", function () {
+    $("#draftTransaction").modal("show");
+    draft_table.ajax.reload();
+});
+$(document).ready(function () {
+    $(document).on("change", "#draft_start_date, #draft_end_date", function () {
+         draft_table.ajax.reload();
+    });
+    $(document).on(
+        "change",
+        "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method",
+        function () {
+            get_recent_transactions();
+        }
+    );
+});
 function get_recent_transactions() {
     recent_transaction_table.ajax.reload();
 }
 
-function get_draft_transactions() {
-    draft_table.ajax.reload();
-}
 
 $(document).on("change", "#customer_id", function () {
     let customer_id = $(this).val();
@@ -1766,7 +1763,7 @@ $(document).on("click", ".remove_draft", function (e) {
                                                 result.msg,
                                                 "success"
                                             );
-                                            get_draft_transactions();
+                                             draft_table.ajax.reload();
                                         } else {
                                             swal("Error", result.msg, "error");
                                         }
