@@ -91,9 +91,9 @@ class EarningOfPointController extends Controller
         try {
             $data = $request->except('_token', 'search_product');
             $data['created_by'] = Auth::user()->id;
-            $data['number'] = $this->productUtil->getNumberByType('earning_of_point');
+            $data['number'] = $request->number;
             $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
-            $data['pct_data'] = $request->pct;
+            $data['pct_data'] = $request->pct ?? [];
             $data['start_date'] = !empty($request->start_date) ? $request->start_date : null;
             $data['end_date'] = !empty($request->end_date) ? $request->end_date : null;
 
@@ -177,7 +177,7 @@ class EarningOfPointController extends Controller
         try {
             $data = $request->except('_token', '_method', 'pct', 'search_product');
             $data['product_ids'] = $this->productUtil->extractProductIdsfromProductTree($request->pct);
-            $data['pct_data'] = $request->pct;
+            $data['pct_data'] = $request->pct ?? [];
             DB::beginTransaction();
 
             EarningOfPoint::where('id', $id)->update($data);

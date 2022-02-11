@@ -30,4 +30,9 @@ class CashRegister extends Model implements HasMedia
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+
+    public function cash_given_to_user()
+    {
+        return $this->belongsTo(User::class, 'cash_given_to');
+    }
 }

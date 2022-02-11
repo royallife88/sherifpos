@@ -20,7 +20,7 @@
                                 <div class="form-group">
                                     {!! Form::label('store_ids', __( 'lang.store' ) . ':*') !!}
                                     {!! Form::select('store_ids[]', $stores, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', 'required', "data-actions-box"=>"true"]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
@@ -28,7 +28,7 @@
                                     {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
                                     {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' =>
                                     'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', 'required', "data-actions-box"=>"true"]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

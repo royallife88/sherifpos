@@ -1116,4 +1116,7 @@ return [
     'content' => 'Content',
     'add_content' => 'Add Content',
     'edit_content' => 'Edit Content',
+
+    'cash_given_to' => 'Cash Given To',
+
 ];

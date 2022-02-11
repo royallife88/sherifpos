@@ -248,7 +248,7 @@
                     @if(!empty($payment_data->change_amount) && $payment_data->change_amount > 0 &&
                     $payment_data->method != 'deposit')
                     <tr>
-                        <td style="padding: 7px;width:30%">@lang('lang.change')</td>
+                        <td style="padding: 7px;width:30%">{{__('lang.change', [], 'ar')}} <br> {{__('lang.change', [], 'en')}}</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                             {{@num_format($payment_data->change_amount)}}</td>
                     </tr>
@@ -257,7 +257,7 @@
                     @if(!empty($payment_data->add_to_deposit) && $payment_data->add_to_deposit > 0 &&
                     $payment_data->method == 'deposit')
                     <tr>
-                        <td style="padding: 7px;width:30%">@lang('lang.deposit')</td>
+                        <td style="padding: 7px;width:30%">{{__('lang.deposit', [], 'ar')}} <br> {{__('lang.deposit', [], 'en')}}</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                             {{@num_format($payment_data->add_to_deposit)}}</td>
                     </tr>
@@ -265,14 +265,14 @@
                     @if(!empty($payment_data->used_deposit_balance) && $payment_data->used_deposit_balance > 0 &&
                     $payment_data->method == 'deposit')
                     <tr>
-                        <td style="padding: 7px;width:30%">@lang('lang.used_deposit_balance')</td>
+                        <td style="padding: 7px;width:30%">{{__('lang.used_deposit_balance', [], 'ar')}} <br> {{__('lang.used_deposit_balance', [], 'en')}}</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                             {{@num_format($payment_data->used_deposit_balance)}}</td>
                     </tr>
                     @endif
                     @if($transaction->payment_status != 'paid')
                     <tr>
-                        <td style="padding: 7px;width:30%">@lang('lang.due')</td>
+                        <td style="padding: 7px;width:30%">{{__('lang.due', [], 'ar')}} <br> {{__('lang.due', [], 'en')}}</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                             {{@num_format($transaction->final_total -
                             $transaction->transaction_payments->sum('amount'))}}</td>

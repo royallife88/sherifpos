@@ -18,16 +18,22 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    {!! Form::label('number', __( 'lang.name' ) . ':') !!}
+                                    {!! Form::text('number', null, ['class' => 'form-control']) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     {!! Form::label('store_ids', __( 'lang.store' ) . ':*') !!}
                                     {!! Form::select('store_ids[]', $stores, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', "data-actions-box"=>"true", 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':*') !!}
                                     {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' => 'selectpicker
-                                    form-control', 'data-live-search' => "true", 'multiple', 'required']) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', "data-actions-box"=>"true", 'required']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

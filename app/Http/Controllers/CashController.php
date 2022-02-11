@@ -321,6 +321,7 @@ class CashController extends Controller
 
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
+            $register->cash_given_to = $request->cash_given_to;
             $register->closing_amount = $amount;
             $register->closed_at = Carbon::now();
             $register->status = 'close';
@@ -339,6 +340,17 @@ class CashController extends Controller
 
                 CashInAdjustment::create($data);
             }
+
+            $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'closing_cash', 'credit', $request->source_id, $request->notes);
+
+            $user_id = $register->user_id;
+            if (!empty($request->cash_given_to)) {
+                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->cash_given_to);
+                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
+                $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
+                $cash_register_transaction->save();
+            }
+
 
 
             DB::commit();

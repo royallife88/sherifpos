@@ -14,7 +14,7 @@
             <tr>
                 <th>@lang('lang.date_and_time')</th>
                 <th>@lang('lang.created_by')</th>
-                <th>@lang('lang.number')</th>
+                <th>@lang('lang.name')</th>
                 <th>@lang('lang.stores')</th>
                 <th>@lang('lang.customer_types')</th>
                 <th>@lang('lang.products')</th>

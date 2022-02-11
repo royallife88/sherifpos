@@ -127,7 +127,7 @@ class ProductController extends Controller
 
             $store_query = '';
             if (!empty($store_id)) {
-                $products->where('product_stores.store_id', $store_id);
+                // $products->where('product_stores.store_id', $store_id);
                 $store_query = 'AND store_id=' . $store_id;
             }
 

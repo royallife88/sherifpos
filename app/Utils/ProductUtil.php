@@ -936,7 +936,8 @@ class ProductUtil extends Util
                 $add_stock->convert_status_expire = $line['convert_status_expire'];
                 $add_stock->save();
                 $keep_lines_ids[] = $line['add_stock_line_id'];
-                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], $old_qty);
+                $qty =  $this->num_uf($line['quantity']);
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, $old_qty);
             } else {
                 $add_stock_data = [
                     'transaction_id' => $transaction->id,
@@ -954,9 +955,9 @@ class ProductUtil extends Util
                 ];
 
                 $add_stock = AddStockLine::create($add_stock_data);
-
+                $qty =  $this->num_uf($line['quantity']);
                 $keep_lines_ids[] = $add_stock->id;
-                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $line['quantity'], 0);
+                $this->updateProductQuantityStore($line['product_id'], $line['variation_id'], $transaction->store_id,  $qty, 0);
             }
         }
 

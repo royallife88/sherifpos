@@ -108,7 +108,7 @@
                                         <td>{{@num_format($expense->final_total)}}</td>
                                         <td>{{ucfirst($expense->created_by)}}</td>
                                         <td>{{@format_date($expense->transaction_date)}}</td>
-                                        <td>@if(!empty($expense->transaction_payments)){{@format_date($expense->transaction_payments->first()->paid_on)}}@endif
+                                        <td>@if(!empty($expense->transaction_payments->first())){{@format_date($expense->transaction_payments->first()->paid_on)}}@endif
                                         </td>
                                         <td>@if(!empty($expense->next_payment_date)){{@format_date($expense->next_payment_date)}}@endif
                                         </td>

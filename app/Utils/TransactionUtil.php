@@ -604,8 +604,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
+                $qty =  $this->num_uf($line['quantity']);
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
-                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity'], $old_qty);
+                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty, $old_qty);
                 if ($is_block_qty) {
                     $block_qty = $transaction_sell_line->quantity;
                     $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
@@ -631,8 +632,9 @@ class TransactionUtil extends Util
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
+                $qty =  $this->num_uf($line['quantity']);
                 $keep_sell_lines[] = $transaction_sell_line->id;
-                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $line['quantity']);
+                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty);
                 if ($transaction->block_qty) {
                     $block_qty = $transaction_sell_line->quantity;
                     $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');

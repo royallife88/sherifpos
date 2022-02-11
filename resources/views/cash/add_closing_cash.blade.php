@@ -19,7 +19,8 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('current_cash', __( 'lang.current_cash' ) . ':*') !!}
-                            {!! Form::text('current_cash', @num_format($total_cash), ['class' => 'form-control', 'placeholder' =>
+                            {!! Form::text('current_cash', @num_format($total_cash), ['class' => 'form-control',
+                            'placeholder' =>
                             __(
                             'lang.current_cash' ), 'readonly', 'id' => 'closing_current_cash' ]);
                             !!}
@@ -32,6 +33,13 @@
                             __(
                             'lang.amount' ), 'required', 'id' => 'closing_amount' ]);
                             !!}
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            {!! Form::label('cash_given_to', __( 'lang.cash_given_to' ) . ':*') !!}
+                            {!! Form::select('cash_given_to', $users, false, ['class' => 'form-control selectpicker',
+                            'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -57,9 +65,12 @@
         </div>
 
         <div class="modal-footer">
-            <button type="submit" name="submit" class="btn btn-primary hide" value="adjustment" id="adjust-btn">@lang( 'lang.adjustment' )</button>
-            <button type="submit" name="submit" class="btn btn-primary" value="save" id="closing-save-btn">@lang( 'lang.save' )</button>
-            <button type="button" class="btn btn-default @if($type == 'logout') close-btn-add-closing-cash @endif" @if($type != 'logout') data-dismiss="modal" @endif>@lang( 'lang.close' )</button>
+            <button type="submit" name="submit" class="btn btn-primary hide" value="adjustment" id="adjust-btn">@lang(
+                'lang.adjustment' )</button>
+            <button type="submit" name="submit" class="btn btn-primary" value="save" id="closing-save-btn">@lang(
+                'lang.save' )</button>
+            <button type="button" class="btn btn-default @if($type == 'logout') close-btn-add-closing-cash @endif"
+                @if($type !='logout' ) data-dismiss="modal" @endif>@lang( 'lang.close' )</button>
         </div>
 
         {!! Form::close() !!}
