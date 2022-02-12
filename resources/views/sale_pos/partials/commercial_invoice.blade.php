@@ -95,7 +95,8 @@
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-12">
-                <h5>@if($sale->status == 'draft' && $sale->is_quotation == 1)@lang('lang.quotation_no')@else @lang('lang.invoice_no') @endif: {{$sale->invoice_no}}
+                <h5>@if($sale->status == 'draft' && $sale->is_quotation == 1)@lang('lang.quotation_no')@else
+                    @lang('lang.invoice_no') @endif: {{$sale->invoice_no}}
                 </h5>
             </div>
             <div class="col-md-12">
@@ -131,20 +132,23 @@
             <table class="table table-bordered" id="">
                 <thead class="bg-success" style="color: white">
                     <tr>
-                        <th style="width: 20% !important;">@lang( 'lang.image' )</th>
+                        <th style="width: 5% !important;">#</th>
+                        <th style="width: 15% !important;">@lang( 'lang.image' )</th>
                         <th style="width: 20% !important;">@lang( 'lang.products' )</th>
                         <th style="width: 10% !important;">@lang( 'lang.sku' )</th>
                         <th style="width: 10% !important;">@lang( 'lang.batch_number' )</th>
                         <th style="width: 10% !important;">@lang( 'lang.quantity' )</th>
                         <th style="width: 10% !important;">@lang( 'lang.sell_price' )</th>
-                        <th style="width: 9% !important;">@lang( 'lang.discount' )</th>
-                        <th style="width: 10% !important;">@lang( 'lang.sub_total' )</th>
+                        <th style="width: 8% !important;">@lang( 'lang.discount' )</th>
+                        <th style="width: 12% !important;">@lang( 'lang.sub_total' )</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($sale->transaction_sell_lines as $line)
                     <tr>
-                        <td style="width: 20% !important;"><img src="@if(!empty($line->product) && !empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
+                        <td style="width: 5% !important;">{{$loop->iteration}}</td>
+                        <td style="width: 15% !important;"><img
+                                src="@if(!empty($line->product) && !empty($line->product->getFirstMediaUrl('product'))){{$line->product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
                                 alt="photo" width="50" height="50"></td>
                         <td style="width: 20% !important;">
                             {{$line->product->name ?? ''}}
@@ -170,10 +174,10 @@
                         <td style="width: 10% !important;">
                             @if(isset($line->sell_price)){{@num_format($line->sell_price)}}@else{{0}}@endif
                         </td>
-                        <td style="width: 9% !important;">
+                        <td style="width: 8% !important;">
                             @if(isset($line->product_discount_amount)){{@num_format($line->product_discount_amount)}}@else{{0}}@endif
                         </td>
-                        <td style="width: 10% !important;">
+                        <td style="width: 12% !important;">
                             {{@num_format($line->sub_total)}}
                         </td>
                     </tr>
@@ -181,7 +185,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th colspan="6" style="text-align: right"> @lang('lang.total')</th>
+                        <th colspan="7" style="text-align: right"> @lang('lang.total') </th>
                         <td>{{@num_format($sale->transaction_sell_lines->sum('product_discount_amount'))}}</td>
                         <td>{{@num_format($sale->grand_total)}}</td>
                     </tr>
@@ -223,7 +227,8 @@
                     <td style="width: 10% !important;">{{$payment_type_array[$payment->method]}}</td>
                     <td style="width: 10% !important;">{{$payment->bank_name}}</td>
                     <td style="width: 10% !important;">{{$payment->ref_number}}</td>
-                    <td style="width: 10% !important;">@if(!empty($payment->bank_deposit_date && ($payment->method == 'bank_transfer' ||
+                    <td style="width: 10% !important;">@if(!empty($payment->bank_deposit_date && ($payment->method ==
+                        'bank_transfer' ||
                         $payment->method == 'cheque'))){{@format_date($payment->bank_deposit_date)}} @endif</td>
                     <td style="width: 10% !important;">{{$payment->card_number}}</td>
                     <td style="width: 10% !important;">{{$payment->card_year}}</td>

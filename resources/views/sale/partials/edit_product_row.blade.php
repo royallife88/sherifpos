@@ -29,7 +29,7 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-            <input type="text" class="form-control quantity  qty numkey input-number" min=1
+            <input type="text" class="form-control quantity  qty numkey input-number" min=1 step="any"
                 name="transaction_sell_line[{{$loop->index}}][quantity]" required
                 value="@if(isset($product->quantity)){{$product->quantity}}@else{{1}}@endif">
             <span class="input-group-btn">
