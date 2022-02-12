@@ -49,7 +49,7 @@
                     <span class="dripicons-minus"></span>
                 </button>
             </span>
-            <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" autocomplete="off"
+            <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" step="any" autocomplete="off"
                 @if(!$product->is_service)max="{{$product->qty_available}}"@endif
             name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
             required
