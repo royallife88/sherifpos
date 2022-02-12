@@ -152,7 +152,7 @@ class SellPosController extends Controller
     public function store(Request $request)
     {
 
-        try {
+        // try {
             $transaction_data = [
                 'store_id' => $request->store_id,
                 'customer_id' => $request->customer_id,
@@ -175,21 +175,21 @@ class SellPosController extends Controller
                 'prova_datetime' => $request->prova_datetime ?? null,
                 'delivery_datetime' => $request->delivery_datetime ?? null,
                 'discount_type' => $request->discount_type,
-                'discount_value' => $this->commonUtil->num_f($request->discount_value),
-                'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
-                'current_deposit_balance' => $this->commonUtil->num_f($request->current_deposit_balance),
-                'used_deposit_balance' => $this->commonUtil->num_f($request->used_deposit_balance),
-                'remaining_deposit_balance' => $this->commonUtil->num_f($request->remaining_deposit_balance),
-                'add_to_deposit' => $this->commonUtil->num_f($request->add_to_deposit),
+                'discount_value' => $this->commonUtil->num_uf($request->discount_value),
+                'discount_amount' => $this->commonUtil->num_uf($request->discount_amount),
+                'current_deposit_balance' => $this->commonUtil->num_uf($request->current_deposit_balance),
+                'used_deposit_balance' => $this->commonUtil->num_uf($request->used_deposit_balance),
+                'remaining_deposit_balance' => $this->commonUtil->num_uf($request->remaining_deposit_balance),
+                'add_to_deposit' => $this->commonUtil->num_uf($request->add_to_deposit),
                 'tax_id' => !empty($request->tax_id_hidden) ? $request->tax_id_hidden : null,
-                'total_tax' => $this->commonUtil->num_f($request->total_tax),
-                'total_item_tax' => $this->commonUtil->num_f($request->total_item_tax),
+                'total_tax' => $this->commonUtil->num_uf($request->total_tax),
+                'total_item_tax' => $this->commonUtil->num_uf($request->total_item_tax),
                 'sale_note' => $request->sale_note,
                 'staff_note' => $request->staff_note,
                 'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
                 'deliveryman_id' => !empty($request->deliveryman_id_hidden) ? $request->deliveryman_id_hidden : null,
                 'delivery_status' => 'pending',
-                'delivery_cost' => $this->commonUtil->num_f($request->delivery_cost),
+                'delivery_cost' => $this->commonUtil->num_uf($request->delivery_cost),
                 'delivery_address' => $request->delivery_address,
                 'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
                 'created_by' => Auth::user()->id,
@@ -352,13 +352,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
         if ($request->action == 'send') {
             return redirect()->back()->with('status', $output);
         }
@@ -1051,7 +1051,7 @@ class SellPosController extends Controller
                     foreach ($payments as $payment) {
                         $amount_paid += $payment->amount;
                     }
-                    return $this->commonUtil->num_f($amount_paid);
+                    return $this->commonUtil->num_uf($amount_paid);
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->addColumn(

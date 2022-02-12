@@ -276,15 +276,15 @@ class QuotationController extends Controller
                 'is_direct_sale' => !empty($request->is_direct_sale) ? 1 : 0,
                 'status' => $request->status,
                 'discount_type' => $request->discount_type,
-                'discount_value' => $this->commonUtil->num_f($request->discount_value),
-                'discount_amount' => $this->commonUtil->num_f($request->discount_amount),
+                'discount_value' => $this->commonUtil->num_uf($request->discount_value),
+                'discount_amount' => $this->commonUtil->num_uf($request->discount_amount),
                 'tax_id' => $request->tax_id,
                 'is_quotation' => 1,
                 'block_qty' => !empty($request->block_qty) ? 1 : 0,
                 'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
                 'block_for_days' => !empty($request->block_for_days) ? $request->block_for_days : 0,
                 'validity_days' => !empty($request->validity_days) ? $request->validity_days : 0,
-                'total_tax' => $this->commonUtil->num_f($request->total_tax),
+                'total_tax' => $this->commonUtil->num_uf($request->total_tax),
             ];
 
             DB::beginTransaction();

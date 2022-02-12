@@ -281,7 +281,8 @@ class CurrenciesTableSeeder extends Seeder
             "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ],
             [ "id" => "133", "country" => "Kenya", "currency" => "Kenyan shilling", "code" => "KES", "symbol" => "KSh",
             "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ],
-            ["id" => "134", "country" => "Bangladesh", "currency" => "Taka", "code" => "BDT", "symbol" => "৳", "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ]
+            ["id" => "134", "country" => "Bangladesh", "currency" => "Taka", "code" => "BDT", "symbol" => "৳", "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ],
+            ["id" => "135", "country" => "Libyan", "currency" => "Libyan dinar", "code" => "LYD", "symbol" => "LD", "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ]
       ];
 
         Currency::insert($data);
