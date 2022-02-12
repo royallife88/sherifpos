@@ -567,13 +567,14 @@ return [
 
     'sales_list' => 'Satış Listesi',
     'sale_status' => 'Satış Durumu',
-    'add_sale' => 'İndirim Ekle',
+    'add_sale' => 'Ticari Fatura Oluştur',
+    'add_sales' => 'Ticari Fatura Oluştur',
     'generate_invoice' => 'Fatura Oluştur',
     'total_tax' => 'Toplam vergi',
     'view_payments' => 'Ödemeleri Görüntüle',
     'edit_payment' => 'Ödemeleri Düzenle',
 
-    'add_sale' => 'İndirim Ekle',
+    'add_sale' => 'Ticari Fatura Oluştur',
     'totals' => 'Toplamlar',
     'edit_sale' => 'Satışı Düzenle',
     'update' => 'Güncelleme',

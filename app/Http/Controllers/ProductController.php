@@ -242,6 +242,9 @@ class ProductController extends Controller
                 ->editColumn('size', '{{$size}}')
                 ->editColumn('grade', '{{$grade}}')
                 ->editColumn('current_stock', '@if($is_service){{@num_format(0)}} @else{{@num_format($current_stock)}}@endif')
+                ->addColumn('current_stock_value', function ($row) {
+                    return $this->productUtil->num_f($row->current_stock * $row->default_purchase_price);
+                })
                 ->addColumn('customer_type', function ($row) {
                     return $row->customer_type;
                 })

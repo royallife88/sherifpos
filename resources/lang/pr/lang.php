@@ -567,13 +567,14 @@ return [
 
     'sales_list' => 'لیست فروش',
     'sale_status' => 'وضعیت فروش',
-    'add_sale' => 'افزودن فروش',
+    'add_sale' => 'ایجاد فاکتور تجاری',
+    'add_sales' => 'ایجاد فاکتور تجاری',
     'generate_invoice' => 'تولید فاکتور',
     'total_tax' => 'مالیات کل',
     'view_payments' => 'مشاهده پرداخت ها',
     'edit_payment' => 'ویرایش پرداخت ها',
 
-    'add_sale' => 'افزودن فروش',
+    'add_sale' => 'ایجاد فاکتور تجاری',
     'totals' => 'جمع کل',
     'edit_sale' => 'ویرایش فروش',
     'update' => 'به روز رسانی',

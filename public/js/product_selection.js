@@ -30,7 +30,11 @@ $(document).ready(function () {
                 d.size_id = $("#filter_size_id").val();
                 d.grade_id = $("#filter_grade_id").val();
                 d.tax_id = $("#filter_tax_id").val();
-                d.store_id = $("#filter_store_id").val();
+                if($('#sender_store_id').length){ //in add transfer page
+                    d.store_id = $("#sender_store_id").val();
+                }else{
+                    d.store_id = $("#filter_store_id").val();
+                }
                 d.customer_type_id = $("#filter_customer_type_id").val();
                 d.created_by = $("#filter_created_by").val();
                 d.is_raw_material = $("#is_raw_material").val();

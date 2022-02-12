@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductStore;
 use App\Models\RemoveStockLine;
 use App\Models\Store;
 use App\Models\Supplier;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
+use Yajra\DataTables\Facades\DataTables;
 
 class RemoveStockController extends Controller
 {
@@ -446,28 +448,155 @@ class RemoveStockController extends Controller
     {
         $id = request()->input('invoice_id');
         $store_id = request()->get('store_id');
-        $query = Transaction::where('type',  'add_stock');
+        $supplier_id = request()->get('supplier_id');
+
+        $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+            ->leftjoin('products', 'add_stock_lines.product_id', 'products.id')
+            ->leftjoin('variations', 'add_stock_lines.variation_id', 'variations.id')
+            ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
+            ->leftjoin('categories', 'products.category_id', 'categories.id')
+            ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'categories.id')
+            ->leftjoin('colors', 'variations.color_id', 'colors.id')
+            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+            ->leftjoin('units', 'variations.unit_id', 'units.id')
+            ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
+            ->where('transactions.type',  'add_stock');
         if (!empty($id)) {
-            $query->where('id', $id);
+            $query->where('transactions.id', $id);
         }
         if (!empty($supplier_id)) {
-            $query->where('supplier_id', $supplier_id);
+            $query->where('transactions.supplier_id', $supplier_id);
         }
         if (!empty($store_id)) {
-            $query->where('store_id', $store_id);
+            $query->where('transactions.store_id', $store_id);
         }
-        $add_stocks = $query->get();
+        $add_stocks = $query->select(
+            'transactions.*',
+            'products.sell_price',
+            'products.id as product_id',
+            'variations.id as variation_id',
+            'products.name as product_name',
+            'variations.name as variation_name',
+            'variations.sub_sku',
+            'colors.name as color',
+            'sizes.name as size',
+            'grades.name as grade',
+            'units.name as unit',
+            'suppliers.name as supplier',
+            'suppliers.email as supplier_email',
+            'product_classes.name as product_class',
+            'categories.name as category',
+            'sub_categories.name as sub_category',
+            'add_stock_lines.purchase_price',
+            'add_stock_lines.quantity',
+            'add_stock_lines.id as index',
+        )->groupBy('add_stock_lines.id');
 
 
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
-        $html = view('remove_stock.partials.product_rows')->with(compact(
-            'add_stocks',
-            'payment_status_array',
-            'store_id'
-        ))->render();
+        if (request()->ajax()) {
+            return DataTables::of($add_stocks)
+                ->addColumn('selected_product', function ($row) {
+                    $html = '<input type="hidden" class="row_index" name="row_index" value="' . $row->index . '">';
+                    $html .= '<input type="hidden" class="product_id" name="product_ids[' . $row->index . ']" value="' . $row->product_id . '">';
+                    $html .= '<input type="hidden" class="variation_id" name="variation_id[' . $row->index . ']" value="' . $row->variation_id . '">';
+                    $html .= '<input type="hidden" class="purchase_price" name="purchase_price[' . $row->index . ']" value="' . $row->purchase_price . '">';
+                    $html .= '<input type="hidden" class="transaction_id" name="transaction_id[' . $row->index . ']" value="' . $row->id . '">';
+                    $html .= '<input type="checkbox" class="product_checkbox" name="product_selected[]" value="' . $row->index . '">';
+                    return $html;
+                })
+                ->addColumn('image', function ($row) {
+                    $image = $row->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name', '{{$product_name}} @if($variation_name != "Default"){{$variation_name}} @endif')
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('payment_status', function ($row) use ($payment_status_array) {
+                    return $payment_status_array[$row->payment_status];
+                })
+                ->editColumn('sell_price', '{{@num_format($sell_price)}}')
+                ->editColumn('purchase_price', '{{@num_format($purchase_price)}}')
+                ->editColumn('quantity', '{{@num_format($quantity)}}')
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->addColumn('product_class', '{{$product_class}}')
+                ->addColumn('category', '{{$category}}')
+                ->addColumn('sub_category', '{{$sub_category}}')
+                ->addColumn('remove_qauntity', function ($row) use ($store_id) {
+                    $html = '<input type="text" class="form-control quantity" min=1
+                    max="' . $row->quantity . '"
+                    name="remove_stock_lines[' . $row->index . '][quantity]" required value="0">';
+                    $html .= '<span class="error stock_error hide">' . __('lang.quantity_should_not_greater_than') . '
+                    ' . $row->quantity . '</span>
+                    <input type="hidden" class="form-control sub_total" min=1 name="remove_stock_lines[' . $row->index . '][sub_total]" required
+                    value="0"> ';
+                    $html .= '<input type="hidden" class="form-control purchase_price" min=1 name="remove_stock_lines[' . $row->index . '][purchase_price]"
+                    required value="' . $row->purchase_price . '">';
 
-        return ['html' => $html];
+                    return $html;
+                })
+                ->editColumn('supplier_email', function ($row) {
+                    $email = $row->supplier_email;
+                    return '<input type="text" class="form-control email" style="width: 100px !important"
+                    name="remove_stock_lines[' . $row->index . '][email]" id="" value="' . $email . '">';
+                })
+                ->editColumn('notes', function ($row) {
+                    return '<input type="text" class="form-control notes" name="remove_stock_lines[' . $row->index . '][notes]" id="" value="">';
+                })
+                ->addColumn('current_stock', function ($row) use ($store_id) {
+                    $query = ProductStore::where(
+                        'product_id',
+                        $row->product_id
+                    )->where('variation_id', $row->variation_id);
+                    if (!empty($store_id)) {
+                        $query->where('store_id', $store_id);
+                    }
+                    $current_stock_query = $query->first();
+                    $current_stock = 0;
+
+                    if (!empty($current_stock_query)) {
+                        $current_stock = $current_stock_query->qty_available;
+                    }
+
+                    return $this->productUtil->num_uf($current_stock);
+                })
+
+                ->rawColumns([
+                    'selected_product',
+                    'image',
+                    'variation_name',
+                    'sku',
+                    'product_class',
+                    'category',
+                    'sub_category',
+                    'purchase_history',
+                    'batch_number',
+                    'sell_price',
+                    'tax',
+                    'brand',
+                    'unit',
+                    'color',
+                    'size',
+                    'grade',
+                    'remove_qauntity',
+                    'supplier_email',
+                    'purchase_price',
+                    'notes',
+                ])
+                ->make(true);
+        }
+        // $html = view('remove_stock.partials.product_rows')->with(compact(
+        //     'add_stocks',
+        //     'payment_status_array',
+        //     'store_id'
+        // ))->render();
+
+        // return ['html' => $html];
     }
 
     /**

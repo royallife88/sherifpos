@@ -91,7 +91,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div id="product_table_div" class="table-responsive">
-                                    <table class="table table-bordered table-striped table-condensed dataTable"
+                                    <table class="table table-bordered table-striped table-condensed"
                                         id="product_table">
                                         <thead>
                                             <tr>
@@ -128,7 +128,8 @@
                         </div>
                         <input type="hidden" name="final_total" id="final_total" value="0">
                         <div class="row">
-                            <div class="col-md-12" style="text-align: right; font-size: 20px; font-weight: bold; padding: 20px;">
+                            <div class="col-md-12"
+                                style="text-align: right; font-size: 20px; font-weight: bold; padding: 20px;">
                                 @lang('lang.total'):<span class="final_total_span"></span>
                             </div>
                         </div>
@@ -183,15 +184,113 @@
 @section('javascript')
 <script src="{{asset('js/add_stock.js')}}"></script>
 <script type="text/javascript">
+    $(document).ready( function(){
+        product_table = $('#product_table').DataTable({
+            lengthChange: true,
+            paging: true,
+            info: false,
+            bAutoWidth: false,
+            order: [],
+            language: {
+                url: dt_lang_url,
+            },
+            lengthMenu: [
+                [10, 25, 50, 75, 100, 200, 500, -1],
+                [10, 25, 50, 75, 100, 200, 500, "All"],
+            ],
+            dom: "lBfrtip",
+            buttons: buttons,
+            processing: true,
+            serverSide: true,
+            aaSorting: [[2, 'asc']],
+             "ajax": {
+                "url": "/remove-stock/get-invoice-details",
+                "data": function ( d ) {
+                    d.supplier_id = $('#supplier_id').val();
+                    d.invoice_id = $('#invoice_id').val();
+                    d.store_id = $('#store_id').val();
+                }
+            },
+            columnDefs: [ {
+                "targets": [0, 3],
+                "orderable": false,
+                "searchable": false
+            } ],
+            columns: [
+                { data: 'selected_product', name: 'selected_product'  },
+                { data: 'image', name: 'image'  },
+                { data: 'variation_name', name: 'products.name'},
+                { data: 'sub_sku', name: 'variations.sub_sku'  },
+                { data: 'product_class', name: 'product_classes.name'},
+                { data: 'category', name: 'categories.name'},
+                { data: 'sub_category', name: 'sub_categories.name'},
+                { data: 'color', name: 'colors.name'},
+                { data: 'size', name: 'sizes.name'},
+                { data: 'grade', name: 'grades.name'},
+                { data: 'unit', name: 'units.name'},
+                { data: 'current_stock', name: 'current_stock'},
+                { data: 'supplier', name: 'suppliers.name'},
+                { data: 'supplier_email', name: 'suppliers.email'},
+                { data: 'invoice_no', name: 'invoice_no'},
+                { data: 'transaction_date', name: 'transaction_date'},
+                { data: 'payment_status', name: 'payment_status'},
+                { data: 'notes', name: 'notes'},
+                { data: 'quantity', name: 'add_stock_lines.quantity'},
+                { data: 'remove_qauntity', name: 'remove_qauntity'},
+                { data: 'purchase_price', name: 'add_stock_lines.purchase_price'},
+                { data: 'sell_price', name: 'products.sell_price'},
+
+            ],
+            createdRow: function( row, data, dataIndex ) {
+
+            },
+            fnDrawCallback: function(oSettings) {
+                var intVal = function (i) {
+                    return typeof i === "string"
+                        ? i.replace(/[\$,]/g, "") * 1
+                        : typeof i === "number"
+                        ? i
+                        : 0;
+                };
+
+                this.api()
+                    .columns(".sum", { page: "current" })
+                    .every(function () {
+                        var column = this;
+                        if (column.data().count()) {
+                            var sum = column.data().reduce(function (a, b) {
+                                a = intVal(a);
+                                if (isNaN(a)) {
+                                    a = 0;
+                                }
+
+                                b = intVal(b);
+                                if (isNaN(b)) {
+                                    b = 0;
+                                }
+
+                                return a + b;
+                            });
+                            $(column.footer()).html(
+                                __currency_trans_from_en(sum, false)
+                            );
+                        }
+                    });
+            },
+        });
+
+    });
+
     var data_array = [];
     var transaction_array = [];
   $(document).on('change', '.quantity', function(){
        let tr = $(this).closest('tr');
+       console.log(tr, 'tr')
        let qty = parseFloat($(tr).find('.quantity').val());
        let max_stock = parseFloat($(this).attr('max'));
        $(tr).find('.stock_error').addClass('hide');
        $(tr).find('.product_checkbox').prop('checked', false);
-       console.log(max_stock);
+
        if(qty < 0){
            $(tr).find('.qty').val(0);
            return;
@@ -217,7 +316,7 @@
            transaction_array = $.grep(transaction_array, function(v, i) {
             return $.inArray(v, transaction_array) === i;
             });
-
+            console.log(row_index, 'row_index');
            data_array[row_index] = {
                 'product_id': product_id,
                 'variation_id': variation_id,
@@ -228,6 +327,7 @@
                 'email': email,
                 'notes': notes,
            }
+           console.log(data_array, 'data_array');
            $('#product_data').val(JSON.stringify(data_array));
            $('#transaction_array').val(JSON.stringify(transaction_array));
         }else{
@@ -237,42 +337,44 @@
     })
 
     $('#invoice_id, #supplier_id, #store_id').change(function () {
-        getProducts()
+        product_table.ajax.reload();
     });
-    $(document).ready(function () {
-        getProducts()
+    // $(document).ready(function () {
+    //     product_table.ajax.reload();
 
-    })
+    // })
 
-    function getProductTableAjax(){
-        return $.ajax({
-            method: 'get',
-            url: '/remove-stock/get-invoice-details',
-            data: { store_id: $('#store_id').val(), invoice_id: $('#invoice_id').val(), supplier_id: $('#supplier_id').val() },
-            success: function(result) {
-                $("table#product_table tbody").empty().append(result.html);
-                $('.payment_status_span').text(result.payment_status);
-                if(result.transaction){
-                    $('#supplier_id').selectpicker('val', result.transaction.supplier_id);
-                }
-                calculate_sub_totals();
-            },
-        });
-    }
-    async function getProducts() {
-        $('table#product_table tbody').css('text-align', 'center')
-        $('table#product_table tbody').html(`<tr style: "text-align: center; width: 100%;"><td colspan="21"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i><span class="sr-only">Loading...</span></td></tr>`);
+    // function product_table.ajax.reload();{
+    //     product_table.ajax.reload();
+    //     // return $.ajax({
+    //     //     method: 'get',
+    //     //     url: '/remove-stock/get-invoice-details',
+    //     //     data: { store_id: $('#store_id').val(), invoice_id: $('#invoice_id').val(), supplier_id: $('#supplier_id').val() },
+    //     //     success: function(result) {
+    //     //         $("table#product_table tbody").empty().append(result.html);
+    //     //         $('.payment_status_span').text(result.payment_status);
+    //     //         if(result.transaction){
+    //     //             $('#supplier_id').selectpicker('val', result.transaction.supplier_id);
+    //     //         }
+    //     //         calculate_sub_totals();
+    //     //     },
+    //     // });
+    // }
+    // async function getProducts() {
+        // product_table.ajax.reload();;
+        // $('table#product_table tbody').css('text-align', 'center')
+        // $('table#product_table tbody').html(`<tr style: "text-align: center; width: 100%;"><td colspan="21"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i><span class="sr-only">Loading...</span></td></tr>`);
 
-        const res = await getProductTableAjax().then(function(result) {
-            if ( $.fn.DataTable.isDataTable('#product_table') ) {
-                $("#product_table").DataTable().destroy();
-            }
-            $('table#product_table tbody').html(result.html);
-            table = $("#product_table").DataTable(datatable_params);
-            toggleColumnInCookie()
-        })
+        // const res = await product_table.ajax.reload();.then(function(result) {
+        //     if ( $.fn.DataTable.isDataTable('#product_table') ) {
+        //         $("#product_table").DataTable().destroy();
+        //     }
+        //     $('table#product_table tbody').html(result.html);
+        //     table = $("#product_table").DataTable(datatable_params);
+        //     toggleColumnInCookie()
+        // })
 
-    }
+    // }
 
     var hidden_column_array = $.cookie('column_visibility_remove_stock') ? JSON.parse($.cookie('column_visibility_remove_stock')) : [];
     function toggleColumnInCookie(){
@@ -286,7 +388,7 @@
         });
     }
     function toggleColumnVisibility(column_index, this_btn){
-        column = table.column(column_index);
+        column = product_table.column(column_index);
         column.visible(! column.visible());
 
         if(column.visible()){

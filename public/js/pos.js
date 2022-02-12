@@ -1492,7 +1492,7 @@ $(document).on("click", "#view-draft-btn", function () {
 });
 $(document).ready(function () {
     $(document).on("change", "#draft_start_date, #draft_end_date", function () {
-         draft_table.ajax.reload();
+        draft_table.ajax.reload();
     });
     $(document).on(
         "change",
@@ -1505,7 +1505,6 @@ $(document).ready(function () {
 function get_recent_transactions() {
     recent_transaction_table.ajax.reload();
 }
-
 
 $(document).on("change", "#customer_id", function () {
     let customer_id = $(this).val();
@@ -1763,7 +1762,7 @@ $(document).on("click", ".remove_draft", function (e) {
                                                 result.msg,
                                                 "success"
                                             );
-                                             draft_table.ajax.reload();
+                                            draft_table.ajax.reload();
                                         } else {
                                             swal("Error", result.msg, "error");
                                         }
@@ -2020,4 +2019,8 @@ $(document).on("click", "#submit-btn-add-product", function (e) {
             },
         });
     }
+});
+$(document).ready(function () {
+    console.log($("input#search_product"), '$("input#search_product")');
+    $("input#search_product").focus();
 });

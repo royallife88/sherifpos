@@ -2,7 +2,7 @@ if ($("form#edit_pos_form").length > 0) {
     pos_total_row();
     pos_form_obj = $("form#edit_pos_form");
 } else {
-    pos_form_obj = $("form#add_pos_form");
+    pos_form_obj = $("form#sell_return_form");
 }
 $(document).ready(function () {});
 
@@ -120,10 +120,9 @@ function calculate_sub_totals() {
             sub_total = price_hidden * quantity;
         }
 
-
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
-          product_discount_total += product_discount;
+        product_discount_total += product_discount;
         sub_total -= product_discount;
 
         grand_total += sub_total;
@@ -325,148 +324,12 @@ $(document).on("change", "#amount", function () {
     }
 });
 
-pos_form_validator = pos_form_obj.validate({
-    submitHandler: function (form) {
-        $("#pos-save").attr("disabled", "true");
-        var data = $(form).serialize();
-        data = data + "&method=" + $("#method").val();
-        var url = $(form).attr("action");
-        $.ajax({
-            method: "POST",
-            url: url,
-            data: data,
-            dataType: "json",
-            success: function (result) {
-                if (result.success == 1) {
-                    $("#add-payment").modal("hide");
-                    toastr.success(result.msg);
-
-                    if (
-                        $("#print_the_transaction").prop("checked") &&
-                        $("#status").val() !== "draft"
-                    ) {
-                        pos_print(result.html_content);
-                    }
-                    reset_pos_form();
-                    get_recent_transactions();
-                } else {
-                    toastr.error(result.msg);
-                }
-
-                $("div.pos-processing").hide();
-                $("#pos-save").removeAttr("disabled");
-            },
-        });
-    },
+$(document).on("click", ".save-btn", function () {
+    $("#sell_return_form").validate();
+    if ($("#sell_return_form").valid()) {
+        $("#sell_return_form").submit();
+    }
 });
-
-//Finalize without showing payment options
-$("button#submit-btn").click(function () {
-    //Check if product is present or not.
-    if ($("table#product_table tbody").find(".product_row").length <= 0) {
-        toastr.warning("No Product Added");
-        return false;
-    }
-
-    $(this).attr("disabled", true);
-
-    pos_form_obj.submit();
-});
-
-function pos_print(receipt) {
-    $("#receipt_section").html(receipt);
-    __currency_convert_recursively($("#receipt_section"));
-    __print_receipt("receipt_section");
-}
-
-function reset_pos_form() {
-    //If on edit page then redirect to Add POS page
-    if ($("form#edit_pos_sell_form").length > 0) {
-        setTimeout(function () {
-            window.location = $("input#pos_redirect_url").val();
-        }, 4000);
-        return true;
-    }
-    if (pos_form_obj[0]) {
-        pos_form_obj[0].reset();
-    }
-    $(
-        "span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span"
-    ).text(0);
-    $(
-        "#amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #coupon_id, #change, .delivery_address, .delivery_cost"
-    ).val("");
-    $("#status").val("final");
-    $("button#submit-btn").attr("disabled", false);
-    set_default_customer();
-    $("#tax_id").val("");
-    $("#tax_id").selectpicker("refresh");
-    $("#deliveryman_id").val("");
-    $("#deliveryman_id").selectpicker("refresh");
-    $("tr.product_row").remove();
-}
-
-function confirmCancel() {
-    var audio = $("#mysoundclip2")[0];
-    audio.play();
-    if (confirm("Are you sure want to reset?")) {
-        window.location = $("#cancel-btn").data("href");
-    }
-    return false;
-}
-
-$(document).on("click", "#recent-transaction-btn", function () {
-    $("#recentTransaction").modal("show");
-    get_recent_transactions();
-});
-
-$(document).on(
-    "change",
-    "#rt_start_date, #rt_end_date, #rt_customer_id",
-    function () {
-        get_recent_transactions();
-    }
-);
-
-//Get recent transactions
-function get_recent_transactions() {
-    let href = $("#recent-transaction-btn").data("href");
-
-    $.ajax({
-        method: "get",
-        url:
-            href +
-            "?start_date=" +
-            $("#rt_start_date").val() +
-            "&end_date=" +
-            $("#rt_end_date").val() +
-            "&customer_id=" +
-            $("#rt_customer_id").val(),
-        data: {},
-        success: function (result) {
-            $(".recent_transaction_div").empty().append(result);
-        },
-    });
-}
-
-//Get recent transactions
-function get_draft_transactions() {
-    let href = $("#view-draft-btn").data("href");
-
-    $.ajax({
-        method: "get",
-        url:
-            href +
-            "?start_date=" +
-            $("#draft_start_date").val() +
-            "&end_date=" +
-            $("#draft_end_date").val(),
-        data: {},
-        success: function (result) {
-            $(".draft_transaction_div").empty().append(result);
-        },
-    });
-}
 
 $(document).on("change", "#customer_id", function () {
     let customer_id = $(this).val();

@@ -197,6 +197,11 @@
 
                             @include('add_stock.partials.payment_form')
 
+                            <div class="col-md-3 due_amount_div hide">
+                                <label for="due_amount" style="margin-top: 25px;">@lang('lang.due'): <span
+                                        class="due_amount_span">{{@num_format(0)}}</span></label>
+                            </div>
+
                             <div class="col-md-3 due_fields hide">
                                 <div class="form-group">
                                     {!! Form::label('due_date', __('lang.due_date'). ':', []) !!} <br>
@@ -248,7 +253,7 @@
 <script src="{{asset('js/add_stock.js')}}"></script>
 <script src="{{asset('js/product_selection.js')}}"></script>
 <script type="text/javascript">
- $(document).on('click', '#add-selected-btn', function(){
+    $(document).on('click', '#add-selected-btn', function(){
         $('#select_products_modal').modal('hide');
         $.each(product_selected, function(index, value){
             get_label_product_row(value.product_id, value.variation_id);

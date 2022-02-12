@@ -14,6 +14,11 @@ $site_title = App\Models\System::getProperty('site_title');
 
                 <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
                     <li class="nav-item">
+                        <a href="{{action('SellController@create')}}" id="commercial_invoice_btn" data-toggle="tooltip" data-title="@lang('lang.add_sale')"
+                             class="btn no-print"><img src="{{asset('images/396 Commercial Invoice Icon.png')}}" alt="" style="height: 40px; width: 35px;">
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
                             style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
                         </a>

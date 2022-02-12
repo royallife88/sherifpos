@@ -155,16 +155,20 @@
             <button type="button" value="15"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock')</button>
             @endif
+            @if(!empty($page))
             <button type="button" value="16"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.current_stock_value')</button>
+            @endif
             <button type="button" value="17"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.customer_type')</button>
             <button type="button" value="18"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.expiry_date')</button>
             <button type="button" value="19"
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.manufacturing_date')</button>
+            <button type="button" value="20"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.discount')</button>
             @can('product_module.purchase_price.view')
-            <button type="button" value="20"
+            <button type="button" value="21"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
             @endcan
         </div>
@@ -192,6 +196,7 @@
                 <th>@lang('lang.size')</th>
                 <th>@lang('lang.grade')</th>
                 <th class="sum">@lang('lang.current_stock')</th>
+                <th class="sum">@lang('lang.current_stock_value')</th>
                 <th>@lang('lang.customer_type')</th>
                 <th>@lang('lang.expiry_date')</th>
                 <th>@lang('lang.manufacturing_date')</th>
@@ -210,7 +215,9 @@
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="16" style="text-align: right">@lang('lang.total')</th>
+                <th colspan="14" style="text-align: right">@lang('lang.total')</th>
+                <td></td>
+                <td></td>
                 <td></td>
             </tr>
         </tfoot>
@@ -278,6 +285,7 @@
                 { data: 'size', name: 'sizes.name'},
                 { data: 'grade', name: 'grades.name'},
                 { data: 'current_stock', name: 'current_stock', searchable: false},
+                { data: 'current_stock_value', name: 'current_stock_value', searchable: false @if(empty($page)), visible: false @endif},
                 { data: 'customer_type', name: 'customer_type'},
                 { data: 'exp_date', name: 'add_stock_lines.expiry_date'},
                 { data: 'manufacturing_date', name: 'add_stock_lines.manufacturing_date'},
@@ -295,7 +303,37 @@
 
             },
             fnDrawCallback: function(oSettings) {
-                __currency_convert_recursively($('#product_table'));
+                var intVal = function (i) {
+                    return typeof i === "string"
+                        ? i.replace(/[\$,]/g, "") * 1
+                        : typeof i === "number"
+                        ? i
+                        : 0;
+                };
+
+                this.api()
+                    .columns(".sum", { page: "current" })
+                    .every(function () {
+                        var column = this;
+                        if (column.data().count()) {
+                            var sum = column.data().reduce(function (a, b) {
+                                a = intVal(a);
+                                if (isNaN(a)) {
+                                    a = 0;
+                                }
+
+                                b = intVal(b);
+                                if (isNaN(b)) {
+                                    b = 0;
+                                }
+
+                                return a + b;
+                            });
+                            $(column.footer()).html(
+                                __currency_trans_from_en(sum, false)
+                            );
+                        }
+                    });
             },
         });
 

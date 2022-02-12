@@ -125,6 +125,19 @@ function calculate_sub_totals() {
     calculate_final_cost_for_products();
 }
 
+$(document).on("change", "#amount", function () {
+    let amount = __read_number($("#amount"));
+    let final_total = __read_number($("#final_total"));
+
+    let due_amount = final_total - amount;
+    if (due_amount > 0) {
+        $(".due_amount_div").removeClass("hide");
+    } else {
+        $(".due_amount_div").addClass("hide");
+    }
+    $(".due_amount_span").text(__currency_trans_from_en(due_amount, false));
+});
+
 function calculate_final_cost_for_products() {
     var total_qauntity = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {

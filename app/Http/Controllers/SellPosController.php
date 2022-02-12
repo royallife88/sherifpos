@@ -1085,12 +1085,10 @@ class SellPosController extends Controller
                             class="btn btn-danger delete_item" style="color: white"><i class="fa fa-trash"></i></a>';
                         }
                         if (auth()->user()->can('return.sell_return.create_and_edit')) {
-                            if (empty($row->return_parent)) {
-                                $html .=
-                                    '  <a href="' . action('SellReturnController@add', $row->id) . '"
+                            $html .=
+                                '  <a href="' . action('SellReturnController@add', $row->id) . '"
                                 title="' . __('lang.sell_return') . '" data-toggle="tooltip" class="btn btn-secondary"
                                 style="color: white"><i class="fa fa-undo"></i></a>';
-                            }
                         }
                         if (auth()->user()->can('return.sell_return.create_and_edit')) {
                             if ($row->status != 'draft' && $row->payment_status != 'paid') {

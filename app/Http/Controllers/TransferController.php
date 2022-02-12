@@ -2,9 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
+use App\Models\Customer;
+use App\Models\CustomerType;
+use App\Models\Grade;
+use App\Models\ProductClass;
+use App\Models\Size;
 use App\Models\Store;
+use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransferLine;
+use App\Models\Unit;
+use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
@@ -78,8 +89,8 @@ class TransferController extends Controller
         }
 
         $permitted_stores = array_keys($stores);
-        if(!session('is_superadmin')){
-            $query->where(function($q) use ($permitted_stores){
+        if (!session('is_superadmin')) {
+            $query->where(function ($q) use ($permitted_stores) {
                 $q->whereIn('receiver_store_id', $permitted_stores)->orWhereIn('sender_store_id', $permitted_stores);
             });
         }
@@ -102,8 +113,34 @@ class TransferController extends Controller
     {
         $stores = Store::getDropdown();
 
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+
+        $users = User::pluck('name', 'id');
+
         return view('transfer.create')->with(compact(
-            'stores'
+            'stores',
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'discount_customer_types',
+            'users',
         ));
     }
 

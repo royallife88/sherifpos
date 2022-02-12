@@ -567,13 +567,14 @@ return [
 
     'sales_list' => 'Verkooplijst',
     'sale_status' => 'Verkoopstatus',
-    'add_sale' => 'Verkoop toevoegen',
+    'add_sale' => 'Handelsfactuur genereren',
+    'add_sales' => 'Handelsfactuur genereren',
     'generate_invoice' => 'Factuur genereren',
     'total_tax' => 'Totale belasting',
     'view_payments' => 'Bekijk betalingen',
     'edit_payment' => 'Betalingen bewerken',
 
-    'add_sale' => 'Verkoop toevoegen',
+    'add_sale' => 'Handelsfactuur genereren',
     'totals' => 'Totalen',
     'edit_sale' => 'Uitverkoop bewerken',
     'update' => 'Bijwerken',

@@ -213,7 +213,7 @@ class SellReturnController extends Controller
 
                 if ($request->payment_status != 'pending') {
                     $payment_data = [
-                        'transaction_payment_id' => $sell_return->transaction_payment_id,
+                        'transaction_payment_id' => $request->transaction_payment_id,
                         'transaction_id' => $sell_return->id,
                         'amount' => $this->commonUtil->num_uf($request->amount),
                         'method' => $request->method,

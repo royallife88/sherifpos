@@ -16,7 +16,8 @@
                     <input type="hidden" name="row_count" id="row_count"
                         value="{{$add_stock->add_stock_lines->count()}}">
                     <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
-                    <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{$add_stock->is_raw_material}}">
+                    <input type="hidden" name="is_raw_material" id="is_raw_material"
+                        value="{{$add_stock->is_raw_material}}">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">
@@ -354,6 +355,11 @@
                                     'form-control not_cash',
                                     'placeholder' => __('lang.bank_name')]) !!}
                                 </div>
+                            </div>
+
+                            <div class="col-md-3 due_amount_div @if($add_stock->transaction_payments->sum('amount') == $add_stock->final_total ) hide @endif">
+                                <label for="due_amount" style="margin-top: 25px;">@lang('lang.due'): <span
+                                        class="due_amount_span">{{@num_format($add_stock->final_total - $add_stock->transaction_payments->sum('amount'))}}</span></label>
                             </div>
 
                             <div class="col-md-3 due_fields hide">

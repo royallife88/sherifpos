@@ -572,8 +572,8 @@ return [
     'view_payments' => 'View Payments',
     'edit_payment' => 'Edit Payments',
 
-    'add_sale' => 'Add Sale',
-    'add_sales' => 'Add Sales',
+    'add_sale' => 'Generate Commercial Invoice',
+    'add_sales' => 'Generate Commercial Invoice',
     'totals' => 'Totals',
     'edit_sale' => 'Edit Sale',
     'update' => 'Update',

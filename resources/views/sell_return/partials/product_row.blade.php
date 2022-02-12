@@ -25,7 +25,7 @@
     <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
     <td style="width: 20%">
         <div class="input-group">
-            <input type="text" class="form-control quantity" min=1 max="{{$product->quantity}}"
+            <input type="text" class="form-control quantity" min=0 max="{{$product->quantity}}"
                 name="transaction_sell_line[{{$loop->index}}][quantity]" required
                 value="@if(isset($product->quantity_returned)){{@num_format($product->quantity_returned)}}@else{{0}}@endif">
         </div>

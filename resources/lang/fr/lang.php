@@ -567,13 +567,14 @@ return [
 
     'sales_list' => 'Liste des ventes',
     'sale_status' => 'Statut des ventes',
-    'add_sale' => 'Ajouter une vente',
+    'add_sale' => 'Générer une facture commerciale',
+    'add_sales' => 'Générer une facture commerciale',
     'generate_invoice' => 'Générer une facture',
     'total_tax' => 'Taxe total',
     'view_payments' => 'Afficher les paiements',
     'edit_payment' => 'Modifier les paiements',
 
-    'add_sale' => 'Ajouter une vente',
+    'add_sale' => 'Générer une facture commerciale',
     'totals' => 'Totaux',
     'edit_sale' => 'Modifier la vente',
     'update' => 'Mettre à jour',

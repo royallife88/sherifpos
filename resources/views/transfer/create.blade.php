@@ -39,7 +39,7 @@
                         <br>
                         <br>
                         <div class="row">
-                            <div class="col-md-8 offset-md-2">
+                            <div class="col-md-8 offset-md-1">
                                 <div class="search-box input-group">
                                     <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                             class="fa fa-search"></i></button>
@@ -47,6 +47,9 @@
                                         placeholder="@lang('lang.enter_product_name_to_print_labels')"
                                         class="form-control ui-autocomplete-input" autocomplete="off">
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                @include('quotation.partial.product_selection')
                             </div>
                         </div>
                         <br>
@@ -114,7 +117,15 @@
 
 @section('javascript')
 <script src="{{asset('js/transfer.js')}}"></script>
+<script src="{{asset('js/product_selection.js')}}"></script>
 <script type="text/javascript">
-
+    $(document).on('click', '#add-selected-btn', function(){
+        $('#select_products_modal').modal('hide');
+        $.each(product_selected, function(index, value){
+            get_label_product_row(value.product_id, value.variation_id);
+        });
+        product_selected = [];
+        product_table.ajax.reload();
+    })
 </script>
 @endsection
