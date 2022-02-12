@@ -13,6 +13,9 @@ $(document).ready(function () {
     } else {
         pos_form_obj = $("form#add_pos_form");
     }
+    setTimeout(() => {
+        $("input#search_product").focus();
+    }, 2000);
 });
 
 $(document).on("click", "#category-filter", function (e) {
@@ -2019,8 +2022,4 @@ $(document).on("click", "#submit-btn-add-product", function (e) {
             },
         });
     }
-});
-$(document).ready(function () {
-    console.log($("input#search_product"), '$("input#search_product")');
-    $("input#search_product").focus();
 });
