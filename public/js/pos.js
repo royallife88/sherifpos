@@ -1107,7 +1107,7 @@ function apply_coupon_to_products() {
 
 $(document).on("click", "#draft-btn", function (e) {
     $("#status").val("draft");
-
+    $("#sale_note_modal").modal("hide");
     //Check if product is present or not.
     if ($("table#product_table tbody").find(".product_row").length <= 0) {
         toastr.warning("No Product Added");
@@ -1245,7 +1245,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id"
+        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -2022,4 +2022,9 @@ $(document).on("click", "#submit-btn-add-product", function (e) {
             },
         });
     }
+});
+
+$(document).on("change", "#sale_note_draft", function () {
+    let sale_note = $(this).val();
+    $("#sale_note").val(sale_note);
 });

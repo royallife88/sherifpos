@@ -110,6 +110,9 @@
                 @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}}
                 {{__('lang.mobile_number',[], 'ar')}}<br>
                 @endif
+                @if(!empty($transaction->sale_note))
+                @lang('lang.sale_note', [], 'en'): {{$transaction->sale_note}} @lang('lang.address',[], 'ar') <br>
+                @endif
             </p>
             @if(session('system_mode') == 'garments')
             <p>

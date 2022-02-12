@@ -112,6 +112,9 @@ $invoice_lang = request()->session()->get('language');
                 @lang('lang.address', [], $invoice_lang): {{$transaction->customer->address}} <br>
                 @lang('lang.mobile_number', [], $invoice_lang): {{$transaction->customer->mobile_number}} <br>
                 @endif
+                @if(!empty($transaction->sale_note))
+                @lang('lang.sale_note', [], $invoice_lang): {{$transaction->sale_note}} <br>
+                @endif
             </p>
             @if(session('system_mode') == 'garments')
             <p>

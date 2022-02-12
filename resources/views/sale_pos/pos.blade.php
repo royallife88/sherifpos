@@ -266,7 +266,8 @@
                         @endif
                         <div class="column-5">
                             <button data-method="draft" style="background-color: #e28d02" type="button"
-                                class="btn btn-custom" id="draft-btn"><i class="dripicons-flag"></i>
+                                data-toggle="modal" data-target="#sale_note_modal" class="btn btn-custom"><i
+                                    class="dripicons-flag"></i>
                                 @lang('lang.draft')</button>
                         </div>
                         <div class="column-5">
@@ -325,6 +326,7 @@
                 @include('sale_pos.partials.weighing_scale_modal')
                 @include('sale_pos.partials.non_identifiable_item_modal')
                 @include('sale_pos.partials.customer_sizes_modal')
+                @include('sale_pos.partials.sale_note')
 
 
                 {!! Form::close() !!}
