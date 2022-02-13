@@ -1,5 +1,8 @@
 @forelse ($products as $product)
 <tr class="product_row">
+    @if(!empty($is_direct_sale))
+    <td class="row_number"></td>
+    @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 18% @else 20% @endif">
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>

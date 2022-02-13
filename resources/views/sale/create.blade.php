@@ -82,6 +82,7 @@
                                     <table id="product_table" style="width: 100% " class="table table-striped">
                                         <thead>
                                             <tr>
+                                                <th>#</th>
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>

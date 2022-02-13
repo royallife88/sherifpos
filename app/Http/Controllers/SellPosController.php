@@ -764,6 +764,7 @@ class SellPosController extends Controller
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
+            $is_direct_sale = $request->input('is_direct_sale');
             $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
             $added_products = json_decode($request->input('added_products'), true);
 
@@ -791,7 +792,7 @@ class SellPosController extends Controller
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
                 $html_content =  view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'))->render();
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale'))->render();
 
                 $output['success'] = true;
                 $output['html_content'] = $html_content;
