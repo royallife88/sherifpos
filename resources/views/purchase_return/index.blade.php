@@ -93,7 +93,7 @@
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                                @can('return.sell_return.view')
+                                @can('return.purchase_return.view')
                                 <li>
 
                                     <a data-href="{{action('PurchaseReturnController@show', $sale->id)}}"
@@ -102,14 +102,14 @@
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('return.sell_return.create_and_edit')
+                                @can('return.purchase_return.create_and_edit')
                                 <li>
                                     <a href="{{action('PurchaseReturnController@edit', $sale->id)}}" class="btn"><i
                                             class="dripicons-document-edit"></i> @lang('lang.edit')</a>
                                 </li>
                                 <li class="divider"></li>
                                 @endcan
-                                @can('return.sell_return_pay.create_and_edit')
+                                @can('return.purchase_return_pay.create_and_edit')
                                 @if($sale->payment_status != 'paid')
                                 <li>
                                     <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $sale->id])}}"
@@ -118,7 +118,7 @@
                                 </li>
                                 @endif
                                 @endcan
-                                @can('return.sell_return_pay.view')
+                                @can('return.purchase_return_pay.view')
                                 @if($sale->payment_status != 'pending')
                                 <li>
                                     <a data-href="{{action('TransactionPaymentController@show', $sale->id)}}"
@@ -127,9 +127,9 @@
                                 </li>
                                 @endif
                                 @endcan
-                                @can('sale.pos.delete')
+                                @can('return.purchase_return.delete')
                                 <li>
-                                    <a data-href="{{action('SellController@destroy', $sale->id)}}"
+                                    <a data-href="{{action('PurchaseReturnController@destroy', $sale->id)}}"
                                         data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                         class="btn text-red delete_item"><i class="fa fa-trash"></i>
                                         @lang('lang.delete')</a>

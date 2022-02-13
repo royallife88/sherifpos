@@ -134,8 +134,8 @@ class SupplierController extends Controller
         $supplier_id = $id;
         $supplier = Supplier::find($id);
 
-        $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock'])
-            ->whereIn('transactions.status', ['received']);
+        $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock', 'purchase_return'])
+            ->whereIn('transactions.status', ['received', 'final']);
 
         if (!empty(request()->start_date)) {
             $add_stock_query->where('transaction_date', '>=', request()->start_date);

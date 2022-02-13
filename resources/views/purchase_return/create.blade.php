@@ -28,7 +28,7 @@
                                     <label for="store_id">@lang('lang.store')</label>
                                     {!! Form::select('store_id', $stores, false, ['class' => 'form-control',
                                     'data-live-search' => 'true', 'placeholder' => __('lang.please_select'),
-                                    'required']) !!}
+                                    'required', 'id' => 'store_id']) !!}
                                 </div>
                             </div>
                         </div>
@@ -57,6 +57,7 @@
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.returned_quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.current_stock')}}</th>
                                                 <th class="sum" style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -70,6 +71,7 @@
                                                 <td></td>
                                                 <th style="text-align: right">@lang('lang.total')</th>
                                                 <th></th>
+                                                <th><span class="grand_total_span">{{@num_format(0)}}</span></th>
                                             </tr>
                                         </tfoot>
                                     </table>

@@ -224,8 +224,8 @@
                                     <tr>
                                         <td>{{@format_date($add_stock->transaction_date)}}</td>
                                         <td>{{$add_stock->invoice_no}}</td>
-                                        <td>{{@num_format($add_stock->final_total)}}</td>
-                                        <td>{{@num_format($add_stock->transaction_payments->sum('amount'))}}</td>
+                                        <td>@if($add_stock->type == 'purchase_return'){{@num_format(-$add_stock->final_total)}}@else{{@num_format($add_stock->final_total)}}@endif</td>
+                                        <td>@if($add_stock->type == 'purchase_return'){{@num_format(-$add_stock->transaction_payments->sum('amount'))}}@else{{@num_format($add_stock->transaction_payments->sum('amount'))}}@endif</td>
                                         <td>{{@num_format($add_stock->final_total - $add_stock->transaction_payments->sum('amount'))}}
                                         </td>
                                         <td>{{ucfirst($add_stock->status)}}</td>
@@ -243,15 +243,17 @@
                                                 </button>
                                                 <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                     user="menu">
-                                                    @can('sale.pos.view')
+                                                    @if($add_stock->type == 'add_stock')
+                                                    @can('stock.add_stock.view')
                                                     <li>
-                                                        <a data-href="{{action('AddStockController@show', $add_stock->id)}}"
-                                                            data-container=".view_modal" class="btn btn-modal"><i
+                                                        <a target="_blank" href="{{action('AddStockController@show', $add_stock->id)}}"
+                                                            class="btn "><i
                                                                 class="fa fa-eye"></i> @lang('lang.view')</a>
                                                     </li>
                                                     <li class="divider"></li>
                                                     @endcan
-                                                    @can('sale.pos.create_and_edit')
+
+                                                    @can('stock.add_stock.create_and_edit')
                                                     <li>
                                                         <a href="{{action('AddStockController@edit', $add_stock->id)}}"
                                                             class="btn"><i class="dripicons-document-edit"></i>
@@ -260,7 +262,7 @@
                                                     <li class="divider"></li>
                                                     @endcan
 
-                                                    @can('sale.pos.delete')
+                                                    @can('stock.add_stock.delete')
                                                     <li>
                                                         <a data-href="{{action('AddStockController@destroy', $add_stock->id)}}"
                                                             data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
@@ -275,6 +277,51 @@
                                                                 class="fa fa-money"></i>
                                                             @lang('lang.pay')</a>
                                                     </li>
+                                                    @endif
+                                                    @endif
+                                                    @if($add_stock->type == 'purchase_return')
+                                                    @can('return.purchase_return.view')
+                                                    <li>
+
+                                                        <a data-href="{{action('PurchaseReturnController@show', $add_stock->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                                            @lang('lang.view')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.purchase_return.create_and_edit')
+                                                    <li>
+                                                        <a href="{{action('PurchaseReturnController@edit', $add_stock->id)}}" class="btn"><i
+                                                                class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                                                    </li>
+                                                    <li class="divider"></li>
+                                                    @endcan
+                                                    @can('return.purchase_return_pay.create_and_edit')
+                                                    @if($add_stock->payment_status != 'paid')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@addPayment', ['id' => $add_stock->id])}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                                            @lang('lang.add_payment')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('return.purchase_return_pay.view')
+                                                    @if($add_stock->payment_status != 'pending')
+                                                    <li>
+                                                        <a data-href="{{action('TransactionPaymentController@show', $add_stock->id)}}"
+                                                            data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                                            @lang('lang.view_payments')</a>
+                                                    </li>
+                                                    @endif
+                                                    @endcan
+                                                    @can('return.purchase_return.delete')
+                                                    <li>
+                                                        <a data-href="{{action('PurchaseReturnController@destroy', $add_stock->id)}}"
+                                                            data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                                            class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                                            @lang('lang.delete')</a>
+                                                    </li>
+                                                    @endcan
                                                     @endif
                                                 </ul>
                                             </div>

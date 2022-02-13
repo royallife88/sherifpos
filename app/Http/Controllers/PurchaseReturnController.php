@@ -349,13 +349,14 @@ class PurchaseReturnController extends Controller
         if ($request->ajax()) {
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
+            $store_id = $request->input('store_id');
 
             if (!empty($product_id)) {
                 $index = $request->input('row_count');
                 $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id);
 
                 return view('purchase_return.partials.product_row')
-                    ->with(compact('products', 'index'));
+                    ->with(compact('products', 'index', 'store_id'));
             }
         }
     }

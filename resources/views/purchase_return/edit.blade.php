@@ -57,6 +57,7 @@
                                                 <th style="width: 30%">{{__('lang.product')}}</th>
                                                 <th style="width: 20%">{{__('lang.returned_quantity')}}</th>
                                                 <th style="width: 20%">{{__('lang.price')}}</th>
+                                                <th style="width: 20%">{{__('lang.current_stock')}}</th>
                                                 <th class="sum" style="width: 10%">{{__('lang.sub_total')}}</th>
                                                 <th style="width: 20%"></th>
                                             </tr>
@@ -70,6 +71,7 @@
                                                 <td></td>
                                                 <th style="text-align: right">@lang('lang.total')</th>
                                                 <th></th>
+                                                <th><span class="grand_total_span">{{@num_format($purchase_return->final_total)}}</span></th>
                                             </tr>
                                         </tfoot>
                                     </table>
