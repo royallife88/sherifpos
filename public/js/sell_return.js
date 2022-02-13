@@ -80,7 +80,9 @@ $(document).on("click", ".filter-by", function () {
         });
     }
 });
-
+$(document).on("change", "#discount_amount", function () {
+    calculate_sub_totals()
+});
 function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
     var total = 0;
@@ -148,7 +150,7 @@ function calculate_sub_totals() {
 
     __write_number($("#grand_total"), grand_total); // total without any discounts
 
-    let discount_amount = get_discount_amount(total);
+    let discount_amount = __read_number($("#discount_amount"));
     total -= discount_amount;
 
     let delivery_cost = __read_number($("#delivery_cost"));

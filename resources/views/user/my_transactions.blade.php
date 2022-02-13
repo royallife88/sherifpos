@@ -48,19 +48,19 @@
 			    					echo '<td><p><strong>'.$i.'</strong></p>';
 
 			    				if($sale_generated[$i]) {
-			    					echo '<strong>'.__("lang.sale_generated").':</strong> '.$sale_generated[$i].'<br>';
+			    					echo '<strong>'.__("lang.sales").':</strong> '.$sale_generated[$i].'<br>';
 			    				}
 			    				if($sale_grand_total[$i]) {
 			    					echo '<strong>'.__("lang.grand_total").':</strong> '.$sale_grand_total[$i].'<br><br>';
 			    				}
 			    				if($purchase_generated[$i]) {
-			    					echo '<strong>'.__("lang.purchase_generated").':</strong> '.$purchase_generated[$i].'<br>';
+			    					echo '<strong>'.__("lang.purchases").':</strong> '.$purchase_generated[$i].'<br>';
 			    				}
 			    				if($purchase_grand_total[$i]) {
 			    					echo '<strong>'.__("lang.grand_total").':</strong> '.$purchase_grand_total[$i].'<br><br>';
 			    				}
 			    				if($quotation_generated[$i]) {
-			    					echo '<strong>'.__("lang.quotation_generated").':</strong> '.$quotation_generated[$i].'<br>';
+			    					echo '<strong>'.__("lang.quotations").':</strong> '.$quotation_generated[$i].'<br>';
 			    				}
 			    				if($quotation_grand_total[$i]) {
 			    					echo '<strong>'.__("lang.grand_total").':</strong> '.$quotation_grand_total[$i].'<br><br>';
@@ -75,22 +75,22 @@
 			    					echo '<td><p><strong>'.$i.'</strong></p>';
 
 			    				if($sale_generated[$i]) {
-			    					echo '<strong>'.trans("file.Sale Generated").':</strong> '.$sale_generated[$i].'<br>';
+			    					echo '<strong>'.trans("lang.sales").':</strong> '.$sale_generated[$i].'<br>';
 			    				}
 			    				if($sale_grand_total[$i]) {
-			    					echo '<strong>'.trans("file.grand total").':</strong> '.$sale_grand_total[$i].'<br><br>';
+			    					echo '<strong>'.trans("lang.grand_total").':</strong> '.$sale_grand_total[$i].'<br><br>';
 			    				}
 			    				if($purchase_generated[$i]) {
-			    					echo '<strong>'.trans("file.Purchase Generated").':</strong> '.$purchase_generated[$i].'<br>';
+			    					echo '<strong>'.trans("lang.purchases").':</strong> '.$purchase_generated[$i].'<br>';
 			    				}
 			    				if($purchase_grand_total[$i]) {
-			    					echo '<strong>'.trans("file.grand total").':</strong> '.$purchase_grand_total[$i].'<br><br>';
+			    					echo '<strong>'.trans("lang.grand_total").':</strong> '.$purchase_grand_total[$i].'<br><br>';
 			    				}
 			    				if($quotation_generated[$i]) {
-			    					echo '<strong>'.trans("file.Quotation Generated").':</strong> '.$quotation_generated[$i].'<br>';
+			    					echo '<strong>'.trans("lang.quotations").':</strong> '.$quotation_generated[$i].'<br>';
 			    				}
 			    				if($quotation_grand_total[$i]) {
-			    					echo '<strong>'.trans("file.grand total").':</strong> '.$quotation_grand_total[$i].'<br><br>';
+			    					echo '<strong>'.trans("lang.grand_total").':</strong> '.$quotation_grand_total[$i].'<br><br>';
 			    				}
 			    				echo '</td>';
 			    				$flag = 1;

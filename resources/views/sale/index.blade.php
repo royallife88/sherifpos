@@ -3,11 +3,11 @@
 
 @section('content')
 <div class="container-fluid no-print">
-    @can('sale.pos.create_and_edit')
+    {{-- @can('sale.pos.create_and_edit')
     <a style="color: white" href="{{action('SellPosController@create')}}" class="btn btn-info"><i
             class="dripicons-plus"></i>
         @lang('lang.add_sale')</a>
-    @endcan
+    @endcan --}}
 </div>
 <br>
 <div class="col-md-12  no-print">

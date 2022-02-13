@@ -165,4 +165,8 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(User::class, 'source_id')->withDefault(['name' => '']);
     }
+    public function tax()
+    {
+        return $this->belongsTo(Tax::class, 'tax_id')->withDefault(['name' => '']);
+    }
 }

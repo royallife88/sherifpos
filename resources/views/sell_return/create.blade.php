@@ -90,6 +90,18 @@
                             {!! Form::text('delivery_cost', @num_format($sale->delivery_cost), ['class' =>
                             'form-control']) !!}
                         </div>
+                        <div class="col-md-4">
+                            {!! Form::hidden('discount_type', $sale->discount_type, ['class' =>
+                            'form-control', 'id' => 'discount_type']) !!}
+                            {!! Form::hidden('discount_value', $sale->discount_value, ['class' =>
+                            'form-control', 'id' => 'discount_value']) !!}
+
+                            {!! Form::label('discount_amount', __('lang.discount'), []) !!}
+                            {!! Form::text('discount_amount', !empty($sell_return->discount_amount) ?
+                            @num_format($sell_return->discount_amount) : @num_format($sale->discount_amount), ['class'
+                            =>
+                            'form-control']) !!}
+                        </div>
                     </div>
                     <br>
                     <div class="row">

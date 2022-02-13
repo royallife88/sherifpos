@@ -18,11 +18,6 @@
         @page {
             margin: 0;
         }
-
-        body {
-            margin: 0.5cm;
-            margin-bottom: 1.6cm;
-        }
     }
 
     #receipt_section * {
@@ -88,10 +83,10 @@
         font-size: 11px;
     }
 </style>
-<div class="row">
+<div class="row header_div" id="header_div">
     @include('layouts.partials.print_header')
 </div>
-<div class="col-md-12">
+<div class="col-md-12 content_div" id="content_div">
     <div class="row">
         <div class="col-md-6">
             <div class="col-md-12">
@@ -300,6 +295,6 @@
         </div>
     </div>
 </div>
-<div class="row">
+<div class="row footer_div" id="footer_div" style=" width: 100%;">
     @include('layouts.partials.print_footer')
 </div>

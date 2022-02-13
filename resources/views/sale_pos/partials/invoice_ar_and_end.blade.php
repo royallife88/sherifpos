@@ -179,8 +179,7 @@
                     @if($transaction->total_tax != 0)
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->total_tax)}}</th>
-                        <th colspan="2" style="text-align:right">{{__('lang.order_tax',[], 'ar')}} <br>
-                            @lang('lang.order_tax',[], 'en') </th>
+                        <th colspan="2" style="text-align:right">{{$transaction->tax->name ?? ''}}</th>
                     </tr>
                     @endif
                     @if($transaction->discount_amount != 0)
@@ -300,7 +299,7 @@
                     <tr>
                         <td class="centered" colspan="3">
                             <img style="margin-top:10px;"
-                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no, 'C128')}}"
+                                src="data:image/png;base64,{{DNS1D::getBarcodePNG($transaction->invoice_no ?? '1', 'C128')}}"
                                 width="300" alt="barcode" />
                         </td>
                     </tr>

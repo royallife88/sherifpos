@@ -686,12 +686,27 @@ class TransactionUtil extends Util
         }
 
         if ($transaction->is_direct_sale == 1) {
+            // $letter_header = System::getProperty('letter_header');
+
+            // $header_img = '';
+            // if (!empty($letter_header)) {
+            //     $header_img = 'uploads/' . $letter_header;
+            // } else {
+            //     $header_img = 'uploads/' . session('logo');
+            // }
+
+            // $height = 60;
+            // if (!empty($header_img)) {
+            //     list($width, $height) = getimagesize($header_img);
+            // }
+
             $sale = $transaction;
             $payment_type_array = $payment_types;
             $html_content = view('sale_pos.partials.commercial_invoice')->with(compact(
                 'sale',
                 'payment_type_array',
-                'invoice_lang'
+                'invoice_lang',
+                // 'height'
             ))->render();
         }
 
@@ -745,6 +760,7 @@ class TransactionUtil extends Util
     {
         $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
+            ->where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
 
         if (!empty($start_date)) {
@@ -766,6 +782,43 @@ class TransactionUtil extends Util
 
         if (!empty($sales)) {
             return $sales->cost_of_sold_products;
+        }
+        return 0;
+    }
+    /**
+     * calculate the cost of sold product for restaurants
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param int $store_id
+     * @return double
+     */
+    public function getCostOfSoldReturnedProducts($start_date, $end_date, $store_id = null, $store_pos_id = null)
+    {
+        $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
+            ->where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
+
+        if (!empty($start_date)) {
+            $query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $query->whereDate('transaction_date',  '<=', $end_date);
+        }
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+        if (!empty($store_pos_id)) {
+            $query->where('store_pos_id', $store_pos_id);
+        }
+
+        $sales = $query->select(
+            DB::raw("SUM(transaction_sell_lines.quantity_returned * variations.default_purchase_price) as cost_of_sold_returned_products")
+        )->first();
+
+        if (!empty($sales)) {
+            return $sales->cost_of_sold_returned_products;
         }
         return 0;
     }

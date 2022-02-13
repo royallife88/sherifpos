@@ -409,7 +409,7 @@ class HomeController extends Controller
         }
 
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
-
+// print_r($revenue ); die();
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
         if (!empty($start_date)) {
             $sell_return_query->whereDate('transaction_date', '>=', $start_date);
@@ -445,7 +445,9 @@ class HomeController extends Controller
         $revenue -= $sell_return;
 
         $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id, $store_pos_id);
-        $profit = $revenue - $cost_sold_product;
+        $cost_sold_returned_product = $this->transactionUtil->getCostOfSoldReturnedProducts($start_date, $end_date, $store_id, $store_pos_id);
+
+        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product;
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

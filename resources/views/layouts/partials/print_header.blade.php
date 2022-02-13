@@ -1,4 +1,4 @@
-<div class="row" style="text-align: center" >
+<div class="row" style="text-align: center; width: 100%;" >
     @php
         $letter_header = App\Models\System::getProperty('letter_header');
     @endphp

@@ -400,6 +400,9 @@
         if(payment_status === 'pending'){
             $('.not_cash_fields').addClass('hide');
             $('.not_cash').attr('required', false);
+            $('#method').val();
+            $('#amount').val(0);
+            $('#method').selectpicker('refresh');
         }
         if(payment_status === 'paid'){
             $('.due_fields').addClass('hide');

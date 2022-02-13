@@ -54,10 +54,10 @@ $site_title = App\Models\System::getProperty('site_title');
                         </ul>
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
                         <a class="dropdown-item" href="{{action('HomeController@getHelp')}}" target="_blank"><i
                                 class="dripicons-information"></i> @lang('lang.help')</a>
-                    </li>
+                    </li> --}}
                     <li class="nav-item">
                         <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true"
                             aria-expanded="false" class="nav-link dropdown-item"><i class="dripicons-user"></i>

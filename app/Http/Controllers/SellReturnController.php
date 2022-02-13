@@ -124,7 +124,7 @@ class SellReturnController extends Controller
     public function add($id)
     {
         $sale  = Transaction::find($id);
-
+        // print_r($sale->discount_amount); die();
         $categories = Category::whereNull('parent_id')->get();
         $sub_categories = Category::whereNotNull('parent_id')->get();
         $brands = Brand::all();
@@ -139,6 +139,7 @@ class SellReturnController extends Controller
         $sell_return = Transaction::where('type', 'sell_return')
             ->where('return_parent_id', $id)
             ->first();
+
         $stores = Store::getDropdown();
 
         return view('sell_return.create')->with(compact(
@@ -181,6 +182,9 @@ class SellReturnController extends Controller
                     'return_parent_id' => $request->transaction_id,
                     'final_total' => $this->commonUtil->num_uf($request->final_total),
                     'grand_total' => $this->commonUtil->num_uf($request->grand_total),
+                    'discount_type' => $request->discount_type,
+                    'discount_value' => $request->discount_value,
+                    'discount_amount' => $this->commonUtil->num_uf($request->discount_amount),
                     'transaction_date' => Carbon::now(),
                     'invoice_no' => $this->transactionUtil->createReturnTransactionInvoiceNoFromInvoice($sell_transaction->invoice_no),
                     'payment_status' => 'pending',
