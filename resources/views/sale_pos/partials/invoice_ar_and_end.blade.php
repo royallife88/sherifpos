@@ -272,7 +272,7 @@
                             {{@num_format($payment_data->used_deposit_balance)}}</td>
                     </tr>
                     @endif
-                    @if($transaction->payment_status != 'paid')
+                    @if($transaction->payment_status != 'paid' && $transaction->final_total - $transaction->transaction_payments->sum('amount') > 0)
                     <tr>
                         <td style="padding: 7px;width:30%">{{__('lang.due', [], 'ar')}} <br> {{__('lang.due', [], 'en')}}</td>
                         <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
