@@ -91,6 +91,8 @@
                     <th class="sum">@lang('lang.grand_total')</th>
                     <th class="sum">@lang('lang.paid')</th>
                     <th class="sum">@lang('lang.due')</th>
+                    <th>@lang('lang.notes')</th>
+                    <th>@lang('lang.files')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -108,7 +110,13 @@
                     <td>{{@num_format($sale->final_total)}}</td>
                     <td>{{@num_format($sale->transaction_payments->sum('amount'))}}</td>
                     <td>{{@num_format($sale->final_total - $sale->transaction_payments->sum('amount'))}}</td>
-
+                    <td>{{$sale->notes}}</td>
+                    <td>
+                        @if(!empty($sale->getFirstMediaUrl('sell_return')))
+                        <a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $sale->id, 'collection_name' => 'sell_return'])}}"
+                            data-container=".view_modal" class="btn btn-modal">@lang('lang.view')</a>
+                        @endif
+                    </td>
                     <td>
                         <div class="btn-group">
                             <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"

@@ -116,7 +116,20 @@
                             @endif
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>@lang('lang.notes')</label>
+                            <textarea rows="3" class="form-control" name="notes"
+                                id="notes">{{!empty($sell_return)? $sell_return->notes: ''}}</textarea>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                {!! Form::label('files', __('lang.files'). ':', []) !!} <br>
+                                <input type="file" name="files[]" id="files" multiple>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
                     <div class="row">
                         <div class="col-md-12">
                             <button type="sbumit" class="btn btn-primary save-btn">@lang('lang.save')</button>

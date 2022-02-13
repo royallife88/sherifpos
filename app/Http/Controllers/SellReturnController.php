@@ -124,7 +124,7 @@ class SellReturnController extends Controller
     public function add($id)
     {
         $sale  = Transaction::find($id);
-        // print_r($sale->discount_amount); die();
+
         $categories = Category::whereNull('parent_id')->get();
         $sub_categories = Category::whereNotNull('parent_id')->get();
         $brands = Brand::all();
@@ -189,6 +189,7 @@ class SellReturnController extends Controller
                     'invoice_no' => $this->transactionUtil->createReturnTransactionInvoiceNoFromInvoice($sell_transaction->invoice_no),
                     'payment_status' => 'pending',
                     'status' => 'final',
+                    'notes' => $request->notes,
                     'is_return' => 1,
                     'created_by' => Auth::user()->id,
                 ];
@@ -201,6 +202,7 @@ class SellReturnController extends Controller
                     $sell_return->final_total = $this->commonUtil->num_uf($request->final_total);
                     $sell_return->grand_total = $this->commonUtil->num_uf($request->grand_total);
                     $sell_return->status = 'final';
+                    $sell_return->notes = $request->notes;
                     $sell_return->save();
                 }
 
@@ -214,7 +216,11 @@ class SellReturnController extends Controller
                         $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $sell_return->store_id, $sell_line['quantity'], $old_quantity);
                     }
                 }
-
+                if ($request->files) {
+                    foreach ($request->file('files', []) as $key => $doc) {
+                        $sell_return->addMedia($doc)->toMediaCollection('sell_return');
+                    }
+                }
                 if ($request->payment_status != 'pending') {
                     $payment_data = [
                         'transaction_payment_id' => $request->transaction_payment_id,

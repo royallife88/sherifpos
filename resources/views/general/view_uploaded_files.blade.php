@@ -14,9 +14,9 @@
                     @foreach ($uploaded_files as $file)
                     @if(!empty($file))
                     @if(strpos($file, 'jpg') > 0 || strpos($file, 'png') > 0 || strpos($file, 'jpeg') > 0)
-                    <img src="{{asset('uploads/'.$file)}}" style="width: 100%; border: 2px solid #fff; padding: 4px;" />
+                    <img src="{{$file}}" style="width: 100%; border: 2px solid #fff; padding: 4px;" />
                     @else
-                    <a href="{{asset('uploads/'.$file)}}">@lang('lang.download')</a>
+                    <a href="{{$file}}">@lang('lang.download')</a>
                     @endif
                     @endif
                     @endforeach
