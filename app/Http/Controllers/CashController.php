@@ -110,7 +110,6 @@ class CashController extends Controller
             $query->whereDate('created_at', '<=', request()->end_date);
         }
 
-
         $cash_register = $query->select(
             'cash_registers.*',
             DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
