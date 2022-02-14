@@ -316,6 +316,7 @@ function get_label_product_row(
                 check_for_sale_promotion();
                 calculate_sub_totals();
                 reset_row_numbering();
+                getCustomerPointDetails();
             },
         });
     }

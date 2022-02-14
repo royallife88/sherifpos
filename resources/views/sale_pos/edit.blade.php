@@ -318,14 +318,51 @@
                                 <div class="navbar-header">
 
                                     <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
+                                        <li class="nav-item">
+                                            <a href="{{action('SellController@create')}}" id="commercial_invoice_btn" data-toggle="tooltip" data-title="@lang('lang.add_sale')"
+                                                 class="btn no-print"><img src="{{asset('images/396 Commercial Invoice Icon.png')}}" alt="" style="height: 40px; width: 35px;">
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a target="_blank" href="{{action('ContactUsController@getUserContactUs')}}" id="contact_us_btn" data-toggle="tooltip" data-title="@lang('lang.contact_us')"
+                                                style="background-image: url('{{asset('images/handshake.jpg')}}');" class="btn no-print">
+                                            </a>
+                                        </li>
+                                        <li class="nav-item"><button class="btn-danger btn-sm hide"
+                                            id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
                                         <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                     class="dripicons-expand"></i></a></li>
                                         @include('layouts.partials.notification_list')
+                                        @php
+                                        $config_languages = config('constants.langs');
+                                        $languages = [];
+                                        foreach ($config_languages as $key => $value) {
+                                        $languages[$key] = $value['full_name'];
+                                        }
+                                        @endphp
                                         <li class="nav-item">
+                                            <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
+                                                aria-haspopup="true" aria-expanded="false"
+                                                class="nav-link dropdown-item"><i class="dripicons-web"></i>
+                                                <span>{{__('lang.language')}}</span> <i
+                                                    class="fa fa-angle-down"></i></a>
+                                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                user="menu">
+                                                @foreach ($languages as $key => $lang)
+                                                <li>
+                                                    <a href="{{action('GeneralController@switchLanguage', $key) }}"
+                                                        class="btn btn-link">
+                                                        {{$lang}}</a>
+                                                </li>
+                                                @endforeach
+
+                                            </ul>
+                                        </li>
+                                        {{-- <li class="nav-item">
                                             <a class="dropdown-item" href="{{action('HomeController@getHelp')}}"
                                                 target="_blank"><i class="dripicons-information"></i>
                                                 {{__('lang.help')}}</a>
-                                        </li>&nbsp;
+                                        </li>&nbsp; --}}
                                         <li class="nav-item">
                                             <a rel="nofollow" data-target="#" href="#" data-toggle="dropdown"
                                                 aria-haspopup="true" aria-expanded="false"

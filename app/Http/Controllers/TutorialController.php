@@ -189,6 +189,7 @@ class TutorialController extends Controller
                 'name' => $tutorial->name,
                 'description' => $tutorial->description,
                 'link' => $tutorial->link,
+                'created_at' => $tutorial->created_at,
                 'video' => $tutorial->getFirstMediaUrl('tutorial'),
                 'thumbnail' => $tutorial->getFirstMediaUrl('thumbnail'),
             ];
@@ -210,6 +211,7 @@ class TutorialController extends Controller
                 'id' => $tutorial->id,
                 'name' => $tutorial->name,
                 'description' => $tutorial->description,
+                'created_at' => $tutorial->created_at,
             ];
         }
         return response()->json($tutorialsCategoriesDataArray, 200);

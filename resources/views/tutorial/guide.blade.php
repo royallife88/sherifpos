@@ -13,28 +13,27 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    @forelse ($tutorialsDataArray as $item)
-                    <div class="col-md-3">
-                        <a target="_blank" href="{{$item['link']}}">
-                            <div class="card video_thumb" style="width: 18rem;" data-video_src="{{$item['video']}}"
-                                data-thumbnail_src="{{$item['thumbnail']}}" data-name="{{$item['name']}}"
-                                data-description="{{$item['description']}}">
-                                <img class="card-img-top"
-                                    src="@if(!empty($item['thumbnail'])){{$item['thumbnail']}}@else{{asset('/uploads/' . session('logo'))}}@endif"
-                                    alt="{{$item['name']}}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{$item['name']}}</h5>
-                                    <p class="card-text">{{$item['description']}}</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    @empty
-                    <div class="col-md-12 text-center">
-                        <p class="text-center">@lang('lang.no_item_found')</p>
-                    </div>
-                    @endforelse
+                    <table class="table table-bordered" id="tutorial_table">
+                        <thead>
+                            <tr>
+                                <th>@lang('lang.tutorial')</th>
+                                <th>@lang('lang.added_at')</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($tutorialsDataArray as $item)
+                            <tr class="tr"
+                                data-href="{{$item['link']}}">
+                                <td>{{$item['name']}}</td>
+                                <td></td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="2">@lang('lang.no_item_found')</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -60,34 +59,13 @@
 <script src="https://vjs.zencdn.net/7.17.0/video.min.js"></script>
 @section('javascript')
 <script>
-    $(document).ready(function(){
-        player = videojs('my-video', {
-            controls: true,
-            autoplay: false,
-            preload: 'auto',
-            poster: '',
-            src: '',
-            responsive: true,
-            fluid: true,
-            playbackRates: [0.5, 1, 1.5, 2]
-        });
-    })
-    // $(document).on('click', '.video_thumb', function(){
-    //     let video_src = $(this).data('video_src');
-    //     let thumbnail_src = $(this).data('thumbnail_src');
-    //     let name = $(this).data('name');
-    //     let description = $(this).data('description');
-
-    //     player.src({
-    //         src: video_src,
-    //         type: 'video/mp4'
-    //     });
-    //     player.poster(thumbnail_src);
-    //     player.autoplay(false);
-    //     player.preload('auto');
-
-    //     $('.video_modal').modal('show');
-
-    // })
+    $('#tutorial_table').DataTable( {
+        "paging":   false,
+        "searching": false,
+        "info":     false
+    } );
+    $(document).on('click', '.tr', function () {
+        window.open($(this).data('href'), '_blank');
+    });
 </script>
 @endsection

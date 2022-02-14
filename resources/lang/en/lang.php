@@ -1118,5 +1118,6 @@ return [
     'edit_content' => 'Edit Content',
 
     'cash_given_to' => 'Cash Given To',
+    'added_at' => 'Added at',
 
 ];

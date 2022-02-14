@@ -249,7 +249,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
             {!! Form::label('other_cost', __('lang.other_cost'), []) !!}
             {!! Form::text('other_cost', !empty($recent_product) ? @num_format($recent_product->other_cost) :
             null, ['class' => 'form-control', 'placeholder' =>
-            __('lang.other_cost'), 'required']) !!}
+            __('lang.other_cost')]) !!}
         </div>
     </div>
     @can('product_module.purchase_price.create_and_edit')

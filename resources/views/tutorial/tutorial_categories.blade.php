@@ -10,7 +10,28 @@
             </div>
             <div class="card-body">
                 <div class="row">
-                    @forelse ($tutorialsCategoryDataArray as $item)
+                    <table class="table table-bordered" id="content_table">
+                        <thead>
+                            <tr>
+                                <th>@lang('lang.content')</th>
+                                <th>@lang('lang.added_at')</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($tutorialsCategoryDataArray as $item)
+                            <tr class="tr"
+                                data-href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
+                                <td>{{$item['name']}}</td>
+                                <td></td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="2">@lang('lang.no_item_found')</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                    {{-- @forelse ($tutorialsCategoryDataArray as $item)
                     <div class="col-md-3">
                         <a href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
                             <div class="card " style="width: 18rem;">
@@ -29,7 +50,7 @@
                     <div class="col-md-12 text-center">
                         <p class="text-center">@lang('lang.no_item_found')</p>
                     </div>
-                    @endforelse
+                    @endforelse --}}
                 </div>
 
             </div>
@@ -40,6 +61,13 @@
 
 @section('javascript')
 <script>
-
+    $('#content_table').DataTable( {
+        "paging":   false,
+        "searching": false,
+        "info":     false
+    } );
+    $(document).on('click', '.tr', function () {
+        window.location = $(this).data('href');
+    });
 </script>
 @endsection
