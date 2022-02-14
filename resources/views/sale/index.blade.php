@@ -183,12 +183,12 @@
                 type: "date-eu",
             },
             {
-                targets: [13],
+                targets: [14],
                 orderable: false,
                 searchable: false,
             },
             {
-                targets: [12],
+                targets: [13],
                 visible: false,
                 orderable: false,
                 searchable: false,
