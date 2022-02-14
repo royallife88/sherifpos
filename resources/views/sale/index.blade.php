@@ -105,6 +105,7 @@
                 <th>@lang('lang.reference')</th>
                 <th>@lang('lang.store')</th>
                 <th>@lang('lang.customer')</th>
+                <th>@lang('lang.phone')</th>
                 <th>@lang('lang.sale_status')</th>
                 <th>@lang('lang.payment_status')</th>
                 <th>@lang('lang.payment_type')</th>
@@ -198,6 +199,7 @@
             { data: "invoice_no", name: "invoice_no" },
             { data: "store_name", name: "stores.name" },
             { data: "customer_name", name: "customers.name" },
+            { data: "mobile_number", name: "customers.mobile_number" },
             { data: "status", name: "transactions.status" },
             { data: "payment_status", name: "transactions.payment_status" },
             { data: "method", name: "transaction_payments.method" },

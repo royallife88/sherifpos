@@ -16,7 +16,7 @@
                 <th>@lang('lang.created_by')</th>
                 <th>@lang('lang.number')</th>
                 <th>@lang('lang.stores')</th>
-                <th>@lang('lang.customer_types')</th>
+                <th>@lang('lang.earning_of_points')</th>
                 <th>@lang('lang.products')</th>
                 <th>@lang('lang.value_of_1000_points')</th>
                 <th>@lang('lang.start_date')</th>
@@ -31,11 +31,13 @@
                 <td>{{ucfirst($redemption_of_point->created_by_user->name ?? '')}}</td>
                 <td>{{$redemption_of_point->number}}</td>
                 <td>{{implode(', ', $redemption_of_point->stores->pluck('name')->toArray())}}</td>
-                <td>{{implode(', ', $redemption_of_point->customer_types->pluck('name')->toArray())}}</td>
+                <td>{{implode(', ', $redemption_of_point->earning_of_points->pluck('number')->toArray())}}</td>
                 <td>{{implode(', ', $redemption_of_point->products->pluck('name')->toArray())}}</td>
                 <td>{{@num_format($redemption_of_point->value_of_1000_points)}}</td>
-                <td>@if(!empty($redemption_of_point->start_date)){{@format_date($redemption_of_point->start_date)}}@endif</td>
-                <td>@if(!empty($redemption_of_point->end_date)){{@format_date($redemption_of_point->end_date)}}@endif</td>
+                <td>@if(!empty($redemption_of_point->start_date)){{@format_date($redemption_of_point->start_date)}}@endif
+                </td>
+                <td>@if(!empty($redemption_of_point->end_date)){{@format_date($redemption_of_point->end_date)}}@endif
+                </td>
                 <td>
                     <div class="btn-group">
                         <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"

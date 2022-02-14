@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\CustomerType;
+use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\RedemptionOfPoint;
@@ -37,7 +38,7 @@ class RedemptionOfPointController extends Controller
         $this->productUtil = $productUtil;
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -63,13 +64,13 @@ class RedemptionOfPointController extends Controller
         $stores = Store::getDropdown();
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
-        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $earning_of_points = EarningOfPoint::pluck('number', 'id');
 
         return view('redemption_of_point.create')->with(compact(
             'stores',
             'product_classes',
             'products',
-            'customer_types'
+            'earning_of_points'
         ));
     }
 
@@ -85,7 +86,7 @@ class RedemptionOfPointController extends Controller
         $this->validate(
             $request,
             ['store_ids' => ['required', 'max:255']],
-            ['customer_type_ids' => ['required', 'max:255']],
+            ['earning_of_point_ids' => ['required', 'max:255']],
             ['value_of_1000_points' => ['required', 'max:255']],
         );
 
@@ -145,9 +146,9 @@ class RedemptionOfPointController extends Controller
         $redemption_of_point = RedemptionOfPoint::find($id);
         $stores = Store::getDropdown();
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
-        $customer_types  = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $product_classes = ProductClass::get();
         $pct_data = $redemption_of_point->pct_data;
+        $earning_of_points = EarningOfPoint::pluck('number', 'id');
 
         return view('redemption_of_point.edit')->with(compact(
             'redemption_of_point',
@@ -155,7 +156,7 @@ class RedemptionOfPointController extends Controller
             'product_classes',
             'stores',
             'products',
-            'customer_types'
+            'earning_of_points'
         ));
     }
 
@@ -171,7 +172,7 @@ class RedemptionOfPointController extends Controller
         $this->validate(
             $request,
             ['store_ids' => ['required', 'max:255']],
-            ['customer_type_ids' => ['required', 'max:255']],
+            ['earning_of_point_ids' => ['required', 'max:255']],
             ['value_of_1000_points' => ['required', 'max:255']],
         );
 
@@ -225,12 +226,13 @@ class RedemptionOfPointController extends Controller
         return $output;
     }
 
-     /**
+    /**
      * return the list of redeemed point sales
      *
      * @return void
      */
-    public function getListOfRedeemedPoint(){
+    public function getListOfRedeemedPoint()
+    {
         $transactions = Transaction::where('rp_redeemed', '>', 0)->orderBy('transaction_date', 'desc')->get();
 
         return view('redemption_of_point.get_list_of_redeemed_points')->with(compact(

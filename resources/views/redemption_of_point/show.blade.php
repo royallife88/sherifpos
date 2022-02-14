@@ -21,7 +21,7 @@
                 </div>
                 <div class="col-md-12">
                     <div class="form-group">
-                        <b>{!! Form::label('customer_type_ids', __( 'lang.customer_type' ) . ':') !!}</b> {{implode(', ', $redemption_of_point->customer_types->pluck('name')->toArray())}}
+                        <b>{!! Form::label('earning_of_points', __( 'lang.earning_of_points' ) . ':') !!}</b> {{implode(', ', $redemption_of_point->earning_of_points->pluck('number')->toArray())}}
 
                     </div>
                 </div>

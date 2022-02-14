@@ -282,23 +282,22 @@ class TransactionUtil extends Util
         $total_points_value = 0;
 
         $customer = Customer::find($customer_id);
-        if ($customer->is_default != 1) {
 
-            $customer_type_id = (string) $customer->customer_type_id;
-            if (!empty($customer_type_id)) {
-                $redemption_of_point = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
-                    ->whereJsonContains('store_ids', $store_id)
-                    ->first();
-                if (!empty($redemption_of_point)) {
-                    if (!empty($redemption_of_point->end_date)) {
-                        //if end date set then check for expiry
-                        if ($redemption_of_point->end_date >= date('Y-m-d')) {
-                            $total_points_value = $this->calculatePointsValue($customer->total_rp,  $redemption_of_point);
-                        }
-                    } else {
-                        //if no end date then its is for unlimited time
+        $customer_type_id = (string) $customer->customer_type_id;
+        if (!empty($customer_type_id)) {
+            $redemption_of_point = RedemptionOfPoint::leftjoin('earning_of_points', 'redemption_of_points.earning_of_point_ids', 'earning_of_points.id')
+                ->whereJsonContains('earning_of_points.customer_type_ids', $customer_type_id)
+                ->whereJsonContains('redemption_of_points.store_ids', $store_id)
+                ->first();
+            if (!empty($redemption_of_point)) {
+                if (!empty($redemption_of_point->end_date)) {
+                    //if end date set then check for expiry
+                    if ($redemption_of_point->end_date >= date('Y-m-d')) {
                         $total_points_value = $this->calculatePointsValue($customer->total_rp,  $redemption_of_point);
                     }
+                } else {
+                    //if no end date then its is for unlimited time
+                    $total_points_value = $this->calculatePointsValue($customer->total_rp,  $redemption_of_point);
                 }
             }
         }
@@ -317,26 +316,25 @@ class TransactionUtil extends Util
         $customer = Customer::find($transaction->customer_id);
         $store_id = (string) $transaction->store_id;
 
-        if ($customer->is_default != 1) {
 
-            $customer_type_id = (string) $customer->customer_type_id;
-            if (!empty($customer_type_id)) {
-                $redemption_of_points = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
-                    ->whereJsonContains('store_ids', $store_id)
-                    ->first();
-                if (!empty($redemption_of_points)) {
-                    if (!empty($redemption_of_points->end_date)) {
-                        //if end date set then check for expiry
-                        if ($redemption_of_points->end_date >= date('Y-m-d')) {
-                            $total_points = $this->calculateRedeemPointsByProdct($transaction->transaction_sell_lines,  $redemption_of_points);
-                        }
-                    } else {
-                        //if no end date then its is for unlimited time
+        $customer_type_id = (string) $customer->customer_type_id;
+        if (!empty($customer_type_id)) {
+            $redemption_of_points = RedemptionOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                ->whereJsonContains('store_ids', $store_id)
+                ->first();
+            if (!empty($redemption_of_points)) {
+                if (!empty($redemption_of_points->end_date)) {
+                    //if end date set then check for expiry
+                    if ($redemption_of_points->end_date >= date('Y-m-d')) {
                         $total_points = $this->calculateRedeemPointsByProdct($transaction->transaction_sell_lines,  $redemption_of_points);
                     }
+                } else {
+                    //if no end date then its is for unlimited time
+                    $total_points = $this->calculateRedeemPointsByProdct($transaction->transaction_sell_lines,  $redemption_of_points);
                 }
             }
         }
+
         return $total_points;
     }
 

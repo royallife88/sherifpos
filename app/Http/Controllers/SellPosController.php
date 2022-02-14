@@ -483,6 +483,7 @@ class SellPosController extends Controller
                             'gift_card_number' => $request->gift_card_number,
                             'amount_to_be_used' => $request->amount_to_be_used,
                             'payment_note' => $request->payment_note,
+                            'change_amount' => $payment['change_amount'] ?? 0,
                         ];
                         if ($amount > 0) {
                             $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
@@ -984,6 +985,7 @@ class SellPosController extends Controller
                 'transactions.*',
                 'users.name as created_by_name',
                 'customers.name as customer_name',
+                'customers.mobile_number',
             )
                 ->groupBy('transactions.id');
 
@@ -1146,7 +1148,8 @@ class SellPosController extends Controller
             $transactions = $query->select(
                 'transactions.*',
                 'customer_types.name as customer_type_name',
-                'customers.name as customer_name'
+                'customers.name as customer_name',
+                'customers.mobile_number',
             );
 
             return DataTables::of($transactions)

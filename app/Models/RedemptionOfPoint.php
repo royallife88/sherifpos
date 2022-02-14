@@ -23,15 +23,15 @@ class RedemptionOfPoint extends Model
      */
     protected $casts = [
         'store_ids' => 'array',
-        'customer_type_ids' => 'array',
+        'earning_of_point_ids' => 'array',
         'product_ids' => 'array',
         'pct_data' => 'array',
     ];
 
 
-    public function customer_types()
+    public function earning_of_points()
     {
-        return $this->belongsToJson(CustomerType::class, 'customer_type_ids');
+        return $this->belongsToJson(EarningOfPoint::class, 'earning_of_point_ids');
     }
 
     public function stores()
