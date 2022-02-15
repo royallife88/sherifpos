@@ -29,7 +29,7 @@
                                     {!! Form::label('earning_of_point_ids', __( 'lang.earning_of_points' ) . ':*') !!}
                                     {!! Form::select('earning_of_point_ids[]', $earning_of_points, $redemption_of_point->earning_of_point_ids, ['class' =>
                                     'selectpicker
-                                    form-control', 'data-live-search' => "true",  'required', "data-actions-box"=>"true"]) !!}
+                                    form-control', 'data-live-search' => "true", 'multiple', 'required', "data-actions-box"=>"true"]) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

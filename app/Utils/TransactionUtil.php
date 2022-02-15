@@ -439,27 +439,26 @@ class TransactionUtil extends Util
 
         $customer = Customer::find($transaction->customer_id);
         $store_id = (string) $transaction->store_id;
-        if ($customer->is_default != 1) {
 
-            $customer_type_id = (string) $customer->customer_type_id;
+        $customer_type_id = (string) $customer->customer_type_id;
 
-            if (!empty($customer_type_id)) {
-                $earning_point_system = EarningOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
-                    ->whereJsonContains('store_ids', $store_id)
-                    ->first();
-                if (!empty($earning_point_system)) {
-                    if (!empty($earning_point_system->end_date)) {
-                        //if end date set then check for expiry
-                        if ($earning_point_system->end_date >= date('Y-m-d')) {
-                            $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
-                        }
-                    } else {
-                        //if no end date then its is for unlimited time
+        if (!empty($customer_type_id)) {
+            $earning_point_system = EarningOfPoint::whereJsonContains('customer_type_ids', $customer_type_id)
+                ->whereJsonContains('store_ids', $store_id)
+                ->first();
+            if (!empty($earning_point_system)) {
+                if (!empty($earning_point_system->end_date)) {
+                    //if end date set then check for expiry
+                    if ($earning_point_system->end_date >= date('Y-m-d')) {
                         $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
                     }
+                } else {
+                    //if no end date then its is for unlimited time
+                    $total_points = $this->calculatePointsByProducts($transaction->transaction_sell_lines,  $earning_point_system);
                 }
             }
         }
+
         return $total_points;
     }
 
