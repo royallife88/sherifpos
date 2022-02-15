@@ -566,7 +566,7 @@ class TransactionUtil extends Util
             'prova_datetime' => $request->prova_datetime ?? null,
             'delivery_datetime' => $request->delivery_datetime ?? null,
             'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
-            'deliveryman_id' => $request->deliveryman_id,
+            'deliveryman_id' => $request->deliveryman_id_hidden,
             'delivery_cost' => $this->num_uf($request->delivery_cost),
             'delivery_address' => $request->delivery_address,
             'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,

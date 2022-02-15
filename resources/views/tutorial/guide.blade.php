@@ -25,7 +25,7 @@
                             <tr class="tr"
                                 data-href="{{$item['link']}}">
                                 <td>{{$item['name']}}</td>
-                                <td></td>
+                                <td>{{@format_date($item['created_at'])}}</td>
                             </tr>
                             @empty
                             <tr>

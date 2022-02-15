@@ -39,7 +39,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="">
+                        <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="@if(!empty($transaction)){{$transaction->deliveryman_id}}@endif">
                     </div>
                     <div class="col-md-6">
                         <label for="delivery_cost">@lang('lang.delivery_cost'):</label>

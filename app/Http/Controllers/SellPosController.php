@@ -1032,7 +1032,7 @@ class SellPosController extends Controller
                 })
                 ->addColumn('deliveryman_name', function ($row) {
                     if (!empty($row->deliveryman)) {
-                        return $row->deliveryman->name;
+                        return $row->deliveryman->employee_name;
                     } else {
                         return '';
                     }
@@ -1172,7 +1172,7 @@ class SellPosController extends Controller
 
                 ->addColumn('deliveryman_name', function ($row) {
                     if (!empty($row->deliveryman)) {
-                        return $row->deliveryman->name;
+                        return $row->deliveryman->employee_name;
                     } else {
                         return '';
                     }

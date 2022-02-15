@@ -22,7 +22,7 @@
                             <tr class="tr"
                                 data-href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
                                 <td>{{$item['name']}}</td>
-                                <td></td>
+                                <td>{{@format_date($item['created_at'])}}</td>
                             </tr>
                             @empty
                             <tr>
@@ -31,26 +31,6 @@
                             @endforelse
                         </tbody>
                     </table>
-                    {{-- @forelse ($tutorialsCategoryDataArray as $item)
-                    <div class="col-md-3">
-                        <a href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
-                            <div class="card " style="width: 18rem;">
-                                <img class="card-img-top"
-                                    src="@if(!empty($item['thumbnail'])){{$item['thumbnail']}}@else{{asset('/uploads/' . session('logo'))}}@endif"
-                                    alt="{{$item['name']}}">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{$item['name']}}</h5>
-                                    <p class="card-text">{{$item['description']}}</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                    @empty
-                    <div class="col-md-12 text-center">
-                        <p class="text-center">@lang('lang.no_item_found')</p>
-                    </div>
-                    @endforelse --}}
                 </div>
 
             </div>
