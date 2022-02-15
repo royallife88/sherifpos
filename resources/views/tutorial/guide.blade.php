@@ -22,7 +22,7 @@
                         </thead>
                         <tbody>
                             @forelse ($tutorialsDataArray as $item)
-                            <tr class="tr"
+                            <tr class="tr" style="cursor: pointer;"
                                 data-href="{{$item['link']}}">
                                 <td>{{$item['name']}}</td>
                                 <td>{{@format_date($item['created_at'])}}</td>

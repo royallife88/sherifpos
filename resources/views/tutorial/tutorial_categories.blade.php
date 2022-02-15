@@ -19,7 +19,7 @@
                         </thead>
                         <tbody>
                             @forelse ($tutorialsCategoryDataArray as $item)
-                            <tr class="tr"
+                            <tr class="tr"  style="cursor: pointer;"
                                 data-href="{{action('TutorialController@getTutorialsGuideByCategory', $item['id'])}}">
                                 <td>{{$item['name']}}</td>
                                 <td>{{@format_date($item['created_at'])}}</td>
