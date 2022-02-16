@@ -522,10 +522,7 @@ class SellPosController extends Controller
 
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-            $html_content = view('sale_pos.partials.invoice')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
 
             $output = [
                 'success' => true,
