@@ -119,12 +119,12 @@
                                                 class="btn btn-danger btn-modal text-white">@lang('lang.view')</a>
                                         </td>
                                         <td>
-                                            @can('account_management.expenses.create_and_edit')
+                                            @can('expense.expenses.create_and_edit')
                                             <a href="{{action('ExpenseController@edit', $expense->id)}}"
                                                 class="btn btn-danger text-white edit_job"><i
                                                     class="fa fa-pencil-square-o"></i></a>
                                             @endcan
-                                            @can('account_management.expenses.delete')
+                                            @can('expense.expenses.delete')
                                             <a data-href="{{action('ExpenseController@destroy', $expense->id)}}"
                                                 data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
                                                 class="btn btn-danger text-white delete_item"><i
