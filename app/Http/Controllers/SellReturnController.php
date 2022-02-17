@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Employee;
+use App\Models\GiftCard;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
@@ -184,6 +185,8 @@ class SellReturnController extends Controller
                     'grand_total' => $this->commonUtil->num_uf($request->grand_total),
                     'discount_type' => $request->discount_type,
                     'discount_value' => $request->discount_value,
+                    'gift_card_id' => $request->gift_card_id,
+                    'gift_card_amount' => $request->gift_card_amount,
                     'discount_amount' => $this->commonUtil->num_uf($request->discount_amount),
                     'transaction_date' => Carbon::now(),
                     'invoice_no' => $this->transactionUtil->createReturnTransactionInvoiceNoFromInvoice($sell_transaction->invoice_no),
@@ -204,6 +207,10 @@ class SellReturnController extends Controller
                     $sell_return->status = 'final';
                     $sell_return->notes = $request->notes;
                     $sell_return->save();
+                }
+
+                if (!empty($request->gift_card_id)) {
+                    GiftCard::where('id', $request->gift_card_id)->increment('balance', $request->gift_card_amount);
                 }
 
                 foreach ($request->transaction_sell_line as $sell_line) {

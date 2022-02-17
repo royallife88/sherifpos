@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\GiftCard;
 use App\Models\Leave;
 use App\Models\Store;
 use App\Models\System;
@@ -409,7 +410,7 @@ class HomeController extends Controller
         }
 
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
-// print_r($revenue ); die();
+
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
         if (!empty($start_date)) {
             $sell_return_query->whereDate('transaction_date', '>=', $start_date);
@@ -424,6 +425,12 @@ class HomeController extends Controller
             $sell_return_query->where('store_pos_id', $store_pos_id);
         }
         $sell_return = $sell_return_query->sum('final_total');
+
+        $gift_card_returned = Transaction::where('type', 'sell_return')->where('status', 'final')
+            ->where('gift_card_amount', '>', 0)
+            ->sum('gift_card_amount');
+
+        $sell_return  = $sell_return - $gift_card_returned; // for gift card return no change in sell return
 
         $purchase_return_query = Transaction::where('type', 'purchase_return')->where('status', 'final');
         if (!empty($start_date)) {
@@ -446,8 +453,9 @@ class HomeController extends Controller
 
         $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id, $store_pos_id);
         $cost_sold_returned_product = $this->transactionUtil->getCostOfSoldReturnedProducts($start_date, $end_date, $store_id, $store_pos_id);
+        $gift_card_sold = GiftCard::sum('balance');
 
-        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product;
+        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned;
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

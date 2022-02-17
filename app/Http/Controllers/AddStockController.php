@@ -338,16 +338,18 @@ class AddStockController extends Controller
                 ];
                 $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
 
-                $user_id = null;
-                if (!empty($request->source_id)) {
-                    if ($request->source_type == 'pos') {
-                        $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                if ($payment_data['method'] == 'cash') {
+                    $user_id = null;
+                    if (!empty($request->source_id)) {
+                        if ($request->source_type == 'pos') {
+                            $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                        }
+                        if ($request->source_type == 'user') {
+                            $user_id = $request->source_id;
+                        }
                     }
-                    if ($request->source_type == 'user') {
-                        $user_id = $request->source_id;
-                    }
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
                 }
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
 
                 if ($request->upload_documents) {
                     foreach ($request->file('upload_documents', []) as $key => $doc) {

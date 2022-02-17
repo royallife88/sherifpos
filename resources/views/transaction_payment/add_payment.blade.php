@@ -86,7 +86,28 @@
                     <label>@lang('lang.year')</label>
                     <input type="text" name="card_year" class="form-control">
                 </div>
-
+                @if($transaction->type == 'add_stock')
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'),
+                        'store' => __('lang.store')],
+                        'user', ['class' => 'selectpicker form-control',
+                        'data-live-search'=>"true",
+                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
+                        {!! Form::select('source_id', $users,
+                        null, ['class' => 'selectpicker form-control',
+                        'data-live-search'=>"true",
+                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select'), 'id' =>
+                        'source_id']) !!}
+                    </div>
+                </div>
+                @endif
             </div>
 
         </div>
@@ -102,6 +123,19 @@
 </div><!-- /.modal-dialog -->
 
 <script>
+     $('#source_type').change(function(){
+        if($(this).val() !== ''){
+            $.ajax({
+                method: 'get',
+                url: '/add-stock/get-source-by-type-dropdown/'+$(this).val(),
+                data: {  },
+                success: function(result) {
+                    $("#source_id").empty().append(result);
+                    $("#source_id").selectpicker("refresh");
+                },
+            });
+        }
+    });
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{session('language')}}',

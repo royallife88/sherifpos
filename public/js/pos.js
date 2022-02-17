@@ -1038,7 +1038,7 @@ $(document).on("change", "#amount_to_be_used", function () {
 
     let new_total = final_total - amount_to_be_used;
     __write_number($("#gift_card_final_total"), new_total);
-    __write_number($("#final_total"), new_total);
+    __write_number($("#amount"), amount_to_be_used);
 });
 $(document).on("change", "#gift_card_number", function () {
     let gift_card_number = $(this).val();

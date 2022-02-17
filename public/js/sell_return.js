@@ -81,51 +81,55 @@ $(document).on("click", ".filter-by", function () {
     }
 });
 $(document).on("change", "#discount_amount", function () {
-    calculate_sub_totals()
+    calculate_sub_totals();
 });
 function calculate_sub_totals() {
     var grand_total = 0; //without any discounts
     var total = 0;
     var item_count = 0;
     var product_discount_total = 0;
+    var total_item_tax = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
         let price_hidden = __read_number($(tr).find(".price_hidden"));
+        let item_tax = __read_number($(tr).find(".item_tax"));
         let sub_total = 0;
 
-        if (sell_price > price_hidden) {
-            let price_discount = (sell_price - price_hidden) * quantity;
-            $(tr).find(".product_discount_type").val("surplus");
-            __write_number(
-                $(tr).find(".product_discount_value"),
-                price_discount
-            );
-            __write_number(
-                $(tr).find(".product_discount_amount"),
-                price_discount
-            );
-            sub_total = sell_price * quantity;
-        } else if (sell_price < price_hidden) {
-            let price_discount = (price_hidden - sell_price) * quantity;
-            $(tr).find(".product_discount_type").val("fixed");
-            __write_number(
-                $(tr).find(".product_discount_value"),
-                price_discount
-            );
-            __write_number(
-                $(tr).find(".product_discount_amount"),
-                price_discount
-            );
-            sub_total = price_hidden * quantity;
-        } else {
-            sub_total = price_hidden * quantity;
-        }
+        if (quantity > 0) {
+            if (sell_price > price_hidden) {
+                let price_discount = (sell_price - price_hidden) * quantity;
+                $(tr).find(".product_discount_type").val("surplus");
+                __write_number(
+                    $(tr).find(".product_discount_value"),
+                    price_discount
+                );
+                __write_number(
+                    $(tr).find(".product_discount_amount"),
+                    price_discount
+                );
+                sub_total = sell_price * quantity;
+            } else if (sell_price < price_hidden) {
+                let price_discount = (price_hidden - sell_price) * quantity;
+                $(tr).find(".product_discount_type").val("fixed");
+                __write_number(
+                    $(tr).find(".product_discount_value"),
+                    price_discount
+                );
+                __write_number(
+                    $(tr).find(".product_discount_amount"),
+                    price_discount
+                );
+                sub_total = price_hidden * quantity;
+            } else {
+                sub_total = price_hidden * quantity;
+            }
 
-        __write_number($(tr).find(".sub_total"), sub_total);
-        let product_discount = calculate_product_discount(tr);
-        product_discount_total += product_discount;
-        sub_total -= product_discount;
+            __write_number($(tr).find(".sub_total"), sub_total);
+            let product_discount = calculate_product_discount(tr);
+            product_discount_total += product_discount;
+            sub_total -= product_discount;
+        }
 
         grand_total += sub_total;
         $(".grand_total_span").text(
@@ -138,6 +142,8 @@ function calculate_sub_totals() {
             .text(__currency_trans_from_en(sub_total, false));
 
         total += sub_total;
+        item_tax = item_tax / quantity;
+        total_item_tax += item_tax;
 
         item_count++;
     });
@@ -155,6 +161,7 @@ function calculate_sub_totals() {
 
     let delivery_cost = __read_number($("#delivery_cost"));
     total += delivery_cost;
+    total += total_item_tax;
 
     __write_number($("#final_total"), total);
     $("#final_total").change();
@@ -256,6 +263,12 @@ $(document).on("click", ".plus", function () {
 
 $(document).on("change", "#final_total", function (e) {
     let final_total = __read_number($("#final_total"));
+    let gift_card_id = parseInt($("#gift_card_id").val());
+
+    if (gift_card_id > 0 && final_total > 0) {
+        let gift_card_amount = __read_number($("#gift_card_amount"));
+        final_total = final_total - gift_card_amount;
+    }
     __write_number($("#amount"), final_total);
     $("#amount").change();
     __write_number($("#paying_amount"), final_total);

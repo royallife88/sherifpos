@@ -78,6 +78,11 @@
                                             value="{{$sale->store_pos_id}}" />
                                         <input type="hidden" id="customer_id" name="customer_id"
                                             value="{{$sale->customer_id}}" />
+                                        <input type="hidden" id="gift_card_id" name="gift_card_id"
+                                            value="{{$sale->gift_card_id}}" />
+                                        <input type="hidden" id="gift_card_amount" name="gift_card_amount"
+                                            value="{{$sale->transaction_payments->where('method', 'gift_card')->sum('amount')}}" />
+
                                     </div>
                                 </div>
                             </div>

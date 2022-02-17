@@ -20,7 +20,12 @@
             class="coupon_discount_type" value="{{$product->coupon_discount_type}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][coupon_discount_amount]"
             class="coupon_discount_amount" value="{{$product->coupon_discount_amount}}">
-
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][tax_id]" class="tax_id"
+            value="{{$product->tax_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][tax_rate]" class="tax_rate"
+            value="{{@num_format($product->tax_rate)}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][item_tax]" class="item_tax"
+            value="{{$product->item_tax}}">
     </td>
     <td>@if(isset($product->quantity)){{@num_format($product->quantity)}}@else{{1}}@endif</td>
     <td style="width: 20%">
