@@ -2042,3 +2042,6 @@ $(document).on("change", "#sale_note_draft", function () {
     let sale_note = $(this).val();
     $("#sale_note").val(sale_note);
 });
+$(document).on("click", ".draft_pay", function () {
+    $("#draftTransaction").modal("hide");
+});
