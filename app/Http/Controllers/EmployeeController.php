@@ -110,7 +110,7 @@ class EmployeeController extends Controller
             'password' => 'required|confirmed|max:255',
         ]);
 
-        try {
+        // try {
 
             DB::beginTransaction();
 
@@ -195,15 +195,15 @@ class EmployeeController extends Controller
             ];
 
             return redirect()->to('/hrm/employee')->with('status', $output);
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
 
-            return redirect()->back()->with('status', $output);
-        }
+        //     return redirect()->back()->with('status', $output);
+        // }
     }
 
     public function createOrUpdateNumberofLeaves($request, $employee_id)
