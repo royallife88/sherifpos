@@ -179,18 +179,16 @@
             <br>
             <div class="col-md-6" style="width: 50%;">
                 <div class="col-md-12">
-                    {!! Form::label('supplier_name', __('lang.customer_name'), []) !!}:
                     <b>{{$sale->customer->name ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    {!! Form::label('email', __('lang.email'), []) !!}: <b>{{$sale->customer->email ?? ''}}</b>
+                   <b>{{$sale->customer->email ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    {!! Form::label('mobile_number', __('lang.mobile_number'), []) !!}:
                     <b>{{$sale->customer->mobile_number ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    {!! Form::label('address', __('lang.address'), []) !!}: <b>{{$sale->customer->address ??
+                    <b>{{$sale->customer->address ??
                         ''}}</b>
                 </div>
             </div>

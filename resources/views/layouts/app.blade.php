@@ -129,7 +129,6 @@
     $(document).on('click', '.btn-modal', function (e) {
         e.preventDefault();
         var container = $(this).data('container');
-        console.log($(this).data('href'));
         $.ajax({
             url: $(this).data('href'),
             dataType: 'html',
