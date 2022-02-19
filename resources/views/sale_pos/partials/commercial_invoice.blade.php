@@ -370,7 +370,6 @@
                         <th>@lang('lang.grand_total'):</th>
                         <td style="text-align: right;">{{@num_format($sale->final_total)}}</td>
                     </tr>
-                    @if($sale->status == 'final')
                     <tr>
                         <th>@lang('lang.paid_amount'):</th>
                         <td style="text-align: right;">{{@num_format($sale->transaction_payments->sum('amount'))}}</td>
@@ -380,7 +379,6 @@
                         <td style="text-align: right;"> {{@num_format($sale->final_total -
                             $sale->transaction_payments->sum('amount'))}}</td>
                     </tr>
-                    @endif
                 </table>
             </div>
             <div class="col-md-12">
