@@ -142,8 +142,10 @@ function calculate_sub_totals() {
             .text(__currency_trans_from_en(sub_total, false));
 
         total += sub_total;
-        item_tax = item_tax / quantity;
-        total_item_tax += item_tax;
+        if (quantity > 0) {
+            item_tax = item_tax / quantity;
+            total_item_tax += item_tax;
+        }
 
         item_count++;
     });
@@ -162,7 +164,6 @@ function calculate_sub_totals() {
     let delivery_cost = __read_number($("#delivery_cost"));
     total += delivery_cost;
     total += total_item_tax;
-
     __write_number($("#final_total"), total);
     $("#final_total").change();
 
