@@ -115,6 +115,8 @@
                             @if($sell_return->transaction_payments->count() > 0)
                             @include('transaction_payment.partials.payment_form', ['payment' =>
                             $sell_return->transaction_payments->first()])
+                            @else
+                            @include('transaction_payment.partials.payment_form')
                             @endif
                             @else
                             @include('transaction_payment.partials.payment_form')
