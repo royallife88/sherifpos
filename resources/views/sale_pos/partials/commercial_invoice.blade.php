@@ -179,16 +179,16 @@
             <br>
             <div class="col-md-6" style="width: 50%;">
                 <div class="col-md-12">
-                    <b>{{$sale->customer->name ?? ''}}</b>
+                    @lang('lang.name'): <b>{{$sale->customer->name ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                   <b>{{$sale->customer->email ?? ''}}</b>
+                    @lang('lang.email'): <b>{{$sale->customer->email ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    <b>{{$sale->customer->mobile_number ?? ''}}</b>
+                    @lang('lang.phone'): <b>{{$sale->customer->mobile_number ?? ''}}</b>
                 </div>
                 <div class="col-md-12">
-                    <b>{{$sale->customer->address ??
+                    @lang('lang.address'): <b>{{$sale->customer->address ??
                         ''}}</b>
                 </div>
             </div>

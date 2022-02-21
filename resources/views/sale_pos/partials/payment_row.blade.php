@@ -14,6 +14,7 @@
         <label class="change_text">@lang('lang.change') : </label>
         <span class="change" class="ml-2">0.00</span>
         <input type="hidden" name="payments[{{$index}}][change_amount]" class="change_amount">
+        <input type="hidden" name="payments[{{$index}}][pending_amount]" class="pending_amount">
     </div>
     <div class="form-group col-md-12 mt-3 hide card_field">
         <div class="row">

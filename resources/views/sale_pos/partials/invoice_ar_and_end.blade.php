@@ -105,10 +105,9 @@
                 'ar')}}<br>
                 @lang('lang.reference',[], 'en'): {{$transaction->invoice_no}} {{__('lang.reference',[], 'ar')}}<br>
                 @if(!empty($transaction->customer) && $transaction->customer->is_default == 0)
-                @lang('lang.customer',[], 'en'): {{$transaction->customer->name}} {{__('lang.customer',[], 'ar')}}<br>
-                @lang('lang.address',[], 'en'): {{$transaction->customer->address}} {{__('lang.address',[], 'ar')}}<br>
-                @lang('lang.mobile_number',[], 'en'): {{$transaction->customer->mobile_number}}
-                {{__('lang.mobile_number',[], 'ar')}}<br>
+                {{$transaction->customer->name}}<br>
+                {{$transaction->customer->address}}<br>
+                {{$transaction->customer->mobile_number}}<br>
                 @endif
                 @if(!empty($transaction->sale_note))
                 @lang('lang.sale_note', [], 'en'): {{$transaction->sale_note}} @lang('lang.address',[], 'ar') <br>

@@ -15,7 +15,7 @@
                     true, 'class' => 'pos-form', 'id' => 'add_sale_form']) !!}
                     <input type="hidden" name="default_customer_id" id="default_customer_id"
                         value="@if(!empty($walk_in_customer)){{$walk_in_customer->id}}@endif">
-                        <input type="hidden" name="row_count" id="row_count" value="0">
+                    <input type="hidden" name="row_count" id="row_count" value="0">
                     <div class="row">
                         <div class="col-md-12">
                             <div class="row">
@@ -164,110 +164,118 @@
                             </div>
                         </div>
                     </div>
+                    <div id="payment_rows" class="col-md-12">
+                        <div class="row payment_row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    {!! Form::label('payment_status', __('lang.payment_status'). ':*', [])
+                                    !!}
+                                    {!! Form::select('payment_status', $payment_status_array,
+                                    null, ['class' => 'selectpicker form-control',
+                                    'data-live-search'=>"true", 'required',
+                                    'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                </div>
+                            </div>
+                            <div class="col-md-3 mt-1 payment_fields hide">
+                                <label>@lang('lang.payment_method')</label>
+                                {!! Form::select('payments[0][method]', $payment_types, null, ['class' =>
+                                'form-control',
+                                'id' =>
+                                'method', 'required', 'data-live-search' => 'true']) !!}
+                            </div>
+                            <div class="col-md-3 mt-1 payment_fields hide">
+                                <label>@lang('lang.received_amount') *</label>
+                                <input type="text" name="payments[0][amount]" class="form-control numkey received_amount" required
+                                    id="amount" step="any">
+                            </div>
+                            <div class="col-md-3 mt-1 payment_fields hide">
+                                <label>@lang('lang.paying_amount') *</label>
+                                <input type="text" name="paying_amount" class="form-control numkey" id="paying_amount"
+                                    step="any">
+                            </div>
+                            <div class="col-md-3 payment_fields hide mt-1">
+                                <label class="change_text">@lang('lang.change') : </label>
+                                <span class="change" class="ml-2">0.00</span>
+                                <input type="hidden" name="payments[0][change_amount]" class="change_amount" value="0">
+                                <input type="hidden" name="payments[0][pending_amount]" class="pending_amount">
+                            </div>
 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {!! Form::label('payment_status', __('lang.payment_status'). ':*', [])
-                                !!}
-                                {!! Form::select('payment_status', $payment_status_array,
-                                null, ['class' => 'selectpicker form-control',
-                                'data-live-search'=>"true", 'required',
-                                'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                            <div class="col-md-12 hide">
+                                <div class="i-checks">
+                                    <input id="print_the_transaction" name="print_the_transaction" type="checkbox"
+                                        checked value="1" class="form-control-custom">
+                                    <label
+                                        for="print_the_transaction"><strong>@lang('lang.print_the_transaction')</strong></label>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3 mt-1 payment_fields hide">
-                            <label>@lang('lang.payment_method')</label>
-                            {!! Form::select('payments[0][method]', $payment_types, null, ['class' => 'form-control',
-                            'id' =>
-                            'method', 'required', 'data-live-search' => 'true']) !!}
-                        </div>
-                        <div class="col-md-3 mt-1 payment_fields hide">
-                            <label>@lang('lang.received_amount') *</label>
-                            <input type="text" name="payments[0][amount]" class="form-control numkey" required
-                                id="amount" step="any">
-                        </div>
-                        <div class="col-md-3 mt-1 payment_fields hide">
-                            <label>@lang('lang.paying_amount') *</label>
-                            <input type="text" name="paying_amount" class="form-control numkey" id="paying_amount"
-                            step="any">
-                        </div>
-                        <input type="hidden" name="payments[0][change_amount]" class="change_amount" value="0">
-                        {{-- <div class="col-md-3 mt-1 payment_fields hide">
-                            <label class="change_text">@lang('lang.change') : </label>
-                            <span class="change" class="ml-2">0.00</span>
-                        </div> --}}
+                            <div class="form-group col-md-12 mt-3 card_field payment_fields hide">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>@lang('lang.card_number') *</label>
+                                        <input type="text" name="payments[0][card_number]" class="form-control">
+                                    </div>
+                                    {{-- <div class="col-md-3">
+                                        <label>@lang('lang.card_security')</label>
+                                        <input type="text" name="payments[0][card_security]" class="form-control">
+                                    </div> --}}
+                                    <div class="col-md-2">
+                                        <label>@lang('lang.month')</label>
+                                        <input type="text" name="payments[0][card_month]" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>@lang('lang.year')</label>
+                                        <input type="text" name="payments[0][card_year]" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="col-md-12 hide">
-                            <div class="i-checks">
-                                <input id="print_the_transaction" name="print_the_transaction" type="checkbox" checked
-                                    value="1" class="form-control-custom">
-                                <label
-                                    for="print_the_transaction"><strong>@lang('lang.print_the_transaction')</strong></label>
+                            <div class="form-group col-md-12 cheque_field payment_fields hide">
+                                <label>@lang('lang.cheque_number') *</label>
+                                <input type="text" name="payments[0][cheque_number]" class="form-control">
                             </div>
-                        </div>
-                        <div class="form-group col-md-12 mt-3 card_field payment_fields hide">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>@lang('lang.card_number') *</label>
-                                    <input type="text" name="payments[0][card_number]" class="form-control">
+                            <div class="form-group col-md-12 gift_card_field hide">
+                                <div class="col-md-12">
+                                    <label>@lang('lang.gift_card_number') *</label>
+                                    <input type="text" name="payments[0][gift_card_number]" id="gift_card_number"
+                                        class="form-control" placeholder="@lang('lang.enter_gift_card_number')">
+                                    <span class="gift_card_error" style="color: red;"></span>
                                 </div>
-                                {{-- <div class="col-md-3">
-                                    <label>@lang('lang.card_security')</label>
-                                    <input type="text" name="payments[0][card_security]" class="form-control">
-                                </div> --}}
-                                <div class="col-md-2">
-                                    <label>@lang('lang.month')</label>
-                                    <input type="text" name="payments[0][card_month]" class="form-control">
-                                </div>
-                                <div class="col-md-2">
-                                    <label>@lang('lang.year')</label>
-                                    <input type="text" name="payments[0][card_year]" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group col-md-12 cheque_field payment_fields hide">
-                            <label>@lang('lang.cheque_number') *</label>
-                            <input type="text" name="payments[0][cheque_number]" class="form-control">
-                        </div>
-                        <div class="form-group col-md-12 gift_card_field hide">
-                            <div class="col-md-12">
-                                <label>@lang('lang.gift_card_number') *</label>
-                                <input type="text" name="payments[0][gift_card_number]" id="gift_card_number"
-                                    class="form-control" placeholder="@lang('lang.enter_gift_card_number')">
-                                <span class="gift_card_error" style="color: red;"></span>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label><b>@lang('lang.current_balance'):</b> </label><br>
-                                    <span class="gift_card_current_balance"></span>
-                                    <input type="hidden" name="payments[0][gift_card_current_balance]"
-                                        id="gift_card_current_balance">
-                                </div>
-                                <div class="col-md-4">
-                                    <label>@lang('lang.enter_amount_to_be_used') </label>
-                                    <input type="text" name="payments[0][amount_to_be_used]" id="amount_to_be_used"
-                                        class="form-control">
-                                </div>
-                                <div class="col-md-4">
-                                    <label>@lang('lang.remaining_balance') </label>
-                                    <input type="text" name="payments[0][remaining_balance]" id="remaining_balance"
-                                        class="form-control">
-                                </div>
-                                <div class="col-md-4">
-                                    <label><b>@lang('lang.final_total'):</b> </label>
-                                </div>
-                                <div class="col-md-4">
-                                    <input type="text" name="payments[0][gift_card_final_total]"
-                                        id="gift_card_final_total" class="form-control">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><b>@lang('lang.current_balance'):</b> </label><br>
+                                        <span class="gift_card_current_balance"></span>
+                                        <input type="hidden" name="payments[0][gift_card_current_balance]"
+                                            id="gift_card_current_balance">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>@lang('lang.enter_amount_to_be_used') </label>
+                                        <input type="text" name="payments[0][amount_to_be_used]" id="amount_to_be_used"
+                                            class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label>@lang('lang.remaining_balance') </label>
+                                        <input type="text" name="payments[0][remaining_balance]" id="remaining_balance"
+                                            class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><b>@lang('lang.final_total'):</b> </label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" name="payments[0][gift_card_final_total]"
+                                            id="gift_card_final_total" class="form-control">
+                                    </div>
                                 </div>
                             </div>
+                            <div class="form-group col-md-12">
+                                <label>@lang('lang.payment_note')</label>
+                                <textarea id="payment_note" rows="2" class="form-control"
+                                    name="payment_note"></textarea>
+                            </div>
                         </div>
-                        <div class="form-group col-md-12">
-                            <label>@lang('lang.payment_note')</label>
-                            <textarea id="payment_note" rows="2" class="form-control" name="payment_note"></textarea>
-                        </div>
+                    </div>
+                    <div class="col-md-12 mb-2 btn-add-payment">
+                        <button type="button" id="add_payment_row" class="btn btn-primary btn-block">
+                            @lang('lang.add_payment_row')</button>
                     </div>
                     <div class="row">
                         <div class="col-md-6 form-group">

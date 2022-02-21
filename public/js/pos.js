@@ -1257,7 +1257,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden"
+        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden"
     ).val("");
     $("#status").val("final");
     $("#row_count").val(0);
@@ -1267,6 +1267,9 @@ function reset_pos_form() {
     set_default_customer();
     $("#tax_id").val("");
     $("#tax_id").selectpicker("refresh");
+    $("#payment_status").val("");
+    $("#payment_status").selectpicker("refresh");
+    $("#payment_status").change()
     $("#deliveryman_id").val("");
     $("#deliveryman_id").selectpicker("refresh");
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
