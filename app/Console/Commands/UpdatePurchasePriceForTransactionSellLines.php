@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Product;
 use App\Models\TransactionSellLine;
 use App\Models\Variation;
 use Illuminate\Console\Command;
@@ -45,9 +46,16 @@ class UpdatePurchasePriceForTransactionSellLines extends Command
 
             foreach ($transactions_sell_lines as $sell_line) {
                 $variation = Variation::where('product_id', $sell_line->product_id)->where('id', $sell_line->variation_id)->first();
-                $sell_line->purchase_price = $variation->default_purchase_price;
-
-                $sell_line->save();
+                if (!empty($variation)) {
+                    $sell_line->purchase_price = $variation->default_purchase_price;
+                    $sell_line->save();
+                } else {
+                    $product = Product::find($sell_line->product_id);
+                    if (!empty($product)) {
+                        $sell_line->purchase_price = $product->purchase_price;
+                        $sell_line->save();
+                    }
+                }
             }
 
 
