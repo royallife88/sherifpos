@@ -152,7 +152,7 @@ function calculate_sub_totals() {
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
 
-    let tax_amount = get_tax_amount(total);
+    let tax_amount = __read_number($("#total_tax"));
     __write_number($("#total_tax"), tax_amount);
     total += tax_amount;
 

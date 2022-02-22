@@ -23,6 +23,7 @@ class CreateTransactionSellLinesTable extends Migration
             $table->foreign('variation_id')->references('id')->on('variations')->onDelete('cascade');
             $table->decimal('quantity', 15, 4);
             $table->decimal('quantity_returned', 15, 4)->default(0);
+            $table->decimal('purchase_price', 15, 4);
             $table->decimal('sell_price', 15, 4);
             $table->decimal('sub_total', 15, 4);
             $table->string('coupon_discount_type')->nullable();

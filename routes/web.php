@@ -321,3 +321,8 @@ Route::get('/clear-cache', function () {
 
     echo 'cache cleared!';
 });
+Route::get('/update-purchase-price-transaction-sell-lines', function () {
+    \Artisan::call('pos:updatePurchasePriceForTransactionSellLines');
+
+    echo 'purchase price update for sell lines!';
+});

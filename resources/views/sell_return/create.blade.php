@@ -107,6 +107,13 @@
                             =>
                             'form-control']) !!}
                         </div>
+                        <div class="col-md-4">
+                            {!! Form::label('total_tax', __('lang.tax'), []) !!}
+                            {!! Form::text('total_tax', !empty($sell_return->total_tax) ?
+                            @num_format($sell_return->total_tax) : @num_format($sale->total_tax), ['class'
+                            =>
+                            'form-control']) !!}
+                        </div>
                     </div>
                     <br>
                     <div class="row">

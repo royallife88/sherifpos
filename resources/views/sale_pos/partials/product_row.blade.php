@@ -17,6 +17,8 @@
             value="{{$product->variation_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
             value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][purchase_price]" class="purchase_price"
+            value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_id]" class="tax_id"
             value="{{$product->tax_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_rate]" class="tax_rate"

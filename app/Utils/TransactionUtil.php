@@ -159,6 +159,7 @@ class TransactionUtil extends Util
                 $old_quantity = $transaction_sell_line->quantity;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
+                $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
@@ -181,6 +182,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->num_uf($line['product_discount_amount']) : 0;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
+                $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
@@ -614,6 +616,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
                 $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->num_uf($line['product_discount_amount']) : 0;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
+                $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
@@ -642,6 +645,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
                 $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $this->num_uf($line['product_discount_amount']) : 0;
                 $transaction_sell_line->quantity = $this->num_uf($line['quantity']);
+                $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sell_price = $this->num_uf($line['sell_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
@@ -793,7 +797,7 @@ class TransactionUtil extends Util
         }
 
         $sales = $query->select(
-            DB::raw("SUM(transaction_sell_lines.quantity * variations.default_purchase_price) as cost_of_sold_products")
+            DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.purchase_price) as cost_of_sold_products")
         )->first();
 
         if (!empty($sales)) {
@@ -830,7 +834,7 @@ class TransactionUtil extends Util
         }
 
         $sales = $query->select(
-            DB::raw("SUM(transaction_sell_lines.quantity_returned * variations.default_purchase_price) as cost_of_sold_returned_products")
+            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products")
         )->first();
 
         if (!empty($sales)) {
