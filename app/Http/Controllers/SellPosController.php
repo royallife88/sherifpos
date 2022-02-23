@@ -1159,6 +1159,7 @@ class SellPosController extends Controller
                         return '';
                     }
                 })
+                ->editColumn('customer_name', '<span class="text-red">{{$customer_name}}</span>')
                 ->addColumn('method', function ($row) {
                     if (!empty($row->transaction_payments[0]->method)) {
                         return ucfirst($row->transaction_payments[0]->method);
@@ -1218,6 +1219,7 @@ class SellPosController extends Controller
                 )
                 ->rawColumns([
                     'action',
+                    'customer_name',
                     'transaction_date',
                     'final_total',
                     'status',

@@ -83,6 +83,7 @@ class TransactionUtil extends Util
             $transaction_payment->amount_to_be_used = !empty($payment_data['amount_to_be_used']) ?  $this->num_uf($payment_data['amount_to_be_used']) : 0;
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
             $transaction_payment->created_by = !empty($payment_data['created_by']) ? $payment_data['created_by'] : Auth::user()->id;
+            $transaction_payment->is_return = !empty($payment_data['is_return']) ? 1 : 0;
             $transaction_payment->save();
         } else {
             $transaction_payment = null;
@@ -858,14 +859,17 @@ class TransactionUtil extends Util
         $query->select(
             'customers.total_rp',
             'customers.deposit_balance',
+            DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', final_total, 0)) as total_return"),
+            DB::raw("SUM(IF(t.type = 'sell_return' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_return_paid"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
             DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
         );
         $customer_details = $query->first();
 
+
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
 
-        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance;
+        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance + $customer_details->total_return - $customer_details->total_return_paid;
 
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }

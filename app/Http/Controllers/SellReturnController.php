@@ -239,6 +239,7 @@ class SellReturnController extends Controller
                         'ref_number' => $request->ref_number,
                         'bank_deposit_date' => !empty($request->bank_deposit_date) ? $request->bank_deposit_date : null,
                         'bank_name' => $request->bank_name,
+                        // 'is_return' => 1,
                     ];
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($sell_return, $payment_data);
 

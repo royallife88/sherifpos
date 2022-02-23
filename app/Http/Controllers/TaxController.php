@@ -34,7 +34,9 @@ class TaxController extends Controller
      */
     public function index()
     {
-        //
+        $taxes = Tax::get();
+
+        return view('tax.index')->with(compact('taxes'));
     }
 
     /**
@@ -66,7 +68,7 @@ class TaxController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['tax_hex' => ['required', 'max:255']]
+            ['rate' => ['required', 'max:255']]
         );
 
         try {
@@ -118,7 +120,11 @@ class TaxController extends Controller
      */
     public function edit($id)
     {
-        //
+        $tax = Tax::find($id);
+
+        return view('tax.edit')->with(compact(
+            'tax'
+        ));
     }
 
     /**
@@ -130,7 +136,32 @@ class TaxController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']],
+            ['rate' => ['required', 'max:255']]
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            $tax = Tax::where('id', $id)->update($data);
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -141,7 +172,21 @@ class TaxController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Tax::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function getDropdown()

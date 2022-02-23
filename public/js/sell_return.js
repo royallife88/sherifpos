@@ -274,6 +274,15 @@ $(document).on("change", "#final_total", function (e) {
     $("#amount").change();
     __write_number($("#paying_amount"), final_total);
 });
+$(document).on("change", "#amount", function (e) {
+    let amount = __read_number($("#amount"));
+    let total_amount_paid = __read_number($("#total_amount_paid"));
+
+    if(amount > total_amount_paid) {
+        swal('warning', LANG.amount_exceeds_total_paid +' :'+total_amount_paid, 'warning');
+        __write_number($("#amount"), total_amount_paid);
+    }
+})
 
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];

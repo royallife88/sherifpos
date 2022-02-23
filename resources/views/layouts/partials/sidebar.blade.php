@@ -1010,7 +1010,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
                     <ul id="setting"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax'])) show @endif">
                         @can('product_module.product_class.view')
                         <li
                             class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
@@ -1054,6 +1054,11 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         @can('product_module.size.view')
                         <li class="@if(request()->segment(1) == 'size' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.tax.view')
+                        <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('TaxController@index')}}">{{__('lang.tax')}}</a>
                         </li>
                         @endcan
                         @can('settings.store.view')

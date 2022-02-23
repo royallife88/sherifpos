@@ -46,6 +46,7 @@ class CustomerController extends Controller
         $query = Customer::leftjoin('transactions', 'customers.id', 'transactions.customer_id')
             ->select(
                 'customers.*',
+                DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_return'),
                 DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_purchase'),
                 DB::raw('SUM(IF(transactions.type="sell", total_sp_discount, 0)) as total_sp_discount'),
                 DB::raw('SUM(IF(transactions.type="sell", total_product_discount, 0)) as total_product_discount'),
@@ -168,6 +169,7 @@ class CustomerController extends Controller
 
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final']);
+            // ->whereNull('parent_return_id');
 
         if (!empty(request()->start_date)) {
             $sale_query->where('transaction_date', '>=', request()->start_date);
@@ -179,6 +181,23 @@ class CustomerController extends Controller
             $sale_query->where('transactions.customer_id', $customer_id);
         }
         $sales = $sale_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->get();
+
+        $sale_return_query = Transaction::whereIn('transactions.type', ['sell_return'])
+            ->whereIn('transactions.status', ['final']);
+            // ->whereNull('parent_return_id');
+
+        if (!empty(request()->start_date)) {
+            $sale_return_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $sale_return_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty($customer_id)) {
+            $sale_return_query->where('transactions.customer_id', $customer_id);
+        }
+        $sale_returns = $sale_return_query->select(
             'transactions.*'
         )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->get();
 
@@ -231,6 +250,7 @@ class CustomerController extends Controller
 
         return view('customer.show')->with(compact(
             'sales',
+            'sale_returns',
             'points',
             'discounts',
             'customers',

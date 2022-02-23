@@ -116,6 +116,7 @@
                         </div>
                     </div>
                     <br>
+                    <input type="hidden" name="total_amount_paid" id="total_amount_paid" value="{{$sale->transaction_payments->sum('amount')}}">
                     <div class="row">
                         <div class="col-md-12">
                             @if(!empty($sell_return))
