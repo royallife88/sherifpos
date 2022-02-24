@@ -903,7 +903,7 @@ return [
     'pending' => 'In afwachting',
     'product_code' => 'Productcode',
 
-    'add_new_service' => 'Of voeg nieuwe service toe',
+    'add_new_service' => 'Dit product heeft geen voorraad',
     'select_products' => 'Selecteer producten',
     'unlimited' => 'Onbeperkt',
     'creation_date' => 'Aanmaakdatum',

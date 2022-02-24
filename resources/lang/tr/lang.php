@@ -903,7 +903,7 @@ return [
     'product_code' => 'Ürün Kodu',
 
 
-    'add_new_service' => 'Veya Yeni Hizmet Ekle',
+    'add_new_service' => 'Bu ürünün stoğu yok',
     'select_products' => 'Ürünleri Seçin',
     'unlimited' => 'Sınırsız',
     'creation_date' => 'Oluşturulma tarihi',

@@ -901,7 +901,7 @@ return [
     'pay_now' => 'Payez maintenant',
     'pending' => 'En attente',
     'product_code' => 'Code produit',
-    'add_new_service' => 'Ou ajouter un nouveau service',
+    'add_new_service' => 'Ce produit n\'a pas de stock',
     'select_products' => 'Sélectionnez des produits',
     'unlimited' => 'Illimité',
     'creation_date' => 'Date de création',

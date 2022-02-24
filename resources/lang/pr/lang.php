@@ -902,7 +902,7 @@ return [
     'pay_now' => 'الان پرداخت کن',
     'pending' => 'در انتظار',
     'product_code' => 'کد محصول',
-    'add_new_service' => 'یا سرویس جدید اضافه کنید',
+    'add_new_service' => 'این محصول موجودی ندارد',
     'select_products' => 'محصولات را انتخاب کنید',
     'unlimited' => 'نامحدود',
     'creation_date' => 'تاریخ ایجاد',

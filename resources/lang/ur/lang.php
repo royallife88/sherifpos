@@ -902,7 +902,7 @@ return [
     'pay_now' => 'اب ادا',
     'pending' => 'زیر التوا',
     'product_code' => 'پروڈکٹ کوڈ',
-    'add_new_service' => 'یا نئی سروس شامل کریں۔',
+    'add_new_service' => 'اس پروڈکٹ کا کوئی اسٹاک نہیں ہے۔',
     'select_products' => 'مصنوعات منتخب کریں۔',
     'unlimited' => 'لامحدود۔',
     'creation_date' => 'بنانے کی تاریخ',
