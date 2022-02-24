@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.add_expense_beneficiary'))
+@section('title', __('lang.add_expense_category'))
 
 @section('content')
 <div class="container-fluid">

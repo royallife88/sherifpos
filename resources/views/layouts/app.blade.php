@@ -14,6 +14,14 @@
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     @include('layouts.partials.css')
+    <style>
+        .mCSB_draggerRail{
+            width: 16px !important;
+        }
+        .mCSB_dragger_bar{
+            width: 10px !important;
+        }
+    </style>
 </head>
 
 <body onload="myFunction()">

@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\JobType;
+use App\Models\ProductClass;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -142,6 +143,9 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Piece', 'is_active' => 1],
                 ['name' => 'One Person', 'is_active' => 1],
                 ['name' => 'Two Person', 'is_active' => 1],
+            ]);
+            ProductClass::insert([
+                ['name' => 'Extras'],
             ]);
         }
 

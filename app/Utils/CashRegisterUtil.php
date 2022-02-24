@@ -101,7 +101,11 @@ class CashRegisterUtil extends Util
             'notes' => $notes,
         ];
         $cash_register_transaction = CashRegisterTransaction::where('id', $id)->first();
-        $cash_register_transaction->update($data);
+        if (!empty($cash_register_transaction)) {
+            $cash_register_transaction->update($data);
+        } else {
+            $cash_register_transaction = CashRegisterTransaction::create($data);
+        }
         return $cash_register_transaction;
     }
 
@@ -151,36 +155,41 @@ class CashRegisterUtil extends Util
      *
      * @return boolean
      */
-    public function updateAddStockAndExpensePayments($transaction, $payment, $type, $user_id = null)
+    public function updateAddStockAndExpensePayments($transaction, $payment_data, $request)
     {
-        if (empty($user_id)) {
-            $user_id = auth()->user()->id;
-        }
-        $register =  $this->getCurrentCashRegisterOrCreate($user_id);
-
-        $cash_register_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)
-            ->where('transaction_type', $transaction->type)
-            ->first();
-        if (!empty($cash_register_transaction)) {
-            $cash_register_transaction->update([
-                'cash_register_id' => $register->id,
-                'amount' => $this->num_uf($payment['amount']),
-                'pay_method' => $payment['method'],
-                'type' => $type,
-                'transaction_type' => $transaction->type,
-                'transaction_id' => $transaction->id
-            ]);
-        } else {
-            CashRegisterTransaction::create([
-                'cash_register_id' => $register->id,
-                'amount' => $this->num_uf($payment['amount']),
-                'pay_method' => $payment['method'],
-                'type' => $type,
-                'transaction_type' => $transaction->type,
-                'transaction_id' => $transaction->id
-            ]);
+        $user_id = null;
+        if (!empty($request->source_id)) {
+            if ($request->source_type == 'pos') {
+                $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+            }
+            if ($request->source_type == 'user') {
+                $user_id = $request->source_id;
+            }
         }
 
+        $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->where('transaction_type', $transaction->type)->first();
+        $register = CashRegister::find($cr_transaction->cash_register_id);
+        if ($register->user_id != $user_id) {
+            $register =  $this->getCurrentCashRegisterOrCreate($user_id);
+        }
+
+        $referenced_id = $cr_transaction->referenced_id;
+        $refercene_transaction = CashRegisterTransaction::where('id', $referenced_id)->first();
+        $refercene_register = CashRegister::find($refercene_transaction->cash_register_id);
+
+        $cash_register_transaction = $this->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $refercene_register->user_id, '', $referenced_id);
+
+        $refercene_transaction = CashRegisterTransaction::where('id', $referenced_id)->first();
+
+
+        $user_id = $register->user_id;
+        $cash_register_transaction_out = $this->updateCashRegisterTransaction($referenced_id, $refercene_register, $payment_data['amount'], 'cash_out', 'credit', $user_id, '', $cr_transaction->id);
+
+        $cash_register_transaction->transaction_id = $transaction->id;
+        $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+        $cash_register_transaction->save();
+        $cash_register_transaction_out->transaction_id = $transaction->id;
+        $cash_register_transaction_out->save();
 
         return true;
     }

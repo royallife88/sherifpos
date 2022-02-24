@@ -84,8 +84,8 @@ class ExpenseController extends Controller
         }
         $expenses = $expense_query->select(
             'transactions.*',
-             'users.name as created_by',
-              )
+            'users.name as created_by',
+        )
             ->orderBy('transaction_date', 'desc')
             ->get();
 
@@ -178,16 +178,30 @@ class ExpenseController extends Controller
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
 
-            $user_id = null;
-            if (!empty($request->source_id)) {
-                if ($request->source_type == 'pos') {
-                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+            if ($payment_data['method'] == 'cash') {
+                $user_id = null;
+                if (!empty($request->source_id)) {
+                    if ($request->source_type == 'pos') {
+                        $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                    }
+                    if ($request->source_type == 'user') {
+                        $user_id = $request->source_id;
+                    }
                 }
-                if ($request->source_type == 'user') {
-                    $user_id = $request->source_id;
-                }
+                $cashier_id = Auth::user()->id;
+
+                $register =  $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($user_id);
+                $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], $expense->type, 'debit', $cashier_id, '');
+
+                $register =  $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($cashier_id);
+
+                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], 'cash_out', 'credit', $user_id, '', $cash_register_transaction->id);
+                $cash_register_transaction->transaction_id = $expense->id;
+                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+                $cash_register_transaction->save();
+                $cash_register_transaction_out->transaction_id = $expense->id;
+                $cash_register_transaction_out->save();
             }
-            $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
 
             DB::commit();
 
@@ -256,7 +270,6 @@ class ExpenseController extends Controller
 
             $expense = Transaction::where('id', $id)->first();
 
-
             $expense_data = [
                 'grand_total' => $this->commonUtil->num_uf($data['amount']),
                 'final_total' => $this->commonUtil->num_uf($data['amount']),
@@ -300,16 +313,9 @@ class ExpenseController extends Controller
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
 
-            $user_id = null;
-            if (!empty($request->source_id)) {
-                if ($request->source_type == 'pos') {
-                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
-                }
-                if ($request->source_type == 'user') {
-                    $user_id = $request->source_id;
-                }
+            if ($payment_data['method'] == 'cash') {
+                $this->cashRegisterUtil->updateAddStockAndExpensePayments($expense, $payment_data, $request);
             }
-            $this->cashRegisterUtil->updateAddStockAndExpensePayments($expense, $payment_data, 'debit', $user_id);
 
             DB::commit();
 

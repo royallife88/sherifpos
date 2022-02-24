@@ -469,6 +469,7 @@ function calculate_sub_totals() {
     var product_discount_total = 0;
     var product_surplus_total = 0;
     var total_item_tax = 0;
+    var total_coupon_discount = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
@@ -516,7 +517,12 @@ function calculate_sub_totals() {
         );
 
         let coupon_discount = calculate_coupon_discount(tr);
-        sub_total -= coupon_discount;
+        if(sub_total > coupon_discount){
+            total_coupon_discount += coupon_discount;
+        }
+        if(sub_total <= coupon_discount){
+            total_coupon_discount += sub_total;
+        }
 
         __write_number($(tr).find(".sub_total"), sub_total);
         $(tr)
@@ -552,6 +558,8 @@ function calculate_sub_totals() {
     total += tax_amount;
 
     __write_number($("#grand_total"), grand_total); // total without any discounts
+
+    total -= total_coupon_discount;
 
     let discount_amount = get_discount_amount(total);
     total -= discount_amount;
@@ -1100,7 +1108,7 @@ $(document).on("click", ".coupon-check", function () {
 function apply_coupon_to_products() {
     if (coupon_products.length) {
         $("#product_table > tbody  > tr").each((ele, tr) => {
-            let product_id = $(tr).find(".product_id").val();
+            let product_id = parseInt($(tr).find(".product_id").val());
             if (amount_to_be_purchase_checkbox) {
                 let grand_total = __read_number($("#grand_total"));
                 if (grand_total >= amount_to_be_purchase) {
@@ -1110,8 +1118,10 @@ function apply_coupon_to_products() {
                     }
                 }
             } else {
-                $(tr).find(".coupon_discount_value").val(coupon_value);
-                $(tr).find(".coupon_discount_type").val(coupon_type);
+                if (coupon_products.includes(product_id)) {
+                    $(tr).find(".coupon_discount_value").val(coupon_value);
+                    $(tr).find(".coupon_discount_type").val(coupon_type);
+                }
             }
         });
     }
@@ -1269,7 +1279,7 @@ function reset_pos_form() {
     $("#tax_id").selectpicker("refresh");
     $("#payment_status").val("");
     $("#payment_status").selectpicker("refresh");
-    $("#payment_status").change()
+    $("#payment_status").change();
     $("#deliveryman_id").val("");
     $("#deliveryman_id").selectpicker("refresh");
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
