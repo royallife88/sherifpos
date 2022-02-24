@@ -69,6 +69,9 @@ class CashController extends Controller
         if (!empty(request()->store_pos_id)) {
             $query->where('store_pos_id', request()->store_pos_id);
         }
+        if (!empty(request()->user_id)) {
+            $query->where('cash_registers.user_id', request()->user_id);
+        }
 
         $cash_registers = $query->select(
             'cash_registers.*',
@@ -85,10 +88,12 @@ class CashController extends Controller
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('cash.index')->with(compact(
             'cash_registers',
             'stores',
+            'users',
             'store_pos'
 
         ));

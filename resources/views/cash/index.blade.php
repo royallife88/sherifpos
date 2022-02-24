@@ -52,6 +52,13 @@
                         </div>
                     </div>
                     <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('user_id', __('lang.user'), []) !!}
+                            {!! Form::select('user_id', $users, request()->user_id, ['class' =>
+                            'form-control', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <br>
                         <button type="submit" class="btn btn-success mt-2">@lang('lang.filter')</button>
                         <a href="{{action('CashController@index')}}"

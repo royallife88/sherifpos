@@ -62,6 +62,12 @@ class CashInController extends Controller
         if (!empty(request()->end_time)) {
             $query->where('cash_registers.created_at', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
+        if (!empty(request()->user_id)) {
+            $query->where('cash_registers.user_id', request()->user_id);
+        }
+        if (!empty(request()->sender_id)) {
+            $query->where('cash_register_transactions.source_id', request()->sender_id);
+        }
 
         $query->where('transaction_type', 'cash_in');
         $cash_registers = $query->select(
@@ -73,7 +79,10 @@ class CashInController extends Controller
         )
             ->groupBy('cash_register_transactions.id')->orderBy('created_at', 'desc')->get();
 
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+
         return view('cash_in.index')->with(compact(
+            'users',
             'cash_registers'
         ));
     }
