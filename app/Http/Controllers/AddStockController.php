@@ -349,19 +349,10 @@ class AddStockController extends Controller
                             $user_id = $request->source_id;
                         }
                     }
-                    $cashier_id = Auth::user()->id;
 
                     $register =  $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($user_id);
-                    $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], $transaction->type, 'debit', $cashier_id, '');
-
-                    $register =  $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($cashier_id);
-
-                    $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], 'cash_out', 'credit', $user_id, '', $cash_register_transaction->id);
-                    $cash_register_transaction->transaction_id = $transaction->id;
-                    $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
-                    $cash_register_transaction->save();
-                    $cash_register_transaction_out->transaction_id = $transaction->id;
-                    $cash_register_transaction_out->save();
+                    // $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
                 }
 
                 if ($request->upload_documents) {
@@ -571,7 +562,19 @@ class AddStockController extends Controller
                 $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
 
                 if ($payment_data['method'] == 'cash') {
-                    $this->cashRegisterUtil->updateAddStockAndExpensePayments($transaction, $payment_data, $request);
+                    $user_id = null;
+                    if (!empty($request->source_id)) {
+                        if ($request->source_type == 'pos') {
+                            $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                        }
+                        if ($request->source_type == 'user') {
+                            $user_id = $request->source_id;
+                        }
+                    }
+
+                    $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
+                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
                 }
 
                 if ($request->upload_documents) {

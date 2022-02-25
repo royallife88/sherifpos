@@ -70,7 +70,7 @@ class CashOutController extends Controller
         }
 
 
-        $query->where('transaction_type', 'cash_out');
+        $query->whereIn('transaction_type', ['cash_out', 'add_stock']);
         $cash_registers = $query->select(
             'cash_register_transactions.*',
             'cash_registers.user_id',
