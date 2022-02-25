@@ -202,6 +202,10 @@ $(document).ready(function () {
                     }
                 },
                 select: function (event, ui) {
+                    if (ui.item.is_sale_promotion) {
+                        get_sale_promotion_products(ui.item.sale_promotion_id);
+                        return;
+                    }
                     if (!ui.item.is_service) {
                         if (ui.item.qty_available > 0) {
                             $(this).val(null);
@@ -455,7 +459,7 @@ function check_for_sale_promotion() {
                             $(tr).find(".product_discount_value").val(0);
                         }
                     });
-                    __write_number($("#total_sp_discount"), discount);
+                    __write_number($("#total_pp_discount"), discount);
                 }
                 calculate_sub_totals();
             }
@@ -517,10 +521,10 @@ function calculate_sub_totals() {
         );
 
         let coupon_discount = calculate_coupon_discount(tr);
-        if(sub_total > coupon_discount){
+        if (sub_total > coupon_discount) {
             total_coupon_discount += coupon_discount;
         }
-        if(sub_total <= coupon_discount){
+        if (sub_total <= coupon_discount) {
             total_coupon_discount += sub_total;
         }
 
@@ -588,12 +592,12 @@ function calculate_sub_totals() {
             $("#rp_redeemed_value").val(points_redeemed_value);
         }
     }
-
     apply_promotion_discounts();
     let promo_discount = __read_number($("#total_sp_discount"));
     // if (promo_discount > 0) {
     //     __write_number($("#discount_amount"), promo_discount);
     // }
+    console.log(promo_discount, "promo_discount");
     total -= promo_discount;
 
     let delivery_cost = 0;
@@ -675,9 +679,12 @@ function apply_promotion_discounts() {
             promo_discount += promotion_discount_amount;
         }
     });
-    let total_sp_discount =
-        __read_number($("#total_sp_discount")) + promo_discount;
+    let total_package_promotion_discount = __read_number(
+        $("#total_pp_discount")
+    );
+    let total_sp_discount = total_package_promotion_discount + promo_discount;
     $("#total_sp_discount").val(total_sp_discount);
+
     return promo_discount;
 }
 function calculate_coupon_discount(tr) {
@@ -2058,3 +2065,26 @@ $(document).on("change", "#sale_note_draft", function () {
 $(document).on("click", ".draft_pay", function () {
     $("#draftTransaction").modal("hide");
 });
+$(document).on("click", ".promotion_add", function () {
+    let sale_promotion_id = $(this).data("sale_promotion_id");
+
+    get_sale_promotion_products(sale_promotion_id);
+});
+
+function get_sale_promotion_products(sale_promotion_id) {
+    $.ajax({
+        method: "get",
+        url: "/sales-promotion/get-sale-promotion-details/" + sale_promotion_id,
+        data: {},
+        success: function (result) {
+            result.forEach((data, index) => {
+                get_label_product_row(
+                    data.product_id,
+                    data.variation_id,
+                    data.qty,
+                    index
+                );
+            });
+        },
+    });
+}

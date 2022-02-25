@@ -198,12 +198,12 @@
             $('.new_price').removeClass('hide');
         }else{
             $('.new_price').addClass('hide');
+            $('.qty').val(1);
         }
     })
     $(document).on('change', '#discount_type, #discount_value', function(){
         let type = $('#type').val()
         let discount_type = $('#discount_type').val()
-        console.log(discount_type, 'discount_type');
         let discount_value = __read_number($('#discount_value'))
 
         let new_price = 0;

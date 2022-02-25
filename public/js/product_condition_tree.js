@@ -88,7 +88,7 @@ $(document).ready(function () {
     calculate_total_prices();
 });
 
-$(".qty").on("change", function () {
+$(document).on('change', '.qty', function() {
     calculate_total_prices();
 });
 

@@ -150,6 +150,8 @@
                                                 value="@if(!empty(request()->status)){{request()->status}}@else{{'final'}}@endif" />
                                             <input type="hidden" id="total_sp_discount" name="total_sp_discount"
                                                 value="0" />
+                                            <input type="hidden" id="total_pp_discount" name="total_pp_discount"
+                                                value="0" />
                                         </div>
                                     </div>
                                 </div>

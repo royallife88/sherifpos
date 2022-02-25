@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\SalesPromotion;
 use App\Models\Store;
+use App\Models\Variation;
 use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -287,5 +288,41 @@ class SalesPromotionController extends Controller
             'products',
             'type'
         ));
+    }
+
+    /**
+     * get the resource details
+     *
+     * @param int $id
+     * @return void
+     */
+    public function getSalePromotionDetails($id)
+    {
+        $sales_promotion = SalesPromotion::find($id);
+
+        $data_array = [];
+        if (!empty($sales_promotion)) {
+            $i = 0;
+            $product_ids = $sales_promotion->product_ids;
+            foreach ($product_ids as $product_id) {
+                $variation_id = Variation::where('product_id', $product_id)->first()->id;
+                $data_array[$i]['product_id'] = $product_id;
+                $data_array[$i]['variation_id'] = $variation_id;
+                $data_array[$i]['qty'] = (int)$sales_promotion->package_promotion_qty[$product_id];
+                $i++;
+            }
+        }
+        if ($sales_promotion->product_condition) {
+            $condition_product_ids = $sales_promotion->condition_product_ids;
+            foreach ($condition_product_ids as $c_product_id) {
+                $variation_id = Variation::where('product_id', $c_product_id)->first()->id;
+                $data_array[$i]['product_id'] = $c_product_id;
+                $data_array[$i]['variation_id'] = $variation_id;
+                $data_array[$i]['qty'] = 1;
+                $i++;
+            }
+        }
+
+        return $data_array;
     }
 }
