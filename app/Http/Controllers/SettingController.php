@@ -162,6 +162,19 @@ class SettingController extends Controller
                 ['key' => 'currency'],
                 ['value' => $request->currency, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
+            if (!empty($request->currency)) {
+                $currency = Currency::find($request->currency);
+                $currency_data = [
+                    'country' => $currency->country,
+                    'code' => $currency->code,
+                    'symbol' => $currency->symbol,
+                    'decimal_separator' => '.',
+                    'thousand_separator' => ',',
+                    'currency_precision' => 2,
+                    'currency_symbol_placement' => 'before',
+                ];
+                $request->session()->put('currency', $currency_data);
+            }
             System::updateOrCreate(
                 ['key' => 'invoice_lang'],
                 ['value' => $request->invoice_lang, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
