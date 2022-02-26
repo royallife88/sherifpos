@@ -350,8 +350,6 @@ class AddStockController extends Controller
                         }
                     }
 
-                    $register =  $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($user_id);
-                    // $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
                     $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
                 }
 

@@ -94,13 +94,21 @@
                                             $supplier_name = $cash_register->transaction->supplier->name ?? '';
                                         @endphp
                                         <td>{{ ucfirst($supplier_name ?? '') }}</td>
+                                    @elseif ($cash_register->transaction_type == 'expense')
+                                        @php
+                                            $beneficiary_name = $cash_register->transaction->expense_beneficiary->name ?? '';
+                                        @endphp
+                                        <td>{{ ucfirst($beneficiary_name ?? '') }}</td>
                                     @else
                                         <td>{{ ucfirst($cash_register->source->name ?? '') }}</td>
                                     @endif
                                     @if ($cash_register->transaction_type == 'add_stock')
                                         <td>@lang('lang.supplier')</td>
+                                    @elseif ($cash_register->transaction_type == 'expense')
+                                        <td>@lang('lang.beneficiary')</td>
                                     @else
-                                        <td>{{ ucfirst($cash_register->source->employee->job_type->job_title ?? '') }}</td>
+                                        <td>{{ ucfirst($cash_register->source->employee->job_type->job_title ?? '') }}
+                                        </td>
                                     @endif
                                     <td>{{ @num_format($cash_register->amount) }}</td>
                                     <td>{{ $cash_register->notes }}</td>
