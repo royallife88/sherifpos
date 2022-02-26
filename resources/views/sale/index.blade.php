@@ -19,6 +19,41 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
+                        {!! Form::label('product_class_id', session('system_mode') == 'restaurant' ? __('lang.category') : __('lang.product_class') . ':', []) !!}
+                        {!! Form::select('product_class_id[]', $product_classes, request()->product_class_id, ['class'
+                        => 'form-control sale_filter
+                        selectpicker', 'data-live-search' =>'true', "data-actions-box"=>"true", 'placeholder' => __('lang.all'), 'multiple', 'id' => 'product_class_id']) !!}
+                    </div>
+                </div>
+                @if(session('system_mode') != 'restaurant')
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('category_id', __('lang.category') . ':', []) !!}
+                        {!! Form::select('category_id[]', $categories, request()->category_id, ['class' =>
+                        'form-control sale_filter
+                        selectpicker', 'data-live-search' =>'true', "data-actions-box"=>"true", 'placeholder' => __('lang.all'), 'multiple', 'id' => 'category_id']) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('sub_category_id', __('lang.sub_category') . ':', []) !!}
+                        {!! Form::select('sub_category_id[]', $sub_categories, request()->sub_category_id, ['class' =>
+                        'form-control sale_filter
+                        selectpicker', 'data-live-search' =>'true', "data-actions-box"=>"true", 'placeholder' => __('lang.all'), 'multiple', 'id' => 'sub_category_id']) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('brand_id', __('lang.brand') . ':', []) !!}
+                        {!! Form::select('brand_id[]', $brands, request()->brand_id, ['class' => 'form-control
+                        sale_filter
+                        selectpicker', 'data-live-search' =>'true', "data-actions-box"=>"true", 'placeholder' => __('lang.all'), 'multiple', 'id' => 'brand_id']) !!}
+                    </div>
+                </div>
+                @endif
+
+                <div class="col-md-3">
+                    <div class="form-group">
                         {!! Form::label('customer_id', __('lang.customer'), []) !!}
                         {!! Form::select('customer_id', $customers, request()->customer_id, ['class' =>
                         'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
@@ -165,6 +200,10 @@
         ajax: {
             url: "/sale",
             data: function (d) {
+                d.product_class_id = $("#product_class_id").val();
+                d.category_id = $("#category_id").val();
+                d.sub_category_id = $("#sub_category_id").val();
+                d.brand_id = $("#brand_id").val();
                 d.customer_id = $("#customer_id").val();
                 d.store_id = $("#store_id").val();
                 d.status = $("#status").val();

@@ -1112,4 +1112,8 @@ return [
     'content' => 'المحتويات',
     'add_content' => 'إضافة محتوى',
     'edit_content' => 'تحرير المحتوى',
+
+    'cash_given_to' => 'النقدية الممنوحة ل',
+    'added_at' => 'تمت الإضافة في',
+    'drop_file_here_to_upload' => 'حمل الصورة من هن',
 ];

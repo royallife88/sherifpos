@@ -44,7 +44,7 @@
                                         <div class="col-md-3">
                                             {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                             <div class="input-group my-group">
-                                                {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'customer_id']) !!}
+                                                {!! Form::select('customer_id', $customers, !empty($walk_in_customer) ? $walk_in_customer->id : null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'customer_id', 'required']) !!}
                                                 <span class="input-group-btn">
                                                     @can('customer_module.customer.create_and_edit')
                                                         <a class="btn-modal btn btn-default bg-white btn-flat"
@@ -333,11 +333,11 @@
 
                                         <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">
                                             <li class="nav-item">
-                                                <a href="{{ action('SellController@create') }}" id="commercial_invoice_btn"
-                                                    data-toggle="tooltip" data-title="@lang('lang.add_sale')"
-                                                    class="btn no-print"><img
-                                                        src="{{ asset('images/396 Commercial Invoice Icon.png') }}" alt=""
-                                                        style="height: 40px; width: 35px;">
+                                                <a href="{{ action('SellController@create') }}"
+                                                    id="commercial_invoice_btn" data-toggle="tooltip"
+                                                    data-title="@lang('lang.add_sale')" class="btn no-print"><img
+                                                        src="{{ asset('images/396 Commercial Invoice Icon.png') }}"
+                                                        alt="" style="height: 40px; width: 35px;">
                                                 </a>
                                             </li>
                                             <li class="nav-item">
@@ -411,13 +411,15 @@
                                                         </li>
                                                     @endcan
                                                     <li>
-                                                        <a href="{{ url('my-transactions/' . date('Y') . '/' . date('m')) }}"><i
+                                                        <a
+                                                            href="{{ url('my-transactions/' . date('Y') . '/' . date('m')) }}"><i
                                                                 class="dripicons-swap"></i>
                                                             @lang('lang.my_transactions')</a>
                                                     </li>
                                                     @if (Auth::user()->role_id != 5)
                                                         <li>
-                                                            <a href="{{ url('my-holidays/' . date('Y') . '/' . date('m')) }}"><i
+                                                            <a
+                                                                href="{{ url('my-holidays/' . date('Y') . '/' . date('m')) }}"><i
                                                                     class="dripicons-vibrate"></i>
                                                                 @lang('lang.my_holidays')</a>
                                                         </li>

@@ -175,6 +175,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)->orderBy('crea
     @endif
     <div class="col-md-12 " style="margin-top: 10px;">
         <div class="dropzone" id="my-dropzone">
+            <div class="dz-message" data-dz-message><span>@lang('lang.drop_file_here_to_upload')</span></div>
         </div>
     </div>
 

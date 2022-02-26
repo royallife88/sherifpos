@@ -84,6 +84,21 @@ class SellController extends Controller
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
                 ->where('transactions.type', 'sell')->where('status', 'final');
 
+            if (!empty(request()->product_class_id) &&  !empty(array_filter(request()->product_class_id))) {
+                $query->whereIn('products.product_class_id', array_filter(request()->product_class_id));
+            }
+
+            if (!empty(request()->category_id) && !empty(array_filter(request()->category_id))) {
+                $query->whereIn('products.category_id', array_filter(request()->category_id));
+            }
+
+            if (!empty(request()->sub_category_id) && !empty(array_filter(request()->sub_category_id))) {
+                $query->whereIn('products.sub_category_id', array_filter(request()->sub_category_id));
+            }
+
+            if (!empty(request()->brand_id) && !empty(array_filter(request()->brand_id))) {
+                $query->whereIn('products.brand_id', array_filter(request()->brand_id));
+            }
             if (!empty(request()->customer_id)) {
                 $query->where('customer_id', request()->customer_id);
             }
@@ -316,12 +331,20 @@ class SellController extends Controller
                 ->make(true);
         }
 
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::getCustomerArrayWithMobile();
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
 
         return view('sale.index')->with(compact(
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
             'payment_types',
             'cashiers',
             'customers',

@@ -1113,4 +1113,8 @@ return [
     'content' => 'مواد',
     'add_content' => 'مواد شامل کریں۔',
     'edit_content' => 'مواد میں ترمیم کریں۔',
+
+    'cash_given_to' => 'نقد رقم دی گئی۔',
+    'added_at' => 'پر شامل کیا گیا۔',
+    'drop_file_here_to_upload' => 'اپ لوڈ کرنے کے لیے فائل یہاں چھوڑیں۔',
 ];

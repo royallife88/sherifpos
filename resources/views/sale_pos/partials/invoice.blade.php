@@ -212,7 +212,7 @@ $invoice_lang = request()->session()->get('language');
                     @endif
                     @if(!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
                     <tr>
-                        <th style="font-size: 16px;" colspan="3">@lang('lang.delivery_cost' , [], $invoice_lang)</th>
+                        <th style="font-size: 16px;" colspan="3">@lang('lang.delivery_cost' , [], $invoice_lang) @if(!empty($transaction->deliveryman->employee_name)) ({{$transaction->deliveryman->employee_name}}) @endif</th>
                         <th style="font-size: 16px; text-align:right;">{{@num_format($transaction->delivery_cost)}}
                         </th>
                     </tr>

@@ -1113,4 +1113,8 @@ return [
     'content' => 'विषय',
     'add_content' => 'सामग्री जोड़ें',
     'edit_content' => 'सामग्री संपादित करें',
+
+    'cash_given_to' => 'नकद दिया गया',
+    'added_at' => 'पर जोड़ा गया',
+    'drop_file_here_to_upload' => 'अपलोड करने के लिए फ़ाइल यहाँ छोड़ें',
 ];

@@ -23,12 +23,13 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        {!! Form::label('product_class_id', __('lang.product_class') . ':', []) !!}
+                        {!! Form::label('product_class_id', session('system_mode') == 'restaurant' ? __('lang.category') : __('lang.product_class') . ':', []) !!}
                         {!! Form::select('product_class_id', $product_classes, request()->product_class_id, ['class'
                         => 'form-control filter_product
                         selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                     </div>
                 </div>
+                @if(session('system_mode') != 'restaurant')
                 <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('category_id', __('lang.category') . ':', []) !!}
@@ -53,6 +54,7 @@
                         selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                     </div>
                 </div>
+                @endif
                 <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
@@ -128,11 +130,13 @@
             <button type="button" value="0"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.image')</button>
             <button type="button" value="3"
-                class="badge badge-pill badge-primary column-toggle">@lang('lang.class')</button>
+                class="badge badge-pill badge-primary column-toggle"> @if(session('system_mode') == 'restaurant' )@lang('lang.category')@else  @lang('lang.class') @endif</button>
+            @if(session('system_mode')  != 'restaurant')
             <button type="button" value="4"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.category')</button>
             <button type="button" value="5"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.sub_category')</button>
+            @endif
             <button type="button" value="6"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_history')</button>
             <button type="button" value="7"
@@ -141,8 +145,10 @@
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.selling_price')</button>
             <button type="button" value="9"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.tax')</button>
+            @if(session('system_mode')  != 'restaurant')
             <button type="button" value="10"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.brand')</button>
+            @endif
             <button type="button" value="11"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.unit')</button>
             <button type="button" value="12"
@@ -170,7 +176,13 @@
             @can('product_module.purchase_price.view')
             <button type="button" value="21"
                 class="badge badge-pill badge-primary column-toggle">@lang('lang.purchase_price')</button>
-            @endcan
+                @endcan
+            <button type="button" value="21"
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.supplier')</button>
+            <button type="button" value="21"
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.created_by')</button>
+            <button type="button" value="21"
+                class="badge badge-pill badge-primary column-toggle">@lang('lang.edited_by')</button>
         </div>
     </div>
 
@@ -183,14 +195,18 @@
                 <th>@lang('lang.image')</th>
                 <th>@lang('lang.name')</th>
                 <th>@lang('lang.product_code')</th>
-                <th>@lang('lang.class')</th>
+                <th>@if(session('system_mode') == 'restaurant')@lang('lang.category') @else @lang('lang.class') @endif</th>
+                @if(session('system_mode')  != 'restaurant')
                 <th>@lang('lang.category')</th>
                 <th>@lang('lang.sub_category')</th>
+                @endif
                 <th>@lang('lang.purchase_history')</th>
                 <th>@lang('lang.batch_number')</th>
                 <th>@lang('lang.selling_price')</th>
                 <th>@lang('lang.tax')</th>
+                @if(session('system_mode')  != 'restaurant')
                 <th>@lang('lang.brand')</th>
+                @endif
                 <th>@lang('lang.unit')</th>
                 <th>@lang('lang.color')</th>
                 <th>@lang('lang.size')</th>
@@ -228,6 +244,33 @@
 @section('javascript')
 <script>
     $(document).ready( function(){
+        $('.column-toggle').each(function(i, obj) {
+            if(i > 0){
+                i = i+2;
+            }
+            @if(session('system_mode') != 'restaurant')
+            @if(empty($page))
+            if(i > 15){
+                i = i+1;
+            }
+            @else
+            if(i > 14){
+                i = i+1;
+            }
+            @endif
+            @else
+            @if(empty($page))
+            if(i > 12){
+                i = i+1;
+            }
+            @else
+            if(i > 11){
+                i = i+1;
+            }
+            @endif
+            @endif
+            $(obj).val(i)
+        });
         product_table = $('#product_table').DataTable({
             lengthChange: true,
             paging: true,
@@ -273,13 +316,17 @@
                 { data: 'variation_name', name: 'products.name'},
                 { data: 'sub_sku', name: 'variations.sub_sku'  },
                 { data: 'product_class', name: 'product_classes.name'},
+                @if(session('system_mode')  != 'restaurant')
                 { data: 'category', name: 'categories.name'},
                 { data: 'sub_category', name: 'categories.name'},
+                @endif
                 { data: 'purchase_history', name: 'purchase_history'},
                 { data: 'batch_number', name: 'add_stock_lines.batch_number'},
                 { data: 'default_sell_price', name: 'variations.default_sell_price'},
                 { data: 'tax', name: 'taxes.name'},
+                @if(session('system_mode')  != 'restaurant')
                 { data: 'brand', name: 'brands.name'},
+                @endif
                 { data: 'unit', name: 'units.name'},
                 { data: 'color', name: 'colors.name'},
                 { data: 'size', name: 'sizes.name'},

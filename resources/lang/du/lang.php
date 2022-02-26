@@ -1116,4 +1116,8 @@ return [
     'add_content' => 'Content toevoegen',
     'edit_content' => 'Inhoud bewerken',
 
+    'cash_given_to' => 'Contant geld gegeven aan',
+    'added_at' => 'Toegevoegd op',
+    'drop_file_here_to_upload' => 'Zet het bestand hier neer om te uploaden',
+
 ];

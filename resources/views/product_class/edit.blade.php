@@ -6,16 +6,16 @@
 
         <div class="modal-header">
 
-            <h4 class="modal-title">@lang( 'lang.edit_class' )</h4>
+            <h4 class="modal-title">@lang( 'lang.edit' )</h4>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
         </div>
 
         <div class="modal-body">
             <div class="form-group">
-                {!! Form::label('name', __( 'lang.class_name' ) . ':*') !!}
+                {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
                 {!! Form::text('name', $product_class->name, ['class' => 'form-control', 'placeholder' => __(
-                'lang.class_name' ), 'required' ]); !!}
+                'lang.name' ), 'required' ]); !!}
             </div>
             <div class="form-group">
                 {!! Form::label('description', __( 'lang.description' ) . ':') !!}

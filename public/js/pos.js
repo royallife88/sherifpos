@@ -1307,7 +1307,7 @@ $(document).ready(function () {
     $("#terms_and_condition_id").selectpicker("render");
 });
 function set_default_customer() {
-    var default_customer_id = $("#default_customer_id").val();
+    var default_customer_id = parseInt($("#default_customer_id").val());
 
     $("select#customer_id").val(default_customer_id).trigger("change");
 }

@@ -1119,5 +1119,6 @@ return [
 
     'cash_given_to' => 'Cash Given To',
     'added_at' => 'Added at',
+    'drop_file_here_to_upload' => 'Drop file here to upload',
 
 ];

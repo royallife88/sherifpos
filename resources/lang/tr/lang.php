@@ -1115,4 +1115,8 @@ return [
     'add_content' => 'İçerik Ekle',
     'edit_content' => 'İçeriği Düzenle',
 
+    'cash_given_to' => 'Verilen Nakit',
+    'added_at' => 'Eklenme tarihi:',
+    'drop_file_here_to_upload' => 'Yüklemek için dosyayı buraya bırakın',
+
 ];

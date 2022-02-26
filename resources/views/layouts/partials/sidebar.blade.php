@@ -1014,7 +1014,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         @can('product_module.product_class.view')
                         <li
                             class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('ProductClassController@index')}}">{{__('lang.product_class')}}</a>
+                            <a href="{{action('ProductClassController@index')}}">@if(session('system_mode') == 'restaurant'){{__('lang.category')}} @else {{__('lang.product_class')}} @endif</a>
                         </li>
                         @endcan
                         @if(session('system_mode') != 'restaurant')

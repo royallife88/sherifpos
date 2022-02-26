@@ -96,7 +96,7 @@ class User extends Authenticatable
             ],
             'product_module' => [
                 'product' => __('lang.product'),
-                'product_class' => __('lang.product_class'),
+                'product_class' => session('system_mode') == 'restaurant' ? __('lang.category') : __('lang.product_class'),
                 'category' => __('lang.category'),
                 'sub_category' => __('lang.sub_category'),
                 'brand' => __('lang.brand'),

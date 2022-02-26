@@ -1112,4 +1112,8 @@ return [
     'content' => 'محتوا',
     'add_content' => 'اضافه کردن محتوا',
     'edit_content' => 'ویرایش محتوا',
+
+    'cash_given_to' => 'پول نقد به',
+    'added_at' => 'اضافه شده در',
+    'drop_file_here_to_upload' => 'برای آپلود فایل را اینجا رها کنید',
 ];

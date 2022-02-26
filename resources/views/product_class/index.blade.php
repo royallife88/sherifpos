@@ -10,7 +10,7 @@
                     @can('product_module.product_class.create_and_edit')
                         <a style="color: white" data-href="{{ action('ProductClassController@create') }}"
                             data-container=".view_modal" class="btn btn-modal btn-info"><i class="dripicons-plus"></i>
-                            @lang('lang.add_product_class')</a>
+                            @lang('lang.add')</a>
                     @endcan
                 </div>
                 <div class="card-body">

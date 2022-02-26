@@ -5,14 +5,14 @@
 
       <div class="modal-header">
 
-          <h4 class="modal-title">@lang( 'lang.add_class' )</h4>
+          <h4 class="modal-title">@if(session('system_mode') == 'restaurant')@lang( 'lang.add_category' )@else @lang('lang.add_class') @endif</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
 
       <div class="modal-body">
         <div class="form-group">
-          {!! Form::label('name', __( 'lang.class_name' ) . ':*') !!}
-            {!! Form::text('name', null, ['class' => 'form-control',  'placeholder' => __( 'lang.class_name' ), 'required' ]); !!}
+          {!! Form::label('name', __( 'lang.name' ) . ':*') !!}
+            {!! Form::text('name', null, ['class' => 'form-control',  'placeholder' => __( 'lang.name' ), 'required' ]); !!}
         </div>
         <input type="hidden" name="quick_add" value="{{$quick_add }}">
         <div class="form-group">

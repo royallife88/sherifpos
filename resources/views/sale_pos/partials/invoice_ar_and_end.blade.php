@@ -212,7 +212,7 @@
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->delivery_cost)}}
                         </th>
                         <th colspan="2" style="text-align:right">{{__('lang.delivery_cost',[], 'ar')}} <br>
-                            @lang('lang.delivery_cost' , [], 'en')</th>
+                            @lang('lang.delivery_cost' , [], 'en') @if(!empty($transaction->deliveryman->employee_name)) ({{$transaction->deliveryman->employee_name}}) @endif</th>
                     </tr>
                     @endif
                     @if(!empty($transaction->rp_redeemed_value))

@@ -1112,4 +1112,8 @@ return [
     'content' => 'Contenu',
     'add_content' => 'Ajouter du contenu',
     'edit_content' => 'Modifier le contenu',
+
+    'cash_given_to' => 'Espèces données à',
+    'added_at' => 'Ajouté à',
+    'drop_file_here_to_upload' => 'Déposez le fichier ici pour le télécharger',
 ];
