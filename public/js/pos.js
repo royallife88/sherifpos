@@ -557,16 +557,16 @@ function calculate_sub_totals() {
     __write_number($("#total_item_tax"), total_item_tax);
     total += total_item_tax;
 
-    let tax_amount = get_tax_amount(total);
-    __write_number($("#total_tax"), tax_amount);
-    total += tax_amount;
-
     __write_number($("#grand_total"), grand_total); // total without any discounts
 
     total -= total_coupon_discount;
 
     let discount_amount = get_discount_amount(total);
     total -= discount_amount;
+
+    let tax_amount = get_tax_amount(total);
+    __write_number($("#total_tax"), tax_amount);
+    total += tax_amount;
 
     let points_redeemed_value = 0;
     if (parseInt($("#is_redeem_points").val())) {
@@ -597,7 +597,7 @@ function calculate_sub_totals() {
     // if (promo_discount > 0) {
     //     __write_number($("#discount_amount"), promo_discount);
     // }
-    console.log(promo_discount, "promo_discount");
+
     total -= promo_discount;
 
     let delivery_cost = 0;
