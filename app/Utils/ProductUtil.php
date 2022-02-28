@@ -1422,7 +1422,6 @@ class ProductUtil extends Util
             $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
         }
 
-        $products->where('active', 1);
         $products->where('is_service', 0);
 
         if (empty($sender_store_id)) {

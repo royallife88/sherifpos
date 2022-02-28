@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.product'))
+@section('title', __('lang.product_classification_tree'))
 
 @section('content')
 

@@ -569,7 +569,7 @@ return [
     'sale_status' => 'حالة المبيعات ',
     'add_sale' => 'أنشيء فاتورة تجارية',
     'add_sales' => 'أنشيء فاتورة تجارية',
-    'generate_invoice' => 'إنشاء الفاتورة',
+    'generate_invoice' => 'طباعة فاتورة',
     'total_tax' => 'مجموع الضريبة',
     'view_payments' => 'عرض المدفوعات',
     'edit_payment' => 'تعديل المدفوعات',
@@ -1047,7 +1047,7 @@ return [
     'fabric_squatch' => 'سكواتش النسيج',
     'select_image' => 'اختر صورة',
     'customer_size_details' => 'تفاصيل حجم العميل',
-    'crop' => 'ا & قتصاص',
+    'crop' => 'اقتصاص',
     'crop_image_before_upload' => 'صورة المحاصيل قبل التحميل',
 
     'add_new_raw_material' => 'إضافة مادة خام جديدة',

@@ -567,7 +567,7 @@ return [
 
     'sales_list' => 'Sales List',
     'sale_status' => 'Sales Status',
-    'generate_invoice' => 'Generate Invoice',
+    'generate_invoice' => 'Print Invoice',
     'total_tax' => 'Total Tax',
     'view_payments' => 'View Payments',
     'edit_payment' => 'Edit Payments',

@@ -95,7 +95,7 @@ class RawMaterialController extends Controller
                 $products->where('products.created_by', request()->created_by);
             }
 
-            $products->where('active', 1)->where('is_raw_material', 1);
+            $products->where('is_raw_material', 1);
             $products = $products->select(
                 'products.*',
                 'add_stock_lines.batch_number',

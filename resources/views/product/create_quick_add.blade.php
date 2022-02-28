@@ -12,6 +12,7 @@
         </div>
 
         <div class="modal-body">
+            <input type="hidden" name="active" value="1">
             <div class="row">
                 @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                 <div class="col-md-4">
