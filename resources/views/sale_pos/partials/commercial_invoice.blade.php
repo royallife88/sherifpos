@@ -42,7 +42,7 @@
                 height: auto;
                 top: 10%;
                 left: 0%;
-                opacity: 0.3;
+                opacity: 0.2;
             }
             #watermark img {
                 width: 100%;

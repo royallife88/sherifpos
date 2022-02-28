@@ -287,6 +287,8 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
     e.preventDefault();
     var data = new FormData(this);
 
+    var category_id = null;
+
     $.ajax({
         method: "post",
         url: $(this).attr("action"),
@@ -297,7 +299,7 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
             if (result.success) {
                 swal("Success", result.msg, "success");
                 $(".view_modal").modal("hide");
-                var category_id = result.category_id;
+                category_id = result.category_id;
                 sub_category_id = result.sub_category_id;
                 $.ajax({
                     method: "get",
@@ -307,13 +309,13 @@ $(document).on("submit", "form#quick_add_category_form", function (e) {
                     data: {},
                     contactType: "html",
                     success: function (data_html) {
-                        $("#category_id").empty().append(data_html);
-                        $("#category_id").selectpicker("refresh");
                         if (category_id) {
-                            $("#category_id").val(category_id).change();
-                        }
-                        if (sub_category_id) {
-                            $("#sub_category_id").val(sub_category_id);
+                            $("#category_id").empty().append(data_html);
+                            $("#category_id").selectpicker("refresh");
+                            $("#category_id").val(category_id);
+                            $("#category_id").selectpicker("refresh");
+                            $("#category_id").change();
+                            category_id = null;
                         }
                     },
                 });
@@ -357,6 +359,7 @@ $(document).on("change", "#category_id", function () {
 
             if (sub_category_id) {
                 $("#sub_category_id").selectpicker("val", sub_category_id);
+                sub_category_id = null;
             }
         },
     });
@@ -721,7 +724,7 @@ function calculate_price_base_on_raw_material() {
 
 $(document).on("click", ".remove_raw_material_btn", function () {
     calculate_price_base_on_raw_material();
-})
+});
 $(document).on("change", "#discount", function () {
     let discount = __read_number($(this));
     if (discount > 0) {
