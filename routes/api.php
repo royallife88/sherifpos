@@ -20,3 +20,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::middleware('api')->get('/tutorials/get-tutorials-data-array-by-category/{category_id}', 'TutorialController@getTutorialsDataArrayByCategory');
 Route::middleware('api')->get('/tutorials/get-tutorials-categories-array', 'TutorialController@getTutorialsCategoryArray');
+
+Route::group(['middleware' => 'api', 'prefix' => 'api'], function () {
+    Route::resource('/category', 'Api\ProductClassController');
+});

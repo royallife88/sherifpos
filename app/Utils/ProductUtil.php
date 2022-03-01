@@ -1610,4 +1610,22 @@ class ProductUtil extends Util
         $current_Stock = $query->sum('qty_available');
         return ['current_stock' => $current_Stock];
     }
+
+    public function createProductStoreForThisStoreIfNotExist($store_id)
+    {
+        $variations = Variation::whereNull('deleted_at')->get();
+
+        foreach ($variations as $variation) {
+            $product_store = ProductStore::where('product_id', $variation->product_id)->where('variation_id', $variation->id)->where('store_id', $store_id)->first();
+
+            if (empty($product_store)) {
+                $product_store = new ProductStore();
+                $product_store->product_id = $variation->product_id;
+                $product_store->variation_id = $variation->id;
+                $product_store->store_id = $store_id;
+                $product_store->qty_available = 0;
+                $product_store->save();
+            }
+        }
+    }
 }

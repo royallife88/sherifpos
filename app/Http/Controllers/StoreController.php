@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Store;
+use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,16 +17,18 @@ class StoreController extends Controller
      *
      */
     protected $commonUtil;
+    protected $productUtil;
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param productUtil $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->productUtil = $productUtil;
     }
 
     /**
@@ -35,7 +38,7 @@ class StoreController extends Controller
      */
     public function index()
     {
-        $query = Store::leftjoin('transactions', function($join){
+        $query = Store::leftjoin('transactions', function ($join) {
             $join->on('stores.id', 'transactions.store_id')->where('type', 'sell');
         });
         $query->select(
@@ -94,6 +97,7 @@ class StoreController extends Controller
 
             $store_id = $store->id;
 
+            $this->productUtil->createProductStoreForThisStoreIfNotExist($store_id);
             DB::commit();
             $output = [
                 'success' => true,
@@ -164,7 +168,7 @@ class StoreController extends Controller
             DB::beginTransaction();
 
             $store = Store::where('id', $id)->update($data);
-
+            $this->productUtil->createProductStoreForThisStoreIfNotExist($id);
             DB::commit();
             $output = [
                 'success' => true,
