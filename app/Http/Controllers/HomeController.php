@@ -46,15 +46,23 @@ class HomeController extends Controller
         $start_date = new Carbon('first day of this month');
         $end_date = new Carbon('last day of this month');
 
+        $store_ids = [];
         $store_pos_id = null;
         if (strtolower(session('user.job_title')) == 'cashier') {
             $store_pos_id = session('user.pos_id');
+        } else {
+            if (!Auth::user()->is_superadmin) {
+                $employee = Employee::where('user_id', Auth::user()->id)->first();
+                $store_ids = $employee->store_id;
+                $store_pos_id = null;
+            }
         }
-        $dashboard_data = $this->getDashboardData($start_date, $end_date, null, $store_pos_id);
 
-        $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', null, $store_pos_id);
-        $yearly_best_sellings_qty = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'qty', null, $store_pos_id);
-        $yearly_best_sellings_price = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'total_price', null, $store_pos_id);
+        $dashboard_data = $this->getDashboardData($start_date, $end_date, $store_ids, $store_pos_id);
+
+        $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_ids, $store_pos_id);
+        $yearly_best_sellings_qty = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'qty', $store_ids, $store_pos_id);
+        $yearly_best_sellings_price = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'total_price', $store_ids, $store_pos_id);
 
         //cash flow of last 6 months
         $start = strtotime(date('Y-m-01', strtotime('-6 month', strtotime(date('Y-m-d')))));
@@ -65,7 +73,7 @@ class HomeController extends Controller
             $start_date = date("Y-m", $start) . '-' . '01';
             $end_date = date("Y-m", $start) . '-' . '31';
 
-            $cash_flow_data  = $this->getDashboardData($start_date, $end_date, null, $store_pos_id);
+            $cash_flow_data  = $this->getDashboardData($start_date, $end_date, $store_ids, $store_pos_id);
 
             $payment_received[] = $cash_flow_data['payment_received'];
             $payment_sent[] = $cash_flow_data['payment_sent'];
@@ -148,12 +156,20 @@ class HomeController extends Controller
 
     public function getChartAndTableSection()
     {
+        $store_id = [];
         $start_date = !empty(request()->start_date) ? request()->start_date : new Carbon('first day of this month');
         $end_date = !empty(request()->end_date) ? request()->end_date : new Carbon('last day of this month');
-        $store_id = request()->store_id;
+        $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
+
         $store_pos_id = null;
         if (strtolower(session('user.job_title')) == 'cashier') {
             $store_pos_id = session('user.pos_id');
+        } else {
+            if (!Auth::user()->is_superadmin) {
+                $employee = Employee::where('user_id', Auth::user()->id)->first();
+                $store_id = $employee->store_id;
+                $store_pos_id = null;
+            }
         }
 
         $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_id);
@@ -307,7 +323,7 @@ class HomeController extends Controller
      * @param string $order_by
      * @return void
      */
-    public function getBestSellings($start_date, $end_date, $order_by, $store_id = null, $store_pos_id = null)
+    public function getBestSellings($start_date, $end_date, $order_by, $store_id = [], $store_pos_id = null)
     {
         $query =  TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id')
             ->join('products', 'transaction_sell_lines.product_id', 'products.id')
@@ -315,7 +331,7 @@ class HomeController extends Controller
             ->where('transaction_date', '<=', $end_date);
 
         if (!empty($store_id)) {
-            $query->where('transactions.store_id', '=', $store_id);
+            $query->whereIn('transactions.store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $query->where('transactions.store_pos_id', '=', $store_pos_id);
@@ -342,7 +358,7 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return double
      */
-    public function getSaleAmount($start_date, $end_date, $store_id = null, $store_pos_id = null)
+    public function getSaleAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
         if (!empty($start_date)) {
@@ -352,7 +368,7 @@ class HomeController extends Controller
             $sell_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $sell_query->where('store_id', $store_id);
+            $sell_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $sell_query->where('store_pos_id', $store_pos_id);
@@ -376,7 +392,7 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return double
      */
-    public function getTotalSaleTaxAmount($start_date, $end_date, $store_id = null, $store_pos_id = null)
+    public function getTotalSaleTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
         if (!empty($start_date)) {
@@ -386,7 +402,7 @@ class HomeController extends Controller
             $sell_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $sell_query->where('store_id', $store_id);
+            $sell_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $sell_query->where('store_pos_id', $store_pos_id);
@@ -411,7 +427,7 @@ class HomeController extends Controller
      * @param int $store_pos_id
      * @return double
      */
-    public function getPurchaseAmount($start_date, $end_date, $store_id = null, $store_pos_id = null)
+    public function getPurchaseAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $purchase_query = Transaction::where('type', 'add_stock')->where('status', 'received');
         if (!empty($start_date)) {
@@ -421,7 +437,7 @@ class HomeController extends Controller
             $purchase_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $purchase_query->where('store_id', $store_id);
+            $purchase_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $purchase_query->where('store_pos_id', $store_pos_id);
@@ -438,17 +454,12 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return void
      */
-    public function getDashboardData($start_date, $end_date, $store_id = null, $store_pos_id = null)
+    public function getDashboardData($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         if (!empty($store_id)) {
             $store_id = $store_id;
         } else {
-            $store_id = request()->get('store_id', null);
-        }
-        if (empty($store_pos_id)) {
-            if (strtolower(session('user.job_title')) == 'cashier') {
-                $store_pos_id = session('user.pos_id');
-            }
+            $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
         }
 
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
@@ -462,7 +473,7 @@ class HomeController extends Controller
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $sell_return_query->where('store_id', $store_id);
+            $sell_return_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $sell_return_query->where('store_pos_id', $store_pos_id);
@@ -487,7 +498,7 @@ class HomeController extends Controller
             $purchase_return_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $purchase_return_query->where('store_id', $store_id);
+            $purchase_return_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $purchase_return_query->where('store_pos_id', $store_pos_id);
@@ -512,7 +523,7 @@ class HomeController extends Controller
             $expense_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $expense_query->where('store_id', $store_id);
+            $expense_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $expense_query->where('store_pos_id', $store_pos_id);
@@ -529,7 +540,7 @@ class HomeController extends Controller
             $payment_received_query->whereDate('paid_on', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $payment_received_query->where('store_id', $store_id);
+            $payment_received_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $payment_received_query->where('store_pos_id', $store_pos_id);
@@ -545,7 +556,7 @@ class HomeController extends Controller
             $payment_purchase_return_query->whereDate('paid_on', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $payment_purchase_return_query->where('store_id', $store_id);
+            $payment_purchase_return_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $payment_purchase_return_query->where('store_pos_id', $store_pos_id);
@@ -563,7 +574,7 @@ class HomeController extends Controller
             $payment_purchase_query->whereDate('paid_on', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $payment_purchase_query->where('store_id', $store_id);
+            $payment_purchase_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $payment_purchase_query->where('store_pos_id', $store_pos_id);
@@ -579,7 +590,7 @@ class HomeController extends Controller
             $payment_expense_query->whereDate('paid_on', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $payment_expense_query->where('store_id', $store_id);
+            $payment_expense_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $payment_expense_query->where('store_pos_id', $store_pos_id);
@@ -603,7 +614,7 @@ class HomeController extends Controller
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty($store_id)) {
-            $sell_return_query->where('store_id', $store_id);
+            $sell_return_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
             $sell_return_query->where('store_pos_id', $store_pos_id);
