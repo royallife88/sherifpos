@@ -37,6 +37,14 @@
                                                 {!! Form::select('store_pos_id', $store_poses, $store_pos->id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
+                                                    value="{{ !empty(App\Models\System::getProperty('invoice_lang'))? App\Models\System::getProperty('invoice_lang'): 'en' }}">
+                                                {!! Form::label('invoice_lang', __('lang.invoice_lang') . ':', []) !!}
+                                                {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">

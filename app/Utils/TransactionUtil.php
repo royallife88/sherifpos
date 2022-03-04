@@ -686,11 +686,15 @@ class TransactionUtil extends Util
      * @param array $payment_types
      * @return void
      */
-    public function getInvoicePrint($transaction, $payment_types)
+    public function getInvoicePrint($transaction, $payment_types, $transaction_invoice_lang = null)
     {
-        $invoice_lang = System::getProperty('invoice_lang');
-        if (empty($invoice_lang)) {
-            $invoice_lang = request()->session()->get('language');
+        if (!empty($transaction_invoice_lang)) {
+            $invoice_lang = $transaction_invoice_lang;
+        } else {
+            $invoice_lang = System::getProperty('invoice_lang');
+            if (empty($invoice_lang)) {
+                $invoice_lang = request()->session()->get('language');
+            }
         }
 
         if ($invoice_lang == 'ar_and_en') {
@@ -707,27 +711,12 @@ class TransactionUtil extends Util
         }
 
         if ($transaction->is_direct_sale == 1) {
-            // $letter_header = System::getProperty('letter_header');
-
-            // $header_img = '';
-            // if (!empty($letter_header)) {
-            //     $header_img = 'uploads/' . $letter_header;
-            // } else {
-            //     $header_img = 'uploads/' . session('logo');
-            // }
-
-            // $height = 60;
-            // if (!empty($header_img)) {
-            //     list($width, $height) = getimagesize($header_img);
-            // }
-
             $sale = $transaction;
             $payment_type_array = $payment_types;
             $html_content = view('sale_pos.partials.commercial_invoice')->with(compact(
                 'sale',
                 'payment_type_array',
-                'invoice_lang',
-                // 'height'
+                'invoice_lang'
             ))->render();
         }
 

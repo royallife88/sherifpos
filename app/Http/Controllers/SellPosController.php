@@ -100,10 +100,11 @@ class SellPosController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('is_default', 1)->first();
-        $stores = Store::getDropdown();
         $product_classes = ProductClass::select('name', 'id')->get();
+        $stores = Store::getDropdown();
         $store_poses = [];
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+        $languages = System::getLanguageDropdown();
 
         if (empty($store_pos)) {
             $output = [
@@ -130,6 +131,7 @@ class SellPosController extends Controller
             'product_classes',
             'payment_types',
             'weighing_scale_setting',
+            'languages',
         ));
     }
 
@@ -344,7 +346,7 @@ class SellPosController extends Controller
         }
 
 
-        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
 
 
         $output = [
@@ -399,6 +401,9 @@ class SellPosController extends Controller
         $product_classes = ProductClass::select('name', 'id')->get();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+        $stores = Store::getDropdown();
+        $store_poses = [];
+        $languages = System::getLanguageDropdown();
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -415,6 +420,9 @@ class SellPosController extends Controller
             'taxes',
             'payment_types',
             'weighing_scale_setting',
+            'stores',
+            'store_poses',
+            'languages',
         ));
     }
 
@@ -522,7 +530,7 @@ class SellPosController extends Controller
 
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
 
             $output = [
                 'success' => true,

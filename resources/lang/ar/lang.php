@@ -659,12 +659,12 @@ return [
     'redeemed_point_value' => 'قيمة النقاط المستبدلة',
     'product_grant_the_points' => 'المنتج يمنح النقاط',
 
-    'sales_promotion' => 'ترويج المبيعات',
-    'sales_promotion_formal_discount' => 'ترويج المبيعات (خصم نظامي)',
-    'edit_sales_promotion' => 'تعديل ترويج المبيعات',
+    'sales_promotion' => 'العروض',
+    'sales_promotion_formal_discount' => 'العروض (خصم نظامي)',
+    'edit_sales_promotion' => 'تعديل العروض',
     'add_sales_promotion_formal_discount' => 'إضافة ترويج مبيعات جديد (خصم نظامي)',
     'add_new_sales_promotion' => 'إضافة ترويج مبيعات جديد',
-    'view_all_sales_promotion' => 'عرض كل ترويج المبيعات',
+    'view_all_sales_promotion' => 'عرض كل العروض',
     'product_condition' => 'حالة المنتج',
     'purchase_condition' => 'شرط الشراء',
 

@@ -1301,6 +1301,15 @@ function reset_pos_form() {
     $(first_row).find(".change_text").text("Change :");
     $(first_row).nextAll().remove();
     $("#customer_size_detail_section").empty();
+
+    let setting_invoice_lang = $("#setting_invoice_lang").val();
+    if (setting_invoice_lang) {
+        $("#invoice_lang").val(setting_invoice_lang);
+        $("#invoice_lang").selectpicker("refresh");
+    } else {
+        $("#invoice_lang").val("en");
+        $("#invoice_lang").selectpicker("refresh");
+    }
 }
 $(document).ready(function () {
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());

@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\ProductClassResource;
-use App\Models\ProductClass;
+use App\Http\Resources\ProductResource;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class ProductClassController extends BaseController
+class ProductController extends BaseController
 {
     /**
      * Display a listing of the resource.
@@ -17,8 +17,8 @@ class ProductClassController extends BaseController
      */
     public function index()
     {
-        $product_classes = ProductClass::all();
-        return $this->handleResponse(ProductClassResource::collection($product_classes), 'Product Classs have been retrieved!');
+        $product = Product::all();
+        return $this->handleResponse(ProductResource::collection($product), 'Products have been retrieved!');
     }
 
     /**
@@ -47,8 +47,8 @@ class ProductClassController extends BaseController
             return $this->handleError($validator->errors());
         }
 
-        $product_class = ProductClass::create($input);
-        return $this->handleResponse(new ProductClassResource($product_class), 'Product Class created!');
+        $product = Product::create($input);
+        return $this->handleResponse(new ProductResource($product), 'Product created!');
     }
 
     /**
@@ -59,11 +59,11 @@ class ProductClassController extends BaseController
      */
     public function show($id)
     {
-        $product_class = ProductClass::find($id);
-        if (is_null($product_class)) {
-            return $this->handleError('Product Class not found!');
+        $product = Product::find($id);
+        if (is_null($product)) {
+            return $this->handleError('Product not found!');
         }
-        return $this->handleResponse(new ProductClassResource($product_class), 'Product Class retrieved.');
+        return $this->handleResponse(new ProductResource($product), 'Product retrieved.');
     }
 
     /**
@@ -86,7 +86,7 @@ class ProductClassController extends BaseController
      */
     public function update(Request $request, $id)
     {
-        $product_class = ProductClass::find($id);
+        $product = Product::find($id);
         $input = $request->all();
 
         $validator = Validator::make($input, [
@@ -97,11 +97,11 @@ class ProductClassController extends BaseController
             return $this->handleError($validator->errors());
         }
 
-        $product_class->name = $input['name'];
-        $product_class->description = $input['description'];
-        $product_class->save();
+        $product->name = $input['name'];
+        $product->description = $input['description'];
+        $product->save();
 
-        return $this->handleResponse(new ProductClassResource($product_class), 'Product Class successfully updated!');
+        return $this->handleResponse(new ProductResource($product), 'Product successfully updated!');
     }
 
     /**
@@ -112,9 +112,9 @@ class ProductClassController extends BaseController
      */
     public function destroy($id)
     {
-        $product_class = ProductClass::find($id);
+        $product = Product::find($id);
 
-        $product_class->delete();
-        return $this->handleResponse([], 'Product Class deleted!');
+        $product->delete();
+        return $this->handleResponse([], 'ProductClass deleted!');
     }
 }
