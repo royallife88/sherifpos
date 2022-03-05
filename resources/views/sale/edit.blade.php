@@ -199,7 +199,19 @@
                         <br>
                         <h4>@lang('lang.payments'):</h4>
                         <div class="row">
-                            <div class="payment_rows" style="width: 100%;">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        {!! Form::label('payment_status', __('lang.payment_status'). ':*', [])
+                                        !!}
+                                        {!! Form::select('payment_status', $payment_status_array,
+                                        $sale->payment_status, ['class' => 'selectpicker form-control',
+                                        'data-live-search'=>"true", 'required',
+                                        'style' =>'width: 80%' , 'placeholder' => __('lang.please_select')]) !!}
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="payment_rows" id="payment_rows" style="width: 100%;">
                                 @forelse ($sale->transaction_payments as $payment)
                                 @include('sale.partials.edit_payment_row', ['payment' => $payment, 'index' =>
                                 $loop->index])
@@ -208,6 +220,11 @@
                                 @include('sale.partials.edit_payment_row', ['payment' => null, 'index' => 0])
                                 @endforelse
                             </div>
+                        </div>
+
+                        <div class="col-md-12 mb-2 btn-add-payment">
+                            <button type="button" id="add_payment_row" class="btn btn-primary btn-block">
+                                @lang('lang.add_payment_row')</button>
                         </div>
 
                         <div class="row">

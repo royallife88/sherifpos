@@ -84,7 +84,10 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="4" class="text-right">@lang( 'lang.total' )</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td class="text-right">@lang( 'lang.total' )</td>
                                 <td>
                                     <span class="total_span">{{@num_format($transaction->final_total)}}</span>
                                 </td>

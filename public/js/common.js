@@ -240,30 +240,35 @@ if (language == "en") {
 var buttons = [
     {
         extend: "print",
+        footer: true,
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },
     },
     {
         extend: "excel",
+        footer: true,
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },
     },
     {
         extend: "csvHtml5",
+        footer: true,
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },
     },
     {
         extend: "pdfHtml5",
+        footer: true,
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },
     },
     {
         extend: "copyHtml5",
+        footer: true,
         exportOptions: {
             columns: ":visible:not(.notexport)",
         },

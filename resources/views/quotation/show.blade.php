@@ -117,7 +117,18 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="11" style="text-align: right"> @lang('lang.total')</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th style="text-align: right"> @lang('lang.total')</th>
                                 <td>{{@num_format($sale->grand_total)}}</td>
                             </tr>
                         </tfoot>

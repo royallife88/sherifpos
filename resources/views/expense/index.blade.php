@@ -136,7 +136,9 @@
                                 </tbody>
                                 <tfoot>
                                     <tr>
-                                        <td colspan="3" class="text-right"><strong>@lang('lang.total')</strong></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="text-right"><strong>@lang('lang.total')</strong></td>
                                         <td>{{@num_format($expenses->sum('final_total'))}}</td>
                                     </tr>
                                 </tfoot>

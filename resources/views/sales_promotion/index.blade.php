@@ -95,7 +95,9 @@
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                <td></td>
+                <td></td>
+                <th style="text-align: right">@lang('lang.total')</th>
                 <td></td>
             </tr>
         </tfoot>

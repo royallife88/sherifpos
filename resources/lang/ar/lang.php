@@ -997,7 +997,7 @@ return [
     'out_of_stock' => 'إنتهى من المخزن',
 
     'new_price' => 'سعر جديد',
-    'weighing_scale_setting' => 'إعداد مقياس الترجيح',
+    'weighing_scale_setting' => 'إعدادات الميزان الإلكتروني',
     'weighing_barcode_prefix' => 'اختصار',
     'weighing_product_sku_length' => 'طول المنتج SKU',
     'weighing_qty_integer_part_length' => 'طول جزء العدد الصحيح',

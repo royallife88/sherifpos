@@ -139,7 +139,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="" style="text-align: right">@lang('lang.total')</th>
+                                <th style="text-align: right">@lang('lang.total')</th>
                                 <th></th>
                                 <th></th>
                                 <th></th>

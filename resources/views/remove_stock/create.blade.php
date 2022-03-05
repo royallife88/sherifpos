@@ -339,42 +339,6 @@
     $('#invoice_id, #supplier_id, #store_id').change(function () {
         product_table.ajax.reload();
     });
-    // $(document).ready(function () {
-    //     product_table.ajax.reload();
-
-    // })
-
-    // function product_table.ajax.reload();{
-    //     product_table.ajax.reload();
-    //     // return $.ajax({
-    //     //     method: 'get',
-    //     //     url: '/remove-stock/get-invoice-details',
-    //     //     data: { store_id: $('#store_id').val(), invoice_id: $('#invoice_id').val(), supplier_id: $('#supplier_id').val() },
-    //     //     success: function(result) {
-    //     //         $("table#product_table tbody").empty().append(result.html);
-    //     //         $('.payment_status_span').text(result.payment_status);
-    //     //         if(result.transaction){
-    //     //             $('#supplier_id').selectpicker('val', result.transaction.supplier_id);
-    //     //         }
-    //     //         calculate_sub_totals();
-    //     //     },
-    //     // });
-    // }
-    // async function getProducts() {
-        // product_table.ajax.reload();;
-        // $('table#product_table tbody').css('text-align', 'center')
-        // $('table#product_table tbody').html(`<tr style: "text-align: center; width: 100%;"><td colspan="21"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i><span class="sr-only">Loading...</span></td></tr>`);
-
-        // const res = await product_table.ajax.reload();.then(function(result) {
-        //     if ( $.fn.DataTable.isDataTable('#product_table') ) {
-        //         $("#product_table").DataTable().destroy();
-        //     }
-        //     $('table#product_table tbody').html(result.html);
-        //     table = $("#product_table").DataTable(datatable_params);
-        //     toggleColumnInCookie()
-        // })
-
-    // }
 
     var hidden_column_array = $.cookie('column_visibility_remove_stock') ? JSON.parse($.cookie('column_visibility_remove_stock')) : [];
     function toggleColumnInCookie(){

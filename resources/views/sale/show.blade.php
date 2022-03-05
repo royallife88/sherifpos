@@ -99,7 +99,12 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th colspan="6" style="text-align: right"> @lang('lang.total')</th>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <th style="text-align: right"> @lang('lang.total')</th>
                                 <td>{{@num_format($sale->transaction_sell_lines->sum('product_discount_amount'))}}</td>
                                 <td>{{@num_format($sale->grand_total)}}</td>
                             </tr>

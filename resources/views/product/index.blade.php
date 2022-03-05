@@ -231,7 +231,20 @@
         </tbody>
         <tfoot>
             <tr>
-                <th colspan="14" style="text-align: right">@lang('lang.total')</th>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <th style="text-align: right">@lang('lang.total')</th>
                 <td></td>
                 <td></td>
                 <td></td>

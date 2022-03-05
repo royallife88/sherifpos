@@ -252,7 +252,10 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <th style="text-align: right">@lang('lang.total')</th>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -371,7 +374,9 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="3" style="text-align: right">@lang('lang.total')</th>
+                                            <td></td>
+                                            <td></td>
+                                            <th style="text-align: right">@lang('lang.total')</th>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -479,7 +484,10 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <th style="text-align: right">@lang('lang.total')</th>
                                             <td></td>
                                         </tr>
                                     </tfoot>
@@ -585,7 +593,10 @@
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th colspan="4" style="text-align: right">@lang('lang.total')</th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th style="text-align: right">@lang('lang.total')</th>
                                             <th></th>
                                         </tr>
                                     </tfoot>
