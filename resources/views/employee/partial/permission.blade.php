@@ -22,12 +22,12 @@
         </tr>
 
     <tbody>
+        @if (session('system_mode') != 'restaurant')
+            @php
+                unset($modulePermissionArray['raw_material_module']);
+            @endphp
+        @endif
         @foreach ($modulePermissionArray as $key_module => $moudle)
-            @if (session('system_mode') != 'restaurant')
-                @php
-                    unset($modulePermissionArray['raw_material_module']);
-                @endphp
-            @endif
             <div>
                 <tr class="module_permission" data-moudle="{{ $key_module }}">
                     <td class="">{{ $moudle }} {!! Form::checkbox('module_check_all', 1, false, ['class' => 'module_check_all']) !!}</td>
