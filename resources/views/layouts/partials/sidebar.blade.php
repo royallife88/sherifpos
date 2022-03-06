@@ -19,7 +19,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 <li><a href="#product" aria-expanded="false" data-toggle="collapse"> <i
                             class="fa fa-cubes"></i><span>{{__('lang.product')}}</span><span></a>
                     <ul id="product"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['product', 'product-classification-tree', 'barcode', 'raw-material', 'consumption'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['product', 'product-classification-tree', 'barcode'])) show @endif">
                         @can('product_module.product.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'product' && request()->segment(2) == 'create') active @endif">
@@ -47,14 +47,28 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
                         @endif
-                        @if(session('system_mode') == 'restaurant')
-                        @can('product_module.raw_material.create_and_edit')
+                    </ul>
+                </li>
+                @endif
+                @endif
+
+
+                @if(session('system_mode') == 'restaurant')
+                @if( !empty($module_settings['raw_material_module']) )
+                @if(auth()->user()->can('raw_material_module.raw_material.create_and_edit') ||
+                auth()->user()->can('raw_material_module.raw_material.view')
+                )
+                <li><a href="#raw_material" aria-expanded="false" data-toggle="collapse"> <i
+                            class="fa fa-industry"></i><span>{{__('lang.raw_material')}}</span><span></a>
+                    <ul id="raw_material"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['raw-material', 'raw-materials', 'consumption'])) show @endif">
+                        @can('raw_material_module.raw_material.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'create')) active @endif">
                             <a href="{{action('RawMaterialController@create')}}">{{__('lang.add_new_raw_material')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.raw_material.view')
+                        @can('raw_material_module.raw_material.view')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && empty(request()->segment(2))) active @endif">
                             <a
@@ -62,37 +76,73 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
 
-                        @can('product_module.consumption.create_and_edit')
+                        @can('raw_material_module.consumption.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'consumption' && request()->segment(2) == 'create')) active @endif">
                             <a
                                 href="{{action('ConsumptionController@create')}}">{{__('lang.add_manual_consumption')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.consumption.create_and_edit')
+                        @can('raw_material_module.consumption.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'consumption' && empty(request()->segment(2))) active @endif">
                             <a
                                 href="{{action('ConsumptionController@index')}}">{{__('lang.list_view_the_consumption_of_raw_material')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.add_stock_for_raw_material.create_and_edit')
+                        @can('raw_material_module.add_stock_for_raw_material.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && request()->segment(3) == 'create') active @endif">
                             <a href="/raw-material/add-stock/create">{{__('lang.add_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
-                        @can('product_module.add_stock_for_raw_material.view')
+                        @can('raw_material_module.add_stock_for_raw_material.view')
                         <li
                             class="@if(request()->segment(1) == 'raw-material' && request()->segment(2) == 'add-stock' && empty(request()->segment(3))) active @endif">
                             <a href="/raw-material/add-stock">{{__('lang.view_all_stock_for_raw_material')}}</a>
                         </li>
                         @endcan
-                        @endif
+
+                        @can('raw_material_module.transfer.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'transfer' && request()->segment(3) == 'create') active @endif">
+                            <a href="/raw-materials/transfer/create">{{__('lang.add_a_transfer')}}</a>
+                        </li>
+                        @endcan
+                        @can('raw_material_module.transfer.view')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'transfer' && empty(request()->segment(2))) active @endif">
+                            <a
+                                href="/raw-materials/transfer?is_raw_material=1">{{__('lang.all_internal_stock_requests_and_transfers')}}</a>
+                        </li>
+                        @endcan
+                        @can('raw_material_module.internal_stock_request.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'internal-stock-request' && request()->segment(3) == 'create') active @endif">
+                            <a
+                                href="/raw-materials/internal-stock-request/create">{{__('lang.internal_stock_request')}}</a>
+                        </li>
+                        @endcan
+                        @can('raw_material_module.internal_stock_return.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'internal-stock-return' && request()->segment(3) == 'create') active @endif">
+                            <a
+                                href="/raw-materials/internal-stock-return/create">{{__('lang.internal_stock_return')}}</a>
+                        </li>
+                        @endcan
+                        @can('raw_material_module.internal_stock_return.view')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'internal-stock-return' && empty(request()->segment(2))) active @endif">
+                            <a
+                                href="/raw-materials/internal-stock-return">{{__('lang.return_requests_report')}}</a>
+                        </li>
+                        @endcan
                     </ul>
                 </li>
                 @endif
                 @endif
+                @endif
+
 
                 @if( !empty($module_settings['purchase_order']) )
                 @if(auth()->user()->can('purchase_order.draft_purchase_order.view') ||
@@ -207,21 +257,21 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         <li
                             class="@if(request()->segment(1) == 'internal-stock-request' && request()->segment(2) == 'create') active @endif">
                             <a
-                                href="{{action('InternalStockRequestController@create')}}">{{__('lang.internal_stock_request')}}</a>
+                                href="/internal-stock-request/create">{{__('lang.internal_stock_request')}}</a>
                         </li>
                         @endcan
                         @can('stock.internal_stock_return.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'internal-stock-return' && request()->segment(2) == 'create') active @endif">
                             <a
-                                href="{{action('InternalStockReturnController@create')}}">{{__('lang.internal_stock_return')}}</a>
+                                href="/internal-stock-return/create">{{__('lang.internal_stock_return')}}</a>
                         </li>
                         @endcan
                         @can('stock.internal_stock_return.view')
                         <li
                             class="@if(request()->segment(1) == 'internal-stock-return' && empty(request()->segment(2))) active @endif">
                             <a
-                                href="{{action('InternalStockReturnController@index')}}">{{__('lang.return_requests_report')}}</a>
+                                href="/internal-stock-return">{{__('lang.return_requests_report')}}</a>
                         </li>
                         @endcan
                         @can('stock.import.create_and_edit')

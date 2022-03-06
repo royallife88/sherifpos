@@ -450,53 +450,55 @@ class RemoveStockController extends Controller
         $store_id = request()->get('store_id');
         $supplier_id = request()->get('supplier_id');
 
-        $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
-            ->leftjoin('products', 'add_stock_lines.product_id', 'products.id')
-            ->leftjoin('variations', 'add_stock_lines.variation_id', 'variations.id')
-            ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
-            ->leftjoin('categories', 'products.category_id', 'categories.id')
-            ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'categories.id')
-            ->leftjoin('colors', 'variations.color_id', 'colors.id')
-            ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
-            ->leftjoin('grades', 'variations.grade_id', 'grades.id')
-            ->leftjoin('units', 'variations.unit_id', 'units.id')
-            ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
-            ->where('transactions.type',  'add_stock');
-        if (!empty($id)) {
-            $query->where('transactions.id', $id);
-        }
-        if (!empty($supplier_id)) {
-            $query->where('transactions.supplier_id', $supplier_id);
-        }
-        if (!empty($store_id)) {
-            $query->where('transactions.store_id', $store_id);
-        }
-        $add_stocks = $query->select(
-            'transactions.*',
-            'products.sell_price',
-            'products.id as product_id',
-            'variations.id as variation_id',
-            'products.name as product_name',
-            'variations.name as variation_name',
-            'variations.sub_sku',
-            'colors.name as color',
-            'sizes.name as size',
-            'grades.name as grade',
-            'units.name as unit',
-            'suppliers.name as supplier',
-            'suppliers.email as supplier_email',
-            'product_classes.name as product_class',
-            'categories.name as category',
-            'sub_categories.name as sub_category',
-            'add_stock_lines.purchase_price',
-            'add_stock_lines.quantity',
-            'add_stock_lines.id as index',
-        )->groupBy('add_stock_lines.id');
-
-
-        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
-
         if (request()->ajax()) {
+
+            $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+                ->leftjoin('products', 'add_stock_lines.product_id', 'products.id')
+                ->leftjoin('variations', 'add_stock_lines.variation_id', 'variations.id')
+                ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
+                ->leftjoin('categories', 'products.category_id', 'categories.id')
+                ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'categories.id')
+                ->leftjoin('colors', 'variations.color_id', 'colors.id')
+                ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+                ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+                ->leftjoin('units', 'variations.unit_id', 'units.id')
+                ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
+                ->where('transactions.type',  'add_stock');
+            if (!empty($id)) {
+                $query->where('transactions.id', $id);
+            }
+            if (!empty($supplier_id)) {
+                $query->where('transactions.supplier_id', $supplier_id);
+            }
+            if (!empty($store_id)) {
+                $query->where('transactions.store_id', $store_id);
+            }
+            $add_stocks = $query->select(
+                'transactions.*',
+                'products.sell_price',
+                'products.id as product_id',
+                'variations.id as variation_id',
+                'products.name as product_name',
+                'variations.name as variation_name',
+                'variations.sub_sku',
+                'colors.name as color',
+                'sizes.name as size',
+                'grades.name as grade',
+                'units.name as unit',
+                'suppliers.name as supplier',
+                'suppliers.email as supplier_email',
+                'product_classes.name as product_class',
+                'categories.name as category',
+                'sub_categories.name as sub_category',
+                'add_stock_lines.purchase_price',
+                'add_stock_lines.quantity',
+                'add_stock_lines.id as index',
+            )->groupBy('add_stock_lines.id');
+
+
+            $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+
+
             return DataTables::of($add_stocks)
                 ->addColumn('selected_product', function ($row) {
                     $html = '<input type="hidden" class="row_index" name="row_index" value="' . $row->index . '">';
@@ -590,13 +592,6 @@ class RemoveStockController extends Controller
                 ])
                 ->make(true);
         }
-        // $html = view('remove_stock.partials.product_rows')->with(compact(
-        //     'add_stocks',
-        //     'payment_status_array',
-        //     'store_id'
-        // ))->render();
-
-        // return ['html' => $html];
     }
 
     /**

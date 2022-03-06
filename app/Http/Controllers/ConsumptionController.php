@@ -56,7 +56,7 @@ class ConsumptionController extends Controller
      */
     public function index(Request $request)
     {
-        if (!auth()->user()->can('product_module.consumption.view')) {
+        if (!auth()->user()->can('raw_material_module.consumption.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -155,21 +155,21 @@ class ConsumptionController extends Controller
                             </button>
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
 
-                        if (auth()->user()->can('product_module.consumption.view')) {
+                        if (auth()->user()->can('raw_material_module.consumption.view')) {
                             $html .=
                                 '<li><a data-href="' . action('ConsumptionController@show', $row->id) . '"
                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                 ' . __('lang.view') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.consumption.create_and_edit')) {
+                        if (auth()->user()->can('raw_material_module.consumption.create_and_edit')) {
                             $html .=
                                 '<li><a href="' . action('ConsumptionController@edit', $row->id) . '" class="btn"
                             target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
                         }
 
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.consumption.delete')) {
+                        if (auth()->user()->can('raw_material_module.consumption.delete')) {
                             $html .=
                                 '<li>
                             <a data-href="' . action('ConsumptionController@destroy', $row->id) . '"
@@ -227,7 +227,7 @@ class ConsumptionController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('product_module.consumption.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.consumption.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -300,7 +300,7 @@ class ConsumptionController extends Controller
      */
     public function show($id)
     {
-        if (!auth()->user()->can('product_module.consumption.view')) {
+        if (!auth()->user()->can('raw_material_module.consumption.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -346,7 +346,7 @@ class ConsumptionController extends Controller
      */
     public function edit($id)
     {
-        if (!auth()->user()->can('product_module.consumption.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.consumption.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
 

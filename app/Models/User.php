@@ -69,6 +69,7 @@ class User extends Authenticatable
         return [
             'dashboard' => __('lang.dashboard'),
             'product_module' => __('lang.product_module'),
+            'raw_material_module' => __('lang.raw_material_module'),
             'customer_module' => __('lang.customer_module'),
             'supplier_module' => __('lang.supplier_module'),
             'hr_management' => __('lang.hr_management'),
@@ -110,9 +111,15 @@ class User extends Authenticatable
                 'barcode' => __('lang.barcode'),
                 'purchase_price' => __('lang.purchase_price'),
                 'sell_price' => __('lang.sell_price'),
+            ],
+            'raw_material_module' => [
                 'raw_material' => __('lang.raw_material'),
                 'consumption' => __('lang.consumption'),
                 'add_consumption_for_others' => __('lang.add_consumption_for_others'),
+                'add_stock_for_raw_material' => __('lang.add_stock_for_raw_material'),
+                'transfer' => __('lang.transfer'),
+                'internal_stock_request' => __('lang.internal_stock_request'),
+                'internal_stock_return' => __('lang.internal_stock_return'),
             ],
             'customer_module' => [
                 'customer' => __('lang.customer'),

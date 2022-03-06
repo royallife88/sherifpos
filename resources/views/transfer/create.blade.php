@@ -12,6 +12,7 @@
                     </div>
                     {!! Form::open(['url' => action('TransferController@store'), 'method' => 'post', 'id' =>
                     'add_transfer_form', 'enctype' => 'multipart/form-data' ]) !!}
+                     <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{ $is_raw_material }}">
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3">

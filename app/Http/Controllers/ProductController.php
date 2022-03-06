@@ -175,10 +175,6 @@ class ProductController extends Controller
                 $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
             }
 
-            if (!empty(request()->customer_type_id)) {
-                $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
-            }
-
             if (!empty(request()->created_by)) {
                 $products->where('products.created_by', request()->created_by);
             }

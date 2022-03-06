@@ -101,6 +101,51 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
+                            @if($transfer->is_raw_material == 1)
+                            @if($transfer->is_internal_stock_transfer == 1 && $transfer->status != 'final')
+                            <li>
+                                <a data-href="{{action('InternalStockRequestController@getUpdateStatus', $transfer->id)}}"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-arrow-up"></i>
+                                    @lang('lang.update_status')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endif
+                            @can('raw_material_module.transfer.view')
+                            <li>
+
+                                <a data-href="{{action('TransferController@show', $transfer->id)}}"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
+                                    @lang('lang.view')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @can('raw_material_module.transfer.view')
+                            <li>
+
+                                <a href="{{action('TransferController@print', $transfer->id)}}?print=true"
+                                    class="btn"><i class="dripicons-print"></i>
+                                    @lang('lang.print')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+                            @can('raw_material_module.transfer.create_and_edit')
+                            <li>
+
+                                <a href="/raw-materials/transfer/{{$transfer->id}}/edit" class="btn"><i
+                                        class="dripicons-document-edit"></i> @lang('lang.edit')</a>
+                            </li>
+                            <li class="divider"></li>
+                            @endcan
+
+                            @can('raw_material_module.transfer.delete')
+                            <li>
+                                <a data-href="{{action('TransferController@destroy', $transfer->id)}}"
+                                    data-check_password="{{action('UserController@checkPassword', Auth::user()->id)}}"
+                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                    @lang('lang.delete')</a>
+                            </li>
+                            @endcan
+                            @else
                             @if($transfer->is_internal_stock_transfer == 1 && $transfer->status != 'final')
                             <li>
                                 <a data-href="{{action('InternalStockRequestController@getUpdateStatus', $transfer->id)}}"
@@ -144,6 +189,7 @@
                                     @lang('lang.delete')</a>
                             </li>
                             @endcan
+                            @endif
                         </ul>
                     </div>
                 </td>

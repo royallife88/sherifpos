@@ -63,6 +63,12 @@ class TransferController extends Controller
         $stores = Store::getDropdown();
         $query = Transaction::where('type', 'transfer');
 
+        if (!empty(request()->is_raw_material)) {
+            $query->where('transactions.is_raw_material', 1);
+        } else {
+            $query->where('transactions.is_raw_material', 0);
+        }
+
         if (!empty(request()->sender_store_id)) {
             $query->where('sender_store_id', request()->sender_store_id);
         }
@@ -111,6 +117,10 @@ class TransferController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('stock.transfer.create_and_edit') || !auth()->user()->can('raw_material_module.transfer.create_and_edit')) {
+            abort(403, 'Unauthorized action.');
+        }
+
         $stores = Store::getDropdown();
 
         $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
@@ -127,6 +137,8 @@ class TransferController extends Controller
 
         $users = User::pluck('name', 'id');
 
+        $is_raw_material = request()->segment(1) == 'raw-materials' ? true : false;
+
         return view('transfer.create')->with(compact(
             'stores',
             'product_classes',
@@ -141,6 +153,7 @@ class TransferController extends Controller
             'customer_types',
             'discount_customer_types',
             'users',
+            'is_raw_material',
         ));
     }
 
@@ -165,7 +178,8 @@ class TransferController extends Controller
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => $this->productUtil->getNumberByType('transfer'),
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'is_raw_material' => !empty($request->is_raw_material) ? 1 : 0,
             ];
 
             DB::beginTransaction();

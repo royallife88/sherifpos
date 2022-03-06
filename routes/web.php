@@ -142,6 +142,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('internal-stock-return/send-the-goods/{id}', 'InternalStockReturnController@sendTheGoods');
     Route::resource('internal-stock-return', InternalStockReturnController::class);
 
+    Route::resource('raw-materials/internal-stock-request', InternalStockRequestController::class);
+    Route::resource('raw-materials/internal-stock-return', InternalStockReturnController::class);
+    Route::get('raw-materials/transfer/get-print/{id}', 'TransferController@print');
+    Route::get('raw-materials/transfer/add-product-row', 'TransferController@addProductRow');
+    Route::resource('raw-materials/transfer', TransferController::class);
+
     Route::get('transfer/get-print/{id}', 'TransferController@print');
     Route::get('transfer/add-product-row', 'TransferController@addProductRow');
     Route::resource('transfer', TransferController::class);

@@ -1203,6 +1203,13 @@ $(document).ready(function () {
                         $("#add-payment").modal("hide");
                         toastr.success(result.msg);
 
+                        if ($("#status").val() == "draft") {
+                            if ($("#edit_pos_form").length > 0) {
+                                setTimeout(() => {
+                                    window.close();
+                                }, 3000);
+                            }
+                        }
                         if (
                             $("#print_the_transaction").prop("checked") &&
                             $("#status").val() !== "draft"

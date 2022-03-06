@@ -1421,6 +1421,11 @@ class ProductUtil extends Util
         if (!empty(request()->customer_type_id)) {
             $products->whereJsonContains('show_to_customer_types', request()->customer_type_id);
         }
+        if (!empty(request()->is_raw_material)) {
+            $products->where('is_raw_material', 1);
+        } else {
+            $products->where('is_raw_material', 0);
+        }
 
         $products->where('is_service', 0);
 

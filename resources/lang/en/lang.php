@@ -1121,4 +1121,6 @@ return [
     'added_at' => 'Added at',
     'drop_file_here_to_upload' => 'Drop file here to upload',
 
+
+    'raw_material_module' => 'Raw Material Module',
 ];

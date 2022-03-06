@@ -60,7 +60,7 @@ class RawMaterialController extends Controller
      */
     public function index(Request $request)
     {
-        if (!auth()->user()->can('product_module.raw_material.view')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -156,32 +156,32 @@ class RawMaterialController extends Controller
                             </button>
                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
 
-                        if (auth()->user()->can('product_module.raw_material.view')) {
+                        if (auth()->user()->can('raw_material_module.raw_material.view')) {
                             $html .=
                                 '<li><a data-href="' . action('RawMaterialController@show', $row->id) . '"
                                 data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                 ' . __('lang.view') . '</a></li>';
                         }
-                        if (auth()->user()->can('product_module.consumption.view')) {
+                        if (auth()->user()->can('raw_material_module.consumption.view')) {
                             $html .=
                                 '<li><a href="' . action('ConsumptionController@create', ['raw_material_id' => $row->id]) . '"
                                 class="btn "><i class="fa fa-plus"></i>
                                 ' . __('lang.add_manual_consumption') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.raw_material.create_and_edit')) {
+                        if (auth()->user()->can('raw_material_module.raw_material.create_and_edit')) {
                             $html .=
                                 '<li><a href="' . action('RawMaterialController@edit', $row->id) . '" class="btn"
                             target="_blank"><i class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.add_stock_for_raw_material.create_and_edit')) {
+                        if (auth()->user()->can('raw_material_module.add_stock_for_raw_material.create_and_edit')) {
                             $html .=
                                 '<li><a target="_blank" href="' . url('/raw-material/add-stock/create?variation_id=' . $row->variation_id . '&product_id=' . $row->id) . '" class="btn"
                             target="_blank"><i class="fa fa-plus"></i> ' . __('lang.add_new_stock') . '</a></li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('product_module.raw_material.delete')) {
+                        if (auth()->user()->can('raw_material_module.raw_material.delete')) {
                             $html .=
                                 '<li>
                             <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
@@ -237,7 +237,7 @@ class RawMaterialController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('product_module.raw_material.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -274,7 +274,7 @@ class RawMaterialController extends Controller
      */
     public function store(Request $request)
     {
-        if (!auth()->user()->can('product_module.raw_material.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
         $this->validate(
@@ -345,7 +345,7 @@ class RawMaterialController extends Controller
      */
     public function show($id)
     {
-        if (!auth()->user()->can('product_module.raw_material.view')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.view')) {
             abort(403, 'Unauthorized action.');
         }
 
@@ -367,7 +367,7 @@ class RawMaterialController extends Controller
      */
     public function edit($id)
     {
-        if (!auth()->user()->can('product_module.raw_material.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
         $raw_material = Product::findOrFail($id);
@@ -407,7 +407,7 @@ class RawMaterialController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!auth()->user()->can('product_module.raw_material.create_and_edit')) {
+        if (!auth()->user()->can('raw_material_module.raw_material.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
         $this->validate(

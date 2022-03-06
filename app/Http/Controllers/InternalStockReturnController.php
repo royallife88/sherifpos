@@ -8,6 +8,7 @@ use App\Models\Color;
 use App\Models\Grade;
 use App\Models\Product;
 use App\Models\ProductClass;
+use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
 use App\Models\Tax;
@@ -23,6 +24,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 class InternalStockReturnController extends Controller
 {
@@ -58,6 +60,12 @@ class InternalStockReturnController extends Controller
     {
         $stores = Store::getDropdown();
         $query = Transaction::where('type', 'internal_stock_return');
+
+        if (!empty(request()->is_raw_material) || request()->segment(1) == 'raw-materials') {
+            $query->where('transactions.is_raw_material', 1);
+        } else {
+            $query->where('transactions.is_raw_material', 0);
+        }
 
         if (!empty(request()->sender_store)) {
             $query->where('sender_store', request()->sender_store);
@@ -107,7 +115,7 @@ class InternalStockReturnController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('stock.internal_stock_return.create_and_edit')) {
+        if (!auth()->user()->can('stock.internal_stock_return.create_and_edit') || !auth()->user()->can('raw_material_module.internal_stock_return.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
         $stores = Store::getDropdown();
@@ -124,6 +132,8 @@ class InternalStockReturnController extends Controller
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
 
+        $is_raw_material = request()->segment(1) == 'raw-materials' ? true : false;
+
         return view('internal_stock_return.create')->with(compact(
             'products',
             'product_classes',
@@ -135,7 +145,8 @@ class InternalStockReturnController extends Controller
             'sizes',
             'grades',
             'stores',
-            'taxes'
+            'taxes',
+            'is_raw_material'
         ));
     }
 
@@ -189,7 +200,8 @@ class InternalStockReturnController extends Controller
                         'invoice_no' => $invoice_no,
                         'is_return' => 1,
                         'created_by' => Auth::user()->id,
-                        'requested_by' => Auth::user()->id
+                        'requested_by' => Auth::user()->id,
+                        'is_raw_material' => !empty($request->is_raw_material) ? 1 : 0,
                     ];
 
                     $transaction = Transaction::create($transaction_data);
@@ -352,11 +364,192 @@ class InternalStockReturnController extends Controller
         $stores = Store::getDropdown();
         $stores_keys = array_keys($stores);
         $sender_store_id = request()->get('sender_store_id');
-        $products = $this->productUtil->getProductList($stores_keys, $sender_store_id);
+        // $products = $this->productUtil->getProductList($stores_keys, $sender_store_id);
 
-        return view('internal_stock_return.partials.product_table')->with(compact(
-            'products'
-        ));
+        // return view('internal_stock_return.partials.product_table')->with(compact(
+        //     'products'
+        // ));
+
+        if (request()->ajax()) {
+
+            $query = Product::leftjoin('add_stock_lines', 'products.id', 'add_stock_lines.product_id')
+                ->leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id')
+                ->leftjoin('variations', 'products.id', 'variations.product_id')
+                ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+                ->leftjoin('stores', 'product_stores.store_id', 'stores.id')
+                ->leftjoin('product_classes', 'products.product_class_id', 'product_classes.id')
+                ->leftjoin('categories', 'products.category_id', 'categories.id')
+                ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'categories.id')
+                ->leftjoin('colors', 'variations.color_id', 'colors.id')
+                ->leftjoin('sizes', 'variations.size_id', 'sizes.id')
+                ->leftjoin('grades', 'variations.grade_id', 'grades.id')
+                ->leftjoin('units', 'variations.unit_id', 'units.id')
+                ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
+                ->leftjoin('brands', 'products.brand_id', 'brands.id')
+                ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
+                ->where('transactions.type',  'add_stock');
+
+            if (!empty(request()->is_raw_material)) {
+                $query->where('products.is_raw_material', 1);
+            } else {
+                $query->where('products.is_raw_material', 0);
+            }
+            $query = $query->select(
+                'transactions.payment_status',
+                'transactions.transaction_date',
+                'transactions.invoice_no',
+                'products.discount',
+                'products.sell_price',
+                'products.id as product_id',
+                'variations.id as variation_id',
+                'products.name as product_name',
+                'variations.name as variation_name',
+                'variations.sub_sku',
+                'colors.name as color',
+                'sizes.name as size',
+                'grades.name as grade',
+                'units.name as unit',
+                'suppliers.name as supplier',
+                'suppliers.email as supplier_email',
+                'product_classes.name as product_class',
+                'categories.name as category',
+                'sub_categories.name as sub_category',
+                'add_stock_lines.batch_number',
+                'add_stock_lines.purchase_price',
+                'add_stock_lines.quantity',
+                'add_stock_lines.expiry_date',
+                'add_stock_lines.manufacturing_date',
+                'product_stores.id as index',
+                'stores.name as store_name',
+                'stores.id as store_id',
+                'taxes.id as tax_name',
+                'brands.name as brand_name',
+            );
+
+            if (empty($sender_store_id)) {
+                $products = $query->addSelect(
+                    DB::raw('SUM(product_stores.qty_available) as current_stock'),
+                )->having('current_stock', '>', 0)
+                    ->groupBy('products.id', 'product_stores.id');
+            } else {
+                $products = $query->addSelect(
+                    DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores WHERE product_stores.product_id=products.id AND product_stores.store_id=' . $sender_store_id . ') as current_stock')
+                )->having('current_stock', '>', 0)
+                    ->groupBy('products.id', 'product_stores.id');
+            }
+
+
+
+            $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+
+            return DataTables::of($products)
+                ->addColumn('selected_product', function ($row) {
+                    $html = '<input type="hidden" class="row_index" name="row_index" value="' . $row->index . '">';
+                    $html .= '<input type="hidden" class="product_id" name="product_ids[' . $row->index . ']" value="' . $row->product_id . '">';
+                    $html .= '<input type="hidden" class="variation_id" name="variation_id[' . $row->index . ']" value="' . $row->variation_id . '">';
+                    $html .= '<input type="hidden" class="purchase_price" name="purchase_price[' . $row->index . ']" value="' . $row->purchase_price . '">';
+                    $html .= '<input type="hidden" class="transaction_id" name="transaction_id[' . $row->index . ']" value="' . $row->id . '">';
+                    $html .= '<input type="hidden" class="store_id" name="store_id[' . $row->index . ']" value="' . $row->store_id . '">';
+                    $html .= '<input type="checkbox" class="product_checkbox" name="product_selected[]" value="' . $row->index . '">';
+
+                    return $html;
+                })
+                ->addColumn('image', function ($row) {
+                    $image = $row->getFirstMediaUrl('product');
+                    if (!empty($image)) {
+                        return '<img src="' . $image . '" height="50px" width="50px">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" height="50px" width="50px">';
+                    }
+                })
+                ->editColumn('variation_name', '{{$product_name}} @if($variation_name != "Default"){{$variation_name}} @endif')
+                ->editColumn('sub_sku', '{{$sub_sku}}')
+                ->editColumn('payment_status', function ($row) use ($payment_status_array) {
+                    return $payment_status_array[$row->payment_status];
+                })
+                ->editColumn('expiry_date', '@if(!empty($expiry_date)){{@format_date($expiry_date)}}@endif')
+                ->editColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
+                ->editColumn('sell_price', '{{@num_format($sell_price)}}')
+                ->editColumn('purchase_price', '{{@num_format($purchase_price)}}')
+                ->editColumn('quantity', '{{@num_format($quantity)}}')
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->addColumn('product_class', '{{$product_class}}')
+                ->addColumn('category', '{{$category}}')
+                ->addColumn('sub_category', '{{$sub_category}}')
+                ->addColumn('qty', function ($row) {
+                    $query = ProductStore::where(
+                        'product_id',
+                        $row->product_id
+                    )->where('variation_id', $row->variation_id);
+                    if (!empty($row->store_id)) {
+                        $query->where('store_id', $row->store_id);
+                    }
+                    $current_stock_query = $query->first();
+                    $current_stock = 0;
+
+                    if (!empty($current_stock_query)) {
+                        $current_stock = $current_stock_query->qty_available;
+                    }
+
+                    $html = '<input type="text" class="form-control qty" min=1
+                    max="' . $current_stock . '"
+                    name="qty[' . $row->index . ']" required value="0" style="width: 100px !important; border: 1px solid #999">';
+                    $html .= '<span class="error stock_error hide">' . __('lang.quantity_should_not_greater_than') . '
+                    ' . $this->productUtil->num_uf($current_stock) . '</span>
+                    <input type="hidden" class="current_stock" name="current_stock" value="' . $current_stock . '">';
+
+                    return $html;
+                })
+                ->addColumn('purchase_history', function ($row) {
+                    $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->product_id) . '"
+                    data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
+                    return $html;
+                })
+                ->editColumn('notes', function ($row) {
+                    return '<input type="text" class="form-control notes" name="remove_stock_lines[' . $row->index . '][notes]" id="" value="">';
+                })
+                ->addColumn('current_stock', function ($row) {
+                    $query = ProductStore::where(
+                        'product_id',
+                        $row->product_id
+                    )->where('variation_id', $row->variation_id);
+                    if (!empty($row->store_id)) {
+                        $query->where('store_id', $row->store_id);
+                    }
+                    $current_stock_query = $query->first();
+                    $current_stock = 0;
+
+                    if (!empty($current_stock_query)) {
+                        $current_stock = $current_stock_query->qty_available;
+                    }
+
+                    return $this->productUtil->num_uf($current_stock);
+                })
+
+                ->rawColumns([
+                    'selected_product',
+                    'image',
+                    'variation_name',
+                    'sku',
+                    'product_class',
+                    'category',
+                    'sub_category',
+                    'purchase_history',
+                    'batch_number',
+                    'sell_price',
+                    'tax',
+                    'brand',
+                    'unit',
+                    'color',
+                    'size',
+                    'grade',
+                    'qty',
+                    'supplier_email',
+                    'purchase_price',
+                    'notes',
+                ])
+                ->make(true);
+        }
     }
 
     /**

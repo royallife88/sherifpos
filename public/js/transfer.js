@@ -13,7 +13,8 @@ $(document).ready(function () {
             .autocomplete({
                 source: function (request, response) {
                     $.getJSON(
-                        "/purchase-order/get-products",
+                        "/purchase-order/get-products?is_raw_material=" +
+                            $("#is_raw_material").val(),
                         { store_id: $("#store_id").val(), term: request.term },
                         response
                     );

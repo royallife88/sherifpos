@@ -95,10 +95,6 @@
                 <td>{{@num_format($transfer->final_total)}}</td>
                 <td>@if($transfer->status == 'received'){{__('lang.received')}}@else{{ucfirst($transfer->status)}}@endif</td>
                 <td>{{$transfer->notes}}</td>
-                {{-- <td>
-                    <a data-href="{{action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $transfer->id, 'collection_name' => 'internal_stock_return'])}}"
-                        data-container=".view_modal"
-                        class="btn-modal">@lang('lang.view')</a> --}}
                 </td>
                 <td>
                     <div class="btn-group">

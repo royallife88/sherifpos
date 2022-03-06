@@ -28,7 +28,7 @@
                                 </div>
                             </div>
                             <div
-                                class="col-md-3 @if(!auth()->user()->can('product_module.add_consumption_for_others.create_and_edit')) hide @endif">
+                                class="col-md-3 @if(!auth()->user()->can('raw_material_module.add_consumption_for_others.create_and_edit')) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('created_by', __('lang.chef'). ':*', []) !!}
                                     {!! Form::select('created_by', $chefs,
