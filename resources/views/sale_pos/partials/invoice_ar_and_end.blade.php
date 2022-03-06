@@ -123,6 +123,9 @@
 
             </p>
             @endif
+            @if(!empty($transaction->deliveryman))
+            <p style="padding-left: 7px;">{{$transaction->deliveryman->employee_name}}</p>
+            @endif
         </div>
         @if(session('system_mode') == 'restaurant')
         <div style="width: 30%; float:right; text-align:center;">

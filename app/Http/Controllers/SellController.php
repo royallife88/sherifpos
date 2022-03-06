@@ -79,6 +79,7 @@ class SellController extends Controller
             $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
                 ->leftjoin('stores', 'transactions.store_id', 'stores.id')
                 ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
                 ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
                 ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
@@ -101,6 +102,9 @@ class SellController extends Controller
             }
             if (!empty(request()->customer_id)) {
                 $query->where('customer_id', request()->customer_id);
+            }
+            if (!empty(request()->customer_type_id)) {
+                $query->where('customer_type_id', request()->customer_type_id);
             }
             if (!empty(request()->status)) {
                 $query->where('status', request()->status);
@@ -336,6 +340,7 @@ class SellController extends Controller
         $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
         $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
         $customers = Customer::getCustomerArrayWithMobile();
+        $customer_types = CustomerType::pluck('name', 'id');
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
@@ -348,6 +353,7 @@ class SellController extends Controller
             'payment_types',
             'cashiers',
             'customers',
+            'customer_types',
             'stores',
             'payment_status_array',
         ));

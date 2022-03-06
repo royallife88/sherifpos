@@ -671,7 +671,7 @@ return [
     'pay_later' => 'Pay Later',
     'bank_transfer' => 'Bank Transfer',
 
-    'profit_loss_report' => 'Profit / Loss Report',
+    'profit_loss_report' => 'General Overview',
     'reports' => 'Reports',
     'income' => 'Income',
     'information' => 'Information',

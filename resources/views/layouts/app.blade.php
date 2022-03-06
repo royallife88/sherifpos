@@ -52,8 +52,8 @@
         @include('layouts.partials.footer')
 
 
-        <div class="modal fade view_modal no-print" role="dialog" aria-hidden="true"></div>
-        <div class="modal fade" id="cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal view_modal no-print" role="dialog" aria-hidden="true"></div>
+        <div class="modal" id="cropper_modal" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                     <div class="modal-header">
@@ -89,8 +89,8 @@
             value="@if(!empty($cash_register)){{0}}@else{{1}}@endif">
         <input type="hidden" name="cash_register_id" id="cash_register_id"
             value="@if(!empty($cash_register)){{$cash_register->id}}@endif">
-        <div id="closing_cash_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-            class="modal fade text-left">
+        <div id="closing_cash_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+            class="modal text-left">
         </div>
     </div>
 

@@ -447,3 +447,9 @@ $(document).on("change", "#sku", function () {
         },
     });
 });
+$(document).on("click", ".btn", function () {
+    let data_dismiss = $(this).data("dismiss");
+    if (data_dismiss == "modal") {
+        $(".modal").modal("hide");
+    }
+});

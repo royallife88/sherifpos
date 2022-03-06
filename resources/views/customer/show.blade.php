@@ -91,7 +91,7 @@
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.mobile'):</b> <span
-                                                class="customer_mobile_span">{{ $customer->mobile }}</span>
+                                                class="customer_mobile_span">{{ $customer->mobile_number }}</span>
                                         </div>
                                         <div class="col-md-12">
                                             <b>@lang('lang.address'):</b> <span

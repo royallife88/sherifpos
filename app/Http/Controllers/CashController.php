@@ -284,8 +284,13 @@ class CashController extends Controller
 
         $cash_register = $query->select(
             'cash_registers.*',
+            DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
             DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND type = 'credit', amount, 0)) as total_cash_sales"),
             DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_refund_cash"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND type = 'credit', amount, 0)) as total_card_sales"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND type = 'credit', amount, 0)) as total_bank_transfer_sales"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND type = 'credit', amount, 0)) as total_gift_card_sales"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND type = 'credit', amount, 0)) as total_cheque_sales"),
             DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_purchases"),
             DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_cash_in"),

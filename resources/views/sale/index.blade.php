@@ -61,6 +61,13 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
+                        {!! Form::label('customer_type_id', __('lang.customer_type'), []) !!}
+                        {!! Form::select('customer_type_id', $customer_types, request()->customer_type_id, ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
                         {!! Form::label('store_id', __('lang.store'), []) !!}
                         {!! Form::select('store_id', $stores, request()->store_id, ['class' =>
                         'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
@@ -209,6 +216,7 @@
                 d.sub_category_id = $("#sub_category_id").val();
                 d.brand_id = $("#brand_id").val();
                 d.customer_id = $("#customer_id").val();
+                d.customer_type_id = $("#customer_type_id").val();
                 d.store_id = $("#store_id").val();
                 d.status = $("#status").val();
                 d.method = $("#method").val();

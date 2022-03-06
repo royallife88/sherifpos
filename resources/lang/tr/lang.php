@@ -672,7 +672,7 @@ return [
     'pay_later' => 'Daha sonra öde',
     'bank_transfer' => 'Banka transferi',
 
-    'profit_loss_report' => 'Kar / Zarar Raporu',
+    'profit_loss_report' => 'Genel Bakış',
     'reports' => 'Raporlar',
     'income' => 'Gelir',
     'information' => 'Bilgi',
