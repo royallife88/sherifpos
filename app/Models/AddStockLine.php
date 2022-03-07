@@ -16,10 +16,16 @@ class AddStockLine extends Model
      */
     protected $guarded = ['id'];
 
-    public function product(){
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
+    public function product()
+    {
         return $this->belongsTo(Product::class);
     }
-    public function variation(){
+    public function variation()
+    {
         return $this->belongsTo(Variation::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AddStockLine;
 use App\Models\CashRegister;
 use App\Models\Customer;
 use App\Models\CustomerType;
@@ -12,6 +13,7 @@ use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Supplier;
 use App\Models\Transaction;
+use App\Models\TransactionSellLine;
 use App\Models\User;
 use App\Models\WagesAndCompensation;
 use App\Utils\NotificationUtil;
@@ -1067,6 +1069,42 @@ class ReportController extends Controller
             'store_pos',
             'products',
             'stores',
+        ));
+    }
+
+    /**
+     * view product details
+     *
+     * @return view
+     */
+    public function viewProductDetails($id)
+    {
+        $store_id = request()->store_id;
+
+        $product = Product::find($id);
+        $stock_detial_query = ProductStore::where('product_id', $id);
+        if (!empty($store_id)) {
+            $stock_detial_query->where('product_stores.store_id', $store_id);
+        }
+        $stock_detials = $stock_detial_query->get();
+
+        $sell_query = TransactionSellLine::leftjoin('transactions', 'transaction_sell_lines.transaction_id', 'transactions.id');
+        if (!empty($store_id)) {
+            $sell_query->where('transactions.store_id', $store_id);
+        }
+        $sales = $sell_query->where('product_id', $id)->select('transaction_sell_lines.*')->get();
+
+        $add_stock_query = AddStockLine::leftjoin('transactions', 'add_stock_lines.transaction_id', 'transactions.id');
+        if (!empty($store_id)) {
+            $add_stock_query->where('transactions.store_id', $store_id);
+        }
+        $add_stocks = $add_stock_query->where('product_id', $id)->select('add_stock_lines.*')->get();
+
+        return view('reports.partials.view_product_details')->with(compact(
+            'product',
+            'stock_detials',
+            'sales',
+            'add_stocks',
         ));
     }
 

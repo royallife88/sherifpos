@@ -108,7 +108,7 @@
                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
                                             @can('product_module.product.view')
                                             <li>
-                                                <a data-href="{{action('ProductController@show', $transaction->id)}}"
+                                                <a data-href="{{action('ReportController@viewProductDetails', $transaction->id)}}?store_id={{request()->store_id}}"
                                                     data-container=".view_modal" class="btn btn-modal"><i class="fa fa-eye"></i>
                                                     @lang('lang.view')</a>
                                             </li>

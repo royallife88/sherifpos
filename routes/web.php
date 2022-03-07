@@ -259,6 +259,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-expected-payable-report', 'ReportController@getExpectedPayableReport');
     Route::get('report/get-summary-report', 'ReportController@getSummaryReport');
     Route::get('report/get-best-seller-report', 'ReportController@getBestSellerReport');
+    Route::get('report/view-product-details/{id}', 'ReportController@viewProductDetails');
     Route::get('report/get-product-report', 'ReportController@getProductReport');
     Route::get('report/get-daily-sale-report', 'ReportController@getDailySaleReport');
     Route::get('report/get-monthly-sale-report', 'ReportController@getMonthlySaleReport');
