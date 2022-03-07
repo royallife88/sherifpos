@@ -17,7 +17,7 @@ class ProductController extends BaseController
      */
     public function index()
     {
-        $product = Product::all();
+        $product = Product::where('is_raw_material', 0)->get();
         return $this->handleResponse(ProductResource::collection($product), 'Products have been retrieved!');
     }
 

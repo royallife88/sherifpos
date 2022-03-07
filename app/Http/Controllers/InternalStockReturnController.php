@@ -115,7 +115,7 @@ class InternalStockReturnController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('stock.internal_stock_return.create_and_edit') || !auth()->user()->can('raw_material_module.internal_stock_return.create_and_edit')) {
+        if (!auth()->user()->can('stock.internal_stock_return.create_and_edit') && !auth()->user()->can('raw_material_module.internal_stock_return.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
         $stores = Store::getDropdown();
@@ -239,13 +239,6 @@ class InternalStockReturnController extends Controller
             }
 
             DB::commit();
-
-            // if ($data['submit'] == 'print') {
-            //     $print = 'print';
-            //     $url = action('AddStockController@show', $transaction->id) . '?print=' . $print;
-
-            //     return Redirect::to($url);
-            // }
 
             $output = [
                 'success' => true,

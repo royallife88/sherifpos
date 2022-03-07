@@ -117,7 +117,7 @@ class TransferController extends Controller
      */
     public function create()
     {
-        if (!auth()->user()->can('stock.transfer.create_and_edit') || !auth()->user()->can('raw_material_module.transfer.create_and_edit')) {
+        if (!auth()->user()->can('stock.transfer.create_and_edit') && !auth()->user()->can('raw_material_module.transfer.create_and_edit')) {
             abort(403, 'Unauthorized action.');
         }
 

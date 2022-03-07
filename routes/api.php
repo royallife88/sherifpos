@@ -28,7 +28,7 @@ Route::middleware('api')->get('/tutorials/get-tutorials-categories-array', 'Tuto
 Route::post('login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    // Route::resource('product-class', ProductClassController::class);
+
     Route::get('product-class', [ProductClassController::class, 'index']);
     Route::post('product-class', [ProductClassController::class, 'store']);
     Route::put('product-class/{id}', [ProductClassController::class, 'update']);
