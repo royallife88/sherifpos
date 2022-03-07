@@ -55,12 +55,10 @@ class ReportController extends Controller
      */
     public function getProfitLoss(Request $request)
     {
-        $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
-        $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+        $store_id = $request->get('store_id');
+        $pos_id = $request->get('pos_id');
 
         $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
-            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
             ->where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
