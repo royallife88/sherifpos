@@ -15,7 +15,7 @@
                 font-size: 12px;
                 line-height: 20px;
                 font-family: 'Times New Roman';
-                background-color:transparent !important;
+                background-color: transparent !important;
             }
 
             td,
@@ -44,9 +44,17 @@
                 left: 0%;
                 opacity: 0.2;
             }
+
             #watermark img {
                 width: 100%;
                 height: 100%;
+            }
+
+            #header_invoice_img {
+                margin: auto;
+            }
+            #invoice_heaer_div{
+                width: 100%;
             }
 
         }
@@ -147,7 +155,8 @@
                 margin-top: 0px;
                 margin-bottom: 40px;
             }
-            body *{
+
+            body * {
                 background-color: transparent !important;
             }
         }

@@ -23,6 +23,9 @@
             margin: 0.5cm;
             margin-bottom: 1.6cm;
         }
+        #header_invoice_img{
+            max-width: 80mm;
+        }
     }
 
     #receipt_section * {
