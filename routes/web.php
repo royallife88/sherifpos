@@ -252,6 +252,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
 
     Route::get('report/get-profit-loss', 'ReportController@getProfitLoss');
+    Route::get('report/daily-sales-summary', 'ReportController@getDailySalesSummary');
     Route::get('report/get-receivable-report', 'ReportController@getReceivableReport');
     Route::get('report/get-payable-report', 'ReportController@getPayableReport');
     Route::get('report/get-receivable-payable-report', 'ReportController@getExpectedReceivableReport');
@@ -273,6 +274,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-customer-report', 'ReportController@getCustomerReport');
     Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
     Route::get('report/get-due-report', 'ReportController@getDueReport');
+    Route::get('report/get-pos-details-by-store', 'ReportController@getPosDetailsByStores');
 
     Route::post('sms/save-setting', 'SmsController@saveSetting');
     Route::get('sms/setting', 'SmsController@getSetting');

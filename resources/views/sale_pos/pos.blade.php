@@ -321,7 +321,9 @@
                     @include('sale_pos.partials.coupon_modal')
                     @include('sale_pos.partials.contact_details_modal')
                     @include('sale_pos.partials.weighing_scale_modal')
-                    @include('sale_pos.partials.non_identifiable_item_modal')
+                    @include(
+                        'sale_pos.partials.non_identifiable_item_modal'
+                    )
                     @include('sale_pos.partials.customer_sizes_modal')
                     @include('sale_pos.partials.sale_note')
 
@@ -361,7 +363,9 @@
                                                     id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
                                             <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                         class="dripicons-expand"></i></a></li>
-                                            @include('layouts.partials.notification_list')
+                                            @include(
+                                                'layouts.partials.notification_list'
+                                            )
                                             @php
                                                 $config_languages = config('constants.langs');
                                                 $languages = [];
@@ -499,7 +503,9 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    @include('sale_pos.partials.recent_transactions')
+                                    @include(
+                                        'sale_pos.partials.recent_transactions'
+                                    )
                                 </div>
                             </div>
 

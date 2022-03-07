@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegister;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Employee;
@@ -196,6 +197,78 @@ class ReportController extends Controller
             'customer_types',
             'wages_payment_types',
         ));
+    }
+
+    /**
+     * show the receivable amount report
+     *
+     * @return view
+     */
+    public function getDailySalesSummary(Request $request)
+    {
+        if (request()->ajax()) {
+            $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id');
+
+            if (!empty(request()->start_date)) {
+                $query->whereDate('cash_register_transactions.created_at', request()->start_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->where('cash_register_transactions.created_at', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->store_id) &&  !empty(array_filter(request()->store_id))) {
+                $query->whereIn('store_id', request()->store_id);
+            }
+            if (!empty(request()->store_pos_id) &&  !empty(array_filter(request()->store_pos_id))) {
+                $query->whereIn('store_pos_id', request()->store_pos_id);
+            }
+            if (!empty(request()->user_id)) {
+                $query->where('cash_registers.user_id', request()->user_id);
+            }
+
+            $cash_register = $query->select(
+                'cash_registers.*',
+                DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND type = 'credit', amount, 0)) as total_cash_sales"),
+                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_refund_cash"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND type = 'credit', amount, 0)) as total_card_sales"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND type = 'credit', amount, 0)) as total_bank_transfer_sales"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND type = 'credit', amount, 0)) as total_gift_card_sales"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND type = 'credit', amount, 0)) as total_cheque_sales"),
+                DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_purchases"),
+                DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
+                DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),
+                DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
+                DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
+            )
+                ->first();
+
+            return view('reports.partials.daily_sales_summary_table')->with(compact('cash_register'));
+        }
+
+        $stores = Store::getDropdown();
+        $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+
+        return view('reports.daily_sales_summary')->with(compact(
+            'stores',
+            'users',
+            'store_pos'
+
+        ));
+    }
+    /**
+     * get store pos details by store id
+     *
+     * @param int $store_id
+     * @return void
+     */
+    public function getPosDetailsByStores()
+    {
+        $store_ids = array_filter(request()->store_ids);
+
+        $store_pos = StorePos::whereIn('store_id', $store_ids)->pluck('name', 'id');
+
+        return $this->commonUtil->createDropdownHtml($store_pos, __('lang.all'));
     }
 
     /**

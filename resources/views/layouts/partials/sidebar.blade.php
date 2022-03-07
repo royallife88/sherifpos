@@ -593,6 +593,12 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('ReportController@getProfitLoss')}}">{{__('lang.profit_loss_report')}}</a>
                         </li>
                         @endcan
+                        @can('reports.daily_sales_summary.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'daily-sales-summary') active @endif">
+                            <a href="{{action('ReportController@getDailySalesSummary')}}">{{__('lang.daily_sales_summary')}}</a>
+                        </li>
+                        @endcan
                         @can('reports.receivable_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-receivable-report') active @endif">

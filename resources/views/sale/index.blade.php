@@ -98,6 +98,15 @@
                     </div>
                 </div>
 
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('deliveryman_id', __('lang.deliveryman'), []) !!}
+                        {!! Form::select('deliveryman_id', $delivery_men, request()->deliveryman_id,
+                        ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+
                 <div class="col-md-2">
                     <div class="form-group">
                         {!! Form::label('start_date', __('lang.start_date'), []) !!}
@@ -221,6 +230,7 @@
                 d.status = $("#status").val();
                 d.method = $("#method").val();
                 d.payment_status = $("#payment_status").val();
+                d.deliveryman_id = $("#deliveryman_id").val();
                 d.start_date = $("#start_date").val();
                 d.start_time = $("#start_time").val();
                 d.end_date = $("#end_date").val();

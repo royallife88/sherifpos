@@ -189,6 +189,7 @@ class User extends Authenticatable
             ],
             'reports' => [
                 'profit_loss' => __('lang.profit_loss'),
+                'daily_sales_summary' => __('lang.daily_sales_summary'),
                 'receivable_report' => __('lang.receivable_report'),
                 'payable_report' => __('lang.payable_report'),
                 'expected_receivable_report' => __('lang.expected_receivable_report'),

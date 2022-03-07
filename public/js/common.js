@@ -453,3 +453,9 @@ $(document).on("click", ".btn", function () {
         $(".modal").modal("hide");
     }
 });
+
+$(document).on("shown.bs.modal", function () {
+    $(".modal-dialog").draggable({
+        handle: ".modal-header",
+    });
+});

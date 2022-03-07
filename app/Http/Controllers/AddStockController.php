@@ -121,7 +121,7 @@ class AddStockController extends Controller
             )->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
             return DataTables::of($add_stocks)
                 ->editColumn('created_at', '{{@format_datetime($created_at)}}')
-                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
                 ->editColumn('due_date', '@if(!empty($add_stock->due_date) && $add_stock->payment_status != "paid"){{@format_datetime($due_date)}}@endif')
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->editColumn('final_total', '{{@num_format($final_total)}}')
@@ -293,7 +293,7 @@ class AddStockController extends Controller
                 'type' => 'add_stock',
                 'status' => $data['status'],
                 'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
-                'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']) . ' ' . date('H:i:s'),
+                'transaction_date' => !empty($data['transaction_date']) ? Carbon::createFromTimestamp(strtotime($data['transaction_date']))->format('Y-m-d H:i:s') : Carbon::now(),
                 'payment_status' => $data['payment_status'],
                 'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
                 'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,

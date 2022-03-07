@@ -112,6 +112,9 @@ class SellController extends Controller
             if (!empty($store_id)) {
                 $query->where('store_id', $store_id);
             }
+            if (!empty(request()->deliveryman_id)) {
+                $query->where('deliveryman_id', request()->deliveryman_id);
+            }
             if (!empty(request()->payment_status)) {
                 $query->where('payment_status', request()->payment_status);
             }
@@ -344,6 +347,7 @@ class SellController extends Controller
         $stores = Store::getDropdown();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
+        $delivery_men = Employee::getDropdownByJobType('Deliveryman');
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -355,6 +359,7 @@ class SellController extends Controller
             'customers',
             'customer_types',
             'stores',
+            'delivery_men',
             'payment_status_array',
         ));
     }

@@ -1116,4 +1116,7 @@ return [
     'cash_given_to' => 'النقدية الممنوحة ل',
     'added_at' => 'تمت الإضافة في',
     'drop_file_here_to_upload' => 'حمل الصورة من هن',
+
+    'raw_material_module' => 'Raw Material Module',
+    'daily_sales_summary' => ' ملخص التقرير اليومي',
 ];

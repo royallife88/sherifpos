@@ -1123,4 +1123,5 @@ return [
 
 
     'raw_material_module' => 'Raw Material Module',
+    'daily_sales_summary' => 'Daily Sales Summary',
 ];

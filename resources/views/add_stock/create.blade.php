@@ -50,7 +50,11 @@
                                         {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], 'received', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
-
+                                <div class="col-md-3">
+                                    {!! Form::label('transaction_date', __('lang.date_and_time'), []) !!}
+                                    <input type="datetime-local" id="transaction_date" name="transaction_date"
+                                        value="{{ date('Y-m-d\TH:i') }}" class="form-control">
+                                </div>
 
                             </div>
                             <br>
@@ -69,7 +73,9 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    @include('quotation.partial.product_selection')
+                                    @include(
+                                        'quotation.partial.product_selection'
+                                    )
                                 </div>
                             </div>
                             <br>
@@ -146,12 +152,6 @@
                                     <div class="form-group">
                                         {!! Form::label('source_of_payment', __('lang.source_of_payment'), []) !!} <br>
                                         {!! Form::select('source_id', $users, null, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
-                                    </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        {!! Form::label('transaction_date', __('lang.date') . ':*', []) !!} <br>
-                                        {!! Form::text('transaction_date', @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'required', 'placeholder' => __('lang.date')]) !!}
                                     </div>
                                 </div>
 
