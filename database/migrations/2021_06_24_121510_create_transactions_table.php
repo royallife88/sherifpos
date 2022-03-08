@@ -105,6 +105,8 @@ class CreateTransactionsTable extends Migration
             $table->string('due_date')->nullable();
             $table->boolean('notify_me')->default(0);
             $table->integer('notify_before_days')->default(0);
+            $table->unsignedBigInteger('restaurant_order_id')->nullable();
+            $table->string('table_no')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('deleted_by')->nullable();

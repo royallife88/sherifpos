@@ -43,4 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('size', [SizeController::class, 'store']);
     Route::put('size/{id}', [SizeController::class, 'update']);
     Route::delete('size/{id}', [SizeController::class, 'destroy']);
+
+    Route::post('order', [OrderController::class, 'store']);
 });
