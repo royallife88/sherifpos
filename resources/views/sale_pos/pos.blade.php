@@ -572,6 +572,17 @@
     <script src="{{ asset('js/onscan.min.js') }}"></script>
     <script src="{{ asset('js/pos.js') }}"></script>
     <script>
+        // Enable pusher logging - don't include this in production
+        Pusher.logToConsole = true;
 
+        var pusher = new Pusher('daf17543838d5b82cb8d', {
+            cluster: 'ap2'
+        });
+
+        var channel = pusher.subscribe('my-channel');
+        channel.bind('my-event', function(data) {
+            console.log(data);
+            // alert(JSON.stringify(data));
+        });
     </script>
 @endsection

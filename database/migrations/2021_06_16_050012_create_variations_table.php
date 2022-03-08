@@ -30,6 +30,7 @@ class CreateVariationsTable extends Migration
             $table->decimal('default_purchase_price', 15, 4);
             $table->decimal('default_sell_price', 15, 4);
             $table->boolean('is_dummy')->default(1);
+            $table->unsignedBigInteger('restaurant_model_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

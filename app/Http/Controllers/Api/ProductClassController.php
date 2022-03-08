@@ -48,6 +48,10 @@ class ProductClassController extends BaseController
         }
 
         $product_class = ProductClass::create($input);
+        if (!empty($input['image'])) {
+            $product_class->addMediaFromUrl($input['image'])->toMediaCollection('product_class');
+        }
+
         return $this->handleResponse(new ProductClassResource($product_class), 'Product Class created!');
     }
 
@@ -100,6 +104,11 @@ class ProductClassController extends BaseController
         $product_class->name = $input['name'];
         $product_class->description = $input['description'];
         $product_class->save();
+
+        if (!empty($input['image'])) {
+            $product_class->clearMediaCollection('product_class');
+            $product_class->addMediaFromUrl($input['image'])->toMediaCollection('product_class');
+        }
 
         return $this->handleResponse(new ProductClassResource($product_class), 'Product Class successfully updated!');
     }
