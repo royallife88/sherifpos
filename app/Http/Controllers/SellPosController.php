@@ -1287,4 +1287,15 @@ class SellPosController extends Controller
 
         return ['customer' => $customer, 'rp_value' => $rp_value, 'total_redeemable'  => $total_redeemable, 'customer_type_name' => !empty($customer_type) ? $customer_type->name : '', 'balance' => $balance];
     }
+
+    /**
+     * get the transction details
+     *
+     * @param int $id
+     * @return void
+     */
+    public function getTransactionDetails($transaction_id)
+    {
+        return Transaction::find($transaction_id);
+    }
 }

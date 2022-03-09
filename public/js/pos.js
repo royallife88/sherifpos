@@ -327,7 +327,6 @@ function get_label_product_row(
 }
 function reset_row_numbering() {
     $("#product_table > tbody  > tr").each((ele, tr) => {
-        console.log(ele, tr);
         $(tr)
             .find(".row_number")
             .text(ele + 1);
@@ -1541,6 +1540,8 @@ $(document).on("shown.bs.modal", "#recentTransaction", function () {
 });
 $(document).on("click", "#view-draft-btn", function () {
     $("#draftTransaction").modal("show");
+    $(".draft-badge").hide();
+    $(".draft-badge").text(0);
     draft_table.ajax.reload();
 });
 $(document).ready(function () {

@@ -173,6 +173,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
     Route::get('pos/get-payment-row', 'SellPosController@getPaymentRow');
     Route::get('pos/get-sale-promotion-details-if-valid', 'SellPosController@getSalePromotionDetailsIfValid');
+    Route::get('pos/get-transaction-details/{transaction_id}', 'SellPosController@getTransactionDetails');
     Route::resource('pos', SellPosController::class);
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');

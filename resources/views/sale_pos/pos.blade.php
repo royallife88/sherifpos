@@ -14,6 +14,10 @@
                     <source src="{{ asset('audio/beep-07.mp3') }}">
                     </source>
                 </audio>
+                <audio id="mysoundclip3" preload="auto">
+                    <source src="{{ asset('audio/beep-long.mp3') }}">
+                    </source>
+                </audio>
                 <div class="@if (session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
                     {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' => true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
                     <div class="card">
@@ -272,7 +276,7 @@
                                     class="btn btn-custom" id="view-draft-btn"
                                     data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
                                         class="dripicons-flag"></i>
-                                    @lang('lang.view_draft')</button>
+                                    @lang('lang.view_draft') <span class="badge badge-danger draft-badge">0</span></button>
                             </div>
                             <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
@@ -572,17 +576,33 @@
     <script src="{{ asset('js/onscan.min.js') }}"></script>
     <script src="{{ asset('js/pos.js') }}"></script>
     <script>
+        $(document).ready(function() {
+            $('.draft-badge').hide();
+        })
         // Enable pusher logging - don't include this in production
-        Pusher.logToConsole = true;
+        // Pusher.logToConsole = true;
 
-        var pusher = new Pusher('daf17543838d5b82cb8d', {
+        var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
             cluster: 'ap2'
         });
 
-        var channel = pusher.subscribe('my-channel');
-        channel.bind('my-event', function(data) {
-            console.log(data);
-            // alert(JSON.stringify(data));
+        var channel = pusher.subscribe('order-channel');
+        channel.bind('new-order', function(data) {
+            if (data) {
+                let badge_count = parseInt($('.draft-badge').text()) + 1;
+                $('.draft-badge').text(badge_count);
+                $('.draft-badge').show();
+                let transaction_id = data.transaction_id;
+                $.ajax({
+                    method: 'get',
+                    url: '/pos/get-transaction-details/' + transaction_id,
+                    data: {},
+                    success: function(result) {
+                        toastr.success(LANG.new_order_placed_invoice_no + ' ' + result.invoice_no);
+
+                    },
+                });
+            }
         });
     </script>
 @endsection

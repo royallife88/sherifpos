@@ -4,4 +4,5 @@ LANG = {
     please_enter_sell_price: "Please enter sell price",
     please_enter_quantity: "Please enter quantity",
     amount_exceeds_total_paid: "Amount exceeds total paid",
+    new_order_placed_invoice_no: "New order placed. Invoice No:",
 };
