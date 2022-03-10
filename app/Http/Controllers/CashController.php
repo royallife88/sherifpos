@@ -81,7 +81,8 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
             DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out"),
-            DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return")
+            DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),
+            DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_wages_and_compensation")
         )
             ->groupBy('cash_registers.id')->orderBy('cash_registers.created_at', 'desc')->get();
 
@@ -128,7 +129,8 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
             DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
-            DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
+            DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out"),
+            DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash', amount, 0)) as total_wages_and_compensation")
         )
             ->first();
 
@@ -296,14 +298,12 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_cash_in"),
             DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash' AND type = 'credit', amount, 0)) as total_cash_out"),
             DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),
+            DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_wages_and_compensation"),
         )->first();
-
-        // $cash_in_amount = CashRegisterTransaction::where('cash_register_id', $cash_register_id)->where('transaction_type', 'cash_in')->sum('amount');
-        // $cash_out_amount = CashRegisterTransaction::where('cash_register_id', $cash_register_id)->where('transaction_type', 'cash_out')->sum('amount');
 
         $total_cash = $cash_register->total_cash_sales - $cash_register->total_refund_cash +
             $cash_register->total_cash_in - $cash_register->total_cash_out -
-            $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_sell_return;
+            $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return;
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         return view('cash.add_closing_cash')->with(compact(

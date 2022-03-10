@@ -73,7 +73,8 @@ class SellController extends Controller
     {
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         if (request()->ajax()) {
-            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            // $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_id = request()->store_id;
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
             $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')

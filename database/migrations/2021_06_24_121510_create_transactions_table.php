@@ -84,12 +84,12 @@ class CreateTransactionsTable extends Migration
             $table->text('sale_note')->nullable();
             $table->text('staff_note')->nullable();
             $table->text('notes')->nullable();
-            $table->string('source_type')->nullable();
             $table->unsignedBigInteger('customer_size_id')->nullable();
             $table->string('fabric_name')->nullable();
             $table->string('fabric_squatch')->nullable();
             $table->string('prova_datetime')->nullable();
             $table->string('delivery_datetime')->nullable();
+            $table->string('source_type')->nullable();
             $table->unsignedBigInteger('source_id')->nullable();
             $table->unsignedBigInteger('terms_and_condition_id')->nullable();
             $table->decimal('compensated_value', 15, 4)->default(0);
@@ -105,6 +105,7 @@ class CreateTransactionsTable extends Migration
             $table->string('due_date')->nullable();
             $table->boolean('notify_me')->default(0);
             $table->integer('notify_before_days')->default(0);
+            $table->unsignedBigInteger('wages_and_compensation_id')->nullable();
             $table->unsignedBigInteger('restaurant_order_id')->nullable();
             $table->string('table_no')->nullable();
             $table->unsignedBigInteger('created_by');

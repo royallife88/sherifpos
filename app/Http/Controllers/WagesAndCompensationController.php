@@ -2,11 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegister;
+use App\Models\CashRegisterTransaction;
 use App\Models\Employee;
 use App\Models\JobType;
 use App\Models\Store;
+use App\Models\StorePos;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
+use App\Models\User;
 use App\Models\WagesAndCompensation;
+use App\Utils\CashRegisterUtil;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,6 +28,8 @@ class WagesAndCompensationController extends Controller
      *
      */
     protected $commonUtil;
+    protected $cashRegisterUtil;
+    protected $transactionUtil;
 
     /**
      * Constructor
@@ -28,9 +37,11 @@ class WagesAndCompensationController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, CashRegisterUtil $cashRegisterUtil, TransactionUtil $transactionUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->transactionUtil = $transactionUtil;
     }
 
     /**
@@ -103,10 +114,12 @@ class WagesAndCompensationController extends Controller
     {
         $employees = Employee::getDropdown();
         $payment_types = WagesAndCompensation::getPaymentTypes();
+        $users = User::pluck('name', 'id');
 
         return view('wages_and_compensations.create')->with(compact(
             'employees',
             'payment_types',
+            'users',
         ));
     }
 
@@ -118,34 +131,76 @@ class WagesAndCompensationController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $data = $request->except('_token', 'submit');
+        // try {
+        $data = $request->except('_token', 'submit');
 
-            $data['date_of_creation'] = Carbon::now();
-            $data['created_by'] = Auth::user()->id;
-            $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
-            $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
-            $data['deductibles'] = !empty($data['deductibles']) ? $data['deductibles'] : 0;
+        $data['date_of_creation'] = Carbon::now();
+        $data['created_by'] = Auth::user()->id;
+        $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
+        $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
+        $data['deductibles'] = !empty($data['deductibles']) ? $data['deductibles'] : 0;
+        $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
+        $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
+        $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
 
-            DB::beginTransaction();
-            $wages_and_compensation = WagesAndCompensation::create($data);
+        DB::beginTransaction();
+        $wages_and_compensation = WagesAndCompensation::create($data);
+        $transaction_data = [
+            'type' => 'wages_and_compensation',
+            'transaction_date' => Carbon::now(),
+            'grand_total' => $this->commonUtil->num_uf($data['net_amount']),
+            'final_total' => $this->commonUtil->num_uf($data['net_amount']),
+            'status' => 'final',
+            'payment_status' => $data['status'],
+            'wages_and_compensation_id' => $wages_and_compensation->id,
+            'source_type' => $request->source_type,
+            'source_id' => $request->source_id,
+            'created_by' => Auth::user()->id,
+        ];
 
-            if ($request->hasFile('upload_files')) {
-                $wages_and_compensation->addMedia($request->upload_files)->toMediaCollection('wages_and_compensation');
+        $transaction = Transaction::create($transaction_data);
+
+        if ($request->payment_status != 'pending') {
+            $payment_data = [
+                'transaction_id' => $transaction->id,
+                'amount' => $this->commonUtil->num_uf($request->net_amount),
+                'method' => 'cash',
+                'paid_on' => $this->commonUtil->uf_date($data['payment_date']),
+                'ref_number' => $request->ref_number,
+                'source_type' => $request->source_type,
+                'source_id' => $request->source_id,
+            ];
+            $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+            $user_id = null;
+            if (!empty($request->source_id)) {
+                if ($request->source_type == 'pos') {
+                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                }
+                if ($request->source_type == 'user') {
+                    $user_id = $request->source_id;
+                }
             }
-            DB::commit();
 
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
+            $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
         }
+
+        if ($request->hasFile('upload_files')) {
+            $wages_and_compensation->addMedia($request->upload_files)->toMediaCollection('wages_and_compensation');
+        }
+        DB::commit();
+
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -173,10 +228,12 @@ class WagesAndCompensationController extends Controller
         $payment_types = WagesAndCompensation::getPaymentTypes();
 
         $wages_and_compensation = WagesAndCompensation::find($id);
+        $users = User::pluck('name', 'id');
 
         return view('wages_and_compensations.edit')->with(compact(
             'wages_and_compensation',
             'employees',
+            'users',
             'payment_types',
         ));
     }
@@ -190,43 +247,95 @@ class WagesAndCompensationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
-            $data = $request->except('_token', 'submit', '_method');
+        // try {
+        $data = $request->except('_token', 'submit', '_method');
 
-            $upload_files = null;
-            if ($request->hasFile('upload_files')) {
-                $file = $request->file('upload_files');
-                $upload_files = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path() . '/uploads/', $upload_files);
-                $data['upload_files'] = $upload_files;
-            }
+        $upload_files = null;
+        if ($request->hasFile('upload_files')) {
+            $file = $request->file('upload_files');
+            $upload_files = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path() . '/uploads/', $upload_files);
+            $data['upload_files'] = $upload_files;
+        }
+        $data['created_by'] = Auth::user()->id;
+        $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
+        $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
+        $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
+        $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
+        $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
 
-            $data['date_of_creation'] = Carbon::now();
-            $data['created_by'] = Auth::user()->id;
-            $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
-            $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
+        $wages_and_compensation = WagesAndCompensation::where('id', $id)->first();
+        $wages_and_compensation->update($data);
 
-            $wages_and_compensation = WagesAndCompensation::where('id', $id)->first();
-            $wages_and_compensation->update($data);
+        $transaction = Transaction::where('wages_and_compensation_id', $id)->first();
 
+        $transaction_data = [
+            'grand_total' => $this->commonUtil->num_uf($data['net_amount']),
+            'final_total' => $this->commonUtil->num_uf($data['net_amount']),
+            'status' => 'final',
+            'payment_status' => $data['status'],
+            'wages_and_compensation_id' => $wages_and_compensation->id,
+            'source_type' => $request->source_type,
+            'source_id' => $request->source_id,
+            'created_by' => Auth::user()->id,
+        ];
 
-            if ($request->hasFile('upload_files')) {
-                $wages_and_compensation->addMedia($request->upload_files)->toMediaCollection('wages_and_compensation');
-            }
-
-            $output = [
-                'success' => true,
-                'msg' => __('lang.success')
-            ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
+        if (!empty($transaction)) {
+            $transaction->update($transaction_data);
+        } else {
+            $transaction_data['type'] = 'wages_and_compensation';
+            $transaction_data['transaction_date'] = $wages_and_compensation->date_of_creation;
+            $transaction = Transaction::create($transaction_data);
         }
 
-        return redirect()->to('/hr-management/wages-and-compensations')->with('status', $output);
+        if ($request->payment_status != 'pending') {
+            $transaction_payment = TransactionPayment::where('transaction_id', $transaction->id)->first();
+            $payment_data = [
+                'transaction_payment_id' => !empty($transaction_payment) ?  $transaction_payment->id : null,
+                'transaction_id' => $transaction->id,
+                'amount' => $this->commonUtil->num_uf($request->net_amount),
+                'method' => 'cash',
+                'paid_on' => $data['payment_date'],
+                'ref_number' => $request->ref_number,
+                'source_type' => $request->source_type,
+                'source_id' => $request->source_id,
+            ];
+            $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+            $user_id = null;
+            if (!empty($request->source_id)) {
+                if ($request->source_type == 'pos') {
+                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                }
+                if ($request->source_type == 'user') {
+                    $user_id = $request->source_id;
+                }
+            }
+
+            $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
+            $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+            $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+        }
+
+
+
+        if ($request->hasFile('upload_files')) {
+            $wages_and_compensation->addMedia($request->upload_files)->toMediaCollection('wages_and_compensation');
+        }
+
+        $output = [
+            'success' => true,
+            'msg' => __('lang.success')
+        ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**

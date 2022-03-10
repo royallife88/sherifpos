@@ -64,8 +64,12 @@
                             <td>{{ @num_format($cash_register->total_expenses) }}</td>
                         </tr>
                         <tr>
+                            <td><b>@lang('lang.wages_and_compensation')</b></td>
+                            <td>{{ @num_format($cash_register->total_wages_and_compensation) }}</td>
+                        </tr>
+                        <tr>
                             <td><b>@lang('lang.current_cash')</b></td>
-                            <td>{{ @num_format($cash_register->total_cash_sales -$cash_register->total_refund_cash +$cash_register->total_cash_in -$cash_register->total_cash_out -$cash_register->total_purchases -$cash_register->total_expenses -$cash_register->total_sell_return) }}
+                            <td>{{ @num_format($cash_register->total_cash_sales -$cash_register->total_refund_cash +$cash_register->total_cash_in -$cash_register->total_cash_out -$cash_register->total_purchases -$cash_register->total_expenses -$cash_register->total_wages_and_compensation -$cash_register->total_sell_return) }}
                             </td>
                         </tr>
                     </table>

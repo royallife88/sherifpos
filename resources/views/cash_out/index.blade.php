@@ -19,10 +19,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_time', __('lang.start_time'), []) !!}
-                                {!! Form::text('start_time', request()->start_time, [
-    'class' => 'form-control
-                            time_picker sale_filter',
-]) !!}
+                                {!! Form::text('start_time', request()->start_time, ['class' => 'form-control time_picker sale_filter' ]) !!}
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -34,10 +31,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_time', __('lang.end_time'), []) !!}
-                                {!! Form::text('end_time', request()->end_time, [
-    'class' => 'form-control time_picker
-                            sale_filter',
-]) !!}
+                                {!! Form::text('end_time', request()->end_time, ['class' => 'form-control time_picker sale_filter' ]) !!}
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -99,6 +93,11 @@
                                             $beneficiary_name = $cash_register->transaction->expense_beneficiary->name ?? '';
                                         @endphp
                                         <td>{{ ucfirst($beneficiary_name ?? '') }}</td>
+                                    @elseif ($cash_register->transaction_type == 'wages_and_compensation')
+                                        @php
+                                            $employee_name = $cash_register->transaction->wages_and_compensation->employee->employee_name ?? '';
+                                        @endphp
+                                        <td>{{ ucfirst($employee_name ?? '') }}</td>
                                     @else
                                         <td>{{ ucfirst($cash_register->source->name ?? '') }}</td>
                                     @endif
@@ -106,6 +105,8 @@
                                         <td>@lang('lang.supplier')</td>
                                     @elseif ($cash_register->transaction_type == 'expense')
                                         <td>@lang('lang.beneficiary')</td>
+                                    @elseif ($cash_register->transaction_type == 'expense')
+                                        <td>{{ $cash_register->transaction->wages_and_compensation->employee->employee_name ?? '' }}</td>
                                     @else
                                         <td>{{ ucfirst($cash_register->source->employee->job_type->job_title ?? '') }}
                                         </td>

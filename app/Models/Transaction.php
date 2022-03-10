@@ -173,4 +173,8 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(Employee::class, 'deliveryman_id')->withDefault(['employee_name' => '']);
     }
+    public function wages_and_compensation()
+    {
+        return $this->belongsTo(WagesAndCompensation::class);
+    }
 }

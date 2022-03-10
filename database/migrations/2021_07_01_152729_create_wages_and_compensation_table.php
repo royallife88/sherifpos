@@ -28,7 +28,9 @@ class CreateWagesAndCompensationTable extends Migration
             $table->date('payment_date');
             $table->text('notes')->nullable();
             $table->date('date_of_creation');
-            $table->enum('status', ['pending','paid'])->default('pending');
+            $table->enum('status', ['pending', 'paid'])->default('pending');
+            $table->string('source_type')->nullable();
+            $table->unsignedBigInteger('source_id')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
         });

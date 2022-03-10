@@ -96,6 +96,7 @@
                     <th class="sum">@lang('lang.paid_amount')</th>
                     <th class="sum">@lang('lang.pending_amount')</th>
                     <th>@lang('lang.due_date')</th>
+                    <th>@lang('lang.notes')</th>
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
             </thead>
@@ -170,6 +171,7 @@
                 { data: 'paid_amount', name: 'paid_amount'  },
                 { data: 'due', name: 'due'  },
                 { data: 'due_date', name: 'due_date'},
+                { data: 'notes', name: 'notes'},
                 { data: 'action', name: 'action'},
 
             ],

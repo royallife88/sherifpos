@@ -627,7 +627,7 @@ return [
     'edit_transfer' => 'Edit Transfer',
     'transfer' => 'Transfer',
 
-    'loyalty_points' => 'Lotalty Points',
+    'loyalty_points' => 'Loyalty Points',
     'earning_of_points' => 'Earning of Points',
     'earning_of_point_system' => 'Earning of Points System',
     'add_earning_of_point_system' => 'Add Earning of Points System',
