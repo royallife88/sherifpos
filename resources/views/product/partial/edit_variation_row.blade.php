@@ -25,9 +25,9 @@
         'form-control selectpicker', 'data-live-search'=>"true", 'placeholder' => __('lang.please_select')]) !!}
     </td>
     <td>{!! Form::text('variations['.$row_id.'][default_purchase_price]', !empty($item) ?
-        $item->default_purchase_price:
+        @num_format($item->default_purchase_price) :
         null, ['class' => 'form-control default_purchase_price', 'required']) !!}</td>
-    <td>{!! Form::text('variations['.$row_id.'][default_sell_price]', !empty($item) ? $item->default_sell_price:
+    <td>{!! Form::text('variations['.$row_id.'][default_sell_price]', !empty($item) ? @num_format($item->default_sell_price) :
         null,
         ['class' => 'form-control default_sell_price', 'required']) !!}</td>
     <td> <button type="button" class="btn btn-danger btn-xs remove_row mt-2"><i class="dripicons-cross"></i></button>
@@ -35,14 +35,13 @@
 </tr>
 <tr class="variant_store_checkbox_{{$row_id}}">
     <td colspan="9">
-        <input name="variant_different_prices_for_stores" type="checkbox" @if(!empty($item) && $item->name !=
-        'Default') checked @endif value="1" data-row_id="{{$row_id}}"
+        <input name="variant_different_prices_for_stores" type="checkbox" value="1" data-row_id="{{$row_id}}"
         class="variant_different_prices_for_stores"><strong>@lang('lang.variant_different_prices_for_stores')</strong>
     </td>
 </tr>
 
 @foreach ($stores as $store)
-<tr class="variant_store_prices_{{$row_id}}">
+<tr class="variant_store_prices_{{$row_id}}" style="display: none;">
     <td>
         {{$store->name}}
     </td>
@@ -62,7 +61,7 @@
             name="variations[{{$row_id}}][variant_stores][{{$store->id}}][store_id]" value="{{$store->id}}">
         <input type="text" class="form-control store_prices" style="width: 200px;"
             name="variations[{{$row_id}}][variant_stores][{{$store->id}}][price]"
-            value="@if(!empty($variant_store)){{$variant_store->price}}@endif">
+            value="@if(!empty($variant_store)){{@num_format($variant_store->price)}}@endif">
 
     </td>
 </tr>
