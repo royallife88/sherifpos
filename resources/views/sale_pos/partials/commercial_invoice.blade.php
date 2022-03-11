@@ -53,7 +53,8 @@
             #header_invoice_img {
                 margin: auto;
             }
-            #invoice_heaer_div{
+
+            #invoice_heaer_div {
                 width: 100%;
             }
 
@@ -266,8 +267,11 @@
                                     @endif
                                 </td>
                                 <td style="width: 8% !important;">
-                                    @if (isset($line->product_discount_amount))
-                                        {{ @num_format($line->product_discount_amount) }}@else{{ @num_format(0) }}
+                                    @if ($line->product_discount_type != 'surplus')
+                                        @if (isset($line->product_discount_amount))
+                                            {{ @num_format($line->product_discount_amount) }}@else{{ @num_format(0) }}
+                                        @endif
+                                        @else{{ @num_format(0) }}
                                     @endif
                                 </td>
                                 <td style="width: 15% !important;">

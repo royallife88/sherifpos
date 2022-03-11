@@ -89,7 +89,11 @@
                                     @if(isset($line->sell_price)){{@num_format($line->sell_price)}}@else{{0}}@endif
                                 </td>
                                 <td>
+                                    @if ($line->product_discount_type != 'surplus')
                                     @if(isset($line->product_discount_amount)){{@num_format($line->product_discount_amount)}}@else{{0}}@endif
+                                    @else
+                                    {{ @num_format(0) }}
+                                    @endif
                                 </td>
                                 <td>
                                     {{@num_format($line->sub_total)}}
@@ -105,7 +109,7 @@
                                 <td></td>
                                 <td></td>
                                 <th style="text-align: right"> @lang('lang.total')</th>
-                                <td>{{@num_format($sale->transaction_sell_lines->sum('product_discount_amount'))}}</td>
+                                <td>{{@num_format($sale->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount'))}}</td>
                                 <td>{{@num_format($sale->grand_total)}}</td>
                             </tr>
                         </tfoot>
