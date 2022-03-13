@@ -580,7 +580,7 @@
             $('.draft-badge').hide();
         })
         // Enable pusher logging - don't include this in production
-        // Pusher.logToConsole = true;
+        Pusher.logToConsole = true;
 
         var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
             cluster: 'ap2'
