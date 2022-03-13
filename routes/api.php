@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ProductClassController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\SettingController;
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -46,4 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('size/{id}', [SizeController::class, 'destroy']);
 
     Route::post('order', [OrderController::class, 'store']);
+
+    Route::get('setting', [SettingController::class, 'index']);
+    Route::post('setting', [SettingController::class, 'store']);
 });

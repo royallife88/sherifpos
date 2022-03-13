@@ -66,6 +66,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
+                            @if($customer_type->name != 'Walk in')
                             @can('customer_module.customer_type.view')
                             <li>
                                 <a href="{{action('CustomerTypeController@edit', $customer_type->id)}}"><i
@@ -73,7 +74,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            @if($customer_type->name != 'Walk in')
+
                             @can('customer_module.customer_type.delete')
                             <li>
                                 <a data-href="{{action('CustomerTypeController@destroy', $customer_type->id)}}"

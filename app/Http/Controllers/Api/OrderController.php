@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Customer;
+use App\Models\CustomerType;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -83,7 +84,8 @@ class OrderController extends BaseController
             return $this->handleError($validator->errors());
         }
         try {
-            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number'], 'name' => $input['customer_name'] ]);
+            $walkin_customer_type = CustomerType::where('name', 'Walk in')->first();
+            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number'], 'name' => $input['customer_name'], 'customer_type_id' =>  !empty($walkin_customer_type) ? $walkin_customer_type->id : 0]);
             $store = Store::first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
 

@@ -87,13 +87,12 @@ class SetSessionData
         $request->session()->put('system_mode', $system_mode);
 
 
-        if (empty(session('logo'))) {
-            $logo = System::getProperty('logo');
-            if (empty($logo)) {
-                $logo = 'sharifshalaby.png';
-            }
-            $request->session()->put('logo', $logo);
+        $logo = System::getProperty('logo');
+        if (empty($logo)) {
+            $logo = 'sharifshalaby.png';
         }
+        $request->session()->put('logo', $logo);
+
 
         return $next($request);
     }
