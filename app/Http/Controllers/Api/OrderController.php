@@ -83,7 +83,7 @@ class OrderController extends BaseController
             return $this->handleError($validator->errors());
         }
         try {
-            $online_customer_type = CustomerType::firstOrCreate(['name' => 'Online customers', 'created_by' => 1])->first();
+            $online_customer_type = CustomerType::firstOrCreate(['name' => 'Online customers', 'created_by' => 1]);
             $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number'], 'name' => $input['customer_name'], 'customer_type_id' =>  !empty($online_customer_type) ? $online_customer_type->id : 0]);
             $store = Store::first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
