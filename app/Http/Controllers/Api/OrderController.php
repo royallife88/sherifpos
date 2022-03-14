@@ -74,7 +74,6 @@ class OrderController extends BaseController
      */
     public function store(Request $request)
     {
-        // return json_encode(['asdfsdf']);
         $input = $request->all();
         $validator = Validator::make($input, [
             'customer_name' => 'required',
@@ -84,8 +83,8 @@ class OrderController extends BaseController
             return $this->handleError($validator->errors());
         }
         try {
-            $walkin_customer_type = CustomerType::where('name', 'Walk in')->first();
-            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number'], 'name' => $input['customer_name'], 'customer_type_id' =>  !empty($walkin_customer_type) ? $walkin_customer_type->id : 0]);
+            $online_customer_type = CustomerType::firstOrCreate(['name', 'Online customers', 'created_by' => 1])->first();
+            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number'], 'name' => $input['customer_name'], 'customer_type_id' =>  !empty($online_customer_type) ? $online_customer_type->id : 0]);
             $store = Store::first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
 

@@ -66,7 +66,7 @@
                             </li>
                             <li class="divider"></li>
                             @endcan
-                            @if($customer_type->name != 'Walk in')
+                            @if($customer_type->name != 'Walk in' && $customer_type->name != 'Online customers')
                             @can('customer_module.customer_type.view')
                             <li>
                                 <a href="{{action('CustomerTypeController@edit', $customer_type->id)}}"><i
