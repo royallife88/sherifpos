@@ -589,6 +589,7 @@
         var channel = pusher.subscribe('order-channel');
         channel.bind('new-order', function(data) {
             if (data) {
+                console.log(data, 'data');
                 // var audio = $("#mysoundclip2")[0];
                 // audio.play();
                 let badge_count = parseInt($('.draft-badge').text()) + 1;
