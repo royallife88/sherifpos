@@ -22,40 +22,19 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('store_ids', __('lang.store') . ':*') !!}
-                                        {!! Form::select('store_ids[]', $stores, false, [
-    'class' => 'selectpicker
-                                    form-control',
-    'data-live-search' => 'true',
-    'data-actions-box' => 'true',
-    'multiple',
-    'required',
-    'id' => 'store_ids',
-]) !!}
+                                        {!! Form::select('store_ids[]', $stores, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'data-actions-box' => 'true', 'multiple', 'required', 'id' => 'store_ids']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('customer_type_ids', __('lang.customer_type') . ':*') !!}
-                                        {!! Form::select('customer_type_ids[]', $customer_types, false, [
-    'class' => 'selectpicker
-                                    form-control',
-    'data-live-search' => 'true',
-    'data-actions-box' => 'true',
-    'multiple',
-    'required',
-]) !!}
+                                        {!! Form::select('customer_type_ids[]', $customer_types, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'data-actions-box' => 'true', 'multiple', 'required',]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('type', __('lang.type') . ':*') !!}
-                                        {!! Form::select('type', ['item_discount' => __('lang.item_discount'), 'package_promotion' => __('lang.package_promotion')], false, [
-    'class' => 'selectpicker
-                                    form-control',
-    'data-live-search' => 'true',
-    'placeholder' => __('lang.please_select'),
-    'required',
-]) !!}
+                                        {!! Form::select('type', ['item_discount' => __('lang.item_discount'), 'package_promotion' => __('lang.package_promotion')], false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'required',]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-4">

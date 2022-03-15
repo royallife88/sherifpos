@@ -18,27 +18,27 @@
             </div>
             <div class="form-group">
                 {!! Form::label('location', __( 'lang.location' )) !!}
-                {!! Form::text('location', $store->location, ['class' => 'form-control', 'placeholder' => __( 'lang.location' ), 'required' ]);
+                {!! Form::text('location', $store->location, ['class' => 'form-control', 'placeholder' => __( 'lang.location' ) ]);
                 !!}
             </div>
             <div class="form-group">
                 {!! Form::label('phone_number', __( 'lang.phone_number' )) !!}
-                {!! Form::text('phone_number', $store->phone_number, ['class' => 'form-control', 'placeholder' => __( 'lang.phone_number' ), 'required' ]);
+                {!! Form::text('phone_number', $store->phone_number, ['class' => 'form-control', 'placeholder' => __( 'lang.phone_number' ) ]);
                 !!}
             </div>
             <div class="form-group">
                 {!! Form::label('email', __( 'lang.email' )) !!}
-                {!! Form::email('email', $store->email, ['class' => 'form-control', 'placeholder' => __( 'lang.email' ), 'required' ]);
+                {!! Form::email('email', $store->email, ['class' => 'form-control', 'placeholder' => __( 'lang.email' ) ]);
                 !!}
             </div>
             <div class="form-group">
                 {!! Form::label('manager_name', __( 'lang.manager_name' )) !!}
-                {!! Form::text('manager_name', $store->manager_name, ['class' => 'form-control', 'placeholder' => __( 'lang.manager_name' ), 'required' ]);
+                {!! Form::text('manager_name', $store->manager_name, ['class' => 'form-control', 'placeholder' => __( 'lang.manager_name' ) ]);
                 !!}
             </div>
             <div class="form-group">
                 {!! Form::label('manager_mobile_number', __( 'lang.manager_mobile_number' )) !!}
-                {!! Form::text('manager_mobile_number', $store->manager_mobile_number, ['class' => 'form-control', 'placeholder' => __( 'lang.manager_mobile_number' ), 'required' ]);
+                {!! Form::text('manager_mobile_number', $store->manager_mobile_number, ['class' => 'form-control', 'placeholder' => __( 'lang.manager_mobile_number' ) ]);
                 !!}
             </div>
             <div class="form-group">

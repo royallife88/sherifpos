@@ -83,9 +83,6 @@ class StoreController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['phone_number' => ['required', 'max:255']],
-            ['manager_name' => ['required', 'max:255']],
-            ['manager_mobile_number' => ['required', 'max:255']],
         );
 
         try {
@@ -158,9 +155,6 @@ class StoreController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['phone_number' => ['required', 'max:255']],
-            ['manager_name' => ['required', 'max:255']],
-            ['manager_mobile_number' => ['required', 'max:255']],
         );
 
         try {

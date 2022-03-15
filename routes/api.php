@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ProductClassController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\StoreController;
+use App\Http\Controllers\Api\SalesPromotionController;
 use App\Http\Controllers\Api\SettingController;
 use App\Models\Tutorial;
 use Illuminate\Http\Request;
@@ -45,6 +47,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('size', [SizeController::class, 'store']);
     Route::put('size/{id}', [SizeController::class, 'update']);
     Route::delete('size/{id}', [SizeController::class, 'destroy']);
+
+    Route::get('store', [StoreController::class, 'index']);
+    Route::post('store', [StoreController::class, 'store']);
+    Route::put('store/{id}', [StoreController::class, 'update']);
+    Route::delete('store/{id}', [StoreController::class, 'destroy']);
+
+    Route::get('customer-type', [CustomerTypeController::class, 'index']);
+    Route::post('customer-type', [CustomerTypeController::class, 'customer-type']);
+    Route::put('customer-type/{id}', [CustomerTypeController::class, 'update']);
+    Route::delete('customer-type/{id}', [CustomerTypeController::class, 'destroy']);
+
+    Route::get('sales-promotion', [SalesPromotionController::class, 'index']);
+    Route::post('sales-promotion', [SalesPromotionController::class, 'store']);
+    Route::put('sales-promotion/{id}', [SalesPromotionController::class, 'update']);
+    Route::delete('sales-promotion/{id}', [SalesPromotionController::class, 'destroy']);
 
     Route::post('order', [OrderController::class, 'store']);
 
