@@ -129,9 +129,9 @@ class OrderController extends BaseController
                 $transaction_sell_line->promotion_discount = !empty($line['promotion_discount']) ? $line['promotion_discount'] : 0;
                 $transaction_sell_line->promotion_discount_type = !empty($line['promotion_discount_type']) ? $line['promotion_discount_type'] : null;
                 $transaction_sell_line->promotion_discount_amount = !empty($line['promotion_discount_amount']) ? $line['promotion_discount_amount'] : 0;
-                $transaction_sell_line->product_discount_value = !empty($line['product_discount_value']) ? $line['product_discount_value'] : 0;
-                $transaction_sell_line->product_discount_type = !empty($line['product_discount_type']) ? $line['product_discount_type'] : null;
-                $transaction_sell_line->product_discount_amount = !empty($line['product_discount_amount']) ? $line['product_discount_amount'] : 0;
+                $transaction_sell_line->product_discount_value = !empty($line['discount']) ? $line['discount'] : 0;
+                $transaction_sell_line->product_discount_type = 'fixed';
+                $transaction_sell_line->product_discount_amount = !empty($line['discount']) ? $line['discount'] : 0;
                 $transaction_sell_line->quantity = $line['quantity'];
                 $transaction_sell_line->sell_price = $line['price'];
                 $transaction_sell_line->purchase_price = $variation->default_purchase_price;
