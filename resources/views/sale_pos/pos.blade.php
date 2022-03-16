@@ -282,7 +282,7 @@
                                 <button data-method="online-order" style="background-color: #69a509" type="button"
                                     class="btn btn-custom" id="view-online-order-btn"
                                     data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><i
-                                        class="dripicons-flag"></i>
+                                        class="fa fa-snowflake-o"></i>
                                     @lang('lang.online_orders') <span
                                         class="badge badge-danger online-order-badge">0</span></button>
                             </div>
