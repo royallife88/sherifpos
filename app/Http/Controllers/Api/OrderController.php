@@ -82,16 +82,17 @@ class OrderController extends BaseController
         if ($validator->fails()) {
             return $this->handleError($validator->errors());
         }
+
         try {
             $online_customer_type = CustomerType::firstOrCreate(['name' => 'Online customers', 'created_by' => 1]);
             $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number']], ['name' => $input['customer_name'], 'customer_type_id' =>  !empty($online_customer_type) ? $online_customer_type->id : 0]);
-            $store = Store::first();
+            $store = Store::where('id', $input['store']['pos_model_id'])->first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
 
             $transaction_data = [
                 'store_id' => $store->id,
+                'store_pos_id' => !empty($store_pos) ? $store_pos->id : null,
                 'customer_id' => $customer->id,
-                'store_pos_id' => $store_pos->id,
                 'type' => 'sell',
                 'final_total' => $input['final_total'],
                 'grand_total' => $input['final_total'],

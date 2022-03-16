@@ -1124,4 +1124,6 @@ return [
 
     'raw_material_module' => 'Raw Material Module',
     'daily_sales_summary' => 'Daily Sales Summary',
+    'online_order_transactions' => 'Online Order Transactions',
+    'online_orders' => 'Online Orders',
 ];

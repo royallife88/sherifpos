@@ -1534,19 +1534,111 @@ $(document).ready(function () {
                 });
         },
     });
+    online_order_table = $("#online_order_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
+        },
+        ajax: {
+            url: "/pos/get-online-order-transactions",
+            data: function (d) {
+                d.start_date = $("#online_order_start_date").val();
+                d.end_date = $("#online_order_end_date").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [7],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "final_total", name: "final_total" },
+            { data: "customer_type", name: "customer_types.name" },
+            { data: "customer_name", name: "customers.name" },
+            { data: "mobile_number", name: "customers.mobile_number" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "status", name: "transactions.status" },
+            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    if (column.data().count()) {
+                        var sum = column.data().reduce(function (a, b) {
+                            a = intVal(a);
+                            if (isNaN(a)) {
+                                a = 0;
+                            }
+
+                            b = intVal(b);
+                            if (isNaN(b)) {
+                                b = 0;
+                            }
+
+                            return a + b;
+                        });
+                        $(column.footer()).html(
+                            __currency_trans_from_en(sum, false)
+                        );
+                    }
+                });
+        },
+    });
 });
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
     recent_transaction_table.ajax.reload();
 });
 $(document).on("click", "#view-draft-btn", function () {
     $("#draftTransaction").modal("show");
-    $(".draft-badge").hide();
-    $(".draft-badge").text(0);
     draft_table.ajax.reload();
+});
+$(document).on("click", "#view-online-order-btn", function () {
+    $("#onlineOrderTransaction").modal("show");
+    $(".online-order-badge").hide();
+    $(".online-order-badge").text(0);
+    online_order_table.ajax.reload();
 });
 $(document).ready(function () {
     $(document).on("change", "#draft_start_date, #draft_end_date", function () {
         draft_table.ajax.reload();
+    });
+    $(document).on("change", "#online_order_start_date, #online_order_end_date", function () {
+            online_order_table.ajax.reload();
     });
     $(document).on(
         "change",

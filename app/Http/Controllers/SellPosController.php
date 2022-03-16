@@ -1169,10 +1169,123 @@ class SellPosController extends Controller
                 $query->where('transactions.store_id', $store_id);
             }
             if (!empty(request()->start_date)) {
-                $query->where('transaction_date', '>=', request()->start_date);
+                $query->whereDate('transaction_date', '>=', request()->start_date);
             }
             if (!empty(request()->end_date)) {
-                $query->where('transaction_date', '<=', request()->end_date);
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+
+            $transactions = $query->select(
+                'transactions.*',
+                'customer_types.name as customer_type_name',
+                'customers.name as customer_name',
+                'customers.mobile_number',
+            );
+
+            return DataTables::of($transactions)
+                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('customer_name', '<span class="text-red">{{$customer_name}}</span>')
+                ->addColumn('method', function ($row) {
+                    if (!empty($row->transaction_payments[0]->method)) {
+                        return ucfirst($row->transaction_payments[0]->method);
+                    } else {
+                        return '';
+                    }
+                })
+
+                ->addColumn('deliveryman_name', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->employee_name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<div class="btn-group">';
+
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                ' <a data-href="' . action('SellController@print', $row->id) . '"
+                        class="btn btn-danger text-white print-invoice"><i title="' . __('lang.print') . '"
+                        data-toggle="tooltip" class="dripicons-print"></i></a>';
+                        }
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<a data-href="' . action('SellController@show', $row->id) . '"
+                        class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
+                        title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
+                        }
+                        $html .=
+                            '<a  target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final" class="btn btn-success draft_pay"><i
+                        title="' . __('lang.edit') . '" data-toggle="tooltip"
+                        class="dripicons-document-edit"></i></a>';
+                        $html .=
+                            '<button class="btn btn-danger remove_draft" data-href=' . action(
+                                'SellController@destroy',
+                                $row->id
+                            ) . '
+                            data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                            ><i class="dripicons-trash"></i></button>';
+
+
+                        $html .=
+                            '<a target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final"
+                            title="' . __('lang.pay_now') . '" data-toggle="tooltip"
+                            class="btn btn-success draft_pay"><i class="fa fa-money"></i></a>';
+
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'customer_name',
+                    'transaction_date',
+                    'final_total',
+                    'status',
+                    'created_by',
+                ])
+                ->make(true);
+        }
+    }
+
+    /**
+     * list of draft transactions
+     *
+     * @return void
+     */
+    public function getOnlineOrderTransactions(Request $request)
+    {
+        if (request()->ajax()) {
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->where('type', 'sell')->where('status', 'draft')
+                ->whereNotNull('transactions.restaurant_order_id');
+            if (!empty($store_id)) {
+                $query->where('transactions.store_id', $store_id);
+            }
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
             }
 
             $transactions = $query->select(

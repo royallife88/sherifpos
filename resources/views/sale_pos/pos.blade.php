@@ -276,7 +276,15 @@
                                     class="btn btn-custom" id="view-draft-btn"
                                     data-href="{{ action('SellPosController@getDraftTransactions') }}"><i
                                         class="dripicons-flag"></i>
-                                    @lang('lang.view_draft') <span class="badge badge-danger draft-badge">0</span></button>
+                                    @lang('lang.view_draft')</button>
+                            </div>
+                            <div class="column-5">
+                                <button data-method="online-order" style="background-color: #69a509" type="button"
+                                    class="btn btn-custom" id="view-online-order-btn"
+                                    data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><i
+                                        class="dripicons-flag"></i>
+                                    @lang('lang.online_orders') <span
+                                        class="badge badge-danger online-order-badge">0</span></button>
                             </div>
                             <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
@@ -560,6 +568,48 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div>
+                <!-- onlineOrder transaction modal -->
+                <div id="onlineOrderTransaction" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                    class="modal text-left">
+
+                    <div class="modal-dialog" role="document" style="width: 65%">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">@lang( 'lang.online_order_transactions' )</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                        aria-hidden="true">&times;</span></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('online_order_start_date', __('lang.start_date'), []) !!}
+                                                {!! Form::text('start_date', null, ['class' => 'form-control', 'id' => 'online_order_start_date']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('online_order_end_date', __('lang.end_date'), []) !!}
+                                                {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'online_order_end_date']) !!}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    @include(
+                                        'sale_pos.partials.view_online_order'
+                                    )
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
+                                    'lang.close')</button>
+                            </div>
+                        </div><!-- /.modal-content -->
+                    </div><!-- /.modal-dialog -->
+                </div>
 
             </div>
         </div>
@@ -577,7 +627,7 @@
     <script src="{{ asset('js/pos.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $('.draft-badge').hide();
+            $('.online-order-badge').hide();
         })
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
@@ -589,9 +639,9 @@
         var channel = pusher.subscribe('order-channel');
         channel.bind('new-order', function(data) {
             if (data) {
-                let badge_count = parseInt($('.draft-badge').text()) + 1;
-                $('.draft-badge').text(badge_count);
-                $('.draft-badge').show();
+                let badge_count = parseInt($('.online-order-badge').text()) + 1;
+                $('.online-order-badge').text(badge_count);
+                $('.online-order-badge').show();
                 let transaction_id = data.transaction_id;
                 $.ajax({
                     method: 'get',

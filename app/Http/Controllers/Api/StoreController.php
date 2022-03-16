@@ -5,11 +5,32 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\StoreResource;
 use App\Models\Store;
+use App\Utils\ProductUtil;
+use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 class StoreController extends BaseController
 {
+    /**
+     * All Utils instance.
+     *
+     */
+    protected $commonUtil;
+    protected $productUtil;
+
+    /**
+     * Constructor
+     *
+     * @param productUtil $product
+     * @return void
+     */
+    public function __construct(Util $commonUtil, ProductUtil $productUtil)
+    {
+        $this->commonUtil = $commonUtil;
+        $this->productUtil = $productUtil;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -48,6 +69,7 @@ class StoreController extends BaseController
         }
 
         $store = Store::create($input);
+        $this->productUtil->createProductStoreForThisStoreIfNotExist($store->id);
         return $this->handleResponse(new StoreResource($store), 'Store created!');
     }
 
@@ -105,7 +127,7 @@ class StoreController extends BaseController
         $store->manager_mobile_number = $input['manager_mobile_number'];
         $store->details = $input['details'];
         $store->save();
-
+        $this->productUtil->createProductStoreForThisStoreIfNotExist($store->id);
         return $this->handleResponse(new StoreResource($store), 'Store successfully updated!');
     }
 

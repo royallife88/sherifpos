@@ -168,6 +168,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');
     Route::get('pos/get-product-items-by-filter', 'SellPosController@getProductItemsByFilter');
+    Route::get('pos/get-online-order-transactions', 'SellPosController@getOnlineOrderTransactions');
     Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
