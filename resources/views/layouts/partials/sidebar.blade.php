@@ -53,7 +53,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 @endif
 
 
-                @if(session('system_mode') == 'restaurant')
+                @if(session('system_mode') == 'restaurant' || session('system_mode') == 'garments')
                 @if( !empty($module_settings['raw_material_module']) )
                 @if(auth()->user()->can('raw_material_module.raw_material.create_and_edit') ||
                 auth()->user()->can('raw_material_module.raw_material.view')

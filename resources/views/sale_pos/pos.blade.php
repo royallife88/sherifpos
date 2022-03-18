@@ -49,6 +49,11 @@
                                                 {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
                                         </div>
+                                        {{-- @if (session('system_mode') == 'restaurant')
+                                        <div class="col-md-3">
+                                            <button type="button" data-href="{{action('SellPosController@getDiningModal')}}" data-container="#dining_model" class="btn btn-modal pull-right mt-4" ><img src="{{asset('images/black-table.png')}}" alt="black-table" style="width: 50px; height: 35px;"></button>
+                                        </div>
+                                        @endif --}}
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -610,6 +615,9 @@
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
                 </div>
+                <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                class="modal text-left">
+                </div>
 
             </div>
         </div>
@@ -625,6 +633,7 @@
 @section('javascript')
     <script src="{{ asset('js/onscan.min.js') }}"></script>
     <script src="{{ asset('js/pos.js') }}"></script>
+    <script src="{{ asset('js/dining_table.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('.online-order-badge').hide();

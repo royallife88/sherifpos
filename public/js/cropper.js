@@ -25,7 +25,8 @@ $(document).ready(function () {
     $modal
         .on("shown.bs.modal", function () {
             cropper = new Cropper(image, {
-                initialAspectRatio: 1,
+                initialAspectRatio: 1 / 1,
+                cropBoxResizable: false,
                 viewMode: 3,
                 preview: ".preview_div",
             });
@@ -37,7 +38,7 @@ $(document).ready(function () {
 
     $(document).on("click", "#crop", function () {
         canvas = cropper.getCroppedCanvas({
-            aspectRatio: 16 / 9,
+            aspectRatio: 1 / 1,
             dragMode: "move",
         });
 

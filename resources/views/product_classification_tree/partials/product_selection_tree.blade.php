@@ -52,9 +52,8 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
 
                                 </div>
                                 <div class="col-md-6">
-                                    {!! Form::select('search_product', $products, false, ['class' => 'form-control
-                                    selectpicker', 'data-live-search' => 'true', 'placeholder' =>
-                                    __('lang.search_product'), 'id' => 'search_pct']) !!}
+                                    {!! Form::select('search_product[]', $products, '', ['class' => 'form-control
+                                    selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.search_product'), 'id' => 'search_pct', 'data-actions-box' => 'true', 'multiple']) !!}
 
                                 </div>
                             </div>

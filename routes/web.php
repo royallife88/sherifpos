@@ -175,7 +175,18 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-payment-row', 'SellPosController@getPaymentRow');
     Route::get('pos/get-sale-promotion-details-if-valid', 'SellPosController@getSalePromotionDetailsIfValid');
     Route::get('pos/get-transaction-details/{transaction_id}', 'SellPosController@getTransactionDetails');
+    Route::get('pos/get-dining-modal', 'SellPosController@getDiningModal');
+
     Route::resource('pos', SellPosController::class);
+    Route::get('dining-room/get-dining-rooms', 'DiningRoomController@getDiningRooms');
+    Route::get('dining-room/check-dining-room-name', 'DiningRoomController@checkDiningRoomName');
+    Route::get('dining-room/get-dining-room-content', 'DiningRoomController@getDiningContent');
+    Route::resource('dining-room', DiningRoomController::class);
+
+    Route::get('dining-table/check-dining-table-name', 'DiningTableController@checkDiningTableName');
+    Route::get('dining-table/get-dining-table-content', 'DiningTableController@getDiningContent');
+    Route::resource('dining-table', DiningTableController::class);
+
     Route::post('sale/save-import', 'SellController@saveImport');
     Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');

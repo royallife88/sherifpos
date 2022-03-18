@@ -8,10 +8,15 @@
             <h4>@lang('lang.modules')</h4>
         </div>
         <div class="card-body">
-            {!! Form::open(['url' => action('SettingController@getModuleSettings'), 'method' => 'post', 'enctype' =>
+            {!! Form::open(['url' => action('SettingController@updateModuleSettings'), 'method' => 'post', 'enctype' =>
             'multipart/form-data']) !!}
             <div class="row">
                 @foreach ($modules as $key => $name)
+                @if(session('system_mode') != 'restaurant' && session('system_mode') != 'garments')
+                @if($key == 'raw_material_module')
+                @continue
+                @endif
+                @endif
                 <div class="col-md-4">
                     <div class="i-checks">
                         <input id="{{$loop->index}}" name="module_settings[{{$key}}]" type="checkbox"

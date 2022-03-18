@@ -165,6 +165,7 @@
                 <th class="sum">@lang('lang.paid')</th>
                 <th class="sum">@lang('lang.due')</th>
                 <th>@lang('lang.cashier')</th>
+                <th>@lang('lang.deliveryman')</th>
                 <th class="hidden">@lang('lang.products')</th>
                 <th class="notexport">@lang('lang.action')</th>
             </tr>
@@ -244,12 +245,12 @@
                 type: "date-eu",
             },
             {
-                targets: [14],
+                targets: [15],
                 orderable: false,
                 searchable: false,
             },
             {
-                targets: [13],
+                targets: [14],
                 visible: false,
                 orderable: false,
                 searchable: false,
@@ -269,6 +270,7 @@
             { data: "paid", name: "transaction_payments.amount", searchable: false },
             { data: "due", name: "transaction_payments.amount", searchable: false },
             { data: "created_by", name: "users.name" },
+            { data: "deliveryman", name: "deliveryman" },
             { data: "products", name: "products.name" },
             { data: "action", name: "action" },
         ],

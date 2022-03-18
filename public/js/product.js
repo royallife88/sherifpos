@@ -211,7 +211,8 @@ myDropzone.on("thumbnail", function (file) {
         $cropperModal.modal("show");
         modalTemplate.on("shown.bs.modal", function () {
             cropper = new Cropper($img, {
-                initialAspectRatio: 1,
+                initialAspectRatio: 1 / 1,
+                cropBoxResizable: false,
                 viewMode: 3,
                 preview: ".product_preview_div",
             });

@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\DiningRoom;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Product;
@@ -1410,5 +1411,14 @@ class SellPosController extends Controller
     public function getTransactionDetails($transaction_id)
     {
         return Transaction::find($transaction_id);
+    }
+
+    public function getDiningModal()
+    {
+        $dining_rooms = DiningRoom::all();
+
+        return view('sale_pos.partials.dining_modal')->with(compact(
+            'dining_rooms'
+        ));
     }
 }

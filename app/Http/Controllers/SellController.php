@@ -184,6 +184,13 @@ class SellController extends Controller
                     }
                     return $methods;
                 })
+                ->addColumn('deliveryman', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->employee_name;
+                    } else {
+                        return '';
+                    }
+                })
                 ->addColumn('store_name', '{{$store_name}}')
                 ->addColumn('ref_number', function ($row) use ($request) {
                     $ref_numbers = '';

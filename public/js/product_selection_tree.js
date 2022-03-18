@@ -25,21 +25,42 @@ $(document).ready(function () {
         }
     });
 });
-
-$(document).on("change", "#search_pct", function () {
-    let product_name = $("#search_pct option:selected").text();
-    let product_element = $(
-        '#accordian_div a:contains("' + product_name + '")'
-    );
-    let related_checkbox = $(product_element)
-        .parent()
-        .parent()
-        .find(".product_checkbox");
-    $(related_checkbox).prop("checked", true);
-    $(this).val("");
-    $(this).selectpicker("refresh");
-    toggleAccordianTillItem($(related_checkbox));
+var doc_ready = 0;
+$(document).ready(function () {
+    $("#search_pct").val("");
+    $("#search_pct").selectpicker("refresh");
+    $(".product_checkbox").prop("checked", false);
+    doc_ready = 1;
 });
+$(document).on(
+    "changed.bs.select",
+    "select#search_pct",
+    function (e, clickedIndex, isSelected, oldValue) {
+        if (doc_ready === 1) {
+            let selectedOptionValue = $(this).val();
+            $(".product_checkbox").prop("checked", false);
+
+            for (var i = 0; i < selectedOptionValue.length; i++) {
+                var val = selectedOptionValue[i];
+
+                let product_name = $(
+                    "#search_pct option[value='" + val + "']"
+                ).text();
+
+                let product_element = $(
+                    '#accordian_div a:contains("' + product_name + '")'
+                );
+                let related_checkbox = $(product_element)
+                    .parent()
+                    .parent()
+                    .find(".product_checkbox");
+                $(related_checkbox).prop("checked", true);
+
+                toggleAccordianTillItem($(related_checkbox));
+            }
+        }
+    }
+);
 
 function toggleAccordianTillItem(product) {
     let class_level = $(product)
@@ -132,4 +153,3 @@ $(document).on("change", "#type", function () {
         $(".qty_hide").addClass("hide");
     }
 });
-
