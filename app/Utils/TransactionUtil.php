@@ -779,6 +779,12 @@ class TransactionUtil extends Util
         if (!empty($end_date)) {
             $query->whereDate('transaction_date',  '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $query->whereIn('store_id', $store_id);
         }
@@ -815,6 +821,12 @@ class TransactionUtil extends Util
         }
         if (!empty($end_date)) {
             $query->whereDate('transaction_date',  '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
             $query->whereIn('store_id', $store_id);

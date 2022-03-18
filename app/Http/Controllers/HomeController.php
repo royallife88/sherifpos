@@ -367,6 +367,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $sell_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $sell_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $sell_query->whereIn('store_id', $store_id);
         }
@@ -400,6 +406,12 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $sell_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $sell_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
             $sell_query->whereIn('store_id', $store_id);
@@ -450,7 +462,7 @@ class HomeController extends Controller
      *
      * @param string $start_date
      * @param string $end_date
-     * @param string $store_id
+     * @param array $store_id
      * @param string $store_pos_id
      * @return void
      */
@@ -461,7 +473,7 @@ class HomeController extends Controller
         } else {
             $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
         }
-
+// print_r(request()->store_id); die();
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
         $total_sale_tax = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
 
@@ -471,6 +483,12 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $sell_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
             $sell_return_query->whereIn('store_id', $store_id);
@@ -497,6 +515,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $purchase_return_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $purchase_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $purchase_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $purchase_return_query->whereIn('store_id', $store_id);
         }
@@ -522,6 +546,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $expense_query->whereDate('transaction_date', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $expense_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $expense_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $expense_query->whereIn('store_id', $store_id);
         }
@@ -539,6 +569,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $payment_received_query->whereDate('paid_on', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $payment_received_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $payment_received_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $payment_received_query->whereIn('store_id', $store_id);
         }
@@ -554,6 +590,12 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $payment_purchase_return_query->whereDate('paid_on', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $payment_purchase_return_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $payment_purchase_return_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
             $payment_purchase_return_query->whereIn('store_id', $store_id);
@@ -573,6 +615,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $payment_purchase_query->whereDate('paid_on', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $payment_purchase_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $payment_purchase_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $payment_purchase_query->whereIn('store_id', $store_id);
         }
@@ -589,6 +637,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $payment_expense_query->whereDate('paid_on', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $payment_expense_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $payment_expense_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         if (!empty($store_id)) {
             $payment_expense_query->whereIn('store_id', $store_id);
         }
@@ -604,6 +658,12 @@ class HomeController extends Controller
         if (!empty($end_date)) {
             $wages_query->where('payment_date', '<=', $end_date);
         }
+        if (!empty(request()->start_time)) {
+            $wages_query->where('payment_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $wages_query->where('payment_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
         $wages_payment = $wages_query->sum('net_amount');
 
         $sell_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')->where('type', 'sell_return')->where('status', 'final');
@@ -612,6 +672,12 @@ class HomeController extends Controller
         }
         if (!empty($end_date)) {
             $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $sell_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
             $sell_return_query->whereIn('store_id', $store_id);
