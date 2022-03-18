@@ -22,7 +22,7 @@
             {{-- Variation --}}
             @if(!empty($print['variations']) && $details['details']->is_dummy != 1)
             <span style="display: block !important">
-                <b>{{$details['details']->product_actual_name}}</b>:{{$details['details']->variation_name}}
+                {{$details['details']->variation_name}}
             </span>
 
             @endif

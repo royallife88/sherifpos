@@ -1132,4 +1132,5 @@ return [
     'add_table' => 'Add Table',
     'dining_table_name_already_exist' => 'Table name already exists.',
     'primary_material' => 'Primary Material',
+    'print_labels' => 'Print Labels',
 ];

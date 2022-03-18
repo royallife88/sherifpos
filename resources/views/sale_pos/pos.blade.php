@@ -95,6 +95,8 @@
                                         <div class="col-md-2">
                                             <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
                                                 <span class="customer_balance">{{ @num_format(0) }}</span></label>
+                                            <label for="points" style="margin-top: 0px;">@lang('lang.points'):
+                                                <span class="points"><span class="customer_points_span">{{ @num_format(0) }}</span></span></label>
                                         </div>
                                         @if (session('system_mode') == 'pos')
                                             <div class="col-md-2">
@@ -616,7 +618,7 @@
                     </div><!-- /.modal-dialog -->
                 </div>
                 <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                class="modal text-left">
+                    class="modal text-left">
                 </div>
 
             </div>

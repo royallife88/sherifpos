@@ -66,7 +66,7 @@
                             <td class=""></td>
                             <td>{{ $sub_module }}</td>
                             <td class="">
-                                {!! Form::checkbox('checked_all', 1, false, ['class' => 'checked_all']) !!}
+                                {!! Form::checkbox('checked_all', 1, false, ['class' => 'checked_all', 'title' => __('lang.select_all')]) !!}
                             </td>
                             @php
                                 $view_permission = $key_module . '.' . $key_sub_module . '.view';
@@ -75,18 +75,18 @@
                             @endphp
                             @if (Spatie\Permission\Models\Permission::where('name', $view_permission)->first())
                                 <td class="">
-                                    {!! Form::checkbox('permissions[' . $view_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($view_permission)) ? true : false, ['class' => 'check_box']) !!}
+                                    {!! Form::checkbox('permissions[' . $view_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($view_permission)) ? true : false, ['class' => 'check_box', 'title' => __('lang.view')]) !!}
                                 </td>
                             @endif
                             @if (Spatie\Permission\Models\Permission::where('name', $create_and_edit_permission)->first())
                                 <td class="">
-                                    {!! Form::checkbox('permissions[' . $create_and_edit_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($create_and_edit_permission)) ? true : false, ['class' => 'check_box']) !!}
+                                    {!! Form::checkbox('permissions[' . $create_and_edit_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($create_and_edit_permission)) ? true : false, ['class' => 'check_box', 'title' => __('lang.create_and_edit')]) !!}
                                 </td>
                             @endif
                             @if (Spatie\Permission\Models\Permission::where('name', $delete_permission)->first())
                                 <td class="">
                                     @if ($delete_permission != 'sale.pos.delete' && $delete_permission != 'sale.sale.delete' && $delete_permission != 'stock.add_stock.delete')
-                                        {!! Form::checkbox('permissions[' . $delete_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($delete_permission)) ? true : false, ['class' => 'check_box']) !!}
+                                        {!! Form::checkbox('permissions[' . $delete_permission . ']', 1, !empty($user) && !empty($user->hasPermissionTo($delete_permission)) ? true : false, ['class' => 'check_box', 'title' => __('lang.delete')]) !!}
                                     @endif
                                 </td>
                             @endif

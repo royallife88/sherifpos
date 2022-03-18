@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.product'))
+@section('title', __('lang.print_barcode'))
 
 @section('content')
 <section class="forms">
