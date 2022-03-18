@@ -43,7 +43,7 @@
                                 <td>{{@num_format($store->total_sales)}}</td>
                                 @php
                                     $stock_value = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
-                                        ->select(DB::raw('SUM(product_stores.qty_available * products.sell_price) as stock_value'))->where('product_stores.store_id', $store->id)->first();
+                                        ->select(DB::raw('SUM(product_stores.qty_available * products.purchase_price) as stock_value'))->where('products.is_service', 0)->where('product_stores.store_id', $store->id)->first();
                                 @endphp
                                 <td>{{@num_format($stock_value->stock_value)}}</td>
                                 @php

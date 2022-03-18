@@ -473,7 +473,7 @@ class HomeController extends Controller
         } else {
             $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
         }
-// print_r(request()->store_id); die();
+
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
         $total_sale_tax = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
 

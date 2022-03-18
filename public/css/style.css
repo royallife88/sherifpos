@@ -147,3 +147,12 @@ input[type="number"] {
 .dataTables_filter input{
     border: 1px solid #17b948f1 !important;
 }
+.dataTables_processing{
+    color: red !important;
+    border: 1px solid red !important;
+    top: 0% !important;
+    margin-top: 100px !important;
+}
+.table-responsive{
+    position: relative;
+}
