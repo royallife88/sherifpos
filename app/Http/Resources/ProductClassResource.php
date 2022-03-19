@@ -18,6 +18,7 @@ class ProductClassResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'sort' => $this->sort,
             'image' => $this->getFirstMediaUrl('product_class'),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

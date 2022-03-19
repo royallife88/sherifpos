@@ -41,7 +41,7 @@
                                         </button>
                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                             user="menu">
-                                            @can('product_module.brand.delete')
+                                            @can('product_module.brand.create_and_edit')
                                             <li>
 
                                                 <a data-href="{{action('BrandController@edit', $brand->id)}}"

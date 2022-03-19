@@ -37,7 +37,7 @@
                                         </button>
                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                             user="menu">
-                                            @can('product_module.unit.delete')
+                                            @can('product_module.unit.create_and_edit')
                                             <li>
 
                                                 <a data-href="{{action('UnitController@edit', $unit->id)}}"

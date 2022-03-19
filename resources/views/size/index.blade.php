@@ -39,7 +39,7 @@
                                         </button>
                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                             user="menu">
-                                            @can('product_module.size.delete')
+                                            @can('product_module.size.create_and_edit')
                                             <li>
 
                                                 <a data-href="{{action('SizeController@edit', $size->id)}}"

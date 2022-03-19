@@ -119,6 +119,7 @@
                         selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
                     </div>
                 </div>
+                <input type="hidden" name="product_id" id="product_id" value="">
                 <div class="col-md-3">
                     <button class="btn btn-danger mt-4 clear_filters">@lang('lang.clear_filters')</button>
                 </div>
@@ -305,6 +306,7 @@
              "ajax": {
                 "url": "/product",
                 "data": function ( d ) {
+                    d.product_id = $('#product_id').val();
                     d.product_class_id = $('#product_class_id').val();
                     d.category_id = $('#category_id').val();
                     d.sub_category_id = $('#sub_category_id').val();
@@ -449,8 +451,26 @@
     })
     $(document).on('click', '.clear_filters', function(){
         $('.filter_product').val('');
-        $('.filter_product').selectpicker('refresh')
+        $('.filter_product').selectpicker('refresh');
+        $('#product_id').val('');
         product_table.ajax.reload();
-    })
+    });
+
+    @if(!empty(request()->product_id))
+    $(document).ready(function(){
+        $('#product_id').val({{request()->product_id}});
+        product_table.ajax.reload();
+
+        var container = '.view_modal';
+        $.ajax({
+            method: 'get',
+            url: '/product/{{request()->product_id}}',
+            dataType: 'html',
+            success: function (result) {
+                $(container).html(result).modal('show');
+            },
+        });
+    });
+    @endif
 </script>
 @endsection

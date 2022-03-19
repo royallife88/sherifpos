@@ -58,7 +58,7 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">
-                            @can('customer_module.customer_type.delete')
+                            @can('customer_module.customer_type.view')
                             <li>
 
                                 <a href="{{action('CustomerTypeController@show', $customer_type->id)}}" class="btn"><i
@@ -67,7 +67,7 @@
                             <li class="divider"></li>
                             @endcan
                             @if($customer_type->name != 'Walk in' && $customer_type->name != 'Online customers')
-                            @can('customer_module.customer_type.view')
+                            @can('customer_module.customer_type.create_and_edit')
                             <li>
                                 <a href="{{action('CustomerTypeController@edit', $customer_type->id)}}"><i
                                         class="dripicons-document-edit btn"></i>@lang('lang.edit')</a>

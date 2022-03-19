@@ -1095,7 +1095,7 @@ return [
     'final_cost' => 'التكلفة النهائية',
     'important_dates' => 'تواريخ مهمة',
     'important_date' => 'تاريخ مهم',
-    'quotation_no' => 'سؤال رقم',
+    'quotation_no' => 'عرض سعر رقم',
     'other_cost' => 'تكاليف أخرى',
     'select_products' => 'حدد المنتجات',
     'select' => 'يختار',

@@ -585,9 +585,21 @@ class ProductController extends Controller
 
         $stock_detials = ProductStore::where('product_id', $id)->get();
 
+        $add_stocks = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')
+            ->where('transactions.type', '=', 'add_stock')
+            ->where('add_stock_lines.product_id', '=', $id)
+            ->whereNotNull('add_stock_lines.expiry_date')
+            ->select(
+                'transactions.*',
+                'add_stock_lines.expiry_date',
+                DB::raw('SUM(add_stock_lines.quantity - add_stock_lines.quantity_sold) as current_stock')
+            )->groupBy('add_stock_lines.id')
+            ->get();
+
         return view('product.show')->with(compact(
             'product',
-            'stock_detials'
+            'stock_detials',
+            'add_stocks',
         ));
     }
 

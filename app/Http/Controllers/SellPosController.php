@@ -101,7 +101,7 @@ class SellPosController extends Controller
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::getDropdownInvoice();
         $walk_in_customer = Customer::where('is_default', 1)->first();
-        $product_classes = ProductClass::select('name', 'id')->get();
+        $product_classes = ProductClass::orderBy('sort', 'asc')->select('name', 'id')->get();
         $stores = Store::getDropdown();
         $store_poses = [];
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];

@@ -336,7 +336,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('SellPosController@create')}}">{{__('lang.pos')}}</a>
                         </li>
                         @endcan
-                        @can('sale.sale.create_and_edit')
+                        @can('sale.pos.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'sale' && request()->segment(2) == 'create') active @endif">
                             <a href="{{action('SellController@create')}}">{{__('lang.add_sales')}}</a>

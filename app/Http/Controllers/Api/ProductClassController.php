@@ -103,6 +103,7 @@ class ProductClassController extends BaseController
 
         $product_class->name = $input['name'];
         $product_class->description = $input['description'];
+        $product_class->sort = $input['sort'];
         $product_class->save();
 
         if (!empty($input['image'])) {

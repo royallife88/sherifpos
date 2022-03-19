@@ -61,7 +61,7 @@
                                         </button>
                                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                             user="menu">
-                                            @can('settings.store.delete')
+                                            @can('settings.store.create_and_edit')
                                             <li>
 
                                                 <a data-href="{{action('StoreController@edit', $store->id)}}"

@@ -38,7 +38,7 @@ class ProductClassController extends Controller
      */
     public function index()
     {
-        $product_classes = ProductClass::get();
+        $product_classes = ProductClass::orderBy('sort', 'asc')->get();
 
         return view('product_class.index')->with(compact(
             'product_classes'
@@ -152,7 +152,7 @@ class ProductClassController extends Controller
         );
 
         try {
-            $data = $request->only('name', 'description');
+            $data = $request->only('name', 'description', 'sort');
             $class = ProductClass::where('id', $id)->first();
             $class->update($data);
 

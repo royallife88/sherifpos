@@ -1133,4 +1133,6 @@ return [
     'dining_table_name_already_exist' => 'Table name already exists.',
     'primary_material' => 'Primary Material',
     'print_labels' => 'Print Labels',
+    'expiry_details' => 'Expiry Details',
+    'sort' => 'Sort',
 ];

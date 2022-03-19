@@ -21,6 +21,7 @@
                                     <th>@lang('lang.image')</th>
                                     <th>@lang('lang.name')</th>
                                     <th>@lang('lang.description')</th>
+                                    <th>@lang('lang.sort')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
                             </thead>
@@ -31,6 +32,7 @@
                                                 alt="photo" width="50" height="50">
                                         <td>{{ $product_class->name }}</td>
                                         <td>{{ $product_class->description }}</td>
+                                        <td>{{ $product_class->sort }}</td>
 
                                         <td>
                                             <div class="btn-group">
@@ -42,17 +44,18 @@
                                                 </button>
                                                 <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                     user="menu">
-                                                    @if ($product_class->name != 'Extras')
-                                                        @can('product_module.product_class.delete')
-                                                            <li>
 
-                                                                <a data-href="{{ action('ProductClassController@edit', $product_class->id) }}"
-                                                                    data-container=".view_modal" class="btn btn-modal"><i
-                                                                        class="dripicons-document-edit"></i>
-                                                                    @lang('lang.edit')</a>
-                                                            </li>
-                                                            <li class="divider"></li>
-                                                        @endcan
+                                                    @can('product_module.product_class.create_and_edit')
+                                                        <li>
+
+                                                            <a data-href="{{ action('ProductClassController@edit', $product_class->id) }}"
+                                                                data-container=".view_modal" class="btn btn-modal"><i
+                                                                    class="dripicons-document-edit"></i>
+                                                                @lang('lang.edit')</a>
+                                                        </li>
+                                                        <li class="divider"></li>
+                                                    @endcan
+                                                    @if ($product_class->name != 'Extras')
                                                         @can('product_module.product_class.delete')
                                                             <li>
                                                                 <a data-href="{{ action('ProductClassController@destroy', $product_class->id) }}"
