@@ -75,10 +75,12 @@ class GiftCardController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
+        $code = $this->generateCode();
 
         return view('gift_card.create')->with(compact(
             'quick_add',
-            'customers'
+            'customers',
+            'code'
         ));
     }
 
@@ -243,7 +245,10 @@ class GiftCardController extends Controller
 
     public function generateCode()
     {
-        $id = \Keygen\Keygen::alphanum(10)->generate();
+        $date = date('Y-m-d');
+        $gift_card_count = GiftCard::whereDate('created_at', $date)->count() + 1;
+        $count = str_pad($gift_card_count, 2, '0', STR_PAD_LEFT);
+        $id = date('Y') . date('m') . date('d') . $count;
         return $id;
     }
 

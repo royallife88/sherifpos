@@ -23,11 +23,11 @@
                                     <div class="form-group">
                                         {!! Form::label('coupon_code', __( 'lang.coupon_code' ) . ':*') !!}
                                         <div class="input-group">
-                                            {!! Form::text('coupon_code', \Keygen\Keygen::alphanum(10)->generate(),
+                                            {!! Form::text('coupon_code', $code,
                                             ['class'
                                             => 'form-control',
                                             'placeholder' => __(
-                                            'lang.coupon_code' ), 'required' ]);
+                                            'lang.coupon_code' ), 'required', 'autocomplete' => 'off' ]);
                                             !!}
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-default btn-sm refresh_code"><i

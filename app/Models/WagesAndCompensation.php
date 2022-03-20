@@ -36,4 +36,8 @@ class WagesAndCompensation extends Model implements HasMedia
     {
         return $this->belongsTo(Employee::class)->withDefault(['employee_name', '']);
     }
+    public function transaction()
+    {
+        return $this->hasOne(Transaction::class);
+    }
 }

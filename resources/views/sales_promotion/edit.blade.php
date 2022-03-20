@@ -119,12 +119,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('discount_type', __('lang.discount_type') . ':*') !!}
-                                        {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], $sales_promotion->discount_type, [
-    'class' => 'form-control
-                                    selecpicker',
-    'required',
-    'placeholder' => __('lang.please_select'),
-]) !!}
+                                        {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], $sales_promotion->discount_type, ['class' => 'form-control selecpicker', 'required', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -163,6 +158,7 @@
                                 </div>
                             </div>
                             <br>
+                            <input type="hidden" name="is_edit_page" id="is_edit_page" value="1">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">

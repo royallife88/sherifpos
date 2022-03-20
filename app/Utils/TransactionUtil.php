@@ -574,6 +574,9 @@ class TransactionUtil extends Util
             'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
         ];
 
+        if(!empty($request->transaction_date)){
+            $transaction_data['transaction_date'] = Carbon::createFromTimestamp(strtotime($request->transaction_date))->format('Y-m-d H:i:s');
+        }
 
         $transaction = Transaction::find($id);
         if ($transaction->is_quotation && $transaction->status == 'draft') {

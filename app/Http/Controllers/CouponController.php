@@ -90,12 +90,14 @@ class CouponController extends Controller
         $product_classes = ProductClass::get();
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $stores = Store::getDropdown();
+        $code = $this->generateCode();
 
         return view('coupon.create')->with(compact(
             'quick_add',
             'products',
             'customer_types',
             'stores',
+            'code',
             'product_classes'
         ));
     }
@@ -280,7 +282,10 @@ class CouponController extends Controller
 
     public function generateCode()
     {
-        $id = \Keygen\Keygen::alphanum(10)->generate();
+        $date = date('Y-m-d');
+        $coupon_count = Coupon::whereDate('created_at', $date)->count() + 1;
+        $count = str_pad($coupon_count, 2, '0', STR_PAD_LEFT);
+        $id = date('Y') . date('m') . date('d') . $count;
         return $id;
     }
 

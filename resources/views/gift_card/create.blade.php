@@ -15,7 +15,7 @@
             <div class="form-group">
                 {!! Form::label('card_number', __( 'lang.card_number' ) . ':*') !!}
                 <div class="input-group">
-                    {!! Form::text('card_number',  \Keygen\Keygen::alphanum(10)->generate(), ['class' => 'form-control', 'placeholder' => __(
+                    {!! Form::text('card_number',  $code, ['class' => 'form-control', 'placeholder' => __(
                     'lang.card_number' ), 'required' ]);
                     !!}
                     <div class="input-group-append">

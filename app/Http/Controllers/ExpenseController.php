@@ -138,7 +138,7 @@ class ExpenseController extends Controller
                 'type' => 'expense',
                 'status' => 'final',
                 'invoice_no' => $this->productUtil->getNumberByType('expense'),
-                'transaction_date' => Carbon::now(),
+                'transaction_date' => !empty($data['paid_on']) ? $this->commonUtil->uf_date($data['paid_on']) : Carbon::now(),
                 'expense_category_id' => $data['expense_category_id'],
                 'expense_beneficiary_id' => $data['expense_beneficiary_id'],
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
@@ -262,8 +262,7 @@ class ExpenseController extends Controller
             $expense_data = [
                 'grand_total' => $this->commonUtil->num_uf($data['amount']),
                 'final_total' => $this->commonUtil->num_uf($data['amount']),
-                'type' => 'expense',
-                'status' => 'final',
+                'transaction_date' => !empty($data['paid_on']) ? $this->commonUtil->uf_date($data['paid_on']) : Carbon::now(),
                 'expense_category_id' => $data['expense_category_id'],
                 'expense_beneficiary_id' => $data['expense_beneficiary_id'],
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,

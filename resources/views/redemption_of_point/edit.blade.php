@@ -68,6 +68,7 @@
                             </div>
                         </div>
                         {!! Form::close() !!}
+                        <input type="hidden" name="is_edit_page" id="is_edit_page" value="1">
                     </div>
                 </div>
             </div>

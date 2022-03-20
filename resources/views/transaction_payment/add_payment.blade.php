@@ -155,7 +155,7 @@
         }else{
             $('.not_cash_fields').removeClass('hide');
             $('.card_field').addClass('hide');
-            $('.not_cash').attr('required', true);
+            $('.not_cash').attr('required', false);
         }
     })
 </script>

@@ -73,11 +73,12 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <input type="submit" value="{{trans('lang.submit')}}" id="submit-btn"
-                                        class="btn btn-primary">
+                                    class="btn btn-primary">
                                 </div>
                             </div>
                         </div>
                         {!! Form::close() !!}
+                        <input type="hidden" name="is_edit_page" id="is_edit_page" value="1">
                     </div>
                 </div>
             </div>

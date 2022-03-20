@@ -48,6 +48,11 @@
                                         'form-control', 'data-live-search' => 'true']) !!}
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                    {!! Form::label('transaction_date', __('lang.date_and_time'), []) !!}
+                                    <input type="datetime-local" id="transaction_date" name="transaction_date"
+                                        value="{{ Carbon\Carbon::parse($sale->transaction_date)->format('Y-m-d\TH:i') }}" class="form-control">
+                                </div>
                                 @if(session('system_mode') == 'garments')
                                 <div class="col-md-2">
                                     <button type="button" class="btn btn-danger" style="margin-top: 30px;"

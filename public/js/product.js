@@ -212,8 +212,9 @@ myDropzone.on("thumbnail", function (file) {
         modalTemplate.on("shown.bs.modal", function () {
             cropper = new Cropper($img, {
                 initialAspectRatio: 1 / 1,
+                aspectRatio: 1 / 1,
                 cropBoxResizable: false,
-                viewMode: 3,
+                viewMode: 2,
                 preview: ".product_preview_div",
             });
         });

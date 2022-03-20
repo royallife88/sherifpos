@@ -31,7 +31,7 @@ $(document).ready(function () {
                 restore: false,
                 guides: false,
                 center: false,
-                viewMode: 3,
+                viewMode: 2,
                 preview: ".preview_div",
             });
         })
