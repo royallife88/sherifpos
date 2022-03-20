@@ -109,7 +109,6 @@
                             <div class="row mt-4">
                                 <div class="col-sm-12">
                                     <input type="submit" class="btn btn-primary" value="@lang('lang.save')" name="submit">
-                                    <input type="submit" class="btn btn-primary" value="@lang('lang.paid')" name="submit">
                                 </div>
                             </div>
 
