@@ -115,8 +115,8 @@
                                                     $employee = App\Models\Employee::find($wages_and_compensation->employee_id);
                                                 @endphp
                                                 <td>
-                                                    <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('images/default.jpg') }} @endif"
-                                                        style="width: 60px; border: 2px solid #fff; padding: 4px;" />
+                                                    <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('uploads/'. session('logo')) }} @endif"
+                                                        style="width: 50px; border: 2px solid #fff;" />
                                                 </td>
                                                 <td>
                                                     @if ($wages_and_compensation->payment_type == 'salary')
@@ -160,6 +160,11 @@
                                                                 class="btn btn-danger text-white">@lang('lang.paid')</a>
                                                         @endcan
                                                     @endif
+                                                    @can('hr_management.wages_and_compensation.view')
+                                                        <a href="{{ action('WagesAndCompensationController@show', $wages_and_compensation->id) }}"
+                                                            class="btn btn-danger text-white edit_job"><i
+                                                                class="fa fa-eye"></i></a>
+                                                    @endcan
                                                     @can('hr_management.wages_and_compensation.create_and_edit')
                                                         <a href="{{ action('WagesAndCompensationController@edit', $wages_and_compensation->id) }}"
                                                             class="btn btn-danger text-white edit_job"><i

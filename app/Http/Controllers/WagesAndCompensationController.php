@@ -213,7 +213,18 @@ class WagesAndCompensationController extends Controller
      */
     public function show($id)
     {
-        //
+        $employees = Employee::getDropdown();
+        $payment_types = WagesAndCompensation::getPaymentTypes();
+
+        $wages_and_compensation = WagesAndCompensation::find($id);
+        $users = User::pluck('name', 'id');
+
+        return view('wages_and_compensations.show')->with(compact(
+            'wages_and_compensation',
+            'employees',
+            'users',
+            'payment_types',
+        ));
     }
 
     /**
