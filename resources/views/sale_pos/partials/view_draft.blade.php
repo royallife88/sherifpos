@@ -3,6 +3,7 @@
         <thead>
             <tr>
                 <th>@lang('lang.date')</th>
+                <th>@lang('lang.invoice_no')</th>
                 <th>@lang('lang.value')</th>
                 <th>@lang('lang.customer_type')</th>
                 <th>@lang('lang.customer_name')</th>

@@ -1483,13 +1483,14 @@ $(document).ready(function () {
         },
         columnDefs: [
             {
-                targets: [7],
+                targets: [9],
                 orderable: false,
                 searchable: false,
             },
         ],
         columns: [
             { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
             { data: "final_total", name: "final_total" },
             { data: "customer_type", name: "customer_types.name" },
             { data: "customer_name", name: "customers.name" },

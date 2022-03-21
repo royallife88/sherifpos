@@ -97,7 +97,14 @@
                         'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                     </div>
                 </div>
-
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('tax_id', __('lang.tax') . ':', []) !!}
+                        {!! Form::select('tax_id[]', $taxes, request()->tax_id, ['class' => 'form-control
+                        sale_filter
+                        selectpicker', 'data-live-search' =>'true', "data-actions-box"=>"true", 'placeholder' => __('lang.all'), 'multiple', 'id' => 'tax_id']) !!}
+                    </div>
+                </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         {!! Form::label('deliveryman_id', __('lang.deliveryman'), []) !!}
@@ -225,6 +232,7 @@
                 d.category_id = $("#category_id").val();
                 d.sub_category_id = $("#sub_category_id").val();
                 d.brand_id = $("#brand_id").val();
+                d.tax_id = $("#tax_id").val();
                 d.customer_id = $("#customer_id").val();
                 d.customer_type_id = $("#customer_type_id").val();
                 d.store_id = $("#store_id").val();

@@ -101,6 +101,9 @@ class SellController extends Controller
             if (!empty(request()->brand_id) && !empty(array_filter(request()->brand_id))) {
                 $query->whereIn('products.brand_id', array_filter(request()->brand_id));
             }
+            if (!empty(request()->tax_id) && !empty(array_filter(request()->tax_id))) {
+                $query->whereIn('transactions.tax_id', array_filter(request()->tax_id));
+            }
             if (!empty(request()->customer_id)) {
                 $query->where('customer_id', request()->customer_id);
             }
@@ -361,6 +364,7 @@ class SellController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
         $delivery_men = Employee::getDropdownByJobType('Deliveryman');
+        $taxes = Tax::pluck('name', 'id');
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -374,6 +378,7 @@ class SellController extends Controller
             'stores',
             'delivery_men',
             'payment_status_array',
+            'taxes',
         ));
     }
 
