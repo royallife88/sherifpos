@@ -161,8 +161,8 @@ class NotificationUtil extends Util
      */
     public function sendQuotationToCustomer($transaction_id, $emails = null)
     {
-        $transaction = Transaction::find($transaction_id);
-        $customer = Customer::find($transaction->customer_id);
+        $sale = Transaction::find($transaction_id);
+        $customer = Customer::find($sale->customer_id);
         $payment_types = $this->getPaymentTypeArrayForPos();
 
 
@@ -170,8 +170,7 @@ class NotificationUtil extends Util
         if (empty($invoice_lang)) {
             $invoice_lang = request()->session()->get('language');
         }
-        if ($transaction->is_quotation == 1 && $transaction->status == 'draft') {
-            $sale = $transaction;
+        if ($sale->is_quotation == 1 && $sale->status == 'draft') {
             $payment_type_array = $payment_types;
             $create_pdf = true;
             $html = view('sale_pos.partials.commercial_invoice')->with(compact(
@@ -184,12 +183,12 @@ class NotificationUtil extends Util
         $mpdf = $this->getMpdf();
 
         $mpdf->WriteHTML($html);
-        $file = config('constants.mpdf_temp_path') . '/' . time() . '_quotation-' . $transaction->invoice_no . '.pdf';
+        $file = config('constants.mpdf_temp_path') . '/' . time() . '_quotation-' . $sale->invoice_no . '.pdf';
         $mpdf->Output($file, 'F');
 
         $data['email_body'] =  'Quotation. Please find the file in attachment.';
         $data['attachment'] =  $file;
-        $data['attachment_name'] =  'quotation-' . $transaction->invoice_no . '.pdf';
+        $data['attachment_name'] =  'quotation-' . $sale->invoice_no . '.pdf';
 
 
         if (!empty($emails)) {
