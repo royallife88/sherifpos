@@ -167,7 +167,9 @@
     @php
         $logo = App\Models\System::getProperty('logo');
     @endphp
+    @if (empty($create_pdf))
     <div id="watermark"><img src="{{ asset('/uploads/' . $logo) }}" alt=""></div>
+    @endif
 
     <div class="row header_div" id="header_div" style="width: 100%;">
         @include('layouts.partials.print_header')
