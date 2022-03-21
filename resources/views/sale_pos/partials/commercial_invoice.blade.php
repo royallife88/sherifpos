@@ -234,7 +234,7 @@
     </div>
     <div class="col-md-12 content_div" id="content_div">
         <div class="row">
-            <div class="col-md-6" style="width: 50%;">
+            <div class="col-md-6" style="width: 50%;@if (!empty($create_pdf)) float:left; @endif">
                 <div class="col-md-12">
                     <h5>
                         @if ($sale->status == 'draft' && $sale->is_quotation == 1)
@@ -254,7 +254,7 @@
                 </div>
             </div>
             <br>
-            <div class="col-md-6" style="width: 50%;">
+            <div class="col-md-6" style="width: 50%;@if (!empty($create_pdf)) float:right; @endif">
                 <div class="col-md-12">
                     @lang('lang.name'): <b>{{ $sale->customer->name ?? '' }}</b>
                 </div>
