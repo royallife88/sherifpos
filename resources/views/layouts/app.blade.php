@@ -46,6 +46,7 @@
             <input type="hidden" id="__currency_symbol_placement" value="before">
             <input type="hidden" id="__precision" value="3">
             <input type="hidden" id="__quantity_precision" value="3">
+            <input type="hidden" id="system_mode" value="{{env('SYSTEM_MODE')}}">
             @yield('content')
         </div>
 

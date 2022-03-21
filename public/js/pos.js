@@ -1638,9 +1638,13 @@ $(document).ready(function () {
     $(document).on("change", "#draft_start_date, #draft_end_date", function () {
         draft_table.ajax.reload();
     });
-    $(document).on("change", "#online_order_start_date, #online_order_end_date", function () {
+    $(document).on(
+        "change",
+        "#online_order_start_date, #online_order_end_date",
+        function () {
             online_order_table.ajax.reload();
-    });
+        }
+    );
     $(document).on(
         "change",
         "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method",
@@ -2078,23 +2082,28 @@ $(document).on("change", "#customer_size_id", function () {
     get_customer_size_details(customer_size_id);
 });
 function get_customer_size_details(customer_size_id) {
-    $.ajax({
-        method: "GET",
-        url:
-            "/customer-sizes/get-customer-size-details-form/" +
-            customer_size_id,
-        data: {
-            transaction_id: $("#transaction_id").val(),
-        },
-        success: function (result) {
-            if (!result.success) {
-                swal("Error", result.msg, "error");
-                return;
-            } else {
-                $("#customer_size_detail_section").html(result.html_content);
-            }
-        },
-    });
+    let system_mode = $("#system_mode").val();
+    if (system_mode == "garments") {
+        $.ajax({
+            method: "GET",
+            url:
+                "/customer-sizes/get-customer-size-details-form/" +
+                customer_size_id,
+            data: {
+                transaction_id: $("#transaction_id").val(),
+            },
+            success: function (result) {
+                if (!result.success) {
+                    swal("Error", result.msg, "error");
+                    return;
+                } else {
+                    $("#customer_size_detail_section").html(
+                        result.html_content
+                    );
+                }
+            },
+        });
+    }
 }
 $(document).on("click", "#size_next", function () {
     let next_item_value = $("#customer_size_id option:selected").next().val();
