@@ -1119,8 +1119,8 @@ return [
 
     'raw_material_module' => 'مادة أولية Module',
     'daily_sales_summary' => ' ملخص التقرير اليومي',
-    'online_order_transactions' => 'Online Order Transactions',
-    'online_orders' => 'Online Orders',
+    'online_order_transactions' => 'معاملات الطلبات عبر الإنترنت',
+    'online_orders' => 'طلبات أونلاين',
     'add_dining_room' => 'Add Dining Room',
     'dining_room_name_already_exist' => 'Dining room name already exists.',
     'add_new_table' => 'Add New Table',
