@@ -279,6 +279,7 @@ $invoice_lang = request()->session()->get('language');
                             {{@num_format($transaction->used_deposit_balance)}}</td>
                     </tr>
                     @endif
+                    @if($transaction->is_quotation != 1)
                     @if($transaction->payment_status != 'paid' && $transaction->final_total - $transaction->transaction_payments->sum('amount') > 0)
                     <tr>
                         <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.due', [], $invoice_lang)</td>
@@ -286,6 +287,7 @@ $invoice_lang = request()->session()->get('language');
                             {{@num_format($transaction->final_total -
                             $transaction->transaction_payments->sum('amount'))}}</td>
                     </tr>
+                    @endif
                     @endif
                     <tr>
                         <td class="centered" colspan="3">

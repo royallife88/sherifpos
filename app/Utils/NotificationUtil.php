@@ -120,19 +120,15 @@ class NotificationUtil extends Util
         if (empty($invoice_lang)) {
             $invoice_lang = request()->session()->get('language');
         }
-        if ($invoice_lang == 'ar_and_en') {
-            $html = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
-                'transaction',
-                'payment_types'
-            ))->render();
-        } else {
-            $html = view('sale_pos.partials.invoice')
-                ->with(compact(
-                    'transaction',
-                    'payment_types',
-                    'invoice_lang'
-                ))->render();
-        }
+        $sale = $transaction;
+        $payment_type_array = $payment_types;
+        $create_pdf = true;
+        $html = view('sale_pos.partials.commercial_invoice')->with(compact(
+            'sale',
+            'payment_type_array',
+            'invoice_lang',
+            'create_pdf',
+        ))->render();
 
         $mpdf = $this->getMpdf();
         $mpdf->WriteHTML($html);
@@ -174,18 +170,16 @@ class NotificationUtil extends Util
         if (empty($invoice_lang)) {
             $invoice_lang = request()->session()->get('language');
         }
-        if ($invoice_lang == 'ar_and_en') {
-            $html = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
-                'transaction',
-                'payment_types'
+        if ($transaction->is_quotation == 1 && $transaction->status == 'draft') {
+            $sale = $transaction;
+            $payment_type_array = $payment_types;
+            $create_pdf = true;
+            $html = view('sale_pos.partials.commercial_invoice')->with(compact(
+                'sale',
+                'payment_type_array',
+                'invoice_lang',
+                'create_pdf',
             ))->render();
-        } else {
-            $html = view('sale_pos.partials.invoice')
-                ->with(compact(
-                    'transaction',
-                    'payment_types',
-                    'invoice_lang'
-                ))->render();
         }
         $mpdf = $this->getMpdf();
 
@@ -193,7 +187,7 @@ class NotificationUtil extends Util
         $file = config('constants.mpdf_temp_path') . '/' . time() . '_quotation-' . $transaction->invoice_no . '.pdf';
         $mpdf->Output($file, 'F');
 
-        $data['email_body'] =  'this is email body';
+        $data['email_body'] =  'Quotation. Please find the file in attachment.';
         $data['attachment'] =  $file;
         $data['attachment_name'] =  'quotation-' . $transaction->invoice_no . '.pdf';
 

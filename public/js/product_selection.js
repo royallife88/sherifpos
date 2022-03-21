@@ -5,6 +5,7 @@ $(document).ready(function () {
         paging: true,
         info: false,
         bAutoWidth: false,
+        deferLoading: 0,
         order: [],
         language: {
             url: dt_lang_url,
@@ -30,9 +31,10 @@ $(document).ready(function () {
                 d.size_id = $("#filter_size_id").val();
                 d.grade_id = $("#filter_grade_id").val();
                 d.tax_id = $("#filter_tax_id").val();
-                if($('#sender_store_id').length){ //in add transfer page
+                if ($("#sender_store_id").length) {
+                    //in add transfer page
                     d.store_id = $("#sender_store_id").val();
-                }else{
+                } else {
                     d.store_id = $("#filter_store_id").val();
                 }
                 d.customer_type_id = $("#filter_customer_type_id").val();
@@ -168,6 +170,16 @@ $(document).on("change", ".product_selected", function () {
             );
         });
     }
+    //remove duplicate object from array
+    product_selected = product_selected.filter(
+        (value, index, self) =>
+            index ===
+            self.findIndex(
+                (t) =>
+                    t.product_id === value.product_id &&
+                    t.variation_id === value.variation_id
+            )
+    );
 });
 
 $("#select_products_modal").on("shown.bs.modal", function () {

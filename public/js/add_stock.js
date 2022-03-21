@@ -95,6 +95,7 @@ function get_label_product_row(product_id, variation_id) {
                 $("input#search_product").val("");
                 $("input#search_product").focus();
                 calculate_sub_totals();
+                reset_row_numbering();
             },
         });
     }
@@ -189,4 +190,12 @@ $(document).on("click", ".remove_row", function () {
     $(this).closest("tr").remove();
     $(".row_details_" + index).remove();
     calculate_sub_totals();
+    reset_row_numbering();
 });
+function reset_row_numbering() {
+    $("#product_table > tbody  > .product_row").each((ele, tr) => {
+        $(tr)
+            .find(".row_number")
+            .text(ele + 2 - 1);
+    });
+}

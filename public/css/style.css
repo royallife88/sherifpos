@@ -91,7 +91,6 @@ input[type="number"] {
 }
 
 #contact_us_btn {
-
     padding-top: 8px;
     padding-bottom: 8px;
     border-radius: 50%;
@@ -144,15 +143,18 @@ input[type="number"] {
 .img-container img {
     width: 100%;
 }
-.dataTables_filter input{
+.dataTables_filter input {
     border: 1px solid #17b948f1 !important;
 }
-.dataTables_processing{
+.dataTables_processing {
     color: red !important;
     border: 1px solid red !important;
     top: 0% !important;
     margin-top: 100px !important;
 }
-.table-responsive{
+.table-responsive {
     position: relative;
+}
+.disabled {
+    pointer-events: none;
 }

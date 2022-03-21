@@ -2,7 +2,8 @@
 @php
 $i = $index;
 @endphp
-<tr>
+<tr class="product_row">
+    <td class="row_number"></td>
     <td><img src="@if(!empty($product->getFirstMediaUrl('product'))){{$product->getFirstMediaUrl('product')}}@else{{asset('/uploads/'.session('logo'))}}@endif"
         alt="photo" width="50" height="50"></td>
     <td>
