@@ -246,11 +246,7 @@
                             @lang('lang.invoice_no')
                         @endif: {{ $sale->invoice_no }}
                     </h5>
-                </div>
-                <div class="col-md-12">
                     <h5>@lang('lang.date'): {{ @format_datetime($sale->transaction_date) }}</h5>
-                </div>
-                <div class="col-md-12">
                     <h5>@lang('lang.store'): {{ $sale->store->name ?? '' }}</h5>
                     <h5>@lang('lang.address'): {{ $sale->store->location ?? '' }}</h5>
                     <h5>@lang('lang.phone'): {{ $sale->store->phone_number ?? '' }}</h5>
