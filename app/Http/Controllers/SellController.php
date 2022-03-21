@@ -159,6 +159,11 @@ class SellController extends Controller
                         data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
                         class="btn btn-modal" style="color: #007bff;">R</a>';
                     }
+                    if ($row->payment_status == 'pending') {
+                        $string .= '<a
+                            data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                            class="btn btn-modal" style="color: #007bff;">P</a>';
+                    }
 
                     return $string;
                 })
