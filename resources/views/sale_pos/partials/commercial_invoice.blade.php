@@ -148,22 +148,25 @@
         #payment_table_view.table-bordered>tbody>tr>td {
             border: 1px solid #333 !important;
         }
-        @if (empty($create_pdf))
-        @media print {
-
-            @page {
-                size: A4;
-                margin-top: 0px;
-                margin-bottom: 40px;
-            }
-
-            body * {
-                background-color: transparent !important;
-            }
-        }
-        @endif
 
     </style>
+    @if (empty($create_pdf))
+        <style>
+            @media print {
+
+                @page {
+                    size: A4;
+                    margin-top: 0px;
+                    margin-bottom: 40px;
+                }
+
+                body * {
+                    background-color: transparent !important;
+                }
+            }
+
+        </style>
+    @endif
     @if (!empty($create_pdf))
         <style>
             .col-xs-1,
@@ -225,7 +228,7 @@
         $logo = App\Models\System::getProperty('logo');
     @endphp
     @if (empty($create_pdf))
-    <div id="watermark"><img src="{{ asset('/uploads/' . $logo) }}" alt=""></div>
+        <div id="watermark"><img src="{{ asset('/uploads/' . $logo) }}" alt=""></div>
     @endif
 
     <div class="row header_div" id="header_div" style="width: 100%;">
