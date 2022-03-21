@@ -183,12 +183,12 @@ class NotificationUtil extends Util
         $mpdf = $this->getMpdf();
 
         $mpdf->WriteHTML($html);
-        $file = config('constants.mpdf_temp_path') . '/' . time() . '_quotation' . $sale->invoice_no . '.pdf';
+        $file = config('constants.mpdf_temp_path') . '/' . time() . '_quotation-' . $sale->invoice_no . '.pdf';
         $mpdf->Output($file, 'F');
 
         $data['email_body'] =  'Quotation. Please find the file in attachment.';
         $data['attachment'] =  $file;
-        $data['attachment_name'] =  'quotation' . $sale->invoice_no . '.pdf';
+        $data['attachment_name'] =  'quotation-' . $sale->invoice_no . '.pdf';
 
 
         if (!empty($emails)) {
