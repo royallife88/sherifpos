@@ -21,7 +21,7 @@
                 <div class="@if (session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
                     {!! Form::open(['url' => action('SellPosController@store'), 'method' => 'post', 'files' => true, 'class' => 'pos-form', 'id' => 'add_pos_form']) !!}
                     <div class="card">
-                        <div class="card-body" style="padding-bottom: 0">
+                        <div class="card-body" style="padding: 0px 10px; !important">
                             <input type="hidden" name="default_customer_id" id="default_customer_id"
                                 value="@if (!empty($walk_in_customer)) {{ $walk_in_customer->id }} @endif">
                             <input type="hidden" name="row_count" id="row_count" value="0">
