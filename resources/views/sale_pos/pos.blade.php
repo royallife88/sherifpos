@@ -27,7 +27,7 @@
                             <input type="hidden" name="row_count" id="row_count" value="0">
                             <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden" value="">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12 main_settings">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -56,7 +56,7 @@
                                         @endif --}}
                                     </div>
                                 </div>
-                                <div class="col-md-12">
+                                <div class="col-md-12 main_settings">
                                     <div class="row">
                                         <div class="col-md-3">
                                             {!! Form::label('customer_id', __('lang.customer'), []) !!}
@@ -93,9 +93,9 @@
                                                     class="customer_type_name"></span></label>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
+                                            <label for="customer_balance" style="margin-top: 30px; margin-bottom: 0px;">@lang('lang.balance'):
                                                 <span class="customer_balance">{{ @num_format(0) }}</span></label>
-                                            <label for="points" style="margin-top: 0px;">@lang('lang.points'):
+                                            <label for="points" style="margin: 0px;">@lang('lang.points'):
                                                 <span class="points"><span class="customer_points_span">{{ @num_format(0) }}</span></span></label>
                                         </div>
                                         @if (session('system_mode') == 'pos')
@@ -125,7 +125,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12" style="margin-top: 20px ">
+                                    <div class="col-md-12" style="margin-top: 5px; padding: 0px; ">
                                         <div class="table-responsive transaction-list">
                                             <table id="product_table" style="width: 100% "
                                                 class="table table-hover table-striped order-list table-fixed">
@@ -245,7 +245,7 @@
                             </div>
                         </div>
 
-                        <div class="payment-options"
+                        <div class="payment-options row"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
                             <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"

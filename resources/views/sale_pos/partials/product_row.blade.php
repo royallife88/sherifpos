@@ -3,7 +3,7 @@
     @if(!empty($is_direct_sale))
     <td class="row_number"></td>
     @endif
-    <td style="width: @if(session('system_mode')  != 'restaurant') 18% @else 20% @endif">
+    <td style="width: @if(session('system_mode')  != 'restaurant') 18%; @else 20%; @endif font-size: 13px;">
         @if($product->variation_name != "Default")
         <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
         @else
@@ -55,7 +55,7 @@
                 </button>
             </span>
             <input type="number" class="form-control quantity  qty numkey input-number" min="0.01" step="any"
-                autocomplete="off" style="width: 70px;"
+                autocomplete="off" style="width: 50px;"
                 @if(!$product->is_service)max="{{$product->qty_available}}"@endif
             name="transaction_sell_line[{{$loop->index + $index}}][quantity]"
             required
@@ -100,10 +100,10 @@
         @if(isset($product->qty_available)){{@num_format($product->qty_available)}}@else{{0}}@endif @endif
     </td>
     @endif
-    <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
-        <button type="button" class="btn btn-danger btn-xs remove_row"><i class="fa fa-times"></i></button>
+    <td style="width: @if(session('system_mode')  != 'restaurant') 10%; @else 15%; @endif padding: 0px;">
+        <button type="button" class="btn btn-danger btn-xs remove_row" style="margin-top: 15px;"><i class="fa fa-times"></i></button>
         @if(session('system_mode') != 'restaurant')
-        <button type="button" class="btn btn-danger btn-xs quick_add_purchase_order"
+        <button type="button" class="btn btn-danger btn-xs quick_add_purchase_order"  style="margin-top: 15px;"
             title="@lang('lang.add_draft_purchase_order')"
             data-href="{{action('PurchaseOrderController@quickAddDraft')}}?variation_id={{$product->variation_id}}&product_id={{$product->product_id}}"><i
                 class="fa fa-plus"></i> @lang('lang.po')</button>

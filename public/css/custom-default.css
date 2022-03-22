@@ -973,7 +973,7 @@ section.pos-section {
 
 .btn-custom {
     display: block;
-    font-size: 16px;
+    font-size: 13px;
     letter-spacing: 0.075em;
     line-height: 1.7;
     width: 100%;
@@ -982,16 +982,26 @@ section.pos-section {
 }
 
 .btn-custom.lg {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
 }
 
 .btn-custom.sm {
     line-height: 18px;
-    font-size: 15px;
+    font-size: 12px;
     margin-bottom: 5px;
 }
-
+.main_settings label{
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+.main_settings select{
+    font-size: 12px !important;
+    height: 10px !important;
+}
+.product_row input{
+    padding: 3px 10px !important;
+}
 .minus,
 .plus {
     padding: 0.35rem 0.75rem;
@@ -1199,7 +1209,7 @@ div.has-error > .form-text {
 .payment-options .column-5 {
     min-width: 10%;
     float: left;
-    margin: 10px 0;
+    margin: 3px 0;
     padding: 0 5px;
 }
 

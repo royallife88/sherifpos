@@ -1,7 +1,7 @@
-@forelse ($products->chunk(4) as $chunk)
-    <tr>
+@forelse ($products->chunk(5) as $chunk)
+    <tr style="font-size: 11px; padding: 5px;">
         @foreach ($chunk as $product)
-            <td class="product-img sound-btn filter_product_add" data-is_service="{{ $product->is_service }}"
+            <td style="padding-top: 0px; padding-bottom: 0px;" class="product-img sound-btn filter_product_add" data-is_service="{{ $product->is_service }}"
                 data-qty_available="{{ $product->qty_available - $product->block_qty }}"
                 data-product_id="{{ $product->id }}" data-variation_id="{{ $product->variation_id }}"
                 title="{{ $product->name }}"
