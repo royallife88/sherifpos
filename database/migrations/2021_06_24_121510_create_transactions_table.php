@@ -107,6 +107,8 @@ class CreateTransactionsTable extends Migration
             $table->integer('notify_before_days')->default(0);
             $table->unsignedBigInteger('wages_and_compensation_id')->nullable();
             $table->unsignedBigInteger('restaurant_order_id')->nullable();
+            $table->unsignedBigInteger('dining_room_id')->nullable();
+            $table->unsignedBigInteger('dining_table_id')->nullable();
             $table->string('table_no')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');

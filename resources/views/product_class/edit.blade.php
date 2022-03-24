@@ -13,8 +13,18 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('name', __('lang.name') . ':*') !!}
-                {!! Form::text('name', $product_class->name, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required', 'readonly' => $product_class->name == 'Extras' ? true : false]) !!}
+                <div class="input-group my-group">
+                    {!! Form::text('name', $product_class->name, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required', 'readonly' => $product_class->name == 'Extras' ? true : false]) !!}
+                    <span class="input-group-btn">
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"><i
+                                class="dripicons-web text-primary fa-lg"></i></button>
+                    </span>
+                </div>
             </div>
+            @include('layouts.partials.translation_inputs', [
+                'attribute' => 'name',
+                'translations' => $product_class->translations,
+            ])
             <div class="form-group">
                 {!! Form::label('description', __('lang.description') . ':') !!}
                 {!! Form::text('description', $product_class->description, ['class' => 'form-control', 'placeholder' => __('lang.description')]) !!}

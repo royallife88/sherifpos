@@ -17,4 +17,25 @@ class Category extends Model implements HasMedia
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'translations' => 'array',
+    ];
+
+    public function getNameAttribute($name)
+    {
+        $translations = !empty($this->translations['name']) ? $this->translations['name'] : [];
+        if (!empty($translations)) {
+            $lang = session('language');
+            if (!empty($translations[$lang])) {
+                return $translations[$lang];
+            }
+        }
+        return $name;
+    }
 }

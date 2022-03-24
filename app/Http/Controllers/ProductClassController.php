@@ -81,6 +81,7 @@ class ProductClassController extends Controller
         }
         try {
             $data = $request->except('_token', 'quick_add');
+            $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
 
             $class = ProductClass::create($data);
 
@@ -152,7 +153,8 @@ class ProductClassController extends Controller
         );
 
         try {
-            $data = $request->only('name', 'description', 'sort');
+            $data = $request->only('name', 'description', 'sort', 'translations');
+            $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
             $class = ProductClass::where('id', $id)->first();
             $class->update($data);
 

@@ -19,8 +19,18 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('name', __('lang.name') . ':*') !!}
-                {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
+                <div class="input-group my-group">
+                    {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
+                    <span class="input-group-btn">
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"><i
+                                class="dripicons-web text-primary fa-lg"></i></button>
+                    </span>
+                </div>
             </div>
+            @include('layouts.partials.translation_inputs', [
+                'attribute' => 'name',
+                'translations' => [],
+            ])
             <input type="hidden" name="quick_add" value="{{ $quick_add }}">
             <div class="form-group">
                 {!! Form::label('description', __('lang.description') . ':') !!}

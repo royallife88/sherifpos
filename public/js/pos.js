@@ -1211,7 +1211,8 @@ $(document).ready(function () {
                         }
                         if (
                             $("#print_the_transaction").prop("checked") &&
-                            $("#status").val() !== "draft"
+                            $("#status").val() !== "draft" &&
+                            $("#dining_action_type").val() !== "save"
                         ) {
                             pos_print(result.html_content);
                         }
@@ -1280,8 +1281,9 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount"
+        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id"
     ).val("");
+    $("#dining_action_type").val("");
     $("#status").val("final");
     $("#row_count").val(0);
     $("button#submit-btn").attr("disabled", false);
@@ -1300,6 +1302,8 @@ function reset_pos_form() {
     $("tr.product_row").remove();
     $(this).attr("disabled", false);
     $("#product_table > tbody").empty();
+    $(".table_room_hide").removeClass("hide");
+    $(".table_room_show").addClass("hide");
 
     let first_row = $("#payment_rows .payment_row").first();
     $(first_row).find(".change").text(__currency_trans_from_en(0, false));
@@ -2207,3 +2211,12 @@ function get_sale_promotion_products(sale_promotion_id) {
         },
     });
 }
+$(document).on("click", "#dining_table_print, #dining_table_save", function () {
+    if ($("table#product_table tbody").find(".product_row").length <= 0) {
+        toastr.warning("No Product Added");
+        return false;
+    }
+    $("#dining_action_type").val($(this).val());
+    $("#amount").val(0);
+    pos_form_obj.submit();
+});

@@ -98,8 +98,21 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('name', __('lang.name') . ' *', []) !!}
-                                        {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
+                                        <div class="input-group my-group">
+                                            {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default bg-white btn-flat translation_btn"
+                                                    type="button"><i class="dripicons-web text-primary fa-lg"></i></button>
+                                            </span>
+                                        </div>
                                     </div>
+                                    @include(
+                                        'layouts.partials.translation_inputs',
+                                        [
+                                            'attribute' => 'name',
+                                            'translations' => $product->translations,
+                                        ]
+                                    )
                                 </div>
                                 <div class="col-md-4  @if (session('system_mode') == 'restaurant') hide @endif">
                                     <div class="form-group">
@@ -184,7 +197,8 @@
                                 <div class="col-md-12 " style="margin-top: 10px;">
                                     <div class="dropzone" id="my-dropzone">
                                         <div class="dz-message" data-dz-message>
-                                            <span>@lang('lang.drop_file_here_to_upload')</span></div>
+                                            <span>@lang('lang.drop_file_here_to_upload')</span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -195,8 +209,15 @@
                                         @else
                                             <label>@lang('lang.product_details')</label>
                                         @endif
+                                        <button type="button" class="translation_textarea_btn btn btn-sm"><i class="dripicons-web text-primary fa-lg"></i></button>
                                         <textarea name="product_details" id="product_details" class="form-control"
                                             rows="3">{{ $product->product_details }}</textarea>
+                                    </div>
+                                    <div class="col-md-4">
+                                        @include('layouts.partials.translation_textarea', [
+                                            'attribute' => 'product_details',
+                                            'translations' => $product->translations,
+                                        ])
                                     </div>
                                 </div>
                                 @if (session('system_mode') == 'restaurant')
@@ -435,7 +456,8 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                <input type="hidden" name="row_id" id="row_id" value="{{ $product->variations->count() }}">
+                                <input type="hidden" name="row_id" id="row_id"
+                                    value="{{ $product->variations->count() }}">
                             </div>
 
                             <div class="row">

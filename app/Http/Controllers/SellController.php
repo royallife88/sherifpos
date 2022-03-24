@@ -11,6 +11,8 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
+use App\Models\DiningRoom;
+use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\Grade;
 use App\Models\ProductClass;
@@ -109,6 +111,12 @@ class SellController extends Controller
             }
             if (!empty(request()->customer_type_id)) {
                 $query->where('customer_type_id', request()->customer_type_id);
+            }
+            if (!empty(request()->dining_room_id)) {
+                $query->where('dining_room_id', request()->dining_room_id);
+            }
+            if (!empty(request()->dining_table_id)) {
+                $query->where('dining_table_id', request()->dining_table_id);
             }
             if (!empty(request()->status)) {
                 $query->where('status', request()->status);
@@ -365,6 +373,8 @@ class SellController extends Controller
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
         $delivery_men = Employee::getDropdownByJobType('Deliveryman');
         $taxes = Tax::pluck('name', 'id');
+        $dining_rooms = DiningRoom::pluck('name', 'id');
+        $dining_tables = DiningTable::pluck('name', 'id');
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -379,6 +389,8 @@ class SellController extends Controller
             'delivery_men',
             'payment_status_array',
             'taxes',
+            'dining_rooms',
+            'dining_tables'
         ));
     }
 

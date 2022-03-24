@@ -484,6 +484,7 @@ class ProductController extends Controller
 
             $product_data = [
                 'name' => $request->name,
+                'translations' => !empty($request->translations) ? $request->translations : [],
                 'product_class_id' => $request->product_class_id,
                 'category_id' => $request->category_id,
                 'sub_category_id' => $request->sub_category_id,
@@ -678,6 +679,7 @@ class ProductController extends Controller
             $discount_customers = $this->getDiscountCustomerFromType($request->discount_customer_types);
             $product_data = [
                 'name' => $request->name,
+                'translations' => !empty($request->translations) ? $request->translations : [],
                 'product_class_id' => $request->product_class_id,
                 'category_id' => $request->category_id,
                 'sub_category_id' => $request->sub_category_id,

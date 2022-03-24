@@ -1135,4 +1135,12 @@ return [
     'print_labels' => 'Print Labels',
     'expiry_details' => 'Expiry Details',
     'sort' => 'Sort',
+
+    'reserve' => 'Reserve',
+    'order' => 'Order',
+    'cancel_reservation' => 'Canel Reservation',
+    'table' => 'Table',
+    'pay_and_close' => 'Pay and Close',
+    'dining_room' => 'Dining Room',
+    'dining_table' => 'Dining Table',
 ];

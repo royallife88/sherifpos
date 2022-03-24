@@ -12,6 +12,7 @@ use App\Models\ConsumptionProduct;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerImportantDate;
+use App\Models\DiningTable;
 use App\Models\EarningOfPoint;
 use App\Models\Product;
 use App\Models\ProductClass;
@@ -128,6 +129,8 @@ class TransactionUtil extends Util
         }
         $transaction->payment_status = $payment_status;
         $transaction->save();
+
+        return $transaction;
     }
 
 
@@ -572,9 +575,15 @@ class TransactionUtil extends Util
             'delivery_cost' => $this->num_uf($request->delivery_cost),
             'delivery_address' => $request->delivery_address,
             'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
+            'dining_table_id' => !empty($request->dining_table_id) ? $request->dining_table_id : 0,
         ];
+        if (!empty($request->dining_table_id)) {
+            $dining_table = DiningTable::find($request->dining_table_id);
+            $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
+        }
 
-        if(!empty($request->transaction_date)){
+
+        if (!empty($request->transaction_date)) {
             $transaction_data['transaction_date'] = Carbon::createFromTimestamp(strtotime($request->transaction_date))->format('Y-m-d H:i:s');
         }
 

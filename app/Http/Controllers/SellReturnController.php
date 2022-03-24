@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Customer;
+use App\Models\DiningRoom;
+use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Store;
@@ -60,43 +62,52 @@ class SellReturnController extends Controller
         $store_id = $this->transactionUtil->getFilterOptionValues(request())['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues(request())['pos_id'];
 
-        $query = Transaction::where('type', 'sell_return');
+        $query = Transaction::leftjoin('transactions as sell_parent', 'transactions.return_parent_id', 'sell_parent.id')
+            ->where('transactions.type', 'sell_return');
 
         if (!empty(request()->customer_id)) {
-            $query->where('customer_id', request()->customer_id);
+            $query->where('transactions.customer_id', request()->customer_id);
         }
         if (!empty(request()->status)) {
-            $query->where('status', request()->status);
+            $query->where('transactions.status', request()->status);
         }
         if (!empty(request()->payment_status)) {
-            $query->where('payment_status', request()->payment_status);
+            $query->where('transactions.payment_status', request()->payment_status);
         }
         if (!empty(request()->start_date)) {
-            $query->where('transaction_date', '>=', request()->start_date);
+            $query->where('transactions.transaction_date', '>=', request()->start_date);
         }
         if (!empty(request()->end_date)) {
-            $query->whereDate('transaction_date', '<=', request()->end_date);
+            $query->whereDate('transactions.transaction_date', '<=', request()->end_date);
         }
         if (!empty(request()->start_time)) {
-            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            $query->where('transactions.transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
         if (!empty(request()->end_time)) {
-            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            $query->where('transactions.transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
-            $query->where('store_id', $store_id);
+            $query->where('transactions.store_id', $store_id);
         }
         if (!empty($pos_id)) {
-            $query->where('store_pos_id', $pos_id);
+            $query->where('transactions.store_pos_id', $pos_id);
+        }
+        if (!empty(request()->dining_room_id)) {
+            $query->where('sell_parent.dining_room_id', request()->dining_room_id);
+        }
+        if (!empty(request()->dining_table_id)) {
+            $query->where('sell_parent.dining_table_id', request()->dining_table_id);
         }
 
-        $sale_returns = $query->orderBy('transaction_date', 'desc')->get();
+        $sale_returns = $query->select('transactions.*')->orderBy('transactions.transaction_date', 'desc')->get();
 
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $customers = Customer::getCustomerArrayWithMobile();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
+        $dining_rooms = DiningRoom::pluck('name', 'id');
+        $dining_tables = DiningTable::pluck('name', 'id');
 
         return view('sell_return.index')->with(compact(
             'sale_returns',
@@ -105,6 +116,8 @@ class SellReturnController extends Controller
             'stores',
             'store_pos',
             'payment_status_array',
+            'dining_rooms',
+            'dining_tables',
         ));
     }
 

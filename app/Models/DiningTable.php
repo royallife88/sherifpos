@@ -20,4 +20,8 @@ class DiningTable extends Model
     {
         return $this->belongsTo(DiningRoom::class);
     }
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class, 'current_transaction_id');
+    }
 }

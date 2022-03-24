@@ -77,6 +77,7 @@ class ProductController extends BaseController
         try {
             $product_data = [
                 'name' => $input['name'],
+                'translations' => $input['translations'],
                 'product_class_id' => $input['product_class_id'],
                 'product_details' => $input['product_details'],
                 'purchase_price' => $input['purchase_price'],
@@ -169,6 +170,7 @@ class ProductController extends BaseController
         try {
             $product_data = [
                 'name' => $input['name'],
+                'translations' => $input['translations'],
                 'product_class_id' => $input['product_class_id'],
                 'product_details' => $input['product_details'],
                 'purchase_price' => $input['purchase_price'],

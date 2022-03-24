@@ -177,4 +177,12 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(WagesAndCompensation::class);
     }
+    public function dining_table()
+    {
+        return $this->belongsTo(DiningTable::class);
+    }
+    public function dining_room()
+    {
+        return $this->belongsTo(DiningRoom::class);
+    }
 }

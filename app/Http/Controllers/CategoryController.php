@@ -108,6 +108,7 @@ class CategoryController extends Controller
         }
         try {
             $data = $request->except('_token', 'quick_add');
+            $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
 
             DB::beginTransaction();
             $category = Category::create($data);
@@ -195,7 +196,7 @@ class CategoryController extends Controller
 
         try {
             $data = $request->except('_token', '_method');
-
+            $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
             DB::beginTransaction();
             $category = Category::find($id);
 

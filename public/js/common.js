@@ -459,3 +459,20 @@ $(document).on("shown.bs.modal", function () {
         handle: ".modal-header",
     });
 });
+
+$(document).on("click", ".translation_btn", function () {
+    console.log($("table#translation_table").hasClass("hide"));
+    if ($("#translation_table").hasClass("hide")) {
+        $("#translation_table").removeClass("hide");
+    } else {
+        $("#translation_table").addClass("hide");
+    }
+});
+$(document).on("click", ".translation_textarea_btn", function () {
+    console.log($("table#translation_textarea_table").hasClass("hide"));
+    if ($("#translation_textarea_table").hasClass("hide")) {
+        $("#translation_textarea_table").removeClass("hide");
+    } else {
+        $("#translation_textarea_table").addClass("hide");
+    }
+});

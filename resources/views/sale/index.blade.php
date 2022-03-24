@@ -113,6 +113,24 @@
                         'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
                     </div>
                 </div>
+                @if(session('system_mode') == 'restaurant')
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('dining_room_id', __('lang.dining_room'), []) !!}
+                        {!! Form::select('dining_room_id', $dining_rooms, request()->dining_room_id,
+                        ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        {!! Form::label('dining_table_id', __('lang.dining_table'), []) !!}
+                        {!! Form::select('dining_table_id', $dining_tables, request()->dining_table_id,
+                        ['class' =>
+                        'form-control sale_filter', 'placeholder' => __('lang.all'),'data-live-search'=>"true"]) !!}
+                    </div>
+                </div>
+                @endif
 
                 <div class="col-md-2">
                     <div class="form-group">
@@ -235,6 +253,8 @@
                 d.tax_id = $("#tax_id").val();
                 d.customer_id = $("#customer_id").val();
                 d.customer_type_id = $("#customer_type_id").val();
+                d.dining_room_id = $("#dining_room_id").val();
+                d.dining_table_id = $("#dining_table_id").val();
                 d.store_id = $("#store_id").val();
                 d.status = $("#status").val();
                 d.method = $("#method").val();
@@ -325,6 +345,20 @@
         sales_table.ajax.reload();
     });
 
+    $(document).on('change', '#dining_room_id', function(){
+        let dining_room_id = $(this).val();
+
+        $.ajax({
+            method: 'GET',
+            url: '/dining-table/get-dropdown-by-dining-room/'+dining_room_id,
+            data: {  },
+            success: function(result) {
+                $('#dining_table_id').html(result);
+                $('#dining_table_id').selectpicker('refresh');
+            },
+        });
+
+    });
     $(document).on('click', '.clear_filter', function(){
         $('.sale_filter').val('');
         $('.sale_filter').selectpicker('refresh');

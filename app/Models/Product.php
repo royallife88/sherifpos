@@ -31,7 +31,7 @@ class Product extends Model implements HasMedia
         'discount_customer_types' => 'array',
         'discount_customers' => 'json',
         'show_to_customer_types' => 'array',
-        // 'manufacturing_date' => 'datetime:m/d/Y',
+        'translations' => 'array',
 
     ];
 
@@ -121,5 +121,17 @@ class Product extends Model implements HasMedia
         }
 
         return $variation_dropdown;
+    }
+
+    public function getNameAttribute($name)
+    {
+        $translations = !empty($this->translations['name']) ? $this->translations['name'] : [];
+        if (!empty($translations)) {
+            $lang = session('language');
+            if (!empty($translations[$lang])) {
+                return $translations[$lang];
+            }
+        }
+        return $name;
     }
 }

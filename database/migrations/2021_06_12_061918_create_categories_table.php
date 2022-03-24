@@ -19,6 +19,7 @@ class CreateCategoriesTable extends Migration
             $table->text('description')->nullable();
             $table->unsignedBigInteger('product_class_id')->nullable();
             $table->unsignedBigInteger('parent_id')->nullable();
+            $table->text('translations')->nullable();
             $table->timestamps();
         });
     }

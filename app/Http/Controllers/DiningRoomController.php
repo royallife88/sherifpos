@@ -3,12 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\DiningRoom;
+use App\Models\DiningTable;
+use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class DiningRoomController extends Controller
 {
+    /**
+     * All Utils instance.
+     *
+     */
+    protected $commonUtil;
+
+    /**
+     * Constructor
+     *
+     * @param ProductUtils $product
+     * @return void
+     */
+    public function __construct(Util $commonUtil)
+    {
+        $this->commonUtil = $commonUtil;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -129,8 +148,16 @@ class DiningRoomController extends Controller
     {
         $dining_rooms = DiningRoom::all();
 
+        $active_tab_id = null;
+        $dining_table_id = $request->dining_table_id;
+        if (!empty($dining_table_id)) {
+            $dining_table = DiningTable::find($dining_table_id);
+            $active_tab_id = $dining_table->dining_room_id;
+        }
+
         return view('sale_pos.partials.dining_content')->with(compact(
-            'dining_rooms'
+            'dining_rooms',
+            'active_tab_id',
         ));
     }
 
@@ -147,5 +174,17 @@ class DiningRoomController extends Controller
             ];
             return $output;
         }
+    }
+
+
+    public function getDiningModal()
+    {
+        $dining_rooms = DiningRoom::all();
+        $active_tab_id = null;
+
+        return view('sale_pos.partials.dining_modal')->with(compact(
+            'dining_rooms',
+            'active_tab_id'
+        ));
     }
 }

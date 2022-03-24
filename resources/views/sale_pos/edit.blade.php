@@ -48,10 +48,20 @@
                                                 {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
                                         </div>
+                                        @if (session('system_mode') == 'restaurant')
+                                            <div class="col-md-3">
+                                                <button type="button"
+                                                    data-href="{{ action('DiningRoomController@getDiningModal') }}"
+                                                    data-container="#dining_model"
+                                                    class="btn btn-modal pull-right mt-4"><img
+                                                        src="{{ asset('images/black-table.jpg') }}" alt="black-table"
+                                                        style="width: 50px; height: 35px;"></button>
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <div class="row">
+                                <div class="col-md-12 main_settings">
+                                    <div class="row table_room_hide">
                                         <div class="col-md-3">
                                             {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                             <div class="input-group my-group">
@@ -84,8 +94,12 @@
                                                     class="customer_type_name"></span></label>
                                         </div>
                                         <div class="col-md-2">
-                                            <label for="customer_balance" style="margin-top: 40px;">@lang('lang.balance'):
+                                            <label for="customer_balance"
+                                                style="margin-top: 30px; margin-bottom: 0px;">@lang('lang.balance'):
                                                 <span class="customer_balance">{{ @num_format(0) }}</span></label>
+                                            <label for="points" style="margin: 0px;">@lang('lang.points'):
+                                                <span class="points"><span
+                                                        class="customer_points_span">{{ @num_format(0) }}</span></span></label>
                                         </div>
                                         @if (session('system_mode') == 'pos')
                                             <div class="col-md-2">
@@ -94,29 +108,49 @@
                                                     data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                             </div>
                                         @endif
-
-
-                                        <div class="col-md-12" style="margin-top: 10px;">
-                                            <div class="search-box input-group">
-                                                <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
-                                                        class="fa fa-search"></i></button>
-                                                <input type="text" name="search_product" id="search_product"
-                                                    placeholder="@lang('lang.enter_product_name_to_print_labels')"
-                                                    class="form-control ui-autocomplete-input" autocomplete="off">
-                                                @if (isset($weighing_scale_setting['enable']) && $weighing_scale_setting['enable'])
-                                                    <button type="button" class="btn btn-default bg-white btn-flat"
-                                                        id="weighing_scale_btn" data-toggle="modal"
-                                                        data-target="#weighing_scale_modal"
-                                                        title="@lang('lang.weighing_scale')"><i
-                                                            class="fa fa-balance-scale text-primary fa-lg"></i></button>
-                                                @endif
-                                                <button type="button" class="btn btn-success btn-lg btn-modal"
-                                                    data-href="{{ action('ProductController@create') }}?quick_add=1"
-                                                    data-container=".view_modal"><i class="fa fa-plus"></i></button>
+                                    </div>
+                                    <div class="row table_room_show hide">
+                                        <div class="col-md-4">
+                                            <div class=""
+                                                style="padding: 5px 5px; background:#0082ce; color: #fff; font-size: 20px; font-weight: bold; text-align: center; border-radius: 5px;">
+                                                <span class="room_name">
+                                                    @if (!empty($transaction->dining_room))
+                                                        {{ $transaction->dining_room->name }}
+                                                    @endif
+                                                </span>
                                             </div>
                                         </div>
+                                        <div class="col-md-4">
+                                            <label for=""
+                                                style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
+                                                <span class="table_name">
+                                                    @if (!empty($transaction->dining_table))
+                                                        {{ $transaction->dining_table->name }}
+                                                    @endif
+                                                </span></label>
+                                        </div>
                                     </div>
-                                    <div class="col-md-12" style="margin-top: 20px ">
+
+                                    <div class="col-md-12" style="margin-top: 10px;">
+                                        <div class="search-box input-group">
+                                            <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
+                                                    class="fa fa-search"></i></button>
+                                            <input type="text" name="search_product" id="search_product"
+                                                placeholder="@lang('lang.enter_product_name_to_print_labels')"
+                                                class="form-control ui-autocomplete-input" autocomplete="off">
+                                            @if (isset($weighing_scale_setting['enable']) && $weighing_scale_setting['enable'])
+                                                <button type="button" class="btn btn-default bg-white btn-flat"
+                                                    id="weighing_scale_btn" data-toggle="modal"
+                                                    data-target="#weighing_scale_modal"
+                                                    title="@lang('lang.weighing_scale')"><i
+                                                        class="fa fa-balance-scale text-primary fa-lg"></i></button>
+                                            @endif
+                                            <button type="button" class="btn btn-success btn-lg btn-modal"
+                                                data-href="{{ action('ProductController@create') }}?quick_add=1"
+                                                data-container=".view_modal"><i class="fa fa-plus"></i></button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="margin-top: 5px; padding: 0px;">
                                         <div class="table-responsive transaction-list">
                                             <table id="product_table" style="width: 100% "
                                                 class="table table-hover table-striped order-list table-fixed">
@@ -170,10 +204,15 @@
                                                     value="0" />
                                                 <input type="hidden" id="total_pp_discount" name="total_pp_discount"
                                                     value="0" />
+                                                <input type="hidden" name="dining_table_id" id="dining_table_id"
+                                                    value="{{ $transaction->dining_table_id }}">
+                                                <input type="hidden" name="dining_action_type" id="dining_action_type"
+                                                    value="">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 totals" style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
+                                    <div class="col-md-12 totals table_room_hide"
+                                        style="border-top: 2px solid #e4e6fc; padding-top: 10px;">
                                         <div class="row">
                                             <div class="col-sm-4">
                                                 <span class="totals-title">{{ __('lang.items') }}</span><span
@@ -213,16 +252,41 @@
 
                                         </div>
                                     </div>
+
+                                    <div class="col-md-12 table_room_show hide"
+                                        style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
+                                        <div class="row pt-4">
+                                            <div class="col-md-8">
+                                                <div class="row">
+                                                    <button type="button" name="action" value="print"
+                                                        id="dining_table_print" class="btn mr-2 text-white"
+                                                        style="background: orange;">@lang('lang.print')</button>
+                                                    <button type="button" name="action" value="save" id="dining_table_save"
+                                                        class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
+                                                    <button data-method="cash" style="background: #0082ce" type="button"
+                                                        class="btn payment-btn text-white" data-toggle="modal"
+                                                        data-target="#add-payment"
+                                                        id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <button style="background-color: #ff0000;" type="button"
+                                                    class="btn text-white" id="cancel-btn" onclick="return confirmCancel()">
+                                                    @lang('lang.cancel')</button>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
                             @include('sale_pos.partials.customer_sizes_modal')
                         </div>
-                        <div class="payment-amount">
+                        <div class="payment-amount table_room_hide">
                             <h2>{{ __('lang.grand_total') }} <span class="final_total_span">0.00</span></h2>
                         </div>
                         <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
                             value="{{ $transaction->terms_and_condition_id }}">
-                        <div class="row">
+                        <div class="row table_room_hide">
                             <div class="col-md-12">
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -241,7 +305,7 @@
                             </div>
                         </div>
 
-                        <div class="payment-options">
+                        <div class="payment-options row table_room_hide">
                             <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -280,8 +344,9 @@
                             <div class="column-5">
                                 <button data-method="online-order" style="background-color: #69a509" type="button"
                                     class="btn btn-custom" id="view-online-order-btn"
-                                    data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><i
-                                        class="fa fa-snowflake-o"></i>
+                                    data-href="{{ action('SellPosController@getOnlineOrderTransactions') }}"><img
+                                        src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
+                                        alt="icon">
                                     @lang('lang.online_orders') <span
                                         class="badge badge-danger online-order-badge">0</span></button>
                             </div>
@@ -602,6 +667,13 @@
                     </div><!-- /.modal-dialog -->
                 </div>
 
+                <div id="dining_model" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                    class="modal text-left">
+                </div>
+                <div id="dining_table_action_modal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                    class="modal fade text-left">
+                </div>
+
             </div>
         </div>
 
@@ -616,6 +688,7 @@
 @section('javascript')
     <script src="{{ asset('js/onscan.min.js') }}"></script>
     <script src="{{ asset('js/pos.js') }}"></script>
+    <script src="{{ asset('js/dining_table.js') }}"></script>
     <script>
         $(document).ready(function() {
             @foreach ($transaction->transaction_sell_lines as $line)
@@ -623,6 +696,10 @@
                 {{ $loop->index }})
             @endforeach
         })
+        @if (!empty($transaction->dining_table))
+            $('.table_room_hide').addClass('hide');
+            $('.table_room_show').removeClass('hide');
+        @endif
     </script>
 
 @endsection

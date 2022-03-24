@@ -55,7 +55,7 @@
         border-radius: 5px;
     }
 
-    .vertical-tab .nav-tabs li.active a {
+    .vertical-tab .nav-tabs li a.active {
         background: #06bc61;
         border: 1px solid rgb(248, 200, 111);
         border-radius: 5px;
