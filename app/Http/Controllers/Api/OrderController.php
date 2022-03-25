@@ -85,7 +85,7 @@ class OrderController extends BaseController
 
         try {
             $online_customer_type = CustomerType::firstOrCreate(['name' => 'Online customers', 'created_by' => 1]);
-            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number']], ['name' => $input['customer_name'], 'customer_type_id' =>  !empty($online_customer_type) ? $online_customer_type->id : 0]);
+            $customer = Customer::firstOrCreate(['mobile_number' => $input['phone_number']], ['name' => $input['customer_name'], 'customer_type_id' =>  !empty($online_customer_type) ? $online_customer_type->id : 0, 'address' => $input['address']]);
             $store = Store::where('id', $input['store']['pos_model_id'])->first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
 
@@ -108,7 +108,7 @@ class OrderController extends BaseController
                 'discount_amount' => $input['discount_amount'],
                 'delivery_status' => 'pending',
                 'delivery_cost' => 0,
-                'delivery_address' => null,
+                'delivery_address' => !empty($input['delivery_address']) ? $input['delivery_address'] : null,
                 'delivery_cost_paid_by_customer' => 0,
                 'restaurant_order_id' => $input['id'],
                 'created_by' => 1,

@@ -55,7 +55,7 @@
                     </div>
                     <div class="col-md-12">
                         <label for="delivery_address">@lang('lang.delivery_address'):</label>
-                        {!! Form::textarea('delivery_address', null, ['class' => 'form-control delivery_address', 'rows'
+                        {!! Form::textarea('delivery_address', !empty($transaction->delivery_address) ? $transaction->delivery_address : null, ['class' => 'form-control delivery_address', 'rows'
                         => 2]) !!}
                     </div>
                 </div>

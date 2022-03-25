@@ -1119,4 +1119,26 @@ return [
     'added_at' => 'Eklenme tarihi:',
     'drop_file_here_to_upload' => 'Yüklemek için dosyayı buraya bırakın',
 
+    'raw_material_module' => 'Birincil Malzeme Modülü',
+    'daily_sales_summary' => 'Günlük Satış Özeti',
+    'online_order_transactions' => 'Online Sipariş İşlemleri',
+    'online_orders' => 'Çevrimiçi Siparişler',
+    'add_dining_room' => 'Yemek Odası Ekle',
+    'dining_room_name_already_exist' => 'Yemek odası adı zaten var.',
+    'add_new_table' => 'Yeni Tablo Ekle',
+    'add_table' => 'Tablo Ekle',
+    'dining_table_name_already_exist' => 'Tablo adı zaten var.',
+    'primary_material' => 'Birincil Malzeme',
+    'print_labels' => 'Etiketleri Yazdır',
+    'expiry_details' => 'Bitiş Ayrıntıları',
+    'sort' => 'Çeşit',
+
+    'reserve' => 'Rezerv',
+    'order' => 'Sipariş',
+    'cancel_reservation' => 'Rezervasyon iptali',
+    'table' => 'Tablo',
+    'pay_and_close' => 'Öde ve Kapat',
+    'dining_room' => 'Yemek odası',
+    'dining_table' => 'Yemek masası',
+
 ];

@@ -1120,4 +1120,26 @@ return [
     'added_at' => 'Toegevoegd op',
     'drop_file_here_to_upload' => 'Zet het bestand hier neer om te uploaden',
 
+    'raw_material_module' => 'Primaire materiaalmodule',
+    'daily_sales_summary' => 'Dagelijks verkoopoverzicht',
+    'online_order_transactions' => 'Online besteltransacties',
+    'online_orders' => 'Online bestellingen',
+    'add_dining_room' => 'Eetkamer toevoegen',
+    'dining_room_name_already_exist' => 'De naam van de eetkamer bestaat al.',
+    'add_new_table' => 'Nieuwe tabel toevoegen',
+    'add_table' => 'Tabel toevoegen',
+    'dining_table_name_already_exist' => 'Tabelnaam bestaat al.',
+    'primary_material' => 'Primair materiaal',
+    'print_labels' => 'Etiketten afdrukken',
+    'expiry_details' => 'Vervaldatum',
+    'sort' => 'Soort',
+
+    'reserve' => 'Reserveren',
+    'order' => 'Volgorde',
+    'cancel_reservation' => 'Annuleer reservering',
+    'table' => 'Tafel',
+    'pay_and_close' => 'Betalen en sluiten',
+    'dining_room' => 'Eetkamer',
+    'dining_table' => 'Eettafel',
+
 ];

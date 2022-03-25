@@ -1138,7 +1138,7 @@ return [
 
     'reserve' => 'Reserve',
     'order' => 'Order',
-    'cancel_reservation' => 'Canel Reservation',
+    'cancel_reservation' => 'Cancel Reservation',
     'table' => 'Table',
     'pay_and_close' => 'Pay and Close',
     'dining_room' => 'Dining Room',
