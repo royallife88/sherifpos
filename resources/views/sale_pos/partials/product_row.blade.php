@@ -5,9 +5,9 @@
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 18%; @else 20%; @endif font-size: 13px;">
         @if($product->variation_name != "Default")
-        <b>{{$product->variation_name}} {{$product->sub_sku}}</b>
+        <b>{{$product->product_name}}</b> {{$product->sub_sku}}
         @else
-        {{$product->product_name}}
+        <b>{{$product->product_name}}</b>
         @endif
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][is_service]" class="is_service"
             value="{{$product->is_service}}">
@@ -90,7 +90,7 @@
         </div>
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 10% @else 15% @endif">
-        <span class="sub_total_span"></span>
+        <span class="sub_total_span" style="font-weight: bold;"></span>
         <input type="hidden" class="form-control sub_total"
             name="transaction_sell_line[{{$loop->index + $index}}][sub_total]" value="">
     </td>
