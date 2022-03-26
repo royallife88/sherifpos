@@ -13,9 +13,9 @@
                     <source src="{{ asset('audio/beep-07.mp3') }}">
                     </source>
                 </audio>
-                <div class="col-md-6">
+                <div class="@if (session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
                     <div class="card">
-                        <div class="card-body" style="padding-bottom: 0">
+                        <div class="card-body" style="padding: 0px 10px; !important">
                             {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' => true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                             <input type="hidden" name="transaction_id" id="transaction_id" value="{{ $transaction->id }}">
                             <input type="hidden" name="store_id" id="store_id" value="{{ $store_pos->store_id }}">
@@ -305,7 +305,8 @@
                             </div>
                         </div>
 
-                        <div class="payment-options row table_room_hide">
+                        <div class="payment-options row table_room_hide"
+                            style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
                             <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -406,7 +407,7 @@
 
                 {!! Form::close() !!}
                 <!-- product list -->
-                <div class="col-md-6">
+                <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
                     <!-- navbar-->
                     <header class="header">
                         <nav class="navbar">
