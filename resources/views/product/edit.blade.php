@@ -102,7 +102,8 @@
                                             {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                                             <span class="input-group-btn">
                                                 <button class="btn btn-default bg-white btn-flat translation_btn"
-                                                    type="button"><i class="dripicons-web text-primary fa-lg"></i></button>
+                                                    type="button" data-type="product"><i
+                                                        class="dripicons-web text-primary fa-lg"></i></button>
                                             </span>
                                         </div>
                                     </div>
@@ -111,6 +112,7 @@
                                         [
                                             'attribute' => 'name',
                                             'translations' => $product->translations,
+                                            'type' => 'product',
                                         ]
                                     )
                                 </div>
@@ -209,15 +211,19 @@
                                         @else
                                             <label>@lang('lang.product_details')</label>
                                         @endif
-                                        <button type="button" class="translation_textarea_btn btn btn-sm"><i class="dripicons-web text-primary fa-lg"></i></button>
+                                        <button type="button" class="translation_textarea_btn btn btn-sm"><i
+                                                class="dripicons-web text-primary fa-lg"></i></button>
                                         <textarea name="product_details" id="product_details" class="form-control"
                                             rows="3">{{ $product->product_details }}</textarea>
                                     </div>
                                     <div class="col-md-4">
-                                        @include('layouts.partials.translation_textarea', [
-                                            'attribute' => 'product_details',
-                                            'translations' => $product->translations,
-                                        ])
+                                        @include(
+                                            'layouts.partials.translation_textarea',
+                                            [
+                                                'attribute' => 'product_details',
+                                                'translations' => $product->translations,
+                                            ]
+                                        )
                                     </div>
                                 </div>
                                 @if (session('system_mode') == 'restaurant')

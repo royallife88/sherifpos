@@ -16,7 +16,7 @@
                 <div class="input-group my-group">
                     {!! Form::text('name', $product_class->name, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required', 'readonly' => $product_class->name == 'Extras' ? true : false]) !!}
                     <span class="input-group-btn">
-                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"><i
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button" data-type="product_class"><i
                                 class="dripicons-web text-primary fa-lg"></i></button>
                     </span>
                 </div>
@@ -24,6 +24,7 @@
             @include('layouts.partials.translation_inputs', [
                 'attribute' => 'name',
                 'translations' => $product_class->translations,
+                'type' => 'product_class',
             ])
             <div class="form-group">
                 {!! Form::label('description', __('lang.description') . ':') !!}

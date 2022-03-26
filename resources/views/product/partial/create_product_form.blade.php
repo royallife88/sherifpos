@@ -87,7 +87,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <div class="input-group my-group">
                 {!! Form::text('name', !empty($recent_product) ? $recent_product->name : null, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                 <span class="input-group-btn">
-                    <button class="btn btn-default bg-white btn-flat translation_btn" type="button"><i
+                    <button class="btn btn-default bg-white btn-flat translation_btn" type="button"  data-type="product"><i
                             class="dripicons-web text-primary fa-lg"></i></button>
                 </span>
             </div>
@@ -95,6 +95,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         @include('layouts.partials.translation_inputs', [
             'attribute' => 'name',
             'translations' => [],
+            'type' => 'product',
         ])
     </div>
     <div class="col-md-4 @if (session('system_mode') == 'restaurant') hide @endif">

@@ -3,7 +3,7 @@ $config_langs = config('constants.langs');
 @endphp
 
 
-<table class="table hide" id="translation_table">
+<table class="table hide" @if(!empty($type))id="translation_table_{{$type}}" @else id="translation_table" @endif>
     <tbody>
         @foreach ($config_langs as $key => $lang)
             <tr>

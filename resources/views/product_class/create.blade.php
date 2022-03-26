@@ -22,7 +22,7 @@
                 <div class="input-group my-group">
                     {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
                     <span class="input-group-btn">
-                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"><i
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button" data-type="product_class"><i
                                 class="dripicons-web text-primary fa-lg"></i></button>
                     </span>
                 </div>
@@ -30,6 +30,7 @@
             @include('layouts.partials.translation_inputs', [
                 'attribute' => 'name',
                 'translations' => [],
+                'type' => 'product_class',
             ])
             <input type="hidden" name="quick_add" value="{{ $quick_add }}">
             <div class="form-group">
