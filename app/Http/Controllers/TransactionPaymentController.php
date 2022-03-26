@@ -278,7 +278,7 @@ class TransactionPaymentController extends Controller
     {
         $customer = Customer::find($customer_id);
 
-        $due = app('App\Http\Controllers\CustomerController')->getCustomerBalance($customer_id)['balance'];
+        $due = abs(app('App\Http\Controllers\CustomerController')->getCustomerBalance($customer_id)['balance']);
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
 
         return view('transaction_payment.pay_customer_due')->with(compact(
@@ -298,7 +298,7 @@ class TransactionPaymentController extends Controller
     {
         try {
             $amount = $request->amount;
-            $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->get();
+            $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
 
             DB::beginTransaction();
 

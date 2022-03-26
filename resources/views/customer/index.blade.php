@@ -70,7 +70,7 @@
                             <li class="divider"></li>
                             @endcan
                             @can('customer_module.add_payment.create_and_edit')
-                            @if($balances[$customer->id] > 0)
+                            @if($balances[$customer->id] < 0)
                             <li>
                                 <a data-href="{{action('TransactionPaymentController@getCustomerDue', $customer->id)}}"
                                     class="btn-modal" data-container=".view_modal"><i

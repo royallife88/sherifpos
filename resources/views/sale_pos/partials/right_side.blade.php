@@ -2,9 +2,11 @@
     <br>
     <div class="col-md-12">
         <div class="filter-checkbox card" style="margin: 0px;">
+            @if (session('system_mode') != 'restaurant')
             <div class="card-header" style="padding: 5px 20px; color: #7c5cc4">
                 <i class="fa fa-filter"></i> @lang('lang.filter')
             </div>
+            @endif
             <div class="card-body" style="padding: 5px 20px">
                 <div class="row">
                     @if(session('system_mode') != 'restaurant')
