@@ -1139,4 +1139,6 @@ return [
     'pay_and_close' => 'भुगतान करें और बंद करें',
     'dining_room' => 'भोजन कक्ष',
     'dining_table' => 'खाने की मेज',
+
+    'print_gift_invoice' => 'उपहार चालान प्रिंट करें',
 ];

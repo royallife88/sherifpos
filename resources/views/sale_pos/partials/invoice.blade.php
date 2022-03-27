@@ -150,10 +150,14 @@ $invoice_lang = request()->session()->get('language');
                 <thead>
                     <tr>
                         <th style="width: 30%; padding: 0 50px !important;">@lang('lang.item', [], $invoice_lang) </th>
+                        @if(empty($print_gift_invoice))
                         <th style="width: 20%; text-align:center !important;"> @lang('lang.price', [], $invoice_lang)
                         </th>
+                        @endif
                         <th style="width: 20%; text-algin: center;">@lang('lang.qty', [], $invoice_lang) </th>
+                        @if(empty($print_gift_invoice))
                         <th style="width: 30%; text-algin: center;">@lang('lang.amount', [], $invoice_lang) </th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -168,15 +172,20 @@ $invoice_lang = request()->session()->get('language');
                             @endif
                             @endif
                         </td>
+                        @if(empty($print_gift_invoice))
                         <td style="text-align:center !important;vertical-align:bottom; width: 20%;">
                             {{@num_format($line->sell_price)}}</td>
+                        @endif
                         <td style="text-align:center;vertical-align:bottom; width: 20%;">
                             {{@num_format($line->quantity)}}</td>
+                        @if(empty($print_gift_invoice))
                         <td style="text-align:center;vertical-align:bottom; width: 30%;">
                             {{@num_format($line->sub_total)}}</td>
+                        @endif
                     </tr>
                     @endforeach
                 </tbody>
+                @if(empty($print_gift_invoice))
                 <tfoot>
                     <tr>
                         <th style="font-size: 16px;" colspan="3">@lang('lang.total', [], $invoice_lang)</th>
@@ -239,11 +248,13 @@ $invoice_lang = request()->session()->get('language');
 
                     </tr>
                 </tfoot>
+                @endif
             </table>
         </div>
         <div style="padding: 0 7px;">
             <table>
                 <tbody>
+                    @if(empty($print_gift_invoice))
                     @foreach($transaction->transaction_payments as $payment_data)
                     @if($payment_data->method != 'deposit')
                     <tr style="background-color:#ddd;">
@@ -289,6 +300,7 @@ $invoice_lang = request()->session()->get('language');
                     </tr>
                     @endif
                     @endif
+                    @endif <!-- end of print gift invoice -->
                     <tr>
                         <td class="centered" colspan="3">
                             @if(session('system_mode') == 'restaurant')

@@ -134,26 +134,50 @@
 
                 <div class="col-md-2">
                     <div class="form-group">
-                        {!! Form::label('start_date', __('lang.start_date'), []) !!}
+                        {!! Form::label('start_date', __('lang.generation') . ' ' . __('lang.start_date'), []) !!}
                         {!! Form::text('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        {!! Form::label('start_time', __('lang.start_time'), []) !!}
+                        {!! Form::label('start_time', __('lang.generation') . ' ' .__('lang.start_time'), []) !!}
                         {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        {!! Form::label('end_date', __('lang.end_date'), []) !!}
+                        {!! Form::label('end_date',  __('lang.generation') . ' ' . __('lang.end_date'), []) !!}
                         {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        {!! Form::label('end_time', __('lang.end_time'), []) !!}
+                        {!! Form::label('end_time', __('lang.generation') . ' ' .__('lang.end_time'), []) !!}
                         {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        {!! Form::label('payment_start_date', __('lang.payment') . ' ' . __('lang.start_date'), []) !!}
+                        {!! Form::text('start_date', request()->start_date, ['class' => 'form-control datepicker sale_filter', 'id' => 'payment_start_date']) !!}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        {!! Form::label('payment_start_time', __('lang.payment') . ' ' .__('lang.start_time'), []) !!}
+                        {!! Form::text('payment_start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        {!! Form::label('payment_end_date',  __('lang.payment') . ' ' . __('lang.end_date'), []) !!}
+                        {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter', 'id' => 'payment_end_date']) !!}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        {!! Form::label('payment_end_time', __('lang.payment') . ' ' .__('lang.end_time'), []) !!}
+                        {!! Form::text('payment_end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                     </div>
                 </div>
                 <div class="col-md-3">
@@ -167,7 +191,7 @@
                 </div>
                 <div class="col-md-3">
                     <button type="button"
-                        class="btn btn-danger mt-2 ml-2 clear_filter">@lang('lang.clear_filter')</button>
+                        class="btn btn-danger mt-4 ml-2 clear_filter">@lang('lang.clear_filter')</button>
                 </div>
             </div>
         </div>
@@ -189,6 +213,7 @@
                 <th class="sum">@lang('lang.grand_total')</th>
                 <th class="sum">@lang('lang.paid')</th>
                 <th class="sum">@lang('lang.due')</th>
+                <th>@lang('lang.payment_date')</th>
                 <th>@lang('lang.cashier')</th>
                 <th>@lang('lang.deliveryman')</th>
                 <th class="hidden">@lang('lang.products')</th>
@@ -265,6 +290,10 @@
                 d.start_time = $("#start_time").val();
                 d.end_date = $("#end_date").val();
                 d.end_time = $("#end_time").val();
+                d.payment_start_date = $("#payment_start_date").val();
+                d.payment_start_time = $("#payment_start_time").val();
+                d.payment_end_date = $("#payment_end_date").val();
+                d.payment_end_time = $("#payment_end_time").val();
                 d.created_by = $("#created_by").val();
             },
         },
@@ -274,12 +303,12 @@
                 type: "date-eu",
             },
             {
-                targets: [15],
+                targets: [16],
                 orderable: false,
                 searchable: false,
             },
             {
-                targets: [14],
+                targets: [15],
                 visible: false,
                 orderable: false,
                 searchable: false,
@@ -298,6 +327,7 @@
             { data: "final_total", name: "final_total" },
             { data: "paid", name: "transaction_payments.amount", searchable: false },
             { data: "due", name: "transaction_payments.amount", searchable: false },
+            { data: "paid_on", name: "transaction_payments.paid_on" },
             { data: "created_by", name: "users.name" },
             { data: "deliveryman", name: "deliveryman" },
             { data: "products", name: "products.name" },

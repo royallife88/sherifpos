@@ -1139,4 +1139,6 @@ return [
     'pay_and_close' => 'دفع وإغلاق',
     'dining_room' => 'غرفة العشاء',
     'dining_table' => 'طاولة الطعام',
+
+    'print_gift_invoice' => 'طباعة فاتورة هدية',
 ];

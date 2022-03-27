@@ -1138,4 +1138,6 @@ return [
     'pay_and_close' => 'پرداخت و بستن',
     'dining_room' => 'ناهارخوری',
     'dining_table' => 'میز غذاخوری',
+
+    'print_gift_invoice' => 'چاپ فاکتور هدیه',
 ];

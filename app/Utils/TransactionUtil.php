@@ -700,6 +700,8 @@ class TransactionUtil extends Util
      */
     public function getInvoicePrint($transaction, $payment_types, $transaction_invoice_lang = null)
     {
+        $print_gift_invoice = request()->print_gift_invoice;
+
         if (!empty($transaction_invoice_lang)) {
             $invoice_lang = $transaction_invoice_lang;
         } else {
@@ -712,13 +714,15 @@ class TransactionUtil extends Util
         if ($invoice_lang == 'ar_and_en') {
             $html_content = view('sale_pos.partials.invoice_ar_and_end')->with(compact(
                 'transaction',
-                'payment_types'
+                'payment_types',
+                'print_gift_invoice',
             ))->render();
         } else {
             $html_content = view('sale_pos.partials.invoice')->with(compact(
                 'transaction',
                 'payment_types',
-                'invoice_lang'
+                'invoice_lang',
+                'print_gift_invoice'
             ))->render();
         }
 
@@ -728,7 +732,8 @@ class TransactionUtil extends Util
             $html_content = view('sale_pos.partials.commercial_invoice')->with(compact(
                 'sale',
                 'payment_type_array',
-                'invoice_lang'
+                'invoice_lang',
+                'print_gift_invoice',
             ))->render();
         }
 

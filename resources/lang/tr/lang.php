@@ -1141,4 +1141,6 @@ return [
     'dining_room' => 'Yemek odası',
     'dining_table' => 'Yemek masası',
 
+    'print_gift_invoice' => 'Hediye Faturasını Yazdır',
+
 ];

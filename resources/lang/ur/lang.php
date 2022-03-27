@@ -1139,4 +1139,6 @@ return [
     'pay_and_close' => 'ادائیگی کریں اور بند کریں۔',
     'dining_room' => 'کھانا کھانے کا کمرہ',
     'dining_table' => 'کھانے کی میز',
+
+    'print_gift_invoice' => 'گفٹ انوائس پرنٹ کریں۔',
 ];

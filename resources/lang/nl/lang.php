@@ -1142,4 +1142,6 @@ return [
     'dining_room' => 'Eetkamer',
     'dining_table' => 'Eettafel',
 
+    'print_gift_invoice' => 'Cadeaufactuur afdrukken',
+
 ];

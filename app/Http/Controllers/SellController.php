@@ -143,10 +143,22 @@ class SellController extends Controller
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->end_time)) {
-                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+            if (!empty(request()->payment_start_date)) {
+                $query->whereDate('paid_on', '>=', request()->payment_start_date);
+            }
+            if (!empty(request()->payment_end_date)) {
+                $query->whereDate('paid_on', '<=', request()->payment_end_date);
+            }
+            if (!empty(request()->payment_start_time)) {
+                $query->whereTime('paid_on', '>=', Carbon::parse(request()->payment_start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->payment_end_time)) {
+                $query->whereTime('paid_on', '<=',  Carbon::parse(request()->payment_end_time)->format('H:i:s'));
             }
             if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
                 $query->where('transactions.created_by', $request->session()->get('user.id'));
@@ -154,6 +166,7 @@ class SellController extends Controller
 
             $sales = $query->select(
                 'transactions.*',
+                'transaction_payments.paid_on',
                 'stores.name as store_name',
                 'users.name as created_by_name',
                 'customers.name as customer_name',
@@ -162,7 +175,7 @@ class SellController extends Controller
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)
-                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
                 ->editColumn('invoice_no', function ($row) {
                     $string = $row->invoice_no . ' ';
                     if (!empty($row->return_parent)) {
@@ -186,6 +199,7 @@ class SellController extends Controller
                         return '';
                     }
                 })
+                ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
                     $methods = '';
                     if (!empty($request->method)) {
@@ -285,6 +299,14 @@ class SellController extends Controller
                                 <a data-href="' . action('SellController@print', $row->id) . '"
                                     class="btn print-invoice"><i class="dripicons-print"></i>
                                     ' . __('lang.generate_invoice') . '</a>
+                            </li>';
+                        }
+                        if (auth()->user()->can('sale.pos.create_and_edit')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@print', $row->id) . '?print_gift_invoice=true"
+                                    class="btn print-invoice"><i class="fa fa-gift"></i>
+                                    ' . __('lang.print_gift_invoice') . '</a>
                             </li>';
                         }
                         $html .= '<li class="divider"></li>';

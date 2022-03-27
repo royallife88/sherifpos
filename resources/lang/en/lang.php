@@ -1143,4 +1143,8 @@ return [
     'pay_and_close' => 'Pay and Close',
     'dining_room' => 'Dining Room',
     'dining_table' => 'Dining Table',
+    'print_gift_invoice' => 'Print Gift Invoice',
+
+    'generation_date' => 'Generation Date',
+    'generation' => 'Generation',
 ];

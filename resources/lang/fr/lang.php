@@ -1138,4 +1138,6 @@ return [
     'pay_and_close' => 'Payer et fermer',
     'dining_room' => 'Salle à manger',
     'dining_table' => 'Table à manger',
+
+    'print_gift_invoice' => 'Imprimer la facture cadeau',
 ];

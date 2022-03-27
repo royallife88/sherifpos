@@ -141,10 +141,14 @@
             <table style="margin: 0 auto; width: 100%">
                 <thead>
                     <tr>
+                        @if(empty($print_gift_invoice))
                         <th style="width: 20%">{{__('lang.amount',[], 'ar')}} <br> @lang('lang.amount',[], 'en') </th>
+                        @endif
                         <th style="width: 20%">{{__('lang.qty',[], 'ar')}} <br> @lang('lang.qty',[], 'en') </th>
+                        @if(empty($print_gift_invoice))
                         <th style="width: 20%;text-align:center !important;">{{__('lang.price',[], 'ar')}} <br>
                             @lang('lang.price',[], 'en') </th>
+                        @endif
                         <th style="width: 40%; padding: 0 50px !important;">{{__('lang.item',[], 'ar')}} <br>
                             @lang('lang.item',[], 'en') </th>
                     </tr>
@@ -153,10 +157,14 @@
 
                     @foreach($transaction->transaction_sell_lines as $line)
                     <tr>
+                        @if(empty($print_gift_invoice))
                         <td style="text-align:left;vertical-align:bottom">{{@num_format($line->sub_total)}}</td>
+                        @endif
                         <td style="text-align:left;vertical-align:bottom">{{@num_format($line->quantity)}}</td>
+                        @if(empty($print_gift_invoice))
                         <td style="text-align:center !important;vertical-align:bottom">
                             {{@num_format($line->sell_price)}}</td>
+                        @endif
                         <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
                             {{$line->product->name}}
                             @if(!empty($line->variation))
@@ -169,6 +177,7 @@
                     @endforeach
                 </tbody>
                 <tfoot>
+                    @if(empty($print_gift_invoice))
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->grand_total)}}</th>
                         <th colspan="2" style="text-align:right">{{__('lang.total',[], 'ar')}} <br>
@@ -236,12 +245,14 @@
                     <tr>
 
                     </tr>
+                    @endif <!-- end of print gift invoice -->
                 </tfoot>
             </table>
         </div>
         <div style="padding: 0 7px;">
             <table>
                 <tbody>
+                    @if(empty($print_gift_invoice))
                     @foreach($transaction->transaction_payments as $payment_data)
                     @if($payment_data->method != 'deposit')
                     <tr style="background-color:#ddd;">
@@ -285,6 +296,7 @@
                             $transaction->transaction_payments->sum('amount'))}}</td>
                     </tr>
                     @endif
+                    @endif <!-- end of print gift invoice -->
                     <tr>
                         <td class="centered" colspan="3">
                             @if(session('system_mode') == 'restaurant')
