@@ -97,6 +97,7 @@
 
     <script type="text/javascript">
         base_path = "{{url('/')}}";
+        current_url = "{{url()->current()}}";
     </script>
     @include('layouts.partials.javascript')
     <script>

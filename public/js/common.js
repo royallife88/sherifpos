@@ -307,6 +307,7 @@ var datatable_params = {
             .attr("autocomplete", "off");
     },
     dom: "lBfrtip",
+    stateSave: true,
     buttons: buttons,
     footerCallback: function (row, data, start, end, display) {
         var intVal = function (i) {
@@ -453,10 +454,15 @@ $(document).on("click", ".btn", function () {
         $(".modal").modal("hide");
     }
 });
-
 $(document).on("shown.bs.modal", function () {
     $(".modal-dialog").draggable({
-        handle: ".modal-header",
+        handle: ".modal-content",
+    });
+    $(".modal-content").resizable({
+        // alsoResize: ".modal-dialog",
+        // minWidth: 625,
+        // minHeight: 175,
+        handles: "n, e, s, w, ne, sw, se, nw",
     });
 });
 
