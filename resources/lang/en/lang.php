@@ -1147,4 +1147,7 @@ return [
 
     'generation_date' => 'Generation Date',
     'generation' => 'Generation',
+
+    'dining_in_sales' => 'Dining In Sales',
+    'dining_in' => 'Dining In',
 ];

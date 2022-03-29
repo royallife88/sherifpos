@@ -50,14 +50,14 @@
                                             </div>
                                         </div>
                                         @if (session('system_mode') == 'restaurant')
-                                            {{-- <div class="col-md-3">
+                                            <div class="col-md-3">
                                                 <button type="button"
                                                     data-href="{{ action('DiningRoomController@getDiningModal') }}"
                                                     data-container="#dining_model"
                                                     class="btn btn-modal pull-right mt-4"><img
                                                         src="{{ asset('images/black-table.jpg') }}" alt="black-table"
                                                         style="width: 50px; height: 35px;"></button>
-                                            </div> --}}
+                                            </div>
                                         @endif
                                     </div>
                                 </div>

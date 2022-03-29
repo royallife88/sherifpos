@@ -110,7 +110,11 @@ class SellController extends Controller
                 $query->where('customer_id', request()->customer_id);
             }
             if (!empty(request()->customer_type_id)) {
-                $query->where('customer_type_id', request()->customer_type_id);
+                if(request()->customer_type_id == 'dining_in'){
+                    $query->whereNotNull('dining_table_id');
+                }else{
+                    $query->where('customer_type_id', request()->customer_type_id);
+                }
             }
             if (!empty(request()->dining_room_id)) {
                 $query->where('dining_room_id', request()->dining_room_id);

@@ -632,6 +632,14 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('ReportController@getSummaryReport')}}">{{__('lang.summary_report')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_mode') == 'restaurant')
+                        @can('reports.dining_in_sales.view')
+                        <li
+                            class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-dining-report') active @endif">
+                            <a href="{{action('ReportController@getDiningRoomReport')}}">{{__('lang.dining_in_sales')}}</a>
+                        </li>
+                        @endcan
+                        @endif
                         @can('reports.best_seller_report.view')
                         <li
                             class="@if(request()->segment(1) == 'report' && request()->segment(2) == 'get-best-seller-report') active @endif">

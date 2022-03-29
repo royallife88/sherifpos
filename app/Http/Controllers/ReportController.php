@@ -6,6 +6,8 @@ use App\Models\AddStockLine;
 use App\Models\CashRegister;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\DiningRoom;
+use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\Product;
 use App\Models\ProductStore;
@@ -24,6 +26,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportController extends Controller
 {
@@ -2239,6 +2242,197 @@ class ReportController extends Controller
             'dues',
             'stores',
             'store_pos'
+        ));
+    }
+
+    /**
+     * show the sales of per dining room report
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getDiningRoomReport(Request $request)
+    {
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        if (request()->ajax()) {
+
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                ->leftjoin('dining_rooms', 'transactions.dining_room_id', 'dining_rooms.id')
+                ->leftjoin('dining_tables', 'transactions.dining_table_id', 'dining_tables.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->where('transactions.type', 'sell')
+                ->whereNotNull('transactions.dining_table_id')
+                ->where('transactions.status', 'final');
+
+            if (!empty(request()->dining_room_id)) {
+                $query->where('transactions.dining_room_id', request()->dining_room_id);
+            }
+            if (!empty(request()->dining_table_id)) {
+                $query->where('transactions.dining_table_id', request()->dining_table_id);
+            }
+            if (!empty(request()->method)) {
+                $query->where('transaction_payments.method', request()->method);
+            }
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+
+
+            $sales = $query->select(
+                'transactions.*',
+                'transaction_payments.paid_on',
+                'stores.name as store_name',
+                'users.name as created_by_name',
+                'customers.name as customer_name',
+                'dining_rooms.name as dining_room',
+                'dining_tables.name as dining_table',
+                'customers.mobile_number'
+            )->orderBy('transaction_date', 'desc')
+                ->groupBy('transactions.id');
+
+            return DataTables::of($sales)
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('invoice_no', function ($row) {
+                    $string = $row->invoice_no . ' ';
+                    if (!empty($row->return_parent)) {
+                        $string .= '<a
+                        data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>';
+                    }
+                    if ($row->payment_status == 'pending') {
+                        $string .= '<a
+                            data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                            class="btn btn-modal" style="color: #007bff;">P</a>';
+                    }
+
+                    return $string;
+                })
+                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methods .= $payment_types[$payment->method] . '<br>';
+                        }
+                    }
+                    return $methods;
+                })
+
+                ->addColumn('ref_number', function ($row) use ($request) {
+                    $ref_numbers = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->ref_number)) {
+                            $ref_numbers .= $payment->ref_number . '<br>';
+                        }
+                    }
+                    return $ref_numbers;
+                })
+                ->addColumn('paid', function ($row) use ($request) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    return $this->commonUtil->num_f($amount_paid);
+                })
+                ->addColumn('due', function ($row) {
+                    $paid = $row->transaction_payments->sum('amount');
+                    $due = $row->final_total - $paid;
+                    return $this->commonUtil->num_f($due);
+                })
+                ->editColumn('payment_status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                    }
+                })
+
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                                    class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
+                            </li>';
+                        }
+
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'method',
+                    'invoice_no',
+                    'ref_number',
+                    'payment_status',
+                    'transaction_date',
+                    'final_total',
+                    'status',
+                    'store_name',
+                    'created_by',
+                ])
+                ->make(true);
+        }
+
+        $dining_rooms = DiningRoom::pluck('name', 'id');
+        $dining_tables = DiningTable::pluck('name', 'id');
+
+        return view('reports.dining_room_report')->with(compact(
+            'payment_types',
+            'dining_rooms',
+            'dining_tables',
         ));
     }
 }

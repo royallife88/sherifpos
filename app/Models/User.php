@@ -195,6 +195,7 @@ class User extends Authenticatable
                 'expected_receivable_report' => __('lang.expected_receivable_report'),
                 'expected_payable_report' => __('lang.expected_payable_report'),
                 'summary_report' => __('lang.summary_report'),
+                'dining_in_sales' => __('lang.dining_in_sales'),
                 'best_seller_report' => __('lang.best_seller_report'),
                 'product_report' => __('lang.product_report'),
                 'daily_sale_report' => __('lang.daily_sale_report'),

@@ -79,6 +79,9 @@
                             <th>@lang('lang.notes')</th>
                             <th>@lang('lang.status')</th>
                             <th class="sum">@lang('lang.cash_sales')</th>
+                            @if(session('system_mode') == 'restaurant')
+                            <th class="sum">@lang('lang.dining_in')</th>
+                            @endif
                             <th class="sum">@lang('lang.cash_in')</th>
                             <th class="sum">@lang('lang.cash_out')</th>
                             <th class="sum">@lang('lang.purchases')</th>
@@ -100,6 +103,9 @@
                             <td>{{ucfirst($cash_register->status)}}</td>
                             <td>{{@num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash - $cash_register->total_sell_return)}}
                             </td>
+                            @if(session('system_mode') == 'restaurant')
+                            <td>{{@num_format($cash_register->total_dining_in)}}</td>
+                            @endif
                             <td>{{@num_format($cash_register->total_cash_in)}}</td>
                             <td>{{@num_format($cash_register->total_cash_out)}}</td>
                             <td>{{@num_format($cash_register->total_purchases)}}</td>

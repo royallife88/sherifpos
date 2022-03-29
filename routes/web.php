@@ -293,6 +293,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-supplier-report', 'ReportController@getSupplierReport');
     Route::get('report/get-due-report', 'ReportController@getDueReport');
     Route::get('report/get-pos-details-by-store', 'ReportController@getPosDetailsByStores');
+    Route::get('report/get-dining-report', 'ReportController@getDiningRoomReport');
 
     Route::post('sms/save-setting', 'SmsController@saveSetting');
     Route::get('sms/setting', 'SmsController@getSetting');
