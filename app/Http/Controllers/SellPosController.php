@@ -197,10 +197,12 @@ class SellPosController extends Controller
                 'delivery_cost' => $this->commonUtil->num_uf($request->delivery_cost),
                 'delivery_address' => $request->delivery_address,
                 'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
-                'dining_table_id' => !empty($request->dining_table_id) ? $request->dining_table_id : 0,
+                'dining_table_id' => !empty($request->dining_table_id) ? $request->dining_table_id : null,
+                'dining_room_id' => !empty($request->dining_room_id) ? $request->dining_room_id : null,
                 'created_by' => Auth::user()->id,
             ];
 
+            $transaction_data['dining_room_id'] = null;
             if (!empty($request->dining_table_id)) {
                 $dining_table = DiningTable::find($request->dining_table_id);
                 $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
