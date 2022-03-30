@@ -159,3 +159,102 @@ input[type="number"] {
     pointer-events: none;
 }
 
+/** resize style **/
+/* .ui-resizable-handle {
+    position: absolute;
+    font-size: 0.1px;
+    display: block;
+}
+
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+    display: none;
+}
+
+.ui-resizable-n {
+    cursor: n-resize !important;
+    height: 7px;
+    width: 100%;
+    top: 0px;
+    left: 0;
+    background: url('/images/double-arrow.png') top center
+        no-repeat;
+    border-top: 1px solid #f00;
+}
+
+.ui-resizable-s {
+    cursor: s-resize;
+    height: 7px;
+    width: 100%;
+    bottom: 0px;
+    left: 0;
+    background: url('/images/double-arrow.png') bottom center
+        no-repeat;
+    border-bottom: 1px solid #f00;
+}
+
+.ui-resizable-e {
+    cursor: e-resize;
+    width: 7px;
+    right: 0px;
+    top: 0;
+    height: 100%;
+    /* background: url('/images/double-arrow.png') right center
+        no-repeat; */
+    border-right: 1px solid #f00;
+}
+
+.ui-resizable-w {
+    cursor: w-resize;
+    width: 7px;
+    left: 0px;
+    top: 0;
+    height: 100%;
+    /* background: url('/images/double-arrow.png') left center
+        no-repeat; */
+    border-left: 1px solid #f00;
+}
+
+.ui-resizable-se {
+    cursor: se-resize;
+    width: 7px;
+    height: 7px;
+    right: 0px;
+    bottom: 0px;
+    background: url('/images/double-arrow.png') bottom right
+        no-repeat;
+    border: 1px solid #ff0000;
+}
+
+.ui-resizable-sw {
+    cursor: sw-resize;
+    width: 9px;
+    height: 9px;
+    left: 0px;
+    bottom: 0px;
+    background: url('/images/double-arrow.png') bottom left
+        no-repeat;
+    border-top: 1px solid #f00;
+}
+
+.ui-resizable-nw {
+    cursor: nw-resize;
+    width: 9px;
+    height: 9px;
+    left: 0px;
+    top: 0px;
+    background: url('/images/double-arrow.png') top left
+        no-repeat;
+    border-top: 1px solid #f00;
+}
+
+.ui-resizable-ne {
+    cursor: ne-resize;
+    width: 9px;
+    height: 9px;
+    right: 0px;
+    top: 0px;
+    background: url('/images/double-arrow.png') top right
+        no-repeat;
+    border-top: 1px solid #f00;
+} */

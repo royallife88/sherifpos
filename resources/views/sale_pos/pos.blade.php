@@ -530,7 +530,7 @@
                                         aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
-                                <div class="col-md-12">
+                                <div class="col-md-12 modal-filter">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -590,7 +590,7 @@
                                         aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
-                                <div class="col-md-12">
+                                <div class="col-md-12 modal-filter">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
@@ -630,7 +630,7 @@
                                         aria-hidden="true">&times;</span></button>
                             </div>
                             <div class="modal-body">
-                                <div class="col-md-12">
+                                <div class="col-md-12 modal-filter">
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">

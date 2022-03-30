@@ -456,9 +456,9 @@ $(document).on("click", ".btn", function () {
 });
 $(document).on("shown.bs.modal", function () {
     $(".modal-dialog").draggable({
-        handle: ".modal-content",
+        handle: ".modal-header, .modal-filter, .modal-footer",
     });
-    $(".modal-content").resizable({
+    $(".modal-dialog").resizable({
         // alsoResize: ".modal-dialog",
         // minWidth: 625,
         // minHeight: 175,
