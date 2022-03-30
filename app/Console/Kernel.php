@@ -25,20 +25,20 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('pos:createCustomerImportantDateNotification')
-        //     ->daily();
-        // $schedule->command('pos:createQuantityAlertNotification')
-        //     ->daily();
-        // $schedule->command('pos:createExpiryProductNotification')
-        //     ->daily();
-        // $schedule->command('pos:addStockDueNotify')
-        //     ->daily();
-        // $schedule->command('pos:expenseDueNotify')
-        //     ->daily();
-        // $schedule->command('pos:reverseBlockQuantity')
-        //     ->daily();
-        // $schedule->command('pos:changeQuotationStatusToExpire')
-        //     ->daily();
+        $schedule->command('pos:createCustomerImportantDateNotification')
+            ->daily();
+        $schedule->command('pos:createQuantityAlertNotification')
+            ->daily();
+        $schedule->command('pos:createExpiryProductNotification')
+            ->daily();
+        $schedule->command('pos:addStockDueNotify')
+            ->daily();
+        $schedule->command('pos:expenseDueNotify')
+            ->daily();
+        $schedule->command('pos:reverseBlockQuantity')
+            ->daily();
+        $schedule->command('pos:changeQuotationStatusToExpire')
+            ->daily();
         $schedule->command('pos:sendSaleDataMall')
             ->dailyAt('23:55')->timezone('Asia/Qatar');
         $schedule->command('queue:work')
