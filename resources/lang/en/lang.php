@@ -320,7 +320,7 @@ return [
     'recent_transactions' => 'Recent Transactions',
     'card' => 'Card',
     'paypal' => 'Paypal',
-    'deposit' => 'Deposit',
+    'deposit' => 'Use the Balance',
     'cash' => 'Cash',
     'cancel' => 'Cancel',
     'draft' => 'Draft',

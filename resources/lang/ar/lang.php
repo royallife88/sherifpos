@@ -1132,10 +1132,10 @@ return [
     'expiry_details' => 'تفاصيل انتهاء الصلاحية',
     'sort' => 'نوع',
 
-    'reserve' => 'الاحتياطي',
-    'order' => 'ترتيب',
+    'reserve' => 'حجز',
+    'order' => 'طلب',
     'cancel_reservation' => 'إلغاء الحجز',
-    'table' => 'جدول',
+    'table' => 'طاولة',
     'pay_and_close' => 'دفع وإغلاق',
     'dining_room' => 'غرفة العشاء',
     'dining_table' => 'طاولة الطعام',

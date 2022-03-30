@@ -367,7 +367,7 @@
                             <div class="column-5">
                                 <button data-method="deposit" style="background-color: #b33771" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.deposit')</button>
+                                    id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.use_the_balance')</button>
                             </div>
                             <div class="column-5">
                                 <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
