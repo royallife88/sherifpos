@@ -316,6 +316,7 @@
             data: {  },
             success: function(result) {
                 if(result){
+                    $('.notification-number').text(0);
                     $('.notification-number').addClass('hide')
                 }
             },
