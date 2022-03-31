@@ -694,7 +694,7 @@
         });
 
         var channel = pusher.subscribe('order-channel');
-        channel.bind('new-order-event', function(data) {
+        channel.bind('new-order', function(data) {
             if (data) {
                 let badge_count = parseInt($('.online-order-badge').text()) + 1;
                 $('.online-order-badge').text(badge_count);
