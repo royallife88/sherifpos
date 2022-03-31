@@ -349,7 +349,7 @@
                                         src="{{ asset('images/online_order.png') }}" style="height: 25px; width: 35px;"
                                         alt="icon">
                                     @lang('lang.online_orders') <span
-                                        class="badge badge-danger online-order-badge">0</span></button>
+                                        class="badge badge-danger online-order-badge hide">0</span></button>
                             </div>
                             <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"

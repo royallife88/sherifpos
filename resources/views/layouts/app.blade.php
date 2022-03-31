@@ -333,7 +333,7 @@
 
             },
         });
-        window.location = href;
+        window.open(href, '_blank');
     })
     $.fn.modal.Constructor.prototype._enforceFocus = function() {};
     $('input').attr('autocomplete', 'off');

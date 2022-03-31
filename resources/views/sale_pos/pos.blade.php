@@ -367,7 +367,8 @@
                             <div class="column-5">
                                 <button data-method="deposit" style="background-color: #b33771" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.use_the_balance')</button>
+                                    id="deposit-btn"><i class="fa fa-university"></i>
+                                    @lang('lang.use_the_balance')</button>
                             </div>
                             <div class="column-5">
                                 <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
@@ -689,22 +690,47 @@
         // Pusher.logToConsole = true;
 
         var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-            cluster: 'ap2'
+            cluster: '{{ env('PUSHER_APP_CLUSTER') }}'
         });
 
         var channel = pusher.subscribe('order-channel');
-        channel.bind('new-order', function(data) {
+        channel.bind('new-order-event', function(data) {
             if (data) {
                 let badge_count = parseInt($('.online-order-badge').text()) + 1;
                 $('.online-order-badge').text(badge_count);
                 $('.online-order-badge').show();
-                let transaction_id = data.transaction_id;
+                var transaction_id = data.transaction_id;
                 $.ajax({
                     method: 'get',
                     url: '/pos/get-transaction-details/' + transaction_id,
                     data: {},
                     success: function(result) {
                         toastr.success(LANG.new_order_placed_invoice_no + ' ' + result.invoice_no);
+                        let notification_number = parseInt($('.notification-number').text());
+                        console.log(notification_number, 'notification-number');
+                        if (!isNaN(notification_number)) {
+                            notification_number = parseInt(notification_number) + 1;
+                        } else {
+                            notification_number = 1;
+                        }
+                        $('.notification-list').empty().append(
+                            `<i class="dripicons-bell"></i><span class="badge badge-danger notification-number">${notification_number}</span>`
+                        );
+                        $('.notifications').prepend(
+                            `<li>
+                                <a class="pending notification_item"
+                                    data-mark-read-action=""
+                                    data-href="{{url('/')}}/pos/${transaction_id}/edit?status=final">
+                                    <p style="margin:0px"><i class="dripicons-bell"></i> ${LANG.new_order_placed_invoice_no} #
+                                        ${result.invoice_no}</p>
+                                    <span class="text-muted">
+                                        @lang('lang.total'): ${__currency_trans_from_en(result.final_total, false)}
+                                    </span>
+                                </a>
+
+                            </li>`
+                        );
+                        $('.no_new_notification_div').addClass('hide');
 
                     },
                 });

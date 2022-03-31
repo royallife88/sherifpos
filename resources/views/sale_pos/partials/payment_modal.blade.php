@@ -173,7 +173,7 @@
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>@lang('lang.staff_note')</label>
-                                <textarea rows="3" class="form-control" name="staff_note"></textarea>
+                                <textarea rows="3" class="form-control" name="staff_note">{{!empty($transaction)? $transaction->staff_note: ''}}</textarea>
                             </div>
                         </div>
                         <div class="mt-3">

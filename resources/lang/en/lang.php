@@ -1151,4 +1151,8 @@ return [
     'dining_in_sales' => 'Dining In Sales',
     'dining_in' => 'Dining In',
     'use_the_balance' => 'Use the Balance',
+
+    'delivery_type' => 'Delivery Type',
+    'pick_up' => 'Pick Up',
+    'home_delivery' => 'Home Delivery',
 ];

@@ -89,6 +89,21 @@ class OrderController extends BaseController
             $store = Store::where('id', $input['store']['pos_model_id'])->first();
             $store_pos = StorePos::where('store_id', $store->id)->first();
 
+            $staff_note = null;
+            if ($input['order_type'] == 'order_later') {
+                $order_datetime = $this->commonUtil->format_date($input['year'] . '-' . $input['month'] . '-' . $input['day']) . ' ' . $input['time'];
+                $input['sales_note'] = $input['sales_note'] . ' ' . __('lang.order') . ' ' . __('lang.date_and_time') . ': ' . $order_datetime;
+                $staff_note .= __('lang.order') . ' ' . __('lang.date_and_time') . ': ' . $order_datetime;
+            }
+            if ($input['delivery_type'] == 'i_will_pick_it_up_my_self') {
+                $input['sales_note'] .= ' ' . __('lang.delivery_type') . ': ' . __('lang.pick_up');
+                $staff_note .= ' ' . __('lang.delivery_type') . ': ' . __('lang.pick_up');
+            }
+            if ($input['delivery_type'] == 'home_delivery') {
+                $input['sales_note'] .= ' ' . __('lang.delivery_type') . ': ' . __('lang.home_delivery');
+                $staff_note .= ' ' . __('lang.delivery_type') . ': ' . __('lang.home_delivery');
+            }
+
             $transaction_data = [
                 'store_id' => $store->id,
                 'store_pos_id' => !empty($store_pos) ? $store_pos->id : null,
@@ -102,6 +117,7 @@ class OrderController extends BaseController
                 'is_direct_sale' =>  0,
                 'status' => 'draft',
                 'sale_note' => $input['sales_note'],
+                'staff_note' => $staff_note,
                 'table_no' => $input['table_no'],
                 'discount_type' => 'fixed',
                 'discount_value' => 0,

@@ -27,7 +27,7 @@ $earlier_notifications = App\Models\Notification::where('user_id', Auth::user()-
         @forelse($new_notifications as $notification)
         @include('layouts.partials.notification_data_list', ['notification' => $notification])
         @empty
-        <div class="text-center">
+        <div class="text-center no_new_notification_div">
             <span class="text-muted" style="font-size: 12px">@lang('lang.no_new_notification')</span>
         </div>
         @endforelse
