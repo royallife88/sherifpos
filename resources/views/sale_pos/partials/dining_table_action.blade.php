@@ -9,7 +9,7 @@
         <div class="modal-body">
             <div class="form-group">
                 {!! Form::label('table_status', __('lang.status') . ':*') !!}
-                {!! Form::select('table_status', $status_array, !empty($dining_table) ? $dining_table->status : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
+                {!! Form::select('table_status', $status_array, 'order', ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
             </div>
             <div class="row reserve_div hide">
                 <div class="col-md-4">
@@ -28,14 +28,15 @@
                     <div class="form-group">
                         {!! Form::label('table_date_and_time', __('lang.date_and_time') . ':*') !!}
                         <input type="datetime-local" id="table_date_and_time" name="table_date_and_time"
-                            value="@if(!empty($dining_table->date_and_time)){{Carbon\Carbon::parse($dining_table->date_and_time)->format('Y-m-d\TH:i')}}@else{{ date('Y-m-d\TH:i') }}@endif" class="form-control">
+                            value="@if (!empty($dining_table->date_and_time)) {{ Carbon\Carbon::parse($dining_table->date_and_time)->format('Y-m-d\TH:i') }}@else{{ date('Y-m-d\TH:i') }} @endif"
+                            class="form-control">
                     </div>
                 </div>
             </div>
             <input type="hidden" name="discount_amount" id="discount_amount">
             <div class="modal-footer">
-                <button type="button" name="discount_btn" id="table_action_btn" class="btn btn-primary"
-                    >@lang('lang.save')</button>
+                <button type="button" name="discount_btn" id="table_action_btn"
+                    class="btn btn-primary">@lang('lang.save')</button>
                 <button type="button" name="cancel" class="btn btn-default"
                     data-dismiss="modal">@lang('lang.cancel')</button>
             </div>
