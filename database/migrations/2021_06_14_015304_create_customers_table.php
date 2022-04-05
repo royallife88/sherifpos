@@ -17,8 +17,8 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('name')->nullable();
             $table->unsignedBigInteger('customer_type_id');
-            $table->string('mobile_number');
-            $table->text('address')->nullable();
+            $table->string('mobile_number', 16);
+            $table->string('address', 150)->nullable();
             $table->string('email')->nullable();
             $table->decimal('deposit_balance', 15, 4)->default(0);
             $table->string('fixed_discount')->comment('percentage value of discount')->nullable();

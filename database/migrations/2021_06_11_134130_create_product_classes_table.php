@@ -15,8 +15,8 @@ class CreateProductClassesTable extends Migration
     {
         Schema::create('product_classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description')->nullable();
+            $table->string('name', 25);
+            $table->string('description', 25)->nullable();
             $table->integer('sort')->default(1);
             $table->text('translations')->nullable();
             $table->timestamps();

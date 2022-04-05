@@ -15,7 +15,7 @@ class CreateUnitsTable extends Migration
     {
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 25);
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(1);
             $table->unsignedBigInteger('base_unit_id')->nullable();
