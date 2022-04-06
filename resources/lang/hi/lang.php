@@ -1141,4 +1141,16 @@ return [
     'dining_table' => 'खाने की मेज',
 
     'print_gift_invoice' => 'उपहार चालान प्रिंट करें',
+
+    'generation_date' => 'जनरेशन तिथि',
+    'generation' => 'पीढ़ी',
+
+    'dining_in_sales' => 'बिक्री में भोजन',
+    'dining_in' => 'डाइनिंग इन',
+    'use_the_balance' => 'बैलेंस का उपयोग करें',
+
+    'delivery_type' => 'वितरण के प्रकार',
+    'pick_up' => 'पिक अप',
+    'home_delivery' => 'घर पहुँचाना',
+    'name_already_in_use' => 'नाम पहले से प्रयोग में है',
 ];

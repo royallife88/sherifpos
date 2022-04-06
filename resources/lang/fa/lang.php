@@ -1140,4 +1140,16 @@ return [
     'dining_table' => 'میز غذاخوری',
 
     'print_gift_invoice' => 'چاپ فاکتور هدیه',
+
+    'generation_date' => 'تاریخ تولید',
+    'generation' => 'نسل',
+
+    'dining_in_sales' => 'ناهار خوری در فروش',
+    'dining_in' => 'ناهار خوری در',
+    'use_the_balance' => 'از تعادل استفاده کنید',
+
+    'delivery_type' => 'نوع تحویل',
+    'pick_up' => 'سوار کردن',
+    'home_delivery' => 'تحویل درب منزل',
+    'name_already_in_use' => 'نام در حال حاضر استفاده شده است',
 ];

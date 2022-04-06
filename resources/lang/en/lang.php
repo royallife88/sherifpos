@@ -1155,4 +1155,5 @@ return [
     'delivery_type' => 'Delivery Type',
     'pick_up' => 'Pick Up',
     'home_delivery' => 'Home Delivery',
+    'name_already_in_use' => 'Name already in use',
 ];

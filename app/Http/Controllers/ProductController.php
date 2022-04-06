@@ -1002,6 +1002,39 @@ class ProductController extends Controller
         return $output;
     }
 
+    /**
+     * check name if already in use
+     *
+     * @param string $name
+     * @return array
+     */
+    public function checkName(Request $request)
+    {
+        $query = Product::where('name', $request->name);
+        if (!empty($request->product_class_id)) {
+            $query->where('product_class_id', $request->product_class_id);
+        }
+        if (!empty($request->category_id)) {
+            $query->where('category_id', $request->category_id);
+        }
+
+        $product_name = $query->first();
+
+        if (!empty($product_name)) {
+            $output = [
+                'success' => false,
+                'msg' => __('lang.name_already_in_use')
+            ];
+        } else {
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        }
+
+        return $output;
+    }
+
     public function deleteProductImage($id)
     {
         try {

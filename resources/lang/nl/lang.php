@@ -1144,4 +1144,16 @@ return [
 
     'print_gift_invoice' => 'Cadeaufactuur afdrukken',
 
+    'generation_date' => 'Generatiedatum',
+    'generation' => 'Generatie',
+
+    'dining_in_sales' => 'Dineren in de uitverkoop',
+    'dining_in' => 'Dineren in',
+    'use_the_balance' => 'Gebruik de balans',
+
+    'delivery_type' => 'Leveringstype:',
+    'pick_up' => 'Raap op',
+    'home_delivery' => 'Levering aan huis',
+    'name_already_in_use' => 'Naam al in gebruik',
+
 ];

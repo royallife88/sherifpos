@@ -145,6 +145,9 @@ myDropzone = new Dropzone("div#my-dropzone", {
                             myFunction();
                             if (response.success) {
                                 swal("Success", response.msg, "success");
+                                $("#sku").val("").change();
+                                $("#name").val("").change();
+                                $(".translations").val("").change();
                             } else {
                                 swal("Error", response.msg, "error");
                             }
@@ -648,7 +651,31 @@ $(document).on("change", "#sku", function () {
         },
     });
 });
+$(document).on("change", "#name, #product_class_id, #category_id", function () {
+    checkName();
+});
 
+function checkName() {
+    let name = $("#name").val();
+    let product_class_id = $("#product_class_id").val();
+    let category_id = $("#category_id").val();
+
+    $.ajax({
+        method: "get",
+        url: "/product/check-name",
+        data: {
+            name: name,
+            product_class_id: product_class_id,
+            category_id: category_id,
+        },
+        success: function (result) {
+            if (!result.success) {
+                swal("Error", result.msg, "error");
+                $("#name").val("");
+            }
+        },
+    });
+}
 $(document).on("change", "#purchase_price", function () {
     $(".default_purchase_price").val($(this).val());
 });

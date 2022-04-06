@@ -1143,4 +1143,16 @@ return [
 
     'print_gift_invoice' => 'Hediye Faturasını Yazdır',
 
+    'generation_date' => 'Üretim Tarihi',
+    'generation' => 'Nesil',
+
+    'dining_in_sales' => 'Satışta Yemek',
+    'dining_in' => 'Yemek',
+    'use_the_balance' => 'Bakiyeyi Kullan',
+
+    'delivery_type' => 'Teslimat Türü',
+    'pick_up' => 'Toplamak',
+    'home_delivery' => 'Eve teslim',
+    'name_already_in_use' => 'Ad zaten kullanılıyor',
+
 ];

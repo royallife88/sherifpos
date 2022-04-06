@@ -46,6 +46,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('product/save-import', 'ProductController@saveImport');
     Route::get('product/import', 'ProductController@getImport');
     Route::get('product/check-sku/{sku}', 'ProductController@checkSku');
+    Route::get('product/check-name', 'ProductController@checkName');
     Route::get('product-stocks', 'ProductController@getProductStocks');
     Route::get('product/delete-product-image/{id}', 'ProductController@deleteProductImage');
     Route::resource('product', ProductController::class);

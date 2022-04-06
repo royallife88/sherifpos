@@ -104,13 +104,15 @@ $(document).on("click", "#table_action_btn", function () {
     let table_status = $("#table_status").val();
     let table_id = $("#dining_table_id").val();
     if (table_status == "reserve" || table_status == "cancel_reservation") {
-        if (
-            !$("#table_customer_name").val() ||
-            !$("#table_customer_mobile_number").val() ||
-            !$("#table_date_and_time").val()
-        ) {
-            toastr.error(LANG.please_fill_all_fields);
-            return false;
+        if (table_status == "reserve") {
+            if (
+                !$("#table_customer_name").val() ||
+                !$("#table_customer_mobile_number").val() ||
+                !$("#table_date_and_time").val()
+            ) {
+                toastr.error(LANG.please_fill_all_fields);
+                return false;
+            }
         }
         $.ajax({
             method: "post",

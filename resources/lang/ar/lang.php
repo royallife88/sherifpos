@@ -1141,4 +1141,16 @@ return [
     'dining_table' => 'طاولة الطعام',
 
     'print_gift_invoice' => 'طباعة فاتورة هدية',
+
+    'generation_date' => 'تاريخ التوليد',
+    'generation' => 'توليد',
+
+    'dining_in_sales' => 'تناول الطعام في المبيعات',
+    'dining_in' => 'تناول الطعام في',
+    'use_the_balance' => 'استخدم الميزان',
+
+    'delivery_type' => 'نوع التوصيل',
+    'pick_up' => 'يلتقط',
+    'home_delivery' => 'توصيل منزلي',
+    'name_already_in_use' => 'الاسم مستخدم أو قيد الاستخدام أو موجود بالفعل',
 ];

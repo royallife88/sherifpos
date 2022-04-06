@@ -1141,4 +1141,16 @@ return [
     'dining_table' => 'کھانے کی میز',
 
     'print_gift_invoice' => 'گفٹ انوائس پرنٹ کریں۔',
+
+    'generation_date' => 'جنریشن کی تاریخ',
+    'generation' => 'نسل',
+
+    'dining_in_sales' => 'سیلز میں کھانا',
+    'dining_in' => 'کھانے میں',
+    'use_the_balance' => 'بیلنس استعمال کریں۔',
+
+    'delivery_type' => 'ڈیلیوری کی قسم',
+    'pick_up' => 'اٹھاؤ',
+    'home_delivery' => 'گھر تک ترسیل',
+    'name_already_in_use' => 'نام پہلے سے استعمال میں ہے۔',
 ];

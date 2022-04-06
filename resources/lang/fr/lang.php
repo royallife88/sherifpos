@@ -1140,4 +1140,16 @@ return [
     'dining_table' => 'Table à manger',
 
     'print_gift_invoice' => 'Imprimer la facture cadeau',
+
+    'generation_date' => 'Date de génération',
+    'generation' => 'Génération',
+
+    'dining_in_sales' => 'Dîner dans les ventes',
+    'dining_in' => 'Dîner sur place',
+    'use_the_balance' => 'Utiliser le solde',
+
+    'delivery_type' => 'type de livraison',
+    'pick_up' => 'Récupérer',
+    'home_delivery' => 'Livraison à domicile',
+    'name_already_in_use' => 'Nom déjà utilisé',
 ];
