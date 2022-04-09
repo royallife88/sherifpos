@@ -973,7 +973,7 @@ return [
     'sms_module' => 'وحدة SMS',
     'sp_module' => 'وحدة ترويج البيع',
     'email_module' => 'وحدة البريد الإلكتروني',
-    'promotions' => 'الترقيات',
+    'promotions' => 'العروض',
     'add_payment_row' => 'دفع الباقي بطريقة أخرى',
     'version' => 'الإصدار',
     'last_update' => 'اخر تحديث',
@@ -1142,8 +1142,8 @@ return [
 
     'print_gift_invoice' => 'طباعة فاتورة هدية',
 
-    'generation_date' => 'تاريخ التوليد',
-    'generation' => 'توليد',
+    'generation_date' => 'تاريخ الإنشاء',
+    'generation' => 'إنشاء',
 
     'dining_in_sales' => 'تناول الطعام في المبيعات',
     'dining_in' => 'تناول الطعام في',

@@ -32,12 +32,16 @@ $(document).on("change", "#dining_room_name", function () {
     });
 });
 
-function get_dining_content() {
+function get_dining_content(dining_table_id = null) {
+    if (dining_table_id == null) {
+        dining_table_id = $("#dining_table_id").val();
+    }
+
     $.ajax({
         method: "GET",
         url: "/dining-room/get-dining-room-content",
         data: {
-            dining_table_id: $("#dining_table_id").val(),
+            dining_table_id: dining_table_id,
         },
         success: function (result) {
             $("#dining_content").empty().append(result);
@@ -56,7 +60,7 @@ $(document).on("click", "#add_dining_table_btn", function () {
             if (result.success === true) {
                 toastr.success(result.msg);
                 $(".view_modal").modal("hide");
-                get_dining_content();
+                get_dining_content(result.dining_table_id);
             } else {
                 toastr.error(result.msg);
             }

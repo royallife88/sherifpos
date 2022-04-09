@@ -2284,10 +2284,10 @@ class ReportController extends Controller
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->end_time)) {
-                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
 
 

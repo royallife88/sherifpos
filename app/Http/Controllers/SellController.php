@@ -147,10 +147,10 @@ class SellController extends Controller
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
             if (!empty(request()->start_time)) {
-                $query->whereTime('transaction_date', '>=', Carbon::parse(request()->start_time)->format('H:i:s'));
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->end_time)) {
-                $query->whereTime('transaction_date', '<=', Carbon::parse(request()->end_time)->format('H:i:s'));
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
             }
             if (!empty(request()->payment_start_date)) {
                 $query->whereDate('paid_on', '>=', request()->payment_start_date);
@@ -159,10 +159,10 @@ class SellController extends Controller
                 $query->whereDate('paid_on', '<=', request()->payment_end_date);
             }
             if (!empty(request()->payment_start_time)) {
-                $query->whereTime('paid_on', '>=', Carbon::parse(request()->payment_start_time)->format('H:i:s'));
+                $query->where('paid_on', '>=', request()->payment_start_date . ' ' . Carbon::parse(request()->payment_start_time)->format('H:i:s'));
             }
             if (!empty(request()->payment_end_time)) {
-                $query->whereTime('paid_on', '<=',  Carbon::parse(request()->payment_end_time)->format('H:i:s'));
+                $query->where('paid_on', '<=', request()->payment_end_date . ' ' . Carbon::parse(request()->payment_end_time)->format('H:i:s'));
             }
             if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
                 $query->where('transactions.created_by', $request->session()->get('user.id'));

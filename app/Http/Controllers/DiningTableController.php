@@ -79,6 +79,7 @@ class DiningTableController extends Controller
             $dining_table = DiningTable::create($data);
             $output = [
                 'success' => true,
+                'dining_table_id' => $dining_table->id,
                 'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
