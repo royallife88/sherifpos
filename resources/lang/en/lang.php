@@ -1156,4 +1156,7 @@ return [
     'pick_up' => 'Pick Up',
     'home_delivery' => 'Home Delivery',
     'name_already_in_use' => 'Name already in use',
+
+
+    'canceled_by' => 'Canceled By',
 ];

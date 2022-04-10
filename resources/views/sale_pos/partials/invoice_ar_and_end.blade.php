@@ -126,6 +126,10 @@
 
             </p>
             @endif
+            @if(session('system_mode') == 'restaurant')
+                @if(!empty($transaction->dining_room))@lang('lang.dining_room',[], 'en'): {{$transaction->dining_room->name}} {{__('lang.dining_room',[], 'ar')}} <br>@endif
+                @if(!empty($transaction->dining_table))@lang('lang.dining_table',[], 'en'): {{$transaction->dining_table->name}} {{__('lang.dining_table',[], 'ar')}} <br>@endif
+            @endif
             @if(!empty($transaction->deliveryman))
             <p style="padding-left: 7px;">{{$transaction->deliveryman->employee_name}}</p>
             @endif

@@ -383,7 +383,7 @@ class SellPosController extends Controller
             }
 
             if (!empty($transaction->dining_table_id)) {
-                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
+                $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
 
                 $output = [
                     'success' => true,
@@ -883,6 +883,7 @@ class SellPosController extends Controller
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
+            $dining_table_id = $request->input('dining_table_id');
             $is_direct_sale = $request->input('is_direct_sale');
             $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
             $added_products = json_decode($request->input('added_products'), true);
@@ -911,7 +912,7 @@ class SellPosController extends Controller
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
                 $html_content =  view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale'))->render();
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale', 'dining_table_id'))->render();
 
                 $output['success'] = true;
                 $output['html_content'] = $html_content;
@@ -938,6 +939,7 @@ class SellPosController extends Controller
         $index = $request->row_count;
         $store_id = $request->store_id;
         $customer_id = $request->customer_id;
+        $dining_table_id = $request->dining_table_id;
 
         $product_details = $this->productUtil->getNonIdentifiableProductDetails($name, $sell_price, $purchase_price, $request);
         if (!empty($product_details)) {
@@ -959,7 +961,7 @@ class SellPosController extends Controller
             // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
             $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
             $html_content =  view('sale_pos.partials.product_row')
-                ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity'))->render();
+                ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'dining_table_id'))->render();
 
             $output['success'] = true;
             $output['html_content'] = $html_content;
@@ -1156,10 +1158,12 @@ class SellPosController extends Controller
                     }
                 })
                 ->editColumn('status', function ($row) {
-                    if ($row->payment_status == 'pending') {
-                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
                     } else {
-                        return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
                     }
                 })
                 ->addColumn('paid', function ($row) use ($request) {
@@ -1175,6 +1179,9 @@ class SellPosController extends Controller
                     return $this->commonUtil->num_uf($amount_paid);
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('canceled_by', function ($row) {
+                    return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -1211,8 +1218,8 @@ class SellPosController extends Controller
                                 title="' . __('lang.sell_return') . '" data-toggle="tooltip" class="btn btn-secondary"
                                 style="color: white"><i class="fa fa-undo"></i></a>';
                         }
-                        if (auth()->user()->can('return.sell_return.create_and_edit')) {
-                            if ($row->status != 'draft' && $row->payment_status != 'paid') {
+                        if (auth()->user()->can('sale.pay.create_and_edit')) {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
                                 $html .=
                                     '<a data-href="' . action('TransactionPaymentController@addPayment', ['id' => $row->id]) . '"
                                 title="' . __('lang.pay_now') . '" data-toggle="tooltip" data-container=".view_modal"
@@ -1498,5 +1505,41 @@ class SellPosController extends Controller
     public function getTransactionDetails($transaction_id)
     {
         return Transaction::find($transaction_id);
+    }
+    /**
+     * update transaction status as cancel
+     *
+     * @param int $id
+     * @return void
+     */
+    public function updateTransactionStatusCancel($transaction_id)
+    {
+        try {
+            $transaction = Transaction::find($transaction_id);
+            $transaction->status = 'canceled';
+            $transaction->canceled_by = Auth::user()->id;
+            $transaction->save();
+            $dining_table = DiningTable::find($transaction->dining_table_id);
+            $dining_table->status = 'available';
+            $dining_table->customer_name = null;
+            $dining_table->customer_mobile_number = null;
+            $dining_table->date_and_time = null;
+            $dining_table->current_transaction_id = null;
+            $dining_table->save();
+
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

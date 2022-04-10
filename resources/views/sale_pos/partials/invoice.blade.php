@@ -134,6 +134,14 @@ $invoice_lang = request()->session()->get('language');
 
             </p>
             @endif
+            @if(session('system_mode') == 'restaurant')
+                @if(!empty($transaction->dining_room))@lang('lang.dining_room'):
+                {{$transaction->dining_room->name}} <br>
+                @endif
+                @if(!empty($transaction->dining_table))@lang('lang.dining_table'):
+                {{$transaction->dining_table->name}} <br>
+                @endif
+            @endif
             @if(!empty($transaction->deliveryman))
             <p>{{$transaction->deliveryman->employee_name}}</p>
             @endif

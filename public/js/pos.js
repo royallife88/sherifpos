@@ -307,6 +307,7 @@ function get_label_product_row(
                 customer_id: customer_id,
                 edit_quantity: edit_quantity,
                 weighing_scale_barcode: weighing_scale_barcode,
+                dining_table_id: $("#dining_table_id").val(),
                 is_direct_sale: $("#is_direct_sale").val(),
             },
             success: function (result) {
@@ -1220,6 +1221,15 @@ $(document).ready(function () {
                             pos_print(result.html_content);
                         }
 
+                        if (
+                            $("form#edit_pos_form").length > 0 &&
+                            $("#dining_action_type").val() === "save"
+                        ) {
+                            setTimeout(() => {
+                                window.close();
+                            }, 3000);
+                        }
+
                         reset_pos_form();
                         getFilterProductRightSide();
                         get_recent_transactions();
@@ -1335,6 +1345,25 @@ function confirmCancel() {
     var audio = $("#mysoundclip2")[0];
     audio.play();
     if (confirm("Are you sure want to reset?")) {
+        if ($("form#edit_pos_form").length > 0) {
+            if (
+                $("#dining_table_id").val() != null &&
+                $("#dining_table_id").val() != undefined &&
+                $("#dining_table_id").val() != ""
+            ) {
+                let transaction_id = $("#transaction_id").val();
+
+                $.ajax({
+                    method: "POST",
+                    url:
+                        "/pos/update-transaction-status-cancel/" +
+                        transaction_id,
+                    data: {},
+                    success: function (result) {},
+                });
+            }
+        }
+
         reset_pos_form();
     }
     return false;
@@ -1400,7 +1429,7 @@ $(document).ready(function () {
         },
         columnDefs: [
             {
-                targets: [10],
+                targets: [12],
                 orderable: false,
                 searchable: false,
             },
@@ -1417,6 +1446,7 @@ $(document).ready(function () {
             { data: "status", name: "transactions.status" },
             { data: "deliveryman_name", name: "deliveryman_name" },
             { data: "created_by", name: "users.name" },
+            { data: "canceled_by", name: "canceled_by" },
             { data: "action", name: "action" },
         ],
         createdRow: function (row, data, dataIndex) {},

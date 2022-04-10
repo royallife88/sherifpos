@@ -24,7 +24,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('store_pos_id')->nullable();
             $table->string('type')->nullable();
             $table->string('sub_type')->nullable();
-            $table->enum('status', ['received', 'pending', 'ordered', 'final', 'draft', 'sent_admin', 'sent_supplier', 'partially_received', 'approved', 'rejected', 'expired', 'valid', 'declined', 'send_the_goods', 'compensated']);
+            $table->enum('status', ['received', 'pending', 'ordered', 'final', 'draft', 'sent_admin', 'sent_supplier', 'partially_received', 'approved', 'rejected', 'expired', 'valid', 'declined', 'send_the_goods', 'compensated', 'canceled']);
             $table->integer('ticket_number')->default(0)->comment('used for restaurant only');
             $table->string('order_date')->nullable();
             $table->string('transaction_date');
@@ -110,6 +110,8 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('dining_room_id')->nullable();
             $table->unsignedBigInteger('dining_table_id')->nullable();
             $table->string('table_no')->nullable();
+            $table->unsignedBigInteger('canceled_by')->nullable();
+            $table->foreign('canceled_by')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('created_by');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('deleted_by')->nullable();

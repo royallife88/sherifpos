@@ -188,6 +188,9 @@
                             <th>@lang('lang.payment_date')</th>
                             <th>@lang('lang.cashier')</th>
                             <th>@lang('lang.deliveryman')</th>
+                            @if (session('system_mode') == 'restaurant')
+                                <th>@lang('lang.canceled_by')</th>
+                            @endif
                             <th class="hidden">@lang('lang.products')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
@@ -277,6 +280,19 @@
                         targets: "date",
                         type: "date-eu",
                     },
+                    @if (session('system_mode') == 'restaurant')
+                    {
+                        targets: [17],
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
+                        targets: [16],
+                        visible: false,
+                        orderable: false,
+                        searchable: false,
+                    },
+                    @else
                     {
                         targets: [16],
                         orderable: false,
@@ -288,6 +304,7 @@
                         orderable: false,
                         searchable: false,
                     },
+                    @endif
                 ],
                 columns: [{
                         data: "transaction_date",
@@ -351,6 +368,12 @@
                         data: "deliveryman",
                         name: "deliveryman"
                     },
+                    @if (session('system_mode') == 'restaurant')
+                    {
+                        data: "canceled_by",
+                        name: "canceled_by"
+                    },
+                    @endif
                     {
                         data: "products",
                         name: "products.name"

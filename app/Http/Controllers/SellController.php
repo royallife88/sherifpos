@@ -37,6 +37,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
+use Mpdf\Tag\Em;
 use Yajra\DataTables\Facades\DataTables;
 
 class SellController extends Controller
@@ -86,7 +87,7 @@ class SellController extends Controller
                 ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
                 ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
-                ->where('transactions.type', 'sell')->where('status', 'final');
+                ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
 
             if (!empty(request()->product_class_id) &&  !empty(array_filter(request()->product_class_id))) {
                 $query->whereIn('products.product_class_id', array_filter(request()->product_class_id));
@@ -110,9 +111,9 @@ class SellController extends Controller
                 $query->where('customer_id', request()->customer_id);
             }
             if (!empty(request()->customer_type_id)) {
-                if(request()->customer_type_id == 'dining_in'){
+                if (request()->customer_type_id == 'dining_in') {
                     $query->whereNotNull('dining_table_id');
-                }else{
+                } else {
                     $query->where('customer_type_id', request()->customer_type_id);
                 }
             }
@@ -265,10 +266,12 @@ class SellController extends Controller
                     }
                 })
                 ->editColumn('status', function ($row) {
-                    if ($row->payment_status == 'pending') {
-                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
                     } else {
-                        return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
                     }
                 })
                 ->addColumn('products', function ($row) {
@@ -287,6 +290,9 @@ class SellController extends Controller
                     return $string;
                 })
                 ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('canceled_by', function ($row) {
+                    return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -341,7 +347,7 @@ class SellController extends Controller
                         }
                         $html .= '<li class="divider"></li>';
                         if (auth()->user()->can('sale.pay.create_and_edit')) {
-                            if ($row->status != 'draft' && $row->payment_status != 'paid') {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
                                 $html .=
                                     ' <li>
                                     <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
