@@ -1153,4 +1153,7 @@ return [
     'pick_up' => 'اٹھاؤ',
     'home_delivery' => 'گھر تک ترسیل',
     'name_already_in_use' => 'نام پہلے سے استعمال میں ہے۔',
+
+    'canceled_by' => 'کی طرف سے منسوخ',
+    'due_sale_list' => 'واجب الادا',
 ];

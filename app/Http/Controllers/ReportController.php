@@ -210,7 +210,8 @@ class ReportController extends Controller
     public function getDailySalesSummary(Request $request)
     {
         if (request()->ajax()) {
-            $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id');
+            $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id')
+                ->leftjoin('transactions', 'cash_register_transactions.transaction_id', 'transactions.id');
 
             if (!empty(request()->start_date)) {
                 $query->whereDate('cash_register_transactions.created_at', request()->start_date);
@@ -219,10 +220,10 @@ class ReportController extends Controller
                 $query->where('cash_register_transactions.created_at', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
             }
             if (!empty(request()->store_id) &&  !empty(array_filter(request()->store_id))) {
-                $query->whereIn('store_id', request()->store_id);
+                $query->whereIn('cash_registers.store_id', request()->store_id);
             }
             if (!empty(request()->store_pos_id) &&  !empty(array_filter(request()->store_pos_id))) {
-                $query->whereIn('store_pos_id', request()->store_pos_id);
+                $query->whereIn('cash_registers.store_pos_id', request()->store_pos_id);
             }
             if (!empty(request()->user_id)) {
                 $query->where('cash_registers.user_id', request()->user_id);
@@ -230,13 +231,14 @@ class ReportController extends Controller
 
             $cash_register = $query->select(
                 'cash_registers.*',
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in"),
                 DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND type = 'credit', amount, 0)) as total_cash_sales"),
-                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_refund_cash"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND type = 'credit', amount, 0)) as total_card_sales"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND type = 'credit', amount, 0)) as total_bank_transfer_sales"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND type = 'credit', amount, 0)) as total_gift_card_sales"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND type = 'credit', amount, 0)) as total_cheque_sales"),
+                DB::raw("SUM(IF(transaction_type = 'refund', amount, 0)) as total_refund"),
+                DB::raw("SUM(IF(pay_method = 'cash', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_cash_sales"),
+                DB::raw("SUM(IF(pay_method = 'card', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_card_sales"),
+                DB::raw("SUM(IF(pay_method = 'bank_transfer', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_bank_transfer_sales"),
+                DB::raw("SUM(IF(pay_method = 'gift_card', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_gift_card_sales"),
+                DB::raw("SUM(IF(pay_method = 'cheque', IF(transaction_type='refund', -1 * amount, amount), 0)) as total_cheque_sales"),
                 DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_purchases"),
                 DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
                 DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),

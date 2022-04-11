@@ -184,7 +184,7 @@
                             <th>@lang('lang.ref_number')</th>
                             <th class="sum">@lang('lang.grand_total')</th>
                             <th class="sum">@lang('lang.paid')</th>
-                            <th class="sum">@lang('lang.due')</th>
+                            <th class="sum">@lang('lang.due_sale_list')</th>
                             <th>@lang('lang.payment_date')</th>
                             <th>@lang('lang.cashier')</th>
                             <th>@lang('lang.deliveryman')</th>

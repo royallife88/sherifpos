@@ -1159,4 +1159,5 @@ return [
 
 
     'canceled_by' => 'Canceled By',
+    'due_sale_list' => 'Due',
 ];

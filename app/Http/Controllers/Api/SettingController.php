@@ -17,7 +17,7 @@ class SettingController extends BaseController
     public function index()
     {
         $settings = System::pluck('value', 'key');
-        return $this->handleResponse($settings, 'Product Classs have been retrieved!');
+        return $this->handleResponse($settings, 'Settings have been retrieved!');
     }
 
     /**

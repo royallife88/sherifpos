@@ -1152,4 +1152,7 @@ return [
     'pick_up' => 'Récupérer',
     'home_delivery' => 'Livraison à domicile',
     'name_already_in_use' => 'Nom déjà utilisé',
+
+    'canceled_by' => 'Annulé par',
+    'due_sale_list' => 'Exigible',
 ];

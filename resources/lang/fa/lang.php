@@ -1152,4 +1152,7 @@ return [
     'pick_up' => 'سوار کردن',
     'home_delivery' => 'تحویل درب منزل',
     'name_already_in_use' => 'نام در حال حاضر استفاده شده است',
+
+    'canceled_by' => 'لغو شده توسط',
+    'due_sale_list' => 'ناشی از',
 ];

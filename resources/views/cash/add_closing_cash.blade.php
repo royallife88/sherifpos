@@ -28,7 +28,7 @@
                         </tr>
                         <tr>
                             <td><b>@lang('lang.total_sales')</b></td>
-                            <td>{{ @num_format($cash_register->total_sale) }}</td>
+                            <td>{{ @num_format($cash_register->total_sale - $cash_register->total_refund) }}</td>
                         </tr>
                         @if (session('system_mode') == 'restaurant')
                             <tr>
@@ -38,7 +38,7 @@
                         @endif
                         <tr>
                             <td><b>@lang('lang.total_cash_sale')</b></td>
-                            <td>{{ @num_format($cash_register->total_cash_sales - $cash_register->total_refund_cash) }}
+                            <td>{{ @num_format($cash_register->total_cash_sales) }}
                             </td>
                         </tr>
                         <tr>

@@ -1153,4 +1153,7 @@ return [
     'pick_up' => 'पिक अप',
     'home_delivery' => 'घर पहुँचाना',
     'name_already_in_use' => 'नाम पहले से प्रयोग में है',
+
+    'canceled_by' => 'द्वारा रद्द',
+    'due_sale_list' => 'देय',
 ];

@@ -1155,4 +1155,7 @@ return [
     'home_delivery' => 'Eve teslim',
     'name_already_in_use' => 'Ad zaten kullanılıyor',
 
+    'canceled_by' => 'İptal Eden',
+    'due_sale_list' => 'Vadesi dolmuş',
+
 ];

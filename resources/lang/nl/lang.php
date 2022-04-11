@@ -1156,4 +1156,7 @@ return [
     'home_delivery' => 'Levering aan huis',
     'name_already_in_use' => 'Naam al in gebruik',
 
+    'canceled_by' => 'Geannuleerd door',
+    'due_sale_list' => 'Vanwege',
+
 ];

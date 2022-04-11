@@ -1146,11 +1146,14 @@ return [
     'generation' => 'إنشاء',
 
     'dining_in_sales' => 'تناول الطعام في المبيعات',
-    'dining_in' => 'تناول الطعام في',
+    'dining_in' => 'الصالات',
     'use_the_balance' => 'استخدم الميزان',
 
     'delivery_type' => 'نوع التوصيل',
     'pick_up' => 'يلتقط',
     'home_delivery' => 'توصيل منزلي',
     'name_already_in_use' => 'الاسم مستخدم أو قيد الاستخدام أو موجود بالفعل',
+
+    'canceled_by' => 'ألغى بواسطة',
+    'due_sale_list' => 'متأخرات',
 ];

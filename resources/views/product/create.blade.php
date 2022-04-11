@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md-4 mt-5">
                                     <div class="form-group">
-                                        <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn"
+                                        <input type="button" value="{{ trans('lang.save') }}" id="submit-btn"
                                             class="btn btn-primary">
                                     </div>
                                 </div>
