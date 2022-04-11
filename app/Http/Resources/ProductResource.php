@@ -19,7 +19,7 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'translations' => $this->translations,
             'product_class_id' => $this->product_class_id,
-            'image' => $this->getFirstMediaUrl('product'),
+            'image' => !empty($this->getFirstMediaUrl('product')) ? $this->getFirstMediaUrl('product') : null,
             'sku' => $this->sku,
             'multiple_sizes' => $this->multiple_sizes,
             'is_service' => $this->is_service,
