@@ -105,7 +105,7 @@
                                                 <span class="points"><span
                                                         class="customer_points_span">{{ @num_format(0) }}</span></span></label>
                                         </div>
-                                        @if (session('system_mode') == 'pos')
+                                        @if (session('system_mode') == 'pos' || session('system_mode') == 'restaurant')
                                             <div class="col-md-2">
                                                 <button type="button" class="btn btn-danger btn-xs pull-right"
                                                     style="margin-top: 38px;" data-toggle="modal"
