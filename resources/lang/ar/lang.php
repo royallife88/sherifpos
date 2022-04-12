@@ -518,7 +518,7 @@ return [
     'select_customer_types' => 'حدد أنواع العملاء',
     'select_stores' => 'حدد المتاجر',
     'select_cashiers' => 'حدد الصرافين',
-    'send_credentials' => 'إرسال أوراق الاعتماد',
+    'send_credentials' => 'إرسال اسم المستخدم وكلمة المرور للموظف',
     'employee_list' => 'قائمة بالموظفين',
     'no_file_uploaded' => 'لم يتم تحميل أي ملف',
     'payment_start_date' => 'تاريخ بدء الدفع',

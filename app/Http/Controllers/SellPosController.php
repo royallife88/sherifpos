@@ -22,6 +22,7 @@ use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\DiningTable;
 use App\Models\TransactionSellLine;
+use App\Models\Variation;
 use App\Utils\CashRegisterUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
@@ -821,11 +822,13 @@ class SellPosController extends Controller
                 foreach ($products_array as $key => $value) {
                     $name = $value['name'];
                     foreach ($value['variations'] as $variation) {
+                        $v = Variation::find($variation['variation_id']);
                         $text = $name;
                         if ($value['type'] == 'variable') {
                             if ($variation['variation_name'] != 'Default') {
-                                $text = $text . ' (' . $variation['variation_name'] . ')';
+                                $text = $text . ' (' . $variation['variation_name'] . ') ';
                             }
+                            $text .= $v->size->name ?? '';
                         }
                         $i++;
                         $result[] = [

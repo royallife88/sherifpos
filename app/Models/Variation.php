@@ -27,7 +27,7 @@ class Variation extends Model
         return $this->belongsTo(Color::class)->withDefault(['name' => '']);
     }
 
-    public function Size()
+    public function size()
     {
         return $this->belongsTo(Size::class)->withDefault(['name' => '']);
     }
