@@ -4,4 +4,5 @@ LANG = {
     please_enter_sell_price: "Voer verkoopprijs in",
     please_enter_quantity: "Vul a.u.b. aantal in",
     new_order_placed_invoice_no: "Nieuwe bestelling geplaatst. Factuur nr:",
+    the_order_is_saved_to_draft: "De bestelling is opgeslagen in concept",
 };

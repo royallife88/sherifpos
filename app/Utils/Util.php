@@ -418,7 +418,7 @@ class Util
             'cheque' => __('lang.cheque'),
             'gift_card' => __('lang.gift_card'),
             'bank_transfer' => __('lang.bank_transfer'),
-            'deposit' => __('lang.deposit'),
+            'deposit' => __('lang.use_the_balance'),
             'paypal' => __('lang.paypal'),
         ];
     }

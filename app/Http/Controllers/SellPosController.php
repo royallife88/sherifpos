@@ -596,6 +596,7 @@ class SellPosController extends Controller
                     if ($old_status == 'reserve') {
                         if (Carbon::now()->gt(Carbon::parse($dining_table->date_and_time))) {
                             $dining_table->status = 'available';
+                            $dining_table->current_transaction_id = null;
                             $dining_table->customer_name = null;
                             $dining_table->customer_mobile_number = null;
                             $dining_table->date_and_time = null;
@@ -606,6 +607,7 @@ class SellPosController extends Controller
                     if ($old_status != 'reserve') {
                         if ($transaction->status == 'final' && $transaction->payment_status != 'pending') {
                             $dining_table->status = 'available';
+                            $dining_table->current_transaction_id = null;
                             $dining_table->customer_name = null;
                             $dining_table->customer_mobile_number = null;
                             $dining_table->date_and_time = null;

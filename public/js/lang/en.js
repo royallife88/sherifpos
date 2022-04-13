@@ -6,4 +6,5 @@ LANG = {
     amount_exceeds_total_paid: "Amount exceeds total paid",
     new_order_placed_invoice_no: "New order placed. Invoice No:",
     please_fill_all_fields: "Please fill all fields",
+    the_order_is_saved_to_draft: "The Order is Saved to Draft",
 };

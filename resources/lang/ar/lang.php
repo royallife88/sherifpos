@@ -1147,7 +1147,7 @@ return [
 
     'dining_in_sales' => 'تناول الطعام في المبيعات',
     'dining_in' => 'الصالات',
-    'use_the_balance' => 'استخدم الميزان',
+    'use_the_balance' => 'استعمل رصيد العميل',
 
     'delivery_type' => 'نوع التوصيل',
     'pick_up' => 'يلتقط',

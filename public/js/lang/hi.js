@@ -4,4 +4,5 @@ LANG = {
     please_enter_sell_price: "कृपया बिक्री मूल्य दर्ज करें",
     please_enter_quantity: "कृपया मात्रा दर्ज करें",
     new_order_placed_invoice_no: "नया आदेश दिया है। चालान नंबर:",
+    the_order_is_saved_to_draft: "आदेश ड्राफ़्ट में सहेजा गया है",
 };

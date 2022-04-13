@@ -226,14 +226,14 @@ if (language == "en") {
     dt_lang_url = base_path + "/js/datatables_lang/ar.json";
 } else if (language == "hi") {
     dt_lang_url = base_path + "/js/datatables_lang/hi.json";
-} else if (language == "pr") {
-    dt_lang_url = base_path + "/js/datatables_lang/pr.json";
+} else if (language == "fa") {
+    dt_lang_url = base_path + "/js/datatables_lang/fa.json";
 } else if (language == "ur") {
     dt_lang_url = base_path + "/js/datatables_lang/ur.json";
 } else if (language == "tr") {
     dt_lang_url = base_path + "/js/datatables_lang/tr.json";
-} else if (language == "du") {
-    dt_lang_url = base_path + "/js/datatables_lang/du.json";
+} else if (language == "nl") {
+    dt_lang_url = base_path + "/js/datatables_lang/nl.json";
 } else {
     dt_lang_url = base_path + "/js/datatables_lang/en.json";
 }

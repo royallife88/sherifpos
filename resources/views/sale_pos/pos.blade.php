@@ -92,7 +92,7 @@
                                                         title="@lang('lang.customer_size')"></button>
                                             </div>
                                         @endif
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label for="customer_type_name"
                                                 style="margin-top: 40px;">@lang('lang.customer_type'): <span
                                                     class="customer_type_name"></span></label>
@@ -112,6 +112,13 @@
                                                     data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                             </div>
                                         @endif
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger btn-xs  pull-right"
+                                                style="margin-top: 38px;" id="print_and_draft"><i
+                                                    class="dripicons-print"></i></button>
+                                            <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
+                                                value="">
+                                        </div>
                                     </div>
                                     <div class="row table_room_show hide">
                                         <div class="col-md-4">
@@ -295,16 +302,16 @@
 
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="credit-card-btn"><i class="fa fa-credit-card"></i> @lang('lang.card')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
-                                <button data-method="cash" style="background: #00cec9" type="button"
+                                <button data-method="cash" style="background: #0094ce" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="cash-btn"><i class="fa fa-money"></i>
-                                    @lang('lang.cash')</button>
+                                    @lang('lang.pay')</button>
                             </div>
                             <div class="column-5">
                                 <button data-method="coupon" style="background: #00cec9" type="button"
@@ -342,7 +349,7 @@
                                     @lang('lang.online_orders') <span
                                         class="badge badge-danger online-order-badge">0</span></button>
                             </div>
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="cheque-btn"><i class="fa fa-money"></i> @lang('lang.cheque')</button>
@@ -352,24 +359,24 @@
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                     @lang('lang.bank_transfer')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
                                 <button data-method="pay-later" style="background-color: #cf2929" type="button"
                                     class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
                                     @lang('lang.pay_later')</button>
                             </div>
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="gift_card" style="background-color: #5f27cd" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="gift-card-btn"><i class="fa fa-credit-card-alt"></i>
                                     @lang('lang.gift_card')</button>
-                            </div>
-                            <div class="column-5">
+                            </div> --}}
+                            {{-- <div class="column-5">
                                 <button data-method="deposit" style="background-color: #b33771" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="deposit-btn"><i class="fa fa-university"></i>
                                     @lang('lang.use_the_balance')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
                                 <button style="background-color: #ff0000;" type="button" class="btn btn-custom"
                                     id="cancel-btn" onclick="return confirmCancel()"><i class="fa fa-close"></i>
@@ -720,7 +727,7 @@
                             `<li>
                                 <a class="pending notification_item"
                                     data-mark-read-action=""
-                                    data-href="{{url('/')}}/pos/${transaction_id}/edit?status=final">
+                                    data-href="{{ url('/') }}/pos/${transaction_id}/edit?status=final">
                                     <p style="margin:0px"><i class="dripicons-bell"></i> ${LANG.new_order_placed_invoice_no} #
                                         ${result.invoice_no}</p>
                                     <span class="text-muted">

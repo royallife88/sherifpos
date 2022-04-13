@@ -66,6 +66,9 @@ div.has-error > .form-text {
     .modal-xl {
         width: 100% !important;
     }
+    .swal-overlay{
+        display: none !important;
+    }
 
     ::-webkit-scrollbar {
         display: none !important;

@@ -4,4 +4,5 @@ LANG = {
     please_enter_sell_price: "لطفا قیمت فروش را وارد کنید",
     please_enter_quantity: "لطفا مقدار را وارد کنید",
     new_order_placed_invoice_no: "Yeni sipariş verildi. Fatura No:",
+    the_order_is_saved_to_draft: "Sipariş Taslağa Kaydedildi",
 };
