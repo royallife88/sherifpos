@@ -181,7 +181,7 @@ class TutorialController extends Controller
      */
     public function getTutorialsDataArrayByCategory($category_id)
     {
-        $tutorials = Tutorial::where('tutorial_category_id', $category_id)->orderBy('name', 'asc')->get();
+        $tutorials = Tutorial::where('tutorial_category_id', $category_id)->orderBy('created_at', 'asc')->get();
         $tutorialsDataArray = [];
         foreach ($tutorials as $tutorial) {
             $tutorialsDataArray[] = [
@@ -204,7 +204,7 @@ class TutorialController extends Controller
      */
     public function getTutorialsCategoryArray()
     {
-        $tutorialsCategories = TutorialCategory::orderBy('name', 'asc')->get();
+        $tutorialsCategories = TutorialCategory::orderBy('created_at', 'asc')->get();
         $tutorialsCategoriesDataArray = [];
         foreach ($tutorialsCategories as $tutorial) {
             $tutorialsCategoriesDataArray[] = [
