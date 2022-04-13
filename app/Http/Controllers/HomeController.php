@@ -400,7 +400,10 @@ class HomeController extends Controller
      */
     public function getTotalSaleTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
-        $sell_query = Transaction::where('type', 'sell')->where('status', 'final');
+        $sell_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+            ->where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
         if (!empty($start_date)) {
             $sell_query->whereDate('transaction_date', '>=', $start_date);
         }
@@ -420,12 +423,12 @@ class HomeController extends Controller
             $sell_query->where('store_pos_id', $store_pos_id);
         }
         $sell_query = $sell_query->select(
-            DB::raw('SUM(final_total) as total_sales'),
-            DB::raw('SUM(total_tax) as total_taxes'),
-
+            DB::raw('SUM(IF(products.tax_method = "inclusive", item_tax, 0)) as total_tax'),
+            DB::raw('SUM(IF(products.tax_method = "inclusive", (item_tax / quantity) * quantity_returned, 0)) as total_return_tax')
         )->first();
+
         if (!empty($sell_query)) {
-            return $sell_query->total_taxes;
+            return $sell_query->total_tax - $sell_query->total_return_tax;
         }
         return 0;
     }
@@ -475,7 +478,9 @@ class HomeController extends Controller
         }
 
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
-        $total_sale_tax = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
+        $total_sale_tax_inclusive = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id, 'inclusive');
+        $total_sale_tax_exclusive = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id, 'exclusive');
+        // print_r($total_sale_tax_exclusive); die();
 
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
         if (!empty($start_date)) {
@@ -537,7 +542,7 @@ class HomeController extends Controller
         $cost_sold_returned_product = $this->transactionUtil->getCostOfSoldReturnedProducts($start_date, $end_date, $store_id, $store_pos_id);
         $gift_card_sold = GiftCard::sum('balance');
 
-        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_tax + $sell_return_query->total_taxes;  //excluding taxes from profit as its not part of profit
+        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_tax_inclusive + $sell_return_query->total_taxes;  //excluding taxes from profit as its not part of profit
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

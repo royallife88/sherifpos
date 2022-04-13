@@ -22,6 +22,8 @@
             class="coupon_discount_amount" value="{{$product->coupon_discount_amount}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][tax_id]" class="tax_id"
             value="{{$product->tax_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index}}][tax_method]" class="tax_method"
+            value="{{$product->tax_method}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][tax_rate]" class="tax_rate"
             value="{{@num_format($product->tax_rate)}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index}}][item_tax]" class="item_tax"

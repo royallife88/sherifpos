@@ -21,8 +21,10 @@
             value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_id]" class="tax_id"
             value="{{$product->tax_id}}">
+        <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_method]" class="tax_method"
+            value="{{$product->tax_method}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_rate]" class="tax_rate"
-            value="@if($product->tax_method == 'exclusive'){{@num_format($product->tax_rate)}}@else{{0}}@endif">
+            value="{{@num_format($product->tax_rate)}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][item_tax]" class="item_tax"
             value="0">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][coupon_discount]"

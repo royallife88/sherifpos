@@ -94,6 +94,7 @@ function calculate_sub_totals() {
         let sell_price = __read_number($(tr).find(".sell_price"));
         let price_hidden = __read_number($(tr).find(".price_hidden"));
         let item_tax = __read_number($(tr).find(".item_tax"));
+        let tax_method = $(tr).find(".tax_method").val();
         let sub_total = 0;
 
         if (quantity > 0) {
@@ -144,7 +145,9 @@ function calculate_sub_totals() {
         total += sub_total;
         if (quantity > 0) {
             item_tax = item_tax / quantity;
-            total_item_tax += item_tax;
+            if(tax_method === 'exclusive'){
+                total_item_tax += item_tax;
+            }
         }
 
         item_count++;

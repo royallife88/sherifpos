@@ -597,6 +597,7 @@ class SellController extends Controller
                 }
                 $transaction_sell_line->delete();
             }
+            Transaction::where('return_parent_id', $id)->delete();
 
             $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, 0, $transaction->rp_earned, 0, $transaction->rp_redeemed);
 

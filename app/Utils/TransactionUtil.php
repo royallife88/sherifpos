@@ -166,6 +166,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();
@@ -189,6 +190,7 @@ class TransactionUtil extends Util
                 $transaction_sell_line->purchase_price = $this->num_uf($line['purchase_price']);
                 $transaction_sell_line->sub_total = $this->num_uf($line['sub_total']);
                 $transaction_sell_line->tax_id = !empty($line['tax_id']) ? $line['tax_id'] : null;
+                $transaction_sell_line->tax_method = !empty($line['tax_method']) ? $line['tax_method'] : null;
                 $transaction_sell_line->tax_rate = !empty($line['tax_rate']) ? $this->num_uf($line['tax_rate']) : 0;
                 $transaction_sell_line->item_tax = !empty($line['item_tax']) ? $this->num_uf($line['item_tax']) : 0;
                 $transaction_sell_line->save();

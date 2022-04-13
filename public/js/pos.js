@@ -473,6 +473,7 @@ function calculate_sub_totals() {
     var product_discount_total = 0;
     var product_surplus_total = 0;
     var total_item_tax = 0;
+    var total_tax_payable = 0;
     var total_coupon_discount = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
@@ -540,10 +541,14 @@ function calculate_sub_totals() {
         calculate_promotion_discount(tr);
         product_surplus_total += calculate_product_surplus(tr);
 
+        let tax_method = $(tr).find(".tax_method").val();
         let tax_rate = __read_number($(tr).find(".tax_rate"));
         let item_tax = (sub_total * tax_rate) / 100;
         __write_number($(tr).find(".item_tax"), item_tax);
         total_item_tax += item_tax;
+        if (tax_method === "exclusive") {
+            total_tax_payable += item_tax;
+        }
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
@@ -555,7 +560,7 @@ function calculate_sub_totals() {
     );
 
     __write_number($("#total_item_tax"), total_item_tax);
-    total += total_item_tax;
+    total += total_tax_payable;
 
     __write_number($("#grand_total"), grand_total); // total without any discounts
 

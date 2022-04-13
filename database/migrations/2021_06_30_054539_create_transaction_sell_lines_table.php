@@ -38,6 +38,7 @@ class CreateTransactionSellLinesTable extends Migration
             $table->decimal('product_discount_value', 15, 4)->default(0);
             $table->decimal('product_discount_amount', 15, 4)->default(0);
             $table->unsignedBigInteger('tax_id')->nullable();
+            $table->string('tax_method')->nullable();
             $table->decimal('item_tax', 15, 4)->default(0);
             $table->decimal('tax_rate', 15, 4)->default(0);
             $table->unsignedBigInteger('restaurant_order_detail_id')->nullable();
