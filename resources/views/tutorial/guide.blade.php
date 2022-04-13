@@ -62,7 +62,8 @@
     $('#tutorial_table').DataTable( {
         "paging":   false,
         "searching": false,
-        "info":     false
+        "info":     false,
+        aaSorting: [],
     } );
     $(document).on('click', '.tr', function () {
         window.open($(this).data('href'), '_blank');

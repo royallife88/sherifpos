@@ -45,14 +45,8 @@
             "paging": false,
             "searching": false,
             "info": false,
-            aaSorting: [
-                [1, "asc"]
-            ],
-            columnDefs: [{
-                    targets: "date",
-                    type: "date-eu",
-                },
-            }
+            aaSorting: [],
+
         });
         $(document).on('click', '.tr', function() {
             window.location = $(this).data('href');
