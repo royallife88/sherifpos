@@ -66,6 +66,12 @@
                                 unset($sub_module_permission_array['raw_material']);
                                 unset($sub_module_permission_array['consumption']);
                                 unset($sub_module_permission_array['add_consumption_for_others']);
+                                unset($sub_module_permission_array['service_fee']);
+                            @endphp
+                        @endif
+                        @if ($key_module == 'settings')
+                            @php
+                                unset($sub_module_permission_array['service_fee']);
                             @endphp
                         @endif
                     @endif
