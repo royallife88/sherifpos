@@ -327,7 +327,6 @@ class EmployeeController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $validated = $request->validate([
-            'email' => 'required|email|max:255',
             'name' => 'required|max:255'
         ]);
 
