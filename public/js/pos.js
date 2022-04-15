@@ -611,6 +611,21 @@ function calculate_sub_totals() {
     }
     total += delivery_cost;
 
+    //calculate service fee
+    let service_fee_rate = __read_number($("#service_fee_rate"));
+    let dining_table_id = $("#dining_table_id").val();
+
+    if (
+        dining_table_id != null &&
+        dining_table_id != "" &&
+        dining_table_id != undefined
+    ) {
+        let service_fee_value = __get_percent_value(total, service_fee_rate);
+        $("#service_fee_value").val(service_fee_value);
+
+        total += service_fee_value;
+    }
+
     __write_number($("#final_total"), total);
     $("#final_total").change();
 
@@ -1330,6 +1345,7 @@ function reset_pos_form() {
     $("#dining_action_type").val("");
     $("#status").val("final");
     $("#row_count").val(0);
+    $("#service_fee_value").val(0);
     $("button#submit-btn").attr("disabled", false);
     $("button#redeem_btn").attr("disabled", false);
     $("button.add_to_deposit").attr("disabled", false);
@@ -2285,4 +2301,22 @@ $(document).on("click", "#dining_table_print, #dining_table_save", function () {
     $("#dining_action_type").val($(this).val());
     $("#amount").val(0);
     pos_form_obj.submit();
+});
+
+$(document).on("change", "#service_fee_id", function () {
+    let service_fee_id = $(this).val();
+    $("#service_fee_id_hidden").val(service_fee_id);
+    $.ajax({
+        method: "get",
+        url: "/service-fee/get-details/" + service_fee_id,
+        data: {},
+        success: function (result) {
+            $("#service_fee_rate").val(0);
+            $("#service_fee_value").val(0);
+            if (result.rate) {
+                $("#service_fee_rate").val(result.rate);
+            }
+            calculate_sub_totals();
+        },
+    });
 });

@@ -16,6 +16,7 @@ use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\Grade;
 use App\Models\ProductClass;
+use App\Models\ServiceFee;
 use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -196,7 +197,12 @@ class SellController extends Controller
 
                     return $string;
                 })
-                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->editColumn('final_total', function ($row) {
+                    if (!empty($row->return_parent)) {
+                        return $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                    }
+                    return $this->commonUtil->num_f($row->final_total);
+                })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
                         return $row->customer->customer_type->name;
@@ -456,6 +462,7 @@ class SellController extends Controller
         $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
+        $service_fees = ServiceFee::pluck('name', 'id');
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -483,6 +490,7 @@ class SellController extends Controller
             'taxes_array',
             'customer_types',
             'discount_customer_types',
+            'service_fees',
             'users',
         ));
     }
@@ -535,6 +543,7 @@ class SellController extends Controller
         $walk_in_customer = Customer::where('name', 'Walk-in-customer')->first();
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
+        $service_fees = ServiceFee::pluck('name', 'id');
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -546,7 +555,8 @@ class SellController extends Controller
             'taxes',
             'payment_types',
             'payment_status_array',
-            'weighing_scale_setting'
+            'weighing_scale_setting',
+            'service_fees'
         ));
     }
 

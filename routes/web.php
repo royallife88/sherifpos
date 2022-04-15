@@ -214,6 +214,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('gift-card/generate-code', 'GiftCardController@generateCode');
     Route::get('gift-card/get-details/{gift_card_number}', 'GiftCardController@getDetails');
     Route::resource('gift-card', GiftCardController::class);
+    Route::get('service-fee/get-details/{service_fee_id}', 'ServiceFeeController@getDetails');
+    Route::resource('service-fee', ServiceFeeController::class);
 
     Route::group(['prefix' => 'hrm'], function () {
         Route::resource('job', JobController::class);

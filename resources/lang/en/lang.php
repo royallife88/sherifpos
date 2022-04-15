@@ -1156,8 +1156,13 @@ return [
     'pick_up' => 'Pick Up',
     'home_delivery' => 'Home Delivery',
     'name_already_in_use' => 'Name already in use',
-
-
     'canceled_by' => 'Canceled By',
     'due_sale_list' => 'Due',
+
+
+    'service_fee' => 'Service Fee',
+    'add_service_fee' => 'Add Service Fee',
+    'edit_service_fee' => 'Edit Service Fee',
+    'service' => 'Service',
+    'select_service' => 'Select Service',
 ];

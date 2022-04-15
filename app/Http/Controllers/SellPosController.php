@@ -21,6 +21,7 @@ use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\DiningTable;
+use App\Models\ServiceFee;
 use App\Models\TransactionSellLine;
 use App\Models\Variation;
 use App\Utils\CashRegisterUtil;
@@ -108,6 +109,7 @@ class SellPosController extends Controller
         $store_poses = [];
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
         $languages = System::getLanguageDropdown();
+        $service_fees = ServiceFee::pluck('name', 'id');
 
         if (empty($store_pos)) {
             $output = [
@@ -135,6 +137,7 @@ class SellPosController extends Controller
             'payment_types',
             'weighing_scale_setting',
             'languages',
+            'service_fees',
         ));
     }
 
@@ -200,6 +203,9 @@ class SellPosController extends Controller
                 'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
                 'dining_table_id' => !empty($request->dining_table_id) ? $request->dining_table_id : null,
                 'dining_room_id' => !empty($request->dining_room_id) ? $request->dining_room_id : null,
+                'service_fee_id' => !empty($request->service_fee_id_hidden) ? $request->service_fee_id_hidden : null,
+                'service_fee_rate' => !empty($request->service_fee_rate) ? $this->commonUtil->num_uf($request->service_fee_rate) : null,
+                'service_fee_value' => !empty($request->service_fee_value) ? $this->commonUtil->num_uf($request->service_fee_value) : null,
                 'created_by' => Auth::user()->id,
             ];
 
@@ -464,6 +470,7 @@ class SellPosController extends Controller
         $stores = Store::getDropdown();
         $store_poses = [];
         $languages = System::getLanguageDropdown();
+        $service_fees = ServiceFee::pluck('name', 'id');
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -483,6 +490,7 @@ class SellPosController extends Controller
             'stores',
             'store_poses',
             'languages',
+            'service_fees',
         ));
     }
 

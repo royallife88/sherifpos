@@ -194,6 +194,13 @@
                             @lang('lang.tax',[], 'en') </th>
                     </tr>
                     @endif
+                    @if($transaction->service_fee_value > 0)
+                    <tr>
+                        <th colspan="2" style="text-align:left">{{@num_format($transaction->service_fee_value)}}</th>
+                        <th colspan="2" style="text-align:right">{{__('lang.service',[], 'ar')}} <br>
+                            @lang('lang.service',[], 'en') </th>
+                    </tr>
+                    @endif
                     @if($transaction->total_tax != 0)
                     <tr>
                         <th colspan="2" style="text-align:left">{{@num_format($transaction->total_tax)}}</th>

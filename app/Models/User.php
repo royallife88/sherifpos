@@ -238,6 +238,7 @@ class User extends Authenticatable
             'settings' => [
                 'store' => __('lang.store'),
                 'store_pos' => __('lang.store_pos'),
+                'service_fee' => __('lang.service_fee'),
                 'terms_and_conditions' => __('lang.terms_and_conditions'),
                 'modules' => __('lang.modules'),
                 'weighing_scale_setting' => __('lang.weighing_scale_setting'),

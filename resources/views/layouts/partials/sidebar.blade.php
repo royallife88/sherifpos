@@ -1120,6 +1120,14 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_mode') == 'restaurant')
+                        @can('settings.service_fee.view')
+                        <li
+                            class="@if(request()->segment(1) == 'service-fee' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('ServiceFeeController@index')}}">{{__('lang.service_fee')}}</a>
+                        </li>
+                        @endcan
+                        @endif
                         @can('product_module.tax.view')
                         <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('TaxController@index')}}">{{__('lang.tax')}}</a>

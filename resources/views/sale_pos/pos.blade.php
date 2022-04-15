@@ -127,11 +127,19 @@
                                                 <span class="room_name"></span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label for=""
                                                 style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
                                                 <span class="table_name"></span></label>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group my-group">
+                                                {!! Form::select('service_fee_id', $service_fees, null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden" value="">
+                                        <input type="hidden" name="service_fee_rate" id="service_fee_rate" value="0">
+                                        <input type="hidden" name="service_fee_value" id="service_fee_value" value="0">
                                     </div>
                                     <div class="col-md-12" style="margin-top: 10px;">
                                         <div class="search-box input-group">
@@ -413,7 +421,8 @@
                         <nav class="navbar">
                             <div class="container-fluid">
                                 <div class="navbar-holder d-flex align-items-center justify-content-between">
-                                    <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars"> </i></a>
+                                    <a id="toggle-btn" href="#" class="menu-btn"><i class="fa fa-bars">
+                                        </i></a>
                                     <div class="navbar-header">
 
                                         <ul class="nav-menu list-unstyled d-flex flex-md-row align-items-md-center">

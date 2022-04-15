@@ -109,6 +109,9 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('restaurant_order_id')->nullable();
             $table->unsignedBigInteger('dining_room_id')->nullable();
             $table->unsignedBigInteger('dining_table_id')->nullable();
+            $table->unsignedBigInteger('service_fee_id')->nullable();
+            $table->decimal('service_fee_rate', 15, 4)->nullable();
+            $table->decimal('service_fee_value', 15, 4)->nullable();
             $table->string('table_no')->nullable();
             $table->unsignedBigInteger('canceled_by')->nullable();
             $table->foreign('canceled_by')->references('id')->on('users')->onDelete('cascade');

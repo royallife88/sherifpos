@@ -64,6 +64,10 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->hasOne(TransactionCustomerSize::class);
     }
+    public function service_fee()
+    {
+        return $this->belongsTo(ServiceFee::class);
+    }
     public function canceled_by_user()
     {
         return $this->belongsTo(User::class, 'canceled_by', 'id')->withDefault(['name' => '']);

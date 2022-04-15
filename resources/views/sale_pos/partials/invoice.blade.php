@@ -212,6 +212,12 @@ $invoice_lang = request()->session()->get('language');
                         <th style="font-size: 16px; text-align:right;">{{@num_format($transaction->total_tax)}}</th>
                     </tr>
                     @endif
+                    @if($transaction->service_fee_value > 0)
+                    <tr>
+                        <th style="font-size: 16px;" colspan="3">@lang('lang.service')</th>
+                        <th style="font-size: 16px; text-align:right;">{{@num_format($transaction->service_fee_value)}}</th>
+                    </tr>
+                    @endif
                     @if($transaction->discount_amount != 0)
                     <tr>
                         <th style="font-size: 16px;" colspan="3">@lang('lang.order_discount', [], $invoice_lang)</th>

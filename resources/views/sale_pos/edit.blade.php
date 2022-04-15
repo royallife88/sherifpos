@@ -120,7 +120,7 @@
                                                 </span>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <label for=""
                                                 style="font-size: 20px !important; font-weight: bold; text-align: center; margin-top: 3px;">@lang('lang.table'):
                                                 <span class="table_name">
@@ -129,6 +129,14 @@
                                                     @endif
                                                 </span></label>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group my-group">
+                                                {!! Form::select('service_fee_id', $service_fees, $transaction->service_fee_id, ['class' => 'form-control', 'data-live-search' => 'true', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden" value="{{$transaction->service_fee_id}}">
+                                        <input type="hidden" name="service_fee_rate" id="service_fee_rate" value="{{$transaction->service_fee_rate}}">
+                                        <input type="hidden" name="service_fee_value" id="service_fee_value" value="{{$transaction->service_fee_value}}">
                                     </div>
 
                                     <div class="col-md-12" style="margin-top: 10px;">
@@ -307,16 +315,16 @@
 
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="card" style="background: #0984e3" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="credit-card-btn"><i class="fa fa-credit-card"></i> @lang('lang.card')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
-                                <button data-method="cash" style="background: #00cec9" type="button"
+                                <button data-method="cash" style="background: #0094ce" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="cash-btn"><i class="fa fa-money"></i>
-                                    @lang('lang.cash')</button>
+                                    @lang('lang.pay')</button>
                             </div>
                             <div class="column-5">
                                 <button data-method="coupon" style="background: #00cec9" type="button"
@@ -351,7 +359,7 @@
                                     @lang('lang.online_orders') <span
                                         class="badge badge-danger online-order-badge hide">0</span></button>
                             </div>
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="cheque" style="background-color: #fd7272" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="cheque-btn"><i class="fa fa-money"></i> @lang('lang.cheque')</button>
@@ -361,13 +369,13 @@
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="bank-transfer-btn"><i class="fa fa-building-o"></i>
                                     @lang('lang.bank_transfer')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
                                 <button data-method="pay-later" style="background-color: #cf2929" type="button"
                                     class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
                                     @lang('lang.pay_later')</button>
                             </div>
-                            <div class="column-5">
+                            {{-- <div class="column-5">
                                 <button data-method="gift_card" style="background-color: #5f27cd" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="gift-card-btn"><i class="fa fa-credit-card-alt"></i>
@@ -377,7 +385,7 @@
                                 <button data-method="deposit" style="background-color: #b33771" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
                                     id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.deposit')</button>
-                            </div>
+                            </div> --}}
                             <div class="column-5">
                                 <button data-method="cash" style="background-color: #d63031;" type="button"
                                     class="btn btn-custom" id="cancel-btn" onclick="return confirmCancel()"><i
