@@ -96,7 +96,7 @@ if(empty($invoice_lang)){
 $invoice_lang = request()->session()->get('language');
 }
 @endphp
-<div style="max-width:350px;margin:0 auto; padding: 0 15x; color: black !important;">
+<div style="max-width:350px; padding: 0 15x; color: black !important;">
 
     <div id="receipt-data">
         <div class="centered">
