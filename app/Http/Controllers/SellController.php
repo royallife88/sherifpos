@@ -295,6 +295,7 @@ class SellController extends Controller
 
                     return $string;
                 })
+                ->editColumn('service_fee_value', '{{@num_format($service_fee_value)}}')
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->editColumn('canceled_by', function ($row) {
                     return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';

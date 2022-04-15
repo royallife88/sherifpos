@@ -189,6 +189,7 @@
                                 <th>@lang('lang.cashier')</th>
                                 <th>@lang('lang.deliveryman')</th>
                                 @if (session('system_mode') == 'restaurant')
+                                    <th>@lang('lang.service')</th>
                                     <th>@lang('lang.canceled_by')</th>
                                 @endif
                                 <th class="hidden">@lang('lang.products')</th>
@@ -285,12 +286,12 @@
                     },
                     @if (session('system_mode') == 'restaurant')
                         {
-                        targets: [17],
+                        targets: [18],
                         orderable: false,
                         searchable: false,
                         },
                         {
-                        targets: [16],
+                        targets: [17],
                         visible: false,
                         orderable: false,
                         searchable: false,
@@ -372,6 +373,10 @@
                         name: "deliveryman"
                     },
                     @if (session('system_mode') == 'restaurant')
+                        {
+                        data: "service_fee_value",
+                        name: "service_fee_value"
+                        },
                         {
                         data: "canceled_by",
                         name: "canceled_by"

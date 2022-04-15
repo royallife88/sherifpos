@@ -173,7 +173,7 @@ $invoice_lang = request()->session()->get('language');
                     @foreach($transaction->transaction_sell_lines as $line)
                     <tr>
                         <td style="width: 30%; text-algin: right !important;">
-                            {{$line->product->name}}
+                            {{$line->product->translated_name($line->product->id, $invoice_lang)}}
                             @if(!empty($line->variation))
                             @if($line->variation->name != "Default")
                             <b>{{$line->variation->name}}</b>

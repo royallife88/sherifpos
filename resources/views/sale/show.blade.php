@@ -220,6 +220,12 @@
                             <td>{{@num_format($sale->delivery_cost)}}</td>
                         </tr>
                         @endif
+                        @if($sale->service_fee_value > 0)
+                        <tr>
+                            <th>@lang('lang.service')</th>
+                            <td>{{@num_format($sale->service_fee_value)}}</td>
+                        </tr>
+                        @endif
                         <tr>
                             <th>@lang('lang.grand_total'):</th>
                             <td>{{@num_format($sale->final_total)}}</td>

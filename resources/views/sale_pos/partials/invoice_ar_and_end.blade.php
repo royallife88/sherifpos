@@ -170,7 +170,7 @@
                             {{@num_format($line->sell_price)}}</td>
                         @endif
                         <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
-                            {{$line->product->name}}
+                            {{$line->product->translated_name($line->product->id, 'ar')}}
                             @if(!empty($line->variation))
                             @if($line->variation->name != "Default")
                             <b>{{$line->variation->name}}</b>

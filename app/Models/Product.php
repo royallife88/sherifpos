@@ -134,4 +134,17 @@ class Product extends Model implements HasMedia
         }
         return $name;
     }
+
+    public function translated_name($id, $lang)
+    {
+        $product = Product::find($id);
+        $name = $product->name;
+        $translations = !empty($product->translations['name']) ? $product->translations['name'] : [];
+        if (!empty($translations)) {
+            if (!empty($translations[$lang])) {
+                return $translations[$lang];
+            }
+        }
+        return $name;
+    }
 }
