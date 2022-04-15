@@ -327,10 +327,11 @@ class EmployeeController extends Controller
             abort(403, 'Unauthorized action.');
         }
         $validated = $request->validate([
+            'email' => 'required|email|max:255',
             'name' => 'required|max:255'
         ]);
 
-        // try {
+        try {
 
             DB::beginTransaction();
 
@@ -418,14 +419,14 @@ class EmployeeController extends Controller
             ];
 
             return redirect()->to('/hrm/employee')->with('status', $output);
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        //     return redirect()->back()->with('status', $output);
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+            return redirect()->back()->with('status', $output);
+        }
     }
 
     /**
