@@ -85,7 +85,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="form-group">
             {!! Form::label('name', __('lang.name') . ' *', []) !!}
             <div class="input-group my-group">
-                {!! Form::text('name', !empty($recent_product) ? $recent_product->name : null, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
+                {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                 <span class="input-group-btn">
                     <button class="btn btn-default bg-white btn-flat translation_btn" type="button"  data-type="product"><i
                             class="dripicons-web text-primary fa-lg"></i></button>
