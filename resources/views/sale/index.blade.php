@@ -218,8 +218,6 @@
             </div>
         </div>
     </section>
-    <a data-href="http://127.0.0.1:8000/sale/print/42" class="btn print-invoice no-print"><i class="dripicons-print"></i>
-        Print Invoice</a>
     <!-- This will be printed -->
     <section class="invoice print_section print-only" id="receipt_section"> </section>
 @endsection

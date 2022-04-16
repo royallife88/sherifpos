@@ -121,11 +121,11 @@
                                             <input type="hidden" id="store_pos_id" name="store_pos_id"
                                                 value="{{ $sale->store_pos_id }}" />
                                             <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
-                                                value="{{ $transaction->service_fee_id }}">
+                                                value="{{ $sale->service_fee_id }}">
                                             <input type="hidden" name="service_fee_rate" id="service_fee_rate"
-                                                value="{{ $transaction->service_fee_rate }}">
+                                                value="{{ $sale->service_fee_rate }}">
                                             <input type="hidden" name="service_fee_value" id="service_fee_value"
-                                                value="{{ $transaction->service_fee_value }}">
+                                                value="{{ $sale->service_fee_value }}">
                                         </div>
                                     </div>
                                 </div>
