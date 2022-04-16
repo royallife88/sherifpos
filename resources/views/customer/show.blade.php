@@ -181,7 +181,7 @@
                                                                 <span
                                                                     class="badge badge-danger">@lang('lang.pay_later')</span>
                                                             @elseif($sale->payment_status == 'partial')
-                                                            <span
+                                                                <span
                                                                     class="badge badge-danger">@lang('lang.partial')</span>
                                                             @endif
                                                         @endif
@@ -204,6 +204,12 @@
                                                             <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
                                                                 user="menu">
                                                                 @can('sale.pos.view')
+                                                                    <li>
+                                                                        <a data-href="{{ action('SellController@print', $sale->id) }}"
+                                                                            class="btn print-invoice"><i
+                                                                                class="dripicons-print"></i>
+                                                                            @lang('lang.generate_invoice')</a>
+                                                                    </li>
                                                                     <li>
                                                                         <a data-href="{{ action('SellController@show', $sale->id) }}"
                                                                             data-container=".view_modal"
@@ -314,8 +320,8 @@
                                                 </td>
                                                 <td>
                                                     @if ($return->status == 'final')
-                                                        <span
-                                                        class="badge badge-success">@lang('lang.completed')</span>@else
+                                                        <span class="badge badge-success">@lang('lang.completed')</span>
+                                                    @else
                                                         {{ ucfirst($return->status) }}
                                                     @endif
                                                 </td>
@@ -430,8 +436,8 @@
                                                 </td>
                                                 <td>
                                                     @if ($discount->status == 'final')
-                                                        <span
-                                                        class="badge badge-success">@lang('lang.completed')</span>@else
+                                                        <span class="badge badge-success">@lang('lang.completed')</span>
+                                                    @else
                                                         {{ ucfirst($discount->status) }}
                                                     @endif
                                                 </td>
@@ -538,8 +544,8 @@
                                                 </td>
                                                 <td>
                                                     @if ($point->status == 'final')
-                                                        <span
-                                                        class="badge badge-success">@lang('lang.completed')</span>@else
+                                                        <span class="badge badge-success">@lang('lang.completed')</span>
+                                                    @else
                                                         {{ ucfirst($point->status) }}
                                                     @endif
                                                 </td>
@@ -704,10 +710,29 @@
         </div>
     </div>
     <section class="invoice print_section print-only" id="print_section"> </section>
+    <section class="invoice print_section print-only" id="receipt_section"> </section>
 @endsection
 
 @section('javascript')
     <script>
+        $(document).on('click', '.print-invoice', function() {
+            $(".modal").modal("hide");
+            $.ajax({
+                method: "get",
+                url: $(this).data("href"),
+                data: {},
+                success: function(result) {
+                    if (result.success) {
+                        pos_print(result.html_content);
+                    }
+                },
+            });
+        })
 
+        function pos_print(receipt) {
+            $("#receipt_section").html(receipt);
+            __currency_convert_recursively($("#receipt_section"));
+            __print_receipt("receipt_section");
+        }
     </script>
 @endsection
