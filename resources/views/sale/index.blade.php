@@ -219,7 +219,7 @@
         </div>
     </section>
     <!-- This will be printed -->
-    <section class="invoice print-only" style="max-width: 350px !important;" id="receipt_section"> </section>
+    <section class="invoice print_section print-only" id="receipt_section"> </section>
 @endsection
 
 @section('javascript')
