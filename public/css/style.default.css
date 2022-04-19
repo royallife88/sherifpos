@@ -2890,7 +2890,15 @@ a > code {
     display: none;
 }
 
-#scroll-content {
-    width: 250px;
-    background-color: #ccc;
+.btn-group-custom {
+    width: 100%;
+    padding: 5px !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.btn-group-custom .btn {
+    font-size: 11px !important;
+    width: 12% !important;
+    margin: 2px 5px;
 }

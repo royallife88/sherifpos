@@ -2,7 +2,7 @@
     <div class="modal-content">
 
         {!! Form::open(['url' => action('TransactionPaymentController@payCustomerDue', $customer->id), 'method' =>
-        'post', 'pay_customer_due_form' ])
+        'post', 'id' => 'pay_customer_due_form' ])
         !!}
 
         <div class="modal-header">

@@ -87,6 +87,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('customer/pay-customer-due/{customer_id}', 'CustomerController@postPayContactDue');
     Route::get('customer/pay-customer-due/{customer_id}', 'CustomerController@getPayContactDue');
     Route::get('customer/get-important-date-row', 'CustomerController@getImportantDateRow');
+    Route::post('customer/update-address/{customer_id}', 'CustomerController@updateAddress');
     Route::resource('customer', CustomerController::class);
 
     Route::get('customer-sizes/print/{id}', 'CustomerSizeController@print');
@@ -216,6 +217,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::resource('gift-card', GiftCardController::class);
     Route::get('service-fee/get-details/{service_fee_id}', 'ServiceFeeController@getDetails');
     Route::resource('service-fee', ServiceFeeController::class);
+    Route::get('delivery-zone/get-details/{id}', 'DeliveryZoneController@getDetails');
+    Route::resource('delivery-zone', DeliveryZoneController::class);
 
     Route::group(['prefix' => 'hrm'], function () {
         Route::resource('job', JobController::class);

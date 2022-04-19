@@ -1165,4 +1165,13 @@ return [
     'edit_service_fee' => 'Edit Service Fee',
     'service' => 'Service',
     'select_service' => 'Select Service',
+
+    'add_delivery_zone' => 'Add Delivery Zone',
+    'edit_add_delivery_zone' => 'Edit Delivery Zone',
+    'delivery_zone' => 'Delivery Zone',
+    'coverage_area' => 'Coverage Area',
+    'or_enter_manually' => 'Or Enter Manually',
+    'select_the_zone' => 'Select the Zone',
+    'delivery_zone_cost' => 'Delivery Zone Cost',
+    'update_address' => 'Update Address',
 ];

@@ -11,6 +11,7 @@ use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
+use App\Models\DeliveryZone;
 use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
@@ -464,6 +465,7 @@ class SellController extends Controller
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
         $service_fees = ServiceFee::pluck('name', 'id');
+        $delivery_zones = DeliveryZone::pluck('name', 'id');
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -492,6 +494,7 @@ class SellController extends Controller
             'customer_types',
             'discount_customer_types',
             'service_fees',
+            'delivery_zones',
             'users',
         ));
     }
@@ -545,6 +548,7 @@ class SellController extends Controller
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
         $service_fees = ServiceFee::pluck('name', 'id');
+        $delivery_zones = DeliveryZone::pluck('name', 'id');
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -557,7 +561,8 @@ class SellController extends Controller
             'payment_types',
             'payment_status_array',
             'weighing_scale_setting',
-            'service_fees'
+            'service_fees',
+            'delivery_zones'
         ));
     }
 

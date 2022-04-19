@@ -1340,7 +1340,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id, #print_and_draft_hidden"
+        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id, #print_and_draft_hidden, #manual_delivery_zone"
     ).val("");
     $("#dining_action_type").val("");
     $("#status").val("final");
@@ -1357,6 +1357,8 @@ function reset_pos_form() {
     $("#payment_status").change();
     $("#deliveryman_id").val("");
     $("#deliveryman_id").selectpicker("refresh");
+    $("#delivery_zone_id").val("");
+    $("#delivery_zone_id").selectpicker("refresh");
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
     $("#terms_and_condition_id").selectpicker("render");
     $("tr.product_row").remove();
@@ -1409,7 +1411,11 @@ function confirmCancel() {
                         "/pos/update-transaction-status-cancel/" +
                         transaction_id,
                     data: {},
-                    success: function (result) {},
+                    success: function (result) {
+                        setTimeout(() => {
+                            window.close();
+                        }, 2000);
+                    },
                 });
             }
         }
@@ -1441,6 +1447,92 @@ $(document).on("click", "#recent-transaction-btn", function () {
 });
 
 $(document).ready(function () {
+    customer_sales_table = $("#customer_sales_table").DataTable({
+        lengthChange: true,
+        paging: true,
+        info: false,
+        bAutoWidth: false,
+        language: {
+            url: dt_lang_url,
+        },
+        lengthMenu: [
+            [10, 25, 50, 75, 100, 200, 500, -1],
+            [10, 25, 50, 75, 100, 200, 500, "All"],
+        ],
+        dom: "lBfrtip",
+        stateSave: true,
+        buttons: buttons,
+        processing: true,
+        serverSide: true,
+        aaSorting: [[0, "desc"]],
+        initComplete: function () {
+            $(this.api().table().container())
+                .find("input")
+                .parent()
+                .wrap("<form>")
+                .parent()
+                .attr("autocomplete", "off");
+        },
+        ajax: {
+            url: "/pos/get-recent-transactions",
+            data: function (d) {
+                d.customer_id = $("#customer_id").val();
+            },
+        },
+        columnDefs: [
+            {
+                targets: [9],
+                orderable: false,
+                searchable: false,
+            },
+        ],
+        columns: [
+            { data: "transaction_date", name: "transaction_date" },
+            { data: "invoice_no", name: "invoice_no" },
+            { data: "final_total", name: "final_total" },
+            { data: "method", name: "transaction_payments.method" },
+            { data: "ref_number", name: "transaction_payments.ref_number" },
+            { data: "status", name: "transactions.status" },
+            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "created_by", name: "users.name" },
+            { data: "canceled_by", name: "canceled_by" },
+            { data: "action", name: "action" },
+        ],
+        createdRow: function (row, data, dataIndex) {},
+        footerCallback: function (row, data, start, end, display) {
+            var intVal = function (i) {
+                return typeof i === "string"
+                    ? i.replace(/[\$,]/g, "") * 1
+                    : typeof i === "number"
+                    ? i
+                    : 0;
+            };
+
+            this.api()
+                .columns(".sum", { page: "current" })
+                .every(function () {
+                    var column = this;
+                    if (column.data().count()) {
+                        var sum = column.data().reduce(function (a, b) {
+                            a = intVal(a);
+                            if (isNaN(a)) {
+                                a = 0;
+                            }
+
+                            b = intVal(b);
+                            if (isNaN(b)) {
+                                b = 0;
+                            }
+
+                            return a + b;
+                        });
+                        $(column.footer()).html(
+                            __currency_trans_from_en(sum, false)
+                        );
+                    }
+                });
+        },
+    });
     recent_transaction_table = $("#recent_transaction_table").DataTable({
         lengthChange: true,
         paging: true,
@@ -1707,6 +1799,9 @@ $(document).ready(function () {
         },
     });
 });
+$(document).on("shown.bs.modal", "#contact_details_modal", function () {
+    customer_sales_table.ajax.reload();
+});
 $(document).on("shown.bs.modal", "#recentTransaction", function () {
     recent_transaction_table.ajax.reload();
 });
@@ -1850,6 +1945,7 @@ function getCustomerPointDetails() {
         data: { store_id: $("#store_id").val(), product_array: product_array },
         dataType: "json",
         success: function (result) {
+            $("#customer_address").val(result.customer.address);
             $(".customer_mobile_span").text(result.customer.mobile_number);
             $(".customer_name_span").text(result.customer.name);
             $(".customer_points_span").text(
@@ -1888,11 +1984,40 @@ function getCustomerPointDetails() {
                 __currency_trans_from_en(result.balance, false)
             );
             $("#current_deposit_balance").val(result.balance);
-
+            let pay_due_url =
+                base_path +
+                "/transaction-payment/get-customer-due/" +
+                result.customer.id;
+            $("#pay_customer_due_btn").data("href", pay_due_url);
+            if (result.balance < 0) {
+                $("#pay_customer_due_btn").attr("disabled", false);
+            } else {
+                $("#pay_customer_due_btn").attr("disabled", true);
+            }
             calculate_sub_totals();
         },
     });
 }
+$(document).on("submit", "form#pay_customer_due_form", function (e) {
+    e.preventDefault();
+    let url = $(this).attr("action");
+    let data = $(this).serialize();
+    $.ajax({
+        method: "POST",
+        url: url,
+        data: data,
+        dataType: "json",
+        success: function (result) {
+            if (result.success) {
+                swal("Success!", result.msg, "success");
+                $(".view_modal").modal("hide");
+                $('#customer_id').change();
+            } else {
+                swal("Error!", result.msg, "error");
+            }
+        },
+    });
+});
 $(document).on("click", ".redeem_btn", function () {
     $("#is_redeem_points").val(1);
     $(this).attr("disabled", true);
@@ -2317,6 +2442,49 @@ $(document).on("change", "#service_fee_id", function () {
                 $("#service_fee_rate").val(result.rate);
             }
             calculate_sub_totals();
+        },
+    });
+});
+
+$(document).on("click", ".filter-btn", function () {
+    $(this)
+        .parents(".filter-btn-div")
+        .siblings(".filter-btn-div")
+        .find(".btn")
+        .removeClass("active");
+});
+
+$(document).on("change", "#delivery_zone_id", function () {
+    let delivery_zone_id = $(this).val();
+
+    $.ajax({
+        method: "get",
+        url: "/delivery-zone/get-details/" + delivery_zone_id,
+        data: {},
+        success: function (result) {
+            $("#delivery_cost").val(result.cost);
+            $("#deliveryman_id").val(result.deliveryman_id);
+            $("#deliveryman_id").selectpicker("refresh");
+            $("#deliveryman_id").change();
+            calculate_sub_totals();
+        },
+    });
+});
+
+$(document).on("click", "#update_customer_address", function () {
+    let customer_id = $("#customer_id").val();
+    let address = $("#customer_address").val();
+
+    $.ajax({
+        method: "post",
+        url: "/customer/update-address/" + customer_id,
+        data: { address },
+        success: function (result) {
+            if (result.success) {
+                swal("Success", result.msg, "success");
+            } else {
+                swal("Error", result.msg, "error");
+            }
         },
     });
 });

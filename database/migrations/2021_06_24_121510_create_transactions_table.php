@@ -112,6 +112,8 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('service_fee_id')->nullable();
             $table->decimal('service_fee_rate', 15, 4)->nullable();
             $table->decimal('service_fee_value', 15, 4)->nullable();
+            $table->unsignedBigInteger('delivery_zone_id')->nullable();
+            $table->string('manual_delivery_zone')->nullable();
             $table->string('table_no')->nullable();
             $table->unsignedBigInteger('canceled_by')->nullable();
             $table->foreign('canceled_by')->references('id')->on('users')->onDelete('cascade');

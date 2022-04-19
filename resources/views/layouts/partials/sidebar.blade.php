@@ -1128,6 +1128,12 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
                         @endif
+                        @can('settings.delivery_zone.view')
+                        <li
+                            class="@if(request()->segment(1) == 'delivery-zone' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('DeliveryZoneController@index')}}">{{__('lang.delivery_zone')}}</a>
+                        </li>
+                        @endcan
                         @can('product_module.tax.view')
                         <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('TaxController@index')}}">{{__('lang.tax')}}</a>

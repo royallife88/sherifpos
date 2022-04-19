@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\DeliveryZone;
 use App\Models\DiningRoom;
 use App\Models\Employee;
 use App\Models\GiftCard;
@@ -110,6 +111,7 @@ class SellPosController extends Controller
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
         $languages = System::getLanguageDropdown();
         $service_fees = ServiceFee::pluck('name', 'id');
+        $delivery_zones = DeliveryZone::pluck('name', 'id');
 
         if (empty($store_pos)) {
             $output = [
@@ -138,6 +140,7 @@ class SellPosController extends Controller
             'weighing_scale_setting',
             'languages',
             'service_fees',
+            'delivery_zones',
         ));
     }
 
@@ -196,6 +199,8 @@ class SellPosController extends Controller
                 'sale_note' => $request->sale_note,
                 'staff_note' => $request->staff_note,
                 'terms_and_condition_id' => !empty($request->terms_and_condition_id) ? $request->terms_and_condition_id : null,
+                'delivery_zone_id' => !empty($request->delivery_zone_id) ? $request->delivery_zone_id : null,
+                'manual_delivery_zone' => !empty($request->manual_delivery_zone) ? $request->manual_delivery_zone : null,
                 'deliveryman_id' => !empty($request->deliveryman_id_hidden) ? $request->deliveryman_id_hidden : null,
                 'delivery_status' => 'pending',
                 'delivery_cost' => $this->commonUtil->num_uf($request->delivery_cost),
@@ -471,6 +476,7 @@ class SellPosController extends Controller
         $store_poses = [];
         $languages = System::getLanguageDropdown();
         $service_fees = ServiceFee::pluck('name', 'id');
+        $delivery_zones = DeliveryZone::pluck('name', 'id');
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -491,6 +497,7 @@ class SellPosController extends Controller
             'store_poses',
             'languages',
             'service_fees',
+            'delivery_zones',
         ));
     }
 

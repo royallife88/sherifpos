@@ -169,7 +169,7 @@ class CustomerController extends Controller
 
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final']);
-            // ->whereNull('parent_return_id');
+        // ->whereNull('parent_return_id');
 
         if (!empty(request()->start_date)) {
             $sale_query->where('transaction_date', '>=', request()->start_date);
@@ -186,7 +186,7 @@ class CustomerController extends Controller
 
         $sale_return_query = Transaction::whereIn('transactions.type', ['sell_return'])
             ->whereIn('transactions.status', ['final']);
-            // ->whereNull('parent_return_id');
+        // ->whereNull('parent_return_id');
 
         if (!empty(request()->start_date)) {
             $sale_return_query->where('transaction_date', '>=', request()->start_date);
@@ -470,5 +470,31 @@ class CustomerController extends Controller
         return view('customer.partial.important_date_row')->with(compact(
             'index'
         ));
+    }
+
+    /**
+     *  update customer address
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function updateAddress($id)
+    {
+        try {
+            $customer = Customer::find($id);
+            $customer->address = request()->address;
+            $customer->save();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 }

@@ -297,7 +297,7 @@ class TransactionPaymentController extends Controller
     public function payCustomerDue(Request $request, $customer_id)
     {
         try {
-            $amount = $request->amount;
+            $amount = $this->commonUtil->num_uf($request->amount);
             $transactions = Transaction::where('customer_id', $customer_id)->where('type', 'sell')->whereIn('payment_status', ['pending', 'partial'])->orderBy('transaction_date', 'asc')->get();
 
             DB::beginTransaction();
@@ -346,6 +346,9 @@ class TransactionPaymentController extends Controller
                 'success' => false,
                 'msg' => __('lang.something_went_wrong')
             ];
+        }
+        if (request()->ajax()) {
+            return $output;
         }
 
         return redirect()->back()->with('status', $output);

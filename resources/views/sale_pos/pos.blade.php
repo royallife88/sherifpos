@@ -49,8 +49,26 @@
                                                 {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
                                         </div>
+
+                                        <div class="col-md-1">
+                                            <div class="form-group" style="margin-top: 31px;" >
+                                                <select class="form-control" name="tax_id" id="tax_id">
+                                                    <option value="">No Tax</option>
+                                                    @foreach ($taxes as $tax)
+                                                        <option data-rate="{{ $tax->rate }}"
+                                                            @if (!empty($transaction) && $transaction->tax_id == $tax->id) selected @endif
+                                                            value="{{ $tax->id }}">{{ $tax->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-link btn-sm" style="margin-top: 24px;" data-toggle="modal"
+                                                data-target="#delivery-cost-modal"><img src="{{asset('images/delivery.jpg')}}" alt="delivery" style="height: 35px; width: 40px;"></button>
+                                        </div>
                                         @if (session('system_mode') == 'restaurant')
-                                            <div class="col-md-3">
+                                            <div class="col-md-1">
                                                 <button type="button"
                                                     data-href="{{ action('DiningRoomController@getDiningModal') }}"
                                                     data-container="#dining_model"
@@ -137,7 +155,8 @@
                                                 {!! Form::select('service_fee_id', $service_fees, null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
                                             </div>
                                         </div>
-                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden" value="">
+                                        <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
+                                            value="">
                                         <input type="hidden" name="service_fee_rate" id="service_fee_rate" value="0">
                                         <input type="hidden" name="service_fee_value" id="service_fee_value" value="0">
                                     </div>
@@ -235,17 +254,11 @@
                                             </div>
 
                                             <div class="col-sm-4">
-                                                <span class="totals-title">{{ __('lang.tax') }} <button type="button"
-                                                        class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#tax_modal"><i
-                                                            class="dripicons-document-edit"></i></button></span><span
+                                                <span class="totals-title">{{ __('lang.tax') }} </span><span
                                                     id="tax">0.00</span>
                                             </div>
                                             <div class="col-sm-4">
-                                                <span class="totals-title">{{ __('lang.delivery') }} <button
-                                                        type="button" class="btn btn-link btn-sm" data-toggle="modal"
-                                                        data-target="#delivery-cost-modal"><i
-                                                            class="dripicons-document-edit"></i></button></span><span
+                                                <span class="totals-title">{{ __('lang.delivery') }}</span><span
                                                     id="delivery-cost">0.00</span>
                                             </div>
                                         </div>
@@ -400,7 +413,7 @@
 
                     @include('sale_pos.partials.payment_modal')
                     @include('sale_pos.partials.discount_modal')
-                    @include('sale_pos.partials.tax_modal')
+                    {{-- @include('sale_pos.partials.tax_modal') --}}
                     @include('sale_pos.partials.delivery_cost_modal')
                     @include('sale_pos.partials.coupon_modal')
                     @include('sale_pos.partials.contact_details_modal')
