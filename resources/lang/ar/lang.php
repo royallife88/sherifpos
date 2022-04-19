@@ -1156,4 +1156,7 @@ return [
 
     'canceled_by' => 'ألغى بواسطة',
     'due_sale_list' => 'متأخرات',
+
+    'items_count' => 'عدد الأصناف',
+    'items_quantity' => 'كمية الأصناف',
 ];

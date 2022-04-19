@@ -1174,4 +1174,6 @@ return [
     'select_the_zone' => 'Select the Zone',
     'delivery_zone_cost' => 'Delivery Zone Cost',
     'update_address' => 'Update Address',
+    'items_count' => 'Items Count',
+    'items_quantity' => 'Items Quantity',
 ];

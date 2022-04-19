@@ -141,11 +141,15 @@ $(document).on("change", "#amount", function () {
 
 function calculate_final_cost_for_products() {
     var total_qauntity = 0;
+    var item_count = 0;
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         total_qauntity += quantity;
+        item_count++;
     });
 
+    $('.items_count_span').text(item_count / 2);
+    $('.items_quantity_span').text(total_qauntity);
     let unit_other_expenses =
         __read_number($("#other_expenses")) / total_qauntity;
     let unit_discount_amount =
