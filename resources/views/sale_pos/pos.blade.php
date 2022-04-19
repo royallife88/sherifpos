@@ -50,7 +50,7 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-1">
+                                        <div class="col-md-1" style="padding: 0 !important;">
                                             <div class="form-group" style="margin-top: 31px;" >
                                                 <select class="form-control" name="tax_id" id="tax_id">
                                                     <option value="">No Tax</option>
@@ -64,17 +64,17 @@
                                             </div>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-link btn-sm" style="margin-top: 24px;" data-toggle="modal"
+                                            <button type="button" class="btn btn-link btn-sm" style="margin-top: 30px; padding: 0px !important;" data-toggle="modal"
                                                 data-target="#delivery-cost-modal"><img src="{{asset('images/delivery.jpg')}}" alt="delivery" style="height: 35px; width: 40px;"></button>
                                         </div>
                                         @if (session('system_mode') == 'restaurant')
                                             <div class="col-md-1">
-                                                <button type="button"
+                                                <button type="button" style="padding: 0px !important;"
                                                     data-href="{{ action('DiningRoomController@getDiningModal') }}"
                                                     data-container="#dining_model"
                                                     class="btn btn-modal pull-right mt-4"><img
                                                         src="{{ asset('images/black-table.jpg') }}" alt="black-table"
-                                                        style="width: 50px; height: 35px;"></button>
+                                                        style="width: 40px; height: 33px; margin-top: 7px;"></button>
                                             </div>
                                         @endif
                                     </div>
