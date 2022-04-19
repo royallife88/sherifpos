@@ -660,21 +660,24 @@ function checkName() {
     let product_class_id = $("#product_class_id").val();
     let category_id = $("#category_id").val();
 
-    $.ajax({
-        method: "get",
-        url: "/product/check-name",
-        data: {
-            name: name,
-            product_class_id: product_class_id,
-            category_id: category_id,
-        },
-        success: function (result) {
-            if (!result.success) {
-                swal("Error", result.msg, "error");
-                $("#name").val("");
-            }
-        },
-    });
+    let system_mode = $("#system_mode").val();
+    if (system_mode != "garments") {
+        $.ajax({
+            method: "get",
+            url: "/product/check-name",
+            data: {
+                name: name,
+                product_class_id: product_class_id,
+                category_id: category_id,
+            },
+            success: function (result) {
+                if (!result.success) {
+                    swal("Error", result.msg, "error");
+                    $("#name").val("");
+                }
+            },
+        });
+    }
 }
 $(document).on("change", "#purchase_price", function () {
     $(".default_purchase_price").val($(this).val());
