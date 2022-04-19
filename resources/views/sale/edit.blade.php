@@ -20,7 +20,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         {!! Form::label('customer_id', __('lang.customer'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('customer_id', $customers, $sale->customer_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'customer_id']) !!}
@@ -34,7 +34,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             {!! Form::label('status', __('lang.status') . ':*') !!}
                                             {!! Form::select('status', ['final' => __('lang.completed'), 'pending' => __('lang.pending')], $sale->status, ['class' => 'form-control', 'data-live-search' => 'true']) !!}
@@ -48,10 +48,12 @@
                                     </div>
                                     @if (session('system_mode') == 'garments')
                                         <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger" style="margin-top: 30px;"
-                                                data-toggle="modal" data-target="#customer_sizes_modal"><i
-                                                    class="fa fa-user-secret" data-toggle="tooltip"
-                                                    title="@lang('lang.customer_size')"></i></button>
+                                            <button type="button" class="btn btn-default" style="margin-top: 30px;"
+                                                data-toggle="modal" data-target="#customer_sizes_modal"><img
+                                                    style="width: 20px; height: 25px;"
+                                                    src="{{ asset('images/269 Garment Icon.png') }}"
+                                                    alt="@lang('lang.customer_size')" data-toggle="tooltip"
+                                                    title="@lang('lang.customer_size')"></button>
                                         </div>
                                     @endif
                                     <div class="col-md-8 offset-md-2" style="margin-top: 10px;">

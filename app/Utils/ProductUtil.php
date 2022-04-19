@@ -251,8 +251,8 @@ class ProductUtil extends Util
                 }
 
                 if (!empty($v['id'])) {
-                    $v['default_purchase_price'] = (float)$v['default_purchase_price'];
-                    $v['default_sell_price'] = (float)$v['default_sell_price'];
+                    $v['default_purchase_price'] = (float)$this->num_uf($v['default_purchase_price']);
+                    $v['default_sell_price'] = (float)$this->num_uf($v['default_sell_price']);
                     $variation = Variation::find($v['id']);
                     $variation->name = $v['name'];
                     $variation->sub_sku = $sub_sku;
