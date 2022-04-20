@@ -48,6 +48,7 @@ class CreateTransactionsTable extends Migration
             $table->decimal('gift_card_amount', 15, 4)->nullable();
             $table->unsignedBigInteger('tax_id')->nullable();
             $table->foreign('tax_id')->references('id')->on('taxes')->onDelete('cascade');
+            $table->string('tax_method', 25)->nullable();
             $table->decimal('total_tax', 15, 4)->nullable();
             $table->decimal('total_item_tax', 15, 4)->default(0);
             $table->decimal('other_expenses', 15, 4)->default(0);

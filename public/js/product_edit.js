@@ -409,7 +409,7 @@ $(document).on("submit", "form#quick_add_tax_form", function (e) {
                 $.ajax({
                     method: "get",
                     url: "/tax/get-dropdown",
-                    data: {},
+                    data: { type: "product_tax" },
                     contactType: "html",
                     success: function (data_html) {
                         $("#tax_id").empty().append(data_html);
@@ -721,7 +721,7 @@ function calculate_price_base_on_raw_material() {
 }
 $(document).on("click", ".remove_raw_material_btn", function () {
     calculate_price_base_on_raw_material();
-})
+});
 $(document).ready(function () {
     $("#discount").change();
     $("#consumption_table > tbody > tr").each(function () {

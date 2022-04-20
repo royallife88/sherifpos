@@ -1176,4 +1176,6 @@ return [
     'update_address' => 'Update Address',
     'items_count' => 'Items Count',
     'items_quantity' => 'Items Quantity',
+    'product_tax' => 'Product Tax',
+    'general_tax' => 'General Tax',
 ];

@@ -145,7 +145,7 @@ function calculate_sub_totals() {
         total += sub_total;
         if (quantity > 0) {
             item_tax = item_tax / quantity;
-            if(tax_method === 'exclusive'){
+            if (tax_method === "exclusive") {
                 total_item_tax += item_tax;
             }
         }
@@ -156,6 +156,12 @@ function calculate_sub_totals() {
     $("#item").text(item_count);
 
     let tax_amount = __read_number($("#total_tax"));
+    let tax_type = $("#tax_type").val();
+    let tax_method = $("#tax_method").val();
+
+    if (tax_method == "inclusive") {
+        tax_amount = 0;
+    }
     __write_number($("#total_tax"), tax_amount);
     total += tax_amount;
 
@@ -281,11 +287,15 @@ $(document).on("change", "#amount", function (e) {
     let amount = __read_number($("#amount"));
     let total_amount_paid = __read_number($("#total_amount_paid"));
 
-    if(amount > total_amount_paid) {
-        swal('warning', LANG.amount_exceeds_total_paid +' :'+total_amount_paid, 'warning');
+    if (amount > total_amount_paid) {
+        swal(
+            "warning",
+            LANG.amount_exceeds_total_paid + " :" + total_amount_paid,
+            "warning"
+        );
         __write_number($("#amount"), total_amount_paid);
     }
-})
+});
 
 $(document).on("click", ".payment-btn", function (e) {
     var audio = $("#mysoundclip2")[0];

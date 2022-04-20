@@ -543,11 +543,19 @@ function calculate_sub_totals() {
 
         let tax_method = $(tr).find(".tax_method").val();
         let tax_rate = __read_number($(tr).find(".tax_rate"));
-        let item_tax = (sub_total * tax_rate) / 100;
-        __write_number($(tr).find(".item_tax"), item_tax);
-        total_item_tax += item_tax;
-        if (tax_method === "exclusive") {
-            total_tax_payable += item_tax;
+        let tax_id = __read_number($(tr).find(".tax_id"));
+        let main_tax_id = $("#tax_id_hidden").val();
+        let main_tax_type = $("#tax_type").val();
+
+        if (main_tax_type == "product_tax") {
+            if (main_tax_id == tax_id) {
+                let item_tax = (sub_total * tax_rate) / 100;
+                __write_number($(tr).find(".item_tax"), item_tax);
+                total_item_tax += item_tax;
+                if (tax_method === "exclusive") {
+                    total_tax_payable += item_tax;
+                }
+            }
         }
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
@@ -570,7 +578,7 @@ function calculate_sub_totals() {
     total -= discount_amount;
 
     let tax_amount = get_tax_amount(total);
-    __write_number($("#total_tax"), tax_amount);
+
     total += tax_amount;
 
     let points_redeemed_value = 0;
@@ -744,15 +752,26 @@ $("#tax_btn").click(function () {
 
 function get_tax_amount(total) {
     let tax_rate = parseFloat($("#tax_id").find(":selected").data("rate"));
+    let tax_type = $("#tax_type").val();
+    let tax_method = $("#tax_method").val();
     let tax_amount = 0;
-    if (!isNaN(tax_rate)) {
-        tax_amount = __get_percent_value(total, tax_rate);
+    if (tax_type == "general_tax") {
+        if (!isNaN(tax_rate)) {
+            tax_amount = __get_percent_value(total, tax_rate);
+        }
     }
 
-    $("#tax").text(__currency_trans_from_en(tax_amount, false));
+    if (tax_method == "exclusive") {
+        $("#tax").text(__currency_trans_from_en(tax_amount, false));
+    } else {
+        $("#tax").text(__currency_trans_from_en(0, false));
+    }
     __write_number($("#total_tax"), tax_amount);
 
-    return tax_amount;
+    if (tax_method == "exclusive") {
+        return tax_amount;
+    }
+    return 0;
 }
 function get_discount_amount(total) {
     let discount_type = $("#discount_type").val();
@@ -1350,6 +1369,9 @@ function reset_pos_form() {
     $("button#redeem_btn").attr("disabled", false);
     $("button.add_to_deposit").attr("disabled", false);
     set_default_customer();
+    $("#tax_method").val("");
+    $("#tax_rate").val("0");
+    $("#tax_type").val("");
     $("#tax_id").val("");
     $("#tax_id").selectpicker("refresh");
     $("#payment_status").val("");
@@ -2011,7 +2033,7 @@ $(document).on("submit", "form#pay_customer_due_form", function (e) {
             if (result.success) {
                 swal("Success!", result.msg, "success");
                 $(".view_modal").modal("hide");
-                $('#customer_id').change();
+                $("#customer_id").change();
             } else {
                 swal("Error!", result.msg, "error");
             }
@@ -2029,6 +2051,17 @@ $("#customer_id").change();
 
 $(document).on("change", "#tax_id", function () {
     $("#tax_id_hidden").val($(this).val());
+    $.ajax({
+        method: "GET",
+        url: "/tax/get-details/" + $(this).val(),
+        data: {},
+        success: function (result) {
+            $("#tax_method").val(result.tax_method);
+            $("#tax_rate").val(result.rate);
+            $("#tax_type").val(result.type);
+            calculate_sub_totals();
+        },
+    });
 });
 $(document).on("change", "#deliveryman_id", function () {
     $("#deliveryman_id_hidden").val($(this).val());

@@ -398,7 +398,7 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return double
      */
-    public function getTotalSaleTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
+    public function getTotalSaleItemTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $sell_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
@@ -429,6 +429,90 @@ class HomeController extends Controller
 
         if (!empty($sell_query)) {
             return $sell_query->total_tax - $sell_query->total_return_tax;
+        }
+        return 0;
+    }
+
+    /**
+     * get sales amount
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param string $store_id
+     * @param string $store_pos_id
+     * @return double
+     */
+    public function getTotalSaleGeneralTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
+    {
+        $sell_query = Transaction::where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
+        if (!empty($start_date)) {
+            $sell_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sell_query->whereDate('transaction_date', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $sell_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
+        if (!empty($store_id)) {
+            $sell_query->whereIn('store_id', $store_id);
+        }
+        if (!empty($store_pos_id)) {
+            $sell_query->where('store_pos_id', $store_pos_id);
+        }
+        $sell = $sell_query->select(
+            DB::raw('SUM(IF(transactions.tax_method = "inclusive", total_tax, 0)) as total_tax'),
+        )->first();
+
+        $sell_return_total_tax = $this->getTotalSaleReturnGeneralTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
+        if (!empty($sell)) {
+            return $sell->total_tax - $sell_return_total_tax;
+        }
+        return 0;
+    }
+
+    /**
+     * get sales amount
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param string $store_id
+     * @param string $store_pos_id
+     * @return double
+     */
+    public function getTotalSaleReturnGeneralTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
+    {
+        $sell_query = Transaction::join('transactions as sell_return', 'transactions.id', 'sell_return.return_parent_id')
+            ->where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
+        if (!empty($start_date)) {
+            $sell_query->whereDate('transactions.transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $sell_query->whereDate('transactions.transaction_date', '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $sell_query->where('transactions.transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $sell_query->where('transactions.transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
+        if (!empty($store_id)) {
+            $sell_query->whereIn('transactions.store_id', $store_id);
+        }
+        if (!empty($store_pos_id)) {
+            $sell_query->where('transactions.store_pos_id', $store_pos_id);
+        }
+        $sell_return = $sell_query->select(
+            DB::raw('SUM(IF(transactions.tax_method = "inclusive", transactions.total_tax, 0)) as total_tax'),
+        )->first();
+
+        if (!empty($sell_return)) {
+            return $sell_return->total_tax ?? 0;
         }
         return 0;
     }
@@ -478,8 +562,8 @@ class HomeController extends Controller
         }
 
         $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
-        $total_sale_tax_inclusive = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id, 'inclusive');
-        $total_sale_tax_exclusive = $this->getTotalSaleTaxAmount($start_date, $end_date, $store_id, $store_pos_id, 'exclusive');
+        $total_sale_item_tax_inclusive = $this->getTotalSaleItemTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
+        $total_sale_general_tax_inclusive = $this->getTotalSaleGeneralTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
         // print_r($total_sale_tax_exclusive); die();
 
         $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
@@ -542,7 +626,7 @@ class HomeController extends Controller
         $cost_sold_returned_product = $this->transactionUtil->getCostOfSoldReturnedProducts($start_date, $end_date, $store_id, $store_pos_id);
         $gift_card_sold = GiftCard::sum('balance');
 
-        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_tax_inclusive + $sell_return_query->total_taxes;  //excluding taxes from profit as its not part of profit
+        $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;  //excluding taxes from profit as its not part of profit
 
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {

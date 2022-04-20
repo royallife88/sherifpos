@@ -61,6 +61,9 @@
                                                     @endforeach
                                                 </select>
                                                 <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">
+                                                <input type="hidden" name="tax_method" id="tax_method" value="">
+                                                <input type="hidden" name="tax_rate" id="tax_rate" value="0">
+                                                <input type="hidden" name="tax_type" id="tax_type" value="">
                                             </div>
                                         </div>
                                         <div class="col-md-1">

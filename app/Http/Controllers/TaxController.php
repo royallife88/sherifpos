@@ -34,9 +34,15 @@ class TaxController extends Controller
      */
     public function index()
     {
-        $taxes = Tax::get();
+        $query = Tax::where('id', '>', 0);
+        $type = request()->type ?? 'product_tax';
 
-        return view('tax.index')->with(compact('taxes'));
+        if (!empty(request()->type)) {
+            $query->where('type', request()->type);
+        }
+        $taxes = $query->get();
+
+        return view('tax.index')->with(compact('taxes', 'type'));
     }
 
     /**
@@ -47,12 +53,14 @@ class TaxController extends Controller
     public function create()
     {
         $quick_add = request()->quick_add ?? null;
+        $type = request()->type ?? 'product_tax';
 
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('tax.create')->with(compact(
             'quick_add',
-            'taxes'
+            'taxes',
+            'type'
         ));
     }
 
@@ -68,7 +76,8 @@ class TaxController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['rate' => ['required', 'max:255']]
+            ['rate' => ['required', 'max:255']],
+            ['type' => ['required', 'max:255']]
         );
 
         try {
@@ -139,7 +148,8 @@ class TaxController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['rate' => ['required', 'max:255']]
+            ['rate' => ['required', 'max:255']],
+            ['type' => ['required', 'max:255']],
         );
 
         try {
@@ -191,9 +201,19 @@ class TaxController extends Controller
 
     public function getDropdown()
     {
-        $tax = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $type = request()->type ?? 'product_tax';
+        $query = Tax::orderBy('name', 'asc');
+        if (!empty($type)) {
+            $query->where('type', $type);
+        }
+        $tax = $query->pluck('name', 'id');
         $tax_dp = $this->commonUtil->createDropdownHtml($tax, 'Please Select');
 
         return $tax_dp;
+    }
+    public function getDetails($id)
+    {
+        $tax = Tax::find($id);
+        return $tax;
     }
 }

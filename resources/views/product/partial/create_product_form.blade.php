@@ -260,7 +260,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <span class="input-group-btn">
                 @can('product_module.tax.create')
                     <button class="btn-modal btn btn-default bg-white btn-flat"
-                        data-href="{{ action('TaxController@create') }}?quick_add=1" data-container=".view_modal"><i
+                        data-href="{{ action('TaxController@create') }}?quick_add=1&type=product_tax" data-container=".view_modal"><i
                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>

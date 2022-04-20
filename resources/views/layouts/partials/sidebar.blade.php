@@ -1135,8 +1135,13 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
                         @can('product_module.tax.view')
-                        <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('TaxController@index')}}">{{__('lang.tax')}}</a>
+                        <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2)) && request()->type == "product_tax") active @endif">
+                            <a href="{{action('TaxController@index')}}?type=product_tax">{{__('lang.product_tax')}}</a>
+                        </li>
+                        @endcan
+                        @can('product_module.tax.view')
+                        <li class="@if(request()->segment(1) == 'tax' && empty(request()->segment(2)) && request()->type == "general_tax") active @endif">
+                            <a href="{{action('TaxController@index')}}?type=general_tax">{{__('lang.general_tax')}}</a>
                         </li>
                         @endcan
                         @can('settings.store.view')

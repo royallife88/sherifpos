@@ -76,6 +76,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('grade/get-dropdown', 'GradeController@getDropdown');
     Route::resource('grade', GradeController::class);
     Route::get('tax/get-dropdown', 'TaxController@getDropdown');
+    Route::get('tax/get-details/{tax_id}', 'TaxController@getDetails');
     Route::resource('tax', TaxController::class);
     Route::get('barcode/add-product-row', 'BarcodeController@addProductRow');
     Route::get('barcode/print-barcode', 'BarcodeController@printBarcode');
