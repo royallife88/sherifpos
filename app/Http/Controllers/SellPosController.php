@@ -796,6 +796,7 @@ class SellPosController extends Controller
             )->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
                 ->where(function ($query) use ($term) {
                     $query->where('products.name', 'like', '%' . $term . '%');
+                    $query->orWhere('variations.name', 'like', '%' . $term . '%');
                     $query->orWhere('sku', 'like', '%' . $term . '%');
                     $query->orWhere('sub_sku', 'like', '%' . $term . '%');
                 })
@@ -845,9 +846,9 @@ class SellPosController extends Controller
                         $text = $name;
                         if ($value['type'] == 'variable') {
                             if ($variation['variation_name'] != 'Default') {
-                                $text = $text . ' (' . $variation['variation_name'] . ') ';
+                                $text = $variation['variation_name'];
                             }
-                            $text .= $v->size->name ?? '';
+                            // $text .= $v->size->name ?? '';
                         }
                         $i++;
                         $result[] = [

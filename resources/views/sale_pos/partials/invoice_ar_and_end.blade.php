@@ -112,8 +112,9 @@
         </div>
         <div style="width: 70%; float:left;">
             <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{ $transaction->transaction_date }}
-                {{                 __('lang.date', [], 'ar') }}<br>
-                @lang('lang.reference',[], 'en'): {{ $transaction->invoice_no }} {{ __('lang.reference', [], 'ar') }}<br>
+                {{ __('lang.date', [], 'ar') }}<br>
+                @lang('lang.reference',[], 'en'): {{ $transaction->invoice_no }}
+                {{ __('lang.reference', [], 'ar') }}<br>
                 @if (!empty($transaction->customer) && $transaction->customer->is_default == 0)
                     {{ $transaction->customer->name }}<br>
                     {{ $transaction->customer->address }}<br>
@@ -175,12 +176,14 @@
                 <thead>
                     <tr>
                         @if (empty($print_gift_invoice))
-                            <th style="width: 20%">{{ __('lang.amount', [], 'ar') }} <br> @lang('lang.amount',[], 'en')
+                            <th style="width: 20%">{{ __('lang.amount', [], 'ar') }} <br> @lang('lang.amount',[],
+                                'en')
                             </th>
                         @endif
                         <th style="width: 20%">{{ __('lang.qty', [], 'ar') }} <br> @lang('lang.qty',[], 'en') </th>
                         @if (empty($print_gift_invoice))
-                            <th style="width: 20%;text-align:center !important;">{{ __('lang.price', [], 'ar') }} <br>
+                            <th style="width: 20%;text-align:center !important;">{{ __('lang.price', [], 'ar') }}
+                                <br>
                                 @lang('lang.price',[], 'en') </th>
                         @endif
                         <th style="width: 40%; padding: 0 50px !important;">{{ __('lang.item', [], 'ar') }} <br>
@@ -201,10 +204,11 @@
                                     {{ @num_format($line->sell_price) }}</td>
                             @endif
                             <td style="width: 40% !important;padding: 0 5px 0 10px !important;">
-                                {{ $line->product->translated_name($line->product->id, 'ar') }}
                                 @if (!empty($line->variation))
                                     @if ($line->variation->name != 'Default')
-                                        <b>{{ $line->variation->name }}</b>
+                                        {{ $line->variation->name }}
+                                    @else
+                                        {{ $line->product->translated_name($line->product->id, 'ar') }}
                                     @endif
                                 @endif
                             </td>
@@ -220,7 +224,8 @@
                         </tr>
                         @if ($transaction->total_item_tax != 0)
                             <tr>
-                                <th colspan="2" style="text-align:left">{{ @num_format($transaction->total_item_tax) }}
+                                <th colspan="2" style="text-align:left">
+                                    {{ @num_format($transaction->total_item_tax) }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.tax', [], 'ar') }} <br>
                                     @lang('lang.tax',[], 'en') </th>
@@ -236,7 +241,8 @@
                         @endif
                         @if ($transaction->total_tax != 0)
                             <tr>
-                                <th colspan="2" style="text-align:left">{{ @num_format($transaction->total_tax) }}</th>
+                                <th colspan="2" style="text-align:left">{{ @num_format($transaction->total_tax) }}
+                                </th>
                                 <th colspan="2" style="text-align:right">{{ $transaction->tax->name ?? '' }}</th>
                             </tr>
                         @endif
@@ -244,7 +250,8 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->discount_amount) }}</th>
-                                <th colspan="2" style="text-align:right">{{ __('lang.order_discount', [], 'ar') }} <br>
+                                <th colspan="2" style="text-align:right">{{ __('lang.order_discount', [], 'ar') }}
+                                    <br>
                                     @lang('lang.order_discount',[],
                                     'en')
                                 </th>
@@ -254,7 +261,8 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->total_sp_discount) }}</th>
-                                <th colspan="2" style="text-align:right">{{ __('lang.sales_promotion', [], 'ar') }} <br>
+                                <th colspan="2" style="text-align:right">{{ __('lang.sales_promotion', [], 'ar') }}
+                                    <br>
                                     @lang('lang.sales_promotion' , [], 'en')</th>
                             </tr>
                         @endif
@@ -263,7 +271,8 @@
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->transaction_sell_lines->sum('coupon_discount')) }}
                                 </th>
-                                <th colspan="2" style="text-align:right">{{ __('lang.coupon_discount', [], 'ar') }} <br>
+                                <th colspan="2" style="text-align:right">{{ __('lang.coupon_discount', [], 'ar') }}
+                                    <br>
                                     @lang('lang.coupon_discount',[],
                                     'en')
                                 </th>
@@ -271,9 +280,11 @@
                         @endif
                         @if (!empty($transaction->delivery_cost) && $transaction->delivery_cost != 0)
                             <tr>
-                                <th colspan="2" style="text-align:left">{{ @num_format($transaction->delivery_cost) }}
+                                <th colspan="2" style="text-align:left">
+                                    {{ @num_format($transaction->delivery_cost) }}
                                 </th>
-                                <th colspan="2" style="text-align:right">{{ __('lang.delivery_cost', [], 'ar') }} <br>
+                                <th colspan="2" style="text-align:right">{{ __('lang.delivery_cost', [], 'ar') }}
+                                    <br>
                                     @lang('lang.delivery_cost' , [], 'en') @if (!empty($transaction->deliveryman->employee_name))
                                         ({{ $transaction->deliveryman->employee_name }})
                                     @endif
@@ -284,9 +295,11 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->rp_redeemed_value) }}</th>
-                                <th colspan="2" style="text-align:right">{{ __('lang.redeemed_point_value', [], 'ar') }}
+                                <th colspan="2" style="text-align:right">
+                                    {{ __('lang.redeemed_point_value', [], 'ar') }}
                                     <br>
-                                    @lang('lang.redeemed_point_value',[], 'en') </th>
+                                    @lang('lang.redeemed_point_value',[], 'en')
+                                </th>
                             </tr>
                         @endif
                         <tr>
@@ -337,7 +350,8 @@
                         @endif
                         @if (!empty($payment_data->used_deposit_balance) && $payment_data->used_deposit_balance > 0 && $payment_data->method == 'deposit')
                             <tr>
-                                <td style="padding: 7px;width:30%">{{ __('lang.used_deposit_balance', [], 'ar') }} <br>
+                                <td style="padding: 7px;width:30%">{{ __('lang.used_deposit_balance', [], 'ar') }}
+                                    <br>
                                     {{ __('lang.used_deposit_balance', [], 'en') }}</td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                                     {{ @num_format($payment_data->used_deposit_balance) }}</td>
@@ -348,7 +362,7 @@
                                 <td style="padding: 7px;width:30%">{{ __('lang.due', [], 'ar') }} <br>
                                     {{ __('lang.due', [], 'en') }}</td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                    {{                                     @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
+                                    {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
                                 </td>
                             </tr>
                         @endif

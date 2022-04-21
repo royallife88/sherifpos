@@ -195,10 +195,11 @@ if (empty($invoice_lang)) {
                     @foreach ($transaction->transaction_sell_lines as $line)
                         <tr>
                             <td style="width: 30%; text-algin: right !important;">
-                                {{ $line->product->translated_name($line->product->id, $invoice_lang) }}
                                 @if (!empty($line->variation))
                                     @if ($line->variation->name != 'Default')
-                                        <b>{{ $line->variation->name }}</b>
+                                        {{ $line->variation->name }}
+                                    @else
+                                    {{ $line->product->translated_name($line->product->id, $invoice_lang) }}
                                     @endif
                                 @endif
                             </td>

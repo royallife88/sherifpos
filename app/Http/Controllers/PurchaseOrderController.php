@@ -354,6 +354,7 @@ class PurchaseOrderController extends Controller
             )->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
                 ->where(function ($query) use ($term) {
                     $query->where('products.name', 'like', '%' . $term . '%');
+                    $query->orWhere('variations.name', 'like', '%' . $term . '%');
                     $query->orWhere('sku', 'like', '%' . $term . '%');
                     $query->orWhere('sub_sku', 'like', '%' . $term . '%');
                 })

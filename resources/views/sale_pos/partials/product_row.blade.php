@@ -5,7 +5,7 @@
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 18%; @else 20%; @endif font-size: 13px;">
         @if($product->variation_name != "Default")
-        <b>{{$product->product_name}}</b> {{$product->sub_sku}}
+        <b>{{$product->variation_name}}</b> {{$product->sub_sku}}
         @else
         <b>{{$product->product_name}}</b>
         @endif
