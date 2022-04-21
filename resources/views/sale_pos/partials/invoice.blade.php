@@ -199,7 +199,7 @@ if (empty($invoice_lang)) {
                                     @if ($line->variation->name != 'Default')
                                         {{ $line->variation->name }}
                                     @else
-                                    {{ $line->product->translated_name($line->product->id, $invoice_lang) }}
+                                        {{ $line->product->translated_name($line->product->id, $invoice_lang) }}
                                     @endif
                                 @endif
                             </td>
@@ -211,7 +211,7 @@ if (empty($invoice_lang)) {
                                 {{ @num_format($line->quantity) }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center;vertical-align:bottom; width: 30%;">
-                                    {{ @num_format($line->sub_total) }}</td>
+                                    {{ @num_format($line->sub_total + $line->product_discount_amount) }}</td>
                             @endif
                         </tr>
                     @endforeach
@@ -220,9 +220,18 @@ if (empty($invoice_lang)) {
                     <tfoot>
                         <tr>
                             <th style="font-size: 16px;" colspan="3">@lang('lang.total', [], $invoice_lang)</th>
-                            <th style="font-size: 16px; text-align:right;">{{ @num_format($transaction->grand_total) }}
+                            <th style="font-size: 16px; text-align:right;">
+                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->sum('product_discount_amount')) }}
                             </th>
                         </tr>
+                        @if ($transaction->transaction_sell_lines->sum('product_discount_amount') > 0)
+                            <tr>
+                                <th style="font-size: 16px;" colspan="3">@lang('lang.discount', [], $invoice_lang)</th>
+                                <th style="font-size: 16px; text-align:right;">
+                                    {{ @num_format($transaction->transaction_sell_lines->sum('product_discount_amount')) }}
+                                </th>
+                            </tr>
+                        @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>
                                 <th style="font-size: 16px;" colspan="3">@lang('lang.tax', [], $invoice_lang)</th>
@@ -296,7 +305,8 @@ if (empty($invoice_lang)) {
                         @endif
                         <tr>
                             <th style="font-size: 16px;" colspan="3">@lang('lang.grand_total', [], $invoice_lang)</th>
-                            <th style="font-size: 16px; text-align:right;">{{ @num_format($transaction->final_total) }}
+                            <th style="font-size: 16px; text-align:right;">
+                                {{ @num_format($transaction->final_total) }}
                             </th>
                         </tr>
                         <tr>
@@ -315,7 +325,7 @@ if (empty($invoice_lang)) {
                                 <tr style="background-color:#ddd;">
                                     <td style="font-size: 16px; padding: 7px;">
                                         @if (!empty($payment_data->method))
-                                            {{                                             __('lang.' . $payment_data->method, [], $invoice_lang) }}
+                                            {{ __('lang.' . $payment_data->method, [], $invoice_lang) }}
                                         @endif
                                     </td>
                                     <td style="font-size: 16px; padding: 10px; text-align: right;" colspan="2">
@@ -355,7 +365,7 @@ if (empty($invoice_lang)) {
                                     <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.due', [],
                                         $invoice_lang)</td>
                                     <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
-                                        {{                                         @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
+                                        {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
                                     </td>
                                 </tr>
                             @endif

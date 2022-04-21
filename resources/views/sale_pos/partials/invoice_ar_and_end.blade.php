@@ -184,7 +184,8 @@
                         @if (empty($print_gift_invoice))
                             <th style="width: 20%;text-align:center !important;">{{ __('lang.price', [], 'ar') }}
                                 <br>
-                                @lang('lang.price',[], 'en') </th>
+                                @lang('lang.price',[], 'en')
+                            </th>
                         @endif
                         <th style="width: 40%; padding: 0 50px !important;">{{ __('lang.item', [], 'ar') }} <br>
                             @lang('lang.item',[], 'en') </th>
@@ -195,7 +196,8 @@
                     @foreach ($transaction->transaction_sell_lines as $line)
                         <tr>
                             @if (empty($print_gift_invoice))
-                                <td style="text-align:left;vertical-align:bottom">{{ @num_format($line->sub_total) }}
+                                <td style="text-align:left;vertical-align:bottom">
+                                    {{ @num_format($line->sub_total + $line->product_discount_amount) }}
                                 </td>
                             @endif
                             <td style="text-align:left;vertical-align:bottom">{{ @num_format($line->quantity) }}</td>
@@ -218,10 +220,21 @@
                 <tfoot>
                     @if (empty($print_gift_invoice))
                         <tr>
-                            <th colspan="2" style="text-align:left">{{ @num_format($transaction->grand_total) }}</th>
+                            <th colspan="2" style="text-align:left">
+                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->sum('product_discount_amount')) }}
+                            </th>
                             <th colspan="2" style="text-align:right">{{ __('lang.total', [], 'ar') }} <br>
                                 @lang('lang.total',[], 'en') </th>
                         </tr>
+                        @if ($transaction->transaction_sell_lines->sum('product_discount_amount') > 0)
+                            <tr>
+                                <th colspan="2" style="text-align:left">
+                                    {{ @num_format($transaction->transaction_sell_lines->sum('product_discount_amount')) }}
+                                </th>
+                                <th colspan="2" style="text-align:right">{{ __('lang.discount', [], 'ar') }} <br>
+                                    @lang('lang.discount',[], 'en') </th>
+                            </tr>
+                        @endif
                         @if ($transaction->total_item_tax != 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">
@@ -263,7 +276,8 @@
                                     {{ @num_format($transaction->total_sp_discount) }}</th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.sales_promotion', [], 'ar') }}
                                     <br>
-                                    @lang('lang.sales_promotion' , [], 'en')</th>
+                                    @lang('lang.sales_promotion' , [], 'en')
+                                </th>
                             </tr>
                         @endif
                         @if ($transaction->transaction_sell_lines->sum('coupon_discount'))
@@ -352,7 +366,8 @@
                             <tr>
                                 <td style="padding: 7px;width:30%">{{ __('lang.used_deposit_balance', [], 'ar') }}
                                     <br>
-                                    {{ __('lang.used_deposit_balance', [], 'en') }}</td>
+                                    {{ __('lang.used_deposit_balance', [], 'en') }}
+                                </td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                                     {{ @num_format($payment_data->used_deposit_balance) }}</td>
                             </tr>

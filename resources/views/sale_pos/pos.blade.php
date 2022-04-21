@@ -51,7 +51,7 @@
                                         </div>
 
                                         <div class="col-md-1" style="padding: 0 !important;">
-                                            <div class="form-group" style="margin-top: 31px;" >
+                                            <div class="form-group" style="margin-top: 31px;">
                                                 <select class="form-control" name="tax_id" id="tax_id">
                                                     <option value="">No Tax</option>
                                                     @foreach ($taxes as $tax)
@@ -67,8 +67,11 @@
                                             </div>
                                         </div>
                                         <div class="col-md-1">
-                                            <button type="button" class="btn btn-link btn-sm" style="margin-top: 30px; padding: 0px !important;" data-toggle="modal"
-                                                data-target="#delivery-cost-modal"><img src="{{asset('images/delivery.jpg')}}" alt="delivery" style="height: 35px; width: 40px;"></button>
+                                            <button type="button" class="btn btn-link btn-sm"
+                                                style="margin-top: 30px; padding: 0px !important;" data-toggle="modal"
+                                                data-target="#delivery-cost-modal"><img
+                                                    src="{{ asset('images/delivery.jpg') }}" alt="delivery"
+                                                    style="height: 35px; width: 40px;"></button>
                                         </div>
                                         @if (session('system_mode') == 'restaurant')
                                             <div class="col-md-1">
@@ -155,7 +158,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="input-group my-group">
-                                                {!! Form::select('service_fee_id', $service_fees, null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
+                                                {!! Form::select('service_fee_id', $service_fees, null, ['class' => 'form-control', 'placeholder' => __('lang.select_service'), 'id' => 'service_fee_id']) !!}
                                             </div>
                                         </div>
                                         <input type="hidden" name="service_fee_id_hidden" id="service_fee_id_hidden"
@@ -269,6 +272,25 @@
 
                                     <div class="col-md-12 table_room_show hide"
                                         style="border-top: 2px solid #e4e6fc; margin-top: 10px;">
+                                        <div class="row">
+                                            <div class="col-md-8"></div>
+                                            <div class="col-md-4">
+                                                <div class="row">
+                                                    <b>@lang('lang.total'): <span class="subtotal">0.00</span></b>
+                                                </div>
+                                                <div class="row">
+                                                    <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
+                                                </div>
+                                                <div class="row">
+                                                    <b>@lang('lang.service'): <span
+                                                            class="service_value_span">0.00</span></b>
+                                                </div>
+                                                <div class="row">
+                                                    <b>@lang('lang.grand_total'): <span
+                                                            class="final_total_span">0.00</span></b>
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="row pt-4">
                                             <div class="col-md-8">
                                                 <div class="row">
@@ -278,9 +300,12 @@
                                                     <button type="button" name="action" value="save" id="dining_table_save"
                                                         class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
                                                     <button data-method="cash" style="background: #0082ce" type="button"
-                                                        class="btn payment-btn text-white" data-toggle="modal"
+                                                        class="btn mr-2 payment-btn text-white" data-toggle="modal"
                                                         data-target="#add-payment"
                                                         id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                    <button style="background-color: #d63031" type="button"
+                                                        class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
+                                                        data-target="#discount_modal">@lang('lang.random_discount')</button>
                                                 </div>
                                             </div>
                                             <div class="col-md-4">

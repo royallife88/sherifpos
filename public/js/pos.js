@@ -559,6 +559,7 @@ function calculate_sub_totals() {
         }
     });
     $("#subtotal").text(__currency_trans_from_en(total, false));
+    $(".subtotal").text(__currency_trans_from_en(total, false));
     $("#item").text(item_count);
     $(".payment_modal_discount_text").text(
         __currency_trans_from_en(product_discount_total, false)
@@ -575,6 +576,7 @@ function calculate_sub_totals() {
     total -= total_coupon_discount;
 
     let discount_amount = get_discount_amount(total);
+    $(".discount_span").text(__currency_trans_from_en(discount_amount, false));
     total -= discount_amount;
 
     let tax_amount = get_tax_amount(total);
@@ -630,7 +632,9 @@ function calculate_sub_totals() {
     ) {
         let service_fee_value = __get_percent_value(total, service_fee_rate);
         $("#service_fee_value").val(service_fee_value);
-
+        $(".service_value_span").text(
+            __currency_trans_from_en(service_fee_value, false)
+        );
         total += service_fee_value;
     }
 
@@ -1356,7 +1360,7 @@ function reset_pos_form() {
         pos_form_obj[0].reset();
     }
     $(
-        "span.grand_total_span, span#subtotal, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
+        "span.grand_total_span, span#subtotal, span.subtotal, span.discount_span, span.service_value_span, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
         "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id, #print_and_draft_hidden, #manual_delivery_zone"
