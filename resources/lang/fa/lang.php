@@ -1155,4 +1155,23 @@ return [
 
     'canceled_by' => 'لغو شده توسط',
     'due_sale_list' => 'ناشی از',
+
+    'service_fee' => 'هزینه خدمات',
+    'add_service_fee' => 'اضافه کردن هزینه خدمات',
+    'edit_service_fee' => 'ویرایش هزینه خدمات',
+    'service' => 'سرویس',
+    'select_service' => 'Service را انتخاب کنید',
+
+    'add_delivery_zone' => 'منطقه تحویل را اضافه کنید',
+    'edit_add_delivery_zone' => 'منطقه تحویل را ویرایش کنید',
+    'delivery_zone' => 'منطقه تحویل',
+    'coverage_area' => 'منطقه تحت پوشش',
+    'or_enter_manually' => 'یا به صورت دستی وارد کنید',
+    'select_the_zone' => 'Zone را انتخاب کنید',
+    'delivery_zone_cost' => 'هزینه منطقه تحویل',
+    'update_address' => 'به روز رسانی آدرس',
+    'items_count' => 'تعداد اقلام',
+    'items_quantity' => 'تعداد اقلام',
+    'product_tax' => 'مالیات بر محصول',
+    'general_tax' => 'مالیات عمومی',
 ];

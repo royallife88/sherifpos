@@ -1159,4 +1159,23 @@ return [
     'canceled_by' => 'Geannuleerd door',
     'due_sale_list' => 'Vanwege',
 
+    'service_fee' => 'Servicekosten',
+    'add_service_fee' => 'Servicekosten toevoegen',
+    'edit_service_fee' => 'Servicekosten bewerken',
+    'service' => 'Onderhoud',
+    'select_service' => 'Selecteer Dienst',
+
+    'add_delivery_zone' => 'Leveringszone toevoegen',
+    'edit_add_delivery_zone' => 'Bezorgzone bewerken',
+    'delivery_zone' => 'Bezorgzone',
+    'coverage_area' => 'Dekkingsgebied',
+    'or_enter_manually' => 'Of voer handmatig in',
+    'select_the_zone' => 'Selecteer de zone',
+    'delivery_zone_cost' => 'Kosten bezorgzone',
+    'update_address' => 'Adres bijwerken',
+    'items_count' => 'Items tellen',
+    'items_quantity' => 'Artikelen Hoeveelheid:',
+    'product_tax' => 'Productbelasting',
+    'general_tax' => 'Algemene belasting',
+
 ];

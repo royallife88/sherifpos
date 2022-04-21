@@ -1157,6 +1157,22 @@ return [
     'canceled_by' => 'ألغى بواسطة',
     'due_sale_list' => 'متأخرات',
 
+    'service_fee' => 'مصاريف الخدمة داخل المطعم',
+    'add_service_fee' => 'Add Service Fee',
+    'edit_service_fee' => 'Edit Service Fee',
+    'service' => 'Service',
+    'select_service' => 'Select Service',
+
+    'add_delivery_zone' => 'أضف منطقة التوصيل',
+    'edit_add_delivery_zone' => 'تحرير منطقة التسليم',
+    'delivery_zone' => 'نطاق التوصيل',
+    'coverage_area' => 'منطقة التغطية',
+    'or_enter_manually' => 'أو قم بكتابته يدوياً',
+    'select_the_zone' => 'اختار النطاق',
+    'delivery_zone_cost' => 'تكلفة منطقة التسليم',
+    'update_address' => 'تحديث العنوان',
     'items_count' => 'عدد الأصناف',
     'items_quantity' => 'كمية الأصناف',
+    'product_tax' => 'ضريبة المنتج',
+    'general_tax' => 'الضرائب العامة',
 ];

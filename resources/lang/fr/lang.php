@@ -1155,4 +1155,23 @@ return [
 
     'canceled_by' => 'Annulé par',
     'due_sale_list' => 'Exigible',
+
+    'service_fee' => 'Frais de service',
+    'add_service_fee' => 'Ajouter des frais de service',
+    'edit_service_fee' => 'Modifier les frais de service',
+    'service' => 'Un service',
+    'select_service' => 'Sélectionnez le service',
+
+    'add_delivery_zone' => 'Ajouter une zone de livraison',
+    'edit_add_delivery_zone' => 'Modifier la zone de livraison',
+    'delivery_zone' => 'Zone de livraison',
+    'coverage_area' => 'Zone de couverture',
+    'or_enter_manually' => 'Ou entrez manuellement',
+    'select_the_zone' => 'Sélectionnez la zone',
+    'delivery_zone_cost' => 'Coût de la zone de livraison',
+    'update_address' => 'Mettre à jour l\'adresse',
+    'items_count' => 'Nombre d\'articles',
+    'items_quantity' => 'Quantité d\'articles',
+    'product_tax' => 'Taxe sur les produits',
+    'general_tax' => 'Taxe générale',
 ];

@@ -1156,4 +1156,23 @@ return [
 
     'canceled_by' => 'کی طرف سے منسوخ',
     'due_sale_list' => 'واجب الادا',
+
+    'service_fee' => 'خدمت کے پیسے',
+    'add_service_fee' => 'سروس فیس شامل کریں۔',
+    'edit_service_fee' => 'سروس فیس میں ترمیم کریں۔',
+    'service' => 'سروس',
+    'select_service' => 'سروس کو منتخب کریں۔',
+
+    'add_delivery_zone' => 'ڈیلیوری زون شامل کریں۔',
+    'edit_add_delivery_zone' => 'ڈیلیوری زون میں ترمیم کریں۔',
+    'delivery_zone' => 'ڈیلیوری زون',
+    'coverage_area' => 'کوریج ایریا',
+    'or_enter_manually' => 'یا دستی طور پر درج کریں۔',
+    'select_the_zone' => 'زون کو منتخب کریں۔',
+    'delivery_zone_cost' => 'ڈیلیوری زون کی قیمت',
+    'update_address' => 'پتہ اپ ڈیٹ کریں۔',
+    'items_count' => 'اشیاء کی گنتی',
+    'items_quantity' => 'اشیاء کی مقدار',
+    'product_tax' => 'پروڈکٹ ٹیکس',
+    'general_tax' => 'جنرل ٹیکس',
 ];

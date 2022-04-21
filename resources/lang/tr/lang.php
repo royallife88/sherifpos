@@ -1158,4 +1158,23 @@ return [
     'canceled_by' => 'İptal Eden',
     'due_sale_list' => 'Vadesi dolmuş',
 
+    'service_fee' => 'Servis ücreti',
+    'add_service_fee' => 'Hizmet Ücreti Ekle',
+    'edit_service_fee' => 'Hizmet Ücretini Düzenle',
+    'service' => 'Hizmet',
+    'select_service' => 'Hizmet Seçin',
+
+    'add_delivery_zone' => 'Teslimat Bölgesi Ekle',
+    'edit_add_delivery_zone' => 'Teslimat Bölgesini Düzenle',
+    'delivery_zone' => 'Teslimat Bölgesi',
+    'coverage_area' => 'Kapsama alanı',
+    'or_enter_manually' => 'Veya Manuel Olarak Girin',
+    'select_the_zone' => 'Bölgeyi seçin',
+    'delivery_zone_cost' => 'Teslimat Bölgesi Maliyeti',
+    'update_address' => 'Adresi Güncelle',
+    'items_count' => 'Öğe Sayısı',
+    'items_quantity' => 'Ürün Miktarı',
+    'product_tax' => 'Ürün Vergisi',
+    'general_tax' => 'Genel Vergi',
+
 ];

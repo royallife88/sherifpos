@@ -1156,4 +1156,23 @@ return [
 
     'canceled_by' => 'द्वारा रद्द',
     'due_sale_list' => 'देय',
+
+    'service_fee' => 'सेवा शुल्क',
+    'add_service_fee' => 'सेवा शुल्क जोड़ें',
+    'edit_service_fee' => 'सेवा शुल्क संपादित करें',
+    'service' => 'सेवा',
+    'select_service' => 'सेवा का चयन करें',
+
+    'add_delivery_zone' => 'वितरण क्षेत्र जोड़ें',
+    'edit_add_delivery_zone' => 'वितरण क्षेत्र संपादित करें',
+    'delivery_zone' => 'वितरण क्षेत्र',
+    'coverage_area' => 'कवरेज क्षेत्र',
+    'or_enter_manually' => 'या मैन्युअल रूप से दर्ज करें',
+    'select_the_zone' => 'जोन का चयन करें',
+    'delivery_zone_cost' => 'वितरण क्षेत्र की लागत',
+    'update_address' => 'पता अपडेट करें',
+    'items_count' => 'आइटम गिनती',
+    'items_quantity' => 'आइटम मात्रा',
+    'product_tax' => 'उत्पाद कर',
+    'general_tax' => 'सामान्य कर',
 ];
