@@ -1606,7 +1606,7 @@ $(document).ready(function () {
             { data: "transaction_date", name: "transaction_date" },
             { data: "invoice_no", name: "invoice_no" },
             { data: "final_total", name: "final_total" },
-            { data: "customer_type", name: "customer_types.name" },
+            { data: "customer_type_name", name: "customer_types.name" },
             { data: "customer_name", name: "customers.name" },
             { data: "mobile_number", name: "customers.mobile_number" },
             { data: "method", name: "transaction_payments.method" },

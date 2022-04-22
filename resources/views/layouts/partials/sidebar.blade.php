@@ -1074,7 +1074,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 <li><a href="#setting" aria-expanded="false" data-toggle="collapse"> <i
                             class="dripicons-gear"></i><span>@lang('lang.settings')</span></a>
                     <ul id="setting"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax'])) show @endif">
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['store', 'store-pos', 'terms-and-conditions', 'settings', 'product-class', 'category', 'sub-category', 'brand', 'unit', 'color', 'size', 'grade', 'tax', 'dining-room', 'dining-table'])) show @endif">
                         @can('product_module.product_class.view')
                         <li
                             class="@if(request()->segment(1) == 'product-class' && empty(request()->segment(2))) active @endif">
@@ -1125,6 +1125,18 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         <li
                             class="@if(request()->segment(1) == 'service-fee' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('ServiceFeeController@index')}}">{{__('lang.service_fee')}}</a>
+                        </li>
+                        @endcan
+                        @can('settings.dining_room.view')
+                        <li
+                            class="@if(request()->segment(1) == 'dining-room' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('DiningRoomController@index')}}">{{__('lang.dining_room')}}</a>
+                        </li>
+                        @endcan
+                        @can('settings.dining_table.view')
+                        <li
+                            class="@if(request()->segment(1) == 'dining-table' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('DiningTableController@index')}}">{{__('lang.dining_table')}}</a>
                         </li>
                         @endcan
                         @endif

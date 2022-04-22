@@ -12,10 +12,17 @@
 
         <div class="modal-body">
             <div class="form-group">
-                <input type="hidden" name="dining_room_id" value="{{ $dining_room->id }}">
                 {!! Form::label('name', __('lang.name') . ':*') !!}
                 {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required', 'id' => 'dining_table_name']) !!}
             </div>
+            @if (!empty($from_setting))
+                <div class="form-group">
+                    {!! Form::label('dining_room_id', __('lang.dining_room') . ':*') !!}
+                    {!! Form::select('dining_room_id', $dining_rooms, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required', 'placeholder' => __('lang.please_select')]) !!}
+                </div>
+            @else
+                <input type="hidden" name="dining_room_id" value="{{ $dining_room->id }}">
+            @endif
         </div>
 
         <div class="modal-footer">
@@ -28,5 +35,5 @@
     </div><!-- /.modal-content -->
 </div><!-- /.modal-dialog -->
 <script>
-
+    $('.selectpicker').selectpicker();
 </script>

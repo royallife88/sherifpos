@@ -172,13 +172,27 @@ class SellController extends Controller
             }
 
             $sales = $query->select(
-                'transactions.*',
+                'transactions.final_total',
+                'transactions.payment_status',
+                'transactions.status',
+                'transactions.id',
+                'transactions.transaction_date',
+                'transactions.service_fee_value',
+                'transactions.invoice_no',
                 'transaction_payments.paid_on',
                 'stores.name as store_name',
                 'users.name as created_by_name',
                 'customers.name as customer_name',
                 'customers.mobile_number'
-            )
+            )->with([
+                'return_parent',
+                'customer',
+                'transaction_payments',
+                'deliveryman',
+                'canceled_by_user',
+                'sell_products',
+                'sell_variations',
+            ])
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)

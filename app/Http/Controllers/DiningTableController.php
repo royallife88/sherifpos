@@ -7,6 +7,7 @@ use App\Models\DiningTable;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -36,8 +37,13 @@ class DiningTableController extends Controller
      */
     public function index()
     {
-        //
+        $dining_tables = DiningTable::get();
+
+        return view('dining_table.index')->with(compact(
+            'dining_tables'
+        ));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -46,10 +52,14 @@ class DiningTableController extends Controller
      */
     public function create()
     {
+        $from_setting = !empty(request()->from_setting) ? true : false;
         $dining_room = DiningRoom::find(request()->room_id);
+        $dining_rooms = DiningRoom::pluck('name', 'id');
 
         return view('dining_table.create')->with(compact(
-            'dining_room'
+            'dining_room',
+            'dining_rooms',
+            'from_setting',
         ));
     }
 
@@ -115,7 +125,14 @@ class DiningTableController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        $dining_rooms = DiningRoom::pluck('name', 'id');
+        $dining_table = DiningTable::find($id);
+
+        return view('dining_table.edit')->with(compact(
+            'dining_rooms',
+            'dining_table',
+        ));
     }
 
     /**
@@ -127,7 +144,32 @@ class DiningTableController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']],
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            DiningTable::where('id', $id)->update($data);
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -138,7 +180,21 @@ class DiningTableController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            DiningTable::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     public function checkDiningTableName(Request $request)

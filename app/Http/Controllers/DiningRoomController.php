@@ -6,6 +6,7 @@ use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
@@ -35,7 +36,11 @@ class DiningRoomController extends Controller
      */
     public function index()
     {
-        //
+        $dining_rooms = DiningRoom::get();
+
+        return view('dining_room.index')->with(compact(
+            'dining_rooms'
+        ));
     }
 
     /**
@@ -108,7 +113,12 @@ class DiningRoomController extends Controller
      */
     public function edit($id)
     {
-        //
+
+        $dining_room = DiningRoom::find($id);
+
+        return view('dining_room.edit')->with(compact(
+            'dining_room'
+        ));
     }
 
     /**
@@ -120,7 +130,32 @@ class DiningRoomController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate(
+            $request,
+            ['name' => ['required', 'max:255']],
+        );
+
+        try {
+            $data = $request->except('_token', '_method');
+
+            DB::beginTransaction();
+            DiningRoom::where('id', $id)->update($data);
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return redirect()->back()->with('status', $output);
     }
 
     /**
@@ -131,7 +166,21 @@ class DiningRoomController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            DiningRoom::find($id)->delete();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+
+        return $output;
     }
 
     /**

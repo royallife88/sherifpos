@@ -238,6 +238,8 @@ class User extends Authenticatable
             'settings' => [
                 'store' => __('lang.store'),
                 'store_pos' => __('lang.store_pos'),
+                'dining_room' => __('lang.dining_room'),
+                'dining_table' => __('lang.dining_table'),
                 'service_fee' => __('lang.service_fee'),
                 'delivery_zone' => __('lang.delivery_zone'),
                 'delivery_zone_cost' => __('lang.delivery_zone_cost'),
