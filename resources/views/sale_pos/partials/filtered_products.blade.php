@@ -8,8 +8,8 @@
                 data-product="{{ $product->name . ' (' . $product->variation_name . ')' }}">
                 <img src="@if (!empty($product->getFirstMediaUrl('product'))) {{ $product->getFirstMediaUrl('product') }}@else{{ asset('/uploads/' . session('logo')) }} @endif"
                     width="100%" />
-                <p>{{ $product->name }} <br> <span>{{ $product->sub_sku }}</span> <br>
-                    {{ @num_format($product->sell_price) . ' ' . session('currency.symbol')}}</p>
+                <p><span style="font-size:12px !important; font-weight: bold; color: black;">{{ $product->name }}</span> <br> <span>{{ $product->sub_sku }}</span> <br>
+                    <span style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($product->sell_price) . ' ' . session('currency.symbol')}} </span></p>
             </td>
         @endforeach
     </tr>

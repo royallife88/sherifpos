@@ -374,7 +374,7 @@
                         @endif
                         @if ($transaction->payment_status != 'paid' && $transaction->final_total - $transaction->transaction_payments->sum('amount') > 0)
                             <tr>
-                                <td style="padding: 7px;width:30%">{{ __('lang.due', [], 'ar') }} <br>
+                                <td style="padding: 7px;width:30%">{{ __('lang.due_sale_list', [], 'ar') }} <br>
                                     {{ __('lang.due', [], 'en') }}</td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
                                     {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}

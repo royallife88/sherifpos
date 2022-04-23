@@ -1121,9 +1121,9 @@ return [
     'daily_sales_summary' => ' ملخص التقرير اليومي',
     'online_order_transactions' => 'معاملات الطلبات عبر الإنترنت',
     'online_orders' => 'طلبات أونلاين',
-    'add_dining_room' => 'أضف غرفة طعام',
+    'add_dining_room' => 'أضف صالة طعام',
     'dining_room_name_already_exist' => 'اسم غرفة الطعام موجود بالفعل.',
-    'add_new_table' => 'أضف جدول جديد',
+    'add_new_table' => 'أضف طاولة جديدة',
     'add_table' => 'أضف الجدول',
     'dining_table_name_already_exist' => 'اسم الجدول موجود بالفعل.',
 

@@ -362,7 +362,7 @@ if (empty($invoice_lang)) {
                         @if ($transaction->is_quotation != 1)
                             @if ($transaction->payment_status != 'paid' && $transaction->final_total - $transaction->transaction_payments->sum('amount') > 0)
                                 <tr>
-                                    <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.due', [],
+                                    <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.due_sale_list', [],
                                         $invoice_lang)</td>
                                     <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
                                         {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
