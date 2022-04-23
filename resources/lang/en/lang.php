@@ -1178,4 +1178,7 @@ return [
     'items_quantity' => 'Items Quantity',
     'product_tax' => 'Product Tax',
     'general_tax' => 'General Tax',
+
+
+    'representative_name' => 'Representative name',
 ];

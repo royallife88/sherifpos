@@ -9,10 +9,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class SupplierController extends Controller
 {
-     /**
+    /**
      * All Utils instance.
      *
      */
@@ -37,13 +38,13 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::leftjoin('transactions', 'suppliers.id', 'transactions.supplier_id')
-        ->select(
-            'suppliers.*',
-            DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', final_total, 0)) as total_invoice"),
-            DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_paid"),
-            DB::raw('COUNT(CASE WHEN transactions.type="purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
-            DB::raw('SUM(IF(transactions.type="add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
-        )->groupBy('suppliers.id')->get();
+            ->select(
+                'suppliers.*',
+                DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', final_total, 0)) as total_invoice"),
+                DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_paid"),
+                DB::raw('COUNT(CASE WHEN transactions.type="purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
+                DB::raw('SUM(IF(transactions.type="add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
+            )->groupBy('suppliers.id')->get();
 
         return view('supplier.index')->with(compact(
             'suppliers'
@@ -79,15 +80,31 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate(
-            $request,
-            ['name' => ['required', 'max:255']],
-            ['company_name' => ['required', 'max:255']],
-            ['email' => ['required', 'max:255']],
-            ['mobile_number' => ['required', 'max:255']],
-            ['address' => ['required', 'max:255']]
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => ['required', 'max:30'],
+                'company_name' => ['nullable', 'max:30'],
+                'vat_number' => ['nullable', 'max:30'],
+                'email' => ['nullable', 'email'],
+                'mobile_number' => ['nullable', 'max:30'],
+                'address' => ['nullable', 'max:60'],
+                'city' => ['nullable', 'max:30'],
+                'state' => ['nullable', 'max:30'],
+                'postal_code' => ['nullable', 'max:30']
+            ]
         );
+        if ($validator->fails()) {
+            $output = [
+                'success' => false,
+                'msg' => $validator->getMessageBag()->first()
+            ];
+            if ($request->ajax()) {
+                return $output;
+            }
 
+            return redirect()->back()->with('status', $output);
+        }
         try {
             $data = $request->except('_token', 'quick_add');
             $data['created_by'] = Auth::user()->id;
@@ -116,7 +133,7 @@ class SupplierController extends Controller
         }
 
 
-        if ($request->quick_add) {
+        if ($request->ajax()) {
             return $output;
         }
 
@@ -203,14 +220,31 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate(
-            $request,
-            ['name' => ['required', 'max:255']],
-            ['company_name' => ['required', 'max:255']],
-            ['email' => ['required', 'max:255']],
-            ['mobile_number' => ['required', 'max:255']],
-            ['address' => ['required', 'max:255']]
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => ['required', 'max:30'],
+                'company_name' => ['nullable', 'max:30'],
+                'vat_number' => ['nullable', 'max:30'],
+                'email' => ['nullable', 'email'],
+                'mobile_number' => ['nullable', 'max:30'],
+                'address' => ['nullable', 'max:60'],
+                'city' => ['nullable', 'max:30'],
+                'state' => ['nullable', 'max:30'],
+                'postal_code' => ['nullable', 'max:30']
+            ]
         );
+        if ($validator->fails()) {
+            $output = [
+                'success' => false,
+                'msg' => $validator->getMessageBag()->first()
+            ];
+            if ($request->ajax()) {
+                return $output;
+            }
+
+            return redirect()->back()->with('status', $output);
+        }
 
         try {
             $data = $request->except('_token', '_method');
@@ -268,14 +302,15 @@ class SupplierController extends Controller
         return $output;
     }
 
-    public function getDetails($id){
+    public function getDetails($id)
+    {
         $supplier = Supplier::find($id);
 
         $is_purchase_order = request()->is_purchase_order;
 
         return view('supplier.details')->with(compact(
-             'supplier',
-             'is_purchase_order'
+            'supplier',
+            'is_purchase_order'
         ));
     }
 }
