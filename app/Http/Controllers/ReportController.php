@@ -1148,8 +1148,7 @@ class ReportController extends Controller
             } else {
                 $date = $year . '-' . $month . '-' . $start;
             }
-            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-                ->where('type', 'sell')->where('status', 'final')
+            $query = Transaction::where('type', 'sell')->whereIn('status', ['final', 'canceled'])
                 ->whereDate('transaction_date', $date);
 
             if (!empty($store_id)) {

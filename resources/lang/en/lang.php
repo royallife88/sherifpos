@@ -981,7 +981,7 @@ return [
     'added_by' => 'Added By',
     'enjoy_your_meal_please_come_again' => 'Enjoy your meal, please come again',
 
-    'or_add_new_product' => 'This product has no stock',
+    'or_add_new_product' => 'This product is Service or Has No Stock',
     'last_session_closed_at' => 'Last Session Closed At',
     'condition_products' => 'Condition Products',
 

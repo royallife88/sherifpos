@@ -980,7 +980,7 @@ return [
     'added_by' => 'أضيفت من قبل',
     'enjoy_your_meal_please_come_again' => 'استمتع بوجبتك، ننتظركم مرة أخرى',
 
-    'or_add_new_product' => 'هذا المنتج ليس لديه مخزون',
+    'or_add_new_product' => 'هذا المنتج عبارة عن خدمة أو ليس له مخزون',
     'last_session_closed_at' => 'تم إغلاق الجلسة الأخيرة في',
     'condition_products' => 'منتجات الحالة',
 
