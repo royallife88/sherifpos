@@ -901,7 +901,7 @@ return [
     'pay_now' => 'Pay Now',
     'pending' => 'Pending',
     'product_code' => 'Product Code',
-    'add_new_service' => 'This product has no stock',
+    'add_new_service' => 'This product is Service or Has No Stock',
     'select_products' => 'Select Products',
     'unlimited' => 'Unlimted',
     'creation_date' => 'Creation Date',

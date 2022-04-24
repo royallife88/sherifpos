@@ -901,7 +901,7 @@ return [
     'pay_now' => 'ادفع الآن',
     'pending' => 'قيد الانتظار',
     'product_code' => 'كود المنتج',
-    'add_new_service' => 'هذا المنتج ليس له مخزون',
+    'add_new_service' => 'هذا المنتج عبارة عن خدمة أو ليس له مخزون',
     'select_products' => 'حدد المنتجات',
     'unlimited' => 'غير محدود',
     'creation_date' => 'تاريخ الإنشاء',
