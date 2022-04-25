@@ -58,7 +58,6 @@
             getDailySaleReport();
         })
         $(document).on('click', '.clear_filter', function() {
-            console.log('asdfsdf');
             $('.selectpicker').val('');
             $('.selectpicker').selectpicker('refresh');
             $('.date').val("{{ date('Y-m-d') }}");
@@ -74,7 +73,7 @@
 
         function getDailySaleReport() {
             $("#table_div").html(
-                `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
+                `<div class="text-center"><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
             );
 
             $.ajax({

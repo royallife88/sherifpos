@@ -243,14 +243,15 @@ class ReportController extends Controller
                 DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_gift_card_sales"),
                 DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cheque_sales"),
                 DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cheque' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cheque"),
-                DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_purchases"),
-                DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_expenses"),
-                DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND type = 'debit', amount, 0)) as total_sell_return"),
+                DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_purchases"),
+                DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_expenses"),
+                DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
                 DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
                 DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
             )
                 ->first();
 
+            $cash_register->total_cash_sales =  $cash_register->total_cash_sales - $cash_register->total_refund_cash;
             $cash_register->total_card_sales =  $cash_register->total_card_sales - $cash_register->total_refund_card;
             $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
             $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;

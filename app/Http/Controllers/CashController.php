@@ -142,6 +142,7 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash', amount, 0)) as total_wages_and_compensation")
         )
             ->first();
+        $cash_register->total_cash_sales =  $cash_register->total_cash_sales - $cash_register->total_refund_cash;
         $cash_register->total_card_sales =  $cash_register->total_card_sales - $cash_register->total_refund_card;
         $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
         $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
@@ -318,6 +319,7 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
             DB::raw("SUM(IF(transaction_type = 'wages_and_compensation' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_wages_and_compensation"),
         )->first();
+        $cash_register->total_cash_sales =  $cash_register->total_cash_sales - $cash_register->total_refund_cash;
         $cash_register->total_card_sales =  $cash_register->total_card_sales - $cash_register->total_refund_card;
         $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
         $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
