@@ -901,7 +901,7 @@ return [
     'pay_now' => 'Payez maintenant',
     'pending' => 'En attente',
     'product_code' => 'Code produit',
-    'add_new_service' => 'Ce produit n\'a pas de stock',
+    'add_new_service' => 'Ce produit est Service ou n\'a pas de stock',
     'select_products' => 'Sélectionnez des produits',
     'unlimited' => 'Illimité',
     'creation_date' => 'Date de création',
@@ -980,7 +980,7 @@ return [
     'added_by' => 'Ajouté par',
     'enjoy_your_meal_please_come_again' => 'Bon appétit, revenez s\'il vous plait',
 
-    'or_add_new_product' => 'Ce produit n\'a pas de stock',
+    'or_add_new_product' => 'Ce produit est Service ou n\'a pas de stock',
     'last_session_closed_at' => 'Dernière session fermée à',
     'condition_products' => 'Produits d\'état',
 
@@ -1174,4 +1174,7 @@ return [
     'items_quantity' => 'Quantité d\'articles',
     'product_tax' => 'Taxe sur les produits',
     'general_tax' => 'Taxe générale',
+
+    'representative_name' => 'Nom du représentant',
+    'active' => 'Actif',
 ];

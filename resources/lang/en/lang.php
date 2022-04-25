@@ -1181,4 +1181,5 @@ return [
 
 
     'representative_name' => 'Representative name',
+    'active' => 'Active',
 ];

@@ -711,6 +711,7 @@ class ProductController extends Controller
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
+                'active' => !empty($request->active) ? 1 : 0,
                 'edited_by' => Auth::user()->id,
             ];
 

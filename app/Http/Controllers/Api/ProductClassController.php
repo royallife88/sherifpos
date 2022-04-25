@@ -105,6 +105,7 @@ class ProductClassController extends BaseController
         $product_class->translations = $input['translations'];
         $product_class->description = $input['description'];
         $product_class->sort = $input['sort'];
+        $product_class->status = $input['status'];
         $product_class->save();
 
         if (!empty($input['image'])) {

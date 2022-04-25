@@ -903,7 +903,7 @@ return [
     'product_code' => 'Ürün Kodu',
 
 
-    'add_new_service' => 'Bu ürünün stoğu yok',
+    'add_new_service' => 'Bu Ürün Hizmettir veya Stoksuzdur',
     'select_products' => 'Ürünleri Seçin',
     'unlimited' => 'Sınırsız',
     'creation_date' => 'Oluşturulma tarihi',
@@ -982,7 +982,7 @@ return [
     'added_by' => 'Tarafından eklendi',
     'enjoy_your_meal_please_come_again' => 'Afia olsun, tekrar gel',
 
-    'or_add_new_product' => 'Bu ürünün stoğu yok',
+    'or_add_new_product' => 'Bu Ürün Hizmettir veya Stoksuzdur',
     'last_session_closed_at' => 'Son Oturum Kapanış Tarihi',
     'condition_products' => 'Durum Ürünleri',
 
@@ -1176,5 +1176,8 @@ return [
     'items_quantity' => 'Ürün Miktarı',
     'product_tax' => 'Ürün Vergisi',
     'general_tax' => 'Genel Vergi',
+
+    'representative_name' => 'Temsilci ismi',
+    'active' => 'Aktif',
 
 ];

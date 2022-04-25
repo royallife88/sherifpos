@@ -1175,4 +1175,7 @@ return [
     'items_quantity' => 'كمية الأصناف',
     'product_tax' => 'ضريبة المنتج',
     'general_tax' => 'الضرائب العامة',
+
+    'representative_name' => 'اسم الممثل',
+    'active' => 'نشيط',
 ];

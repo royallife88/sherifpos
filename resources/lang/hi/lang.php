@@ -902,7 +902,7 @@ return [
     'pay_now' => 'अब भुगतान करें',
     'pending' => 'लंबित',
     'product_code' => 'उत्पाद कोड',
-    'add_new_service' => 'इस उत्पाद का कोई स्टॉक नहीं है',
+    'add_new_service' => 'यह उत्पाद सेवा है या इसका कोई स्टॉक नहीं है',
     'select_products' => 'उत्पादों का चयन करें',
     'unlimited' => 'असीमित',
     'creation_date' => 'निर्माण तिथि',
@@ -981,7 +981,7 @@ return [
     'added_by' => 'द्वारा जोड़ा',
     'enjoy_your_meal_please_come_again' => 'अपने भोजन का आनंद लें, कृपया फिर से आएं',
 
-    'or_add_new_product' => 'इस उत्पाद का कोई स्टॉक नहीं है',
+    'or_add_new_product' => 'यह उत्पाद सेवा है या इसका कोई स्टॉक नहीं है',
     'last_session_closed_at' => 'पिछला सत्र बंद',
     'condition_products' => 'शर्त उत्पाद',
 
@@ -1175,4 +1175,7 @@ return [
     'items_quantity' => 'आइटम मात्रा',
     'product_tax' => 'उत्पाद कर',
     'general_tax' => 'सामान्य कर',
+
+    'representative_name' => 'प्रतिनिधि का नाम',
+    'active' => 'सक्रिय',
 ];

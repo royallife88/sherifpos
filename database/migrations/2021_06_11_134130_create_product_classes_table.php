@@ -18,6 +18,7 @@ class CreateProductClassesTable extends Migration
             $table->string('name', 25);
             $table->string('description', 25)->nullable();
             $table->integer('sort')->default(1);
+            $table->boolean('status')->default(1);
             $table->text('translations')->nullable();
             $table->timestamps();
         });

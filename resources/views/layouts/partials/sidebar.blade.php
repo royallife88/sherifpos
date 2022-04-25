@@ -1094,11 +1094,13 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('CategoryController@getSubCategories')}}">{{__('lang.sub_category')}}</a>
                         </li>
                         @endcan
+                        @endif
                         @can('product_module.brand.view')
                         <li class="@if(request()->segment(1) == 'brand' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('BrandController@index')}}">{{__('lang.brand')}}</a>
                         </li>
                         @endcan
+                        @if(session('system_mode') != 'restaurant')
                         @can('product_module.color.view')
                         <li class="@if(request()->segment(1) == 'color' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('ColorController@index')}}">{{__('lang.color')}}</a>

@@ -22,8 +22,8 @@
                 <div class="input-group my-group">
                     {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
                     <span class="input-group-btn">
-                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button" data-type="product_class"><i
-                                class="dripicons-web text-primary fa-lg"></i></button>
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"
+                            data-type="product_class"><i class="dripicons-web text-primary fa-lg"></i></button>
                     </span>
                 </div>
             </div>
@@ -40,6 +40,14 @@
             <div class="form-group">
                 {!! Form::label('sort', __('lang.sort') . ':*') !!}
                 {!! Form::number('sort', 1, ['class' => 'form-control', 'placeholder' => __('lang.sort'), 'required']) !!}
+            </div>
+            <div class="form-group">
+                <div class="i-checks">
+                    <input id="status" name="status" type="checkbox" checked value="1" class="form-control-custom">
+                    <label for="status"><strong>
+                            @lang('lang.active')
+                        </strong></label>
+                </div>
             </div>
             @include('layouts.partials.image_crop')
         </div>

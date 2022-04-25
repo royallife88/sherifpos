@@ -903,7 +903,7 @@ return [
     'pending' => 'In afwachting',
     'product_code' => 'Productcode',
 
-    'add_new_service' => 'Dit product heeft geen voorraad',
+    'add_new_service' => 'Dit product is service of heeft geen voorraad',
     'select_products' => 'Selecteer producten',
     'unlimited' => 'Onbeperkt',
     'creation_date' => 'Aanmaakdatum',
@@ -983,7 +983,7 @@ return [
     'added_by' => 'Toegevoegd door',
     'enjoy_your_meal_please_come_again' => 'Eet smakelijk, kom alsjeblieft nog een keer',
 
-    'or_add_new_product' => 'Dit product heeft geen voorraad',
+    'or_add_new_product' => 'Dit product is service of heeft geen voorraad',
     'last_session_closed_at' => 'Laatste sessie gesloten om',
     'condition_products' => 'Conditie Producten',
 
@@ -1177,5 +1177,8 @@ return [
     'items_quantity' => 'Artikelen Hoeveelheid:',
     'product_tax' => 'Productbelasting',
     'general_tax' => 'Algemene belasting',
+
+    'representative_name' => 'Representatieve naam',
+    'active' => 'Actief',
 
 ];

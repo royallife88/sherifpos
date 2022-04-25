@@ -902,7 +902,7 @@ return [
     'pay_now' => 'اب ادا',
     'pending' => 'زیر التوا',
     'product_code' => 'پروڈکٹ کوڈ',
-    'add_new_service' => 'اس پروڈکٹ کا کوئی اسٹاک نہیں ہے۔',
+    'add_new_service' => 'یہ پروڈکٹ سروس ہے یا کوئی اسٹاک نہیں ہے۔',
     'select_products' => 'مصنوعات منتخب کریں۔',
     'unlimited' => 'لامحدود۔',
     'creation_date' => 'بنانے کی تاریخ',
@@ -981,7 +981,7 @@ return [
     'added_by' => 'نے شامل کیا',
     'enjoy_your_meal_please_come_again' => 'اپنے کھانے کا لطف اٹھائیں، براہ کرم دوبارہ آئیں',
 
-    'or_add_new_product' => 'اس پروڈکٹ کا کوئی اسٹاک نہیں ہے۔',
+    'or_add_new_product' => 'یہ پروڈکٹ سروس ہے یا کوئی اسٹاک نہیں ہے۔',
     'last_session_closed_at' => 'آخری سیشن بجے بند ہوا۔',
     'condition_products' => 'کنڈیشن مصنوعات',
 
@@ -1175,4 +1175,7 @@ return [
     'items_quantity' => 'اشیاء کی مقدار',
     'product_tax' => 'پروڈکٹ ٹیکس',
     'general_tax' => 'جنرل ٹیکس',
+
+    'representative_name' => 'نمائندہ نام',
+    'active' => 'فعال',
 ];

@@ -4,7 +4,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     ->first();
 @endphp
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-4">
         <div class="i-checks">
             <input id="is_service" name="is_service" type="checkbox"
                 @if (session('system_mode') == 'restaurant') checked
@@ -18,6 +18,16 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                     @endif
                 </strong></label>
         </div>
+    </div>
+    <div class="col-md-4">
+        <div class="i-checks">
+            <input id="active" name="active" type="checkbox" checked value="1" class="form-control-custom">
+            <label for="active"><strong>
+                    @lang('lang.active')
+                </strong></label>
+        </div>
+    </div>
+    <div class="col-md-4">
     </div>
     <div class="col-md-4">
         @if (session('system_mode') == 'restaurant')
@@ -87,8 +97,8 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <div class="input-group my-group">
                 {!! Form::text('name', null, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                 <span class="input-group-btn">
-                    <button class="btn btn-default bg-white btn-flat translation_btn" type="button"  data-type="product"><i
-                            class="dripicons-web text-primary fa-lg"></i></button>
+                    <button class="btn btn-default bg-white btn-flat translation_btn" type="button"
+                        data-type="product"><i class="dripicons-web text-primary fa-lg"></i></button>
                 </span>
             </div>
         </div>
@@ -173,7 +183,8 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             @else
                 <label>@lang('lang.product_details')</label>
             @endif
-            <button type="button" class="translation_textarea_btn btn btn-sm"><i class="dripicons-web text-primary fa-lg"></i></button>
+            <button type="button" class="translation_textarea_btn btn btn-sm"><i
+                    class="dripicons-web text-primary fa-lg"></i></button>
             <textarea name="product_details" id="product_details" class="form-control"
                 rows="3">{{ !empty($recent_product) ? $recent_product->product_details : '' }}</textarea>
         </div>
@@ -260,8 +271,8 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <span class="input-group-btn">
                 @can('product_module.tax.create')
                     <button class="btn-modal btn btn-default bg-white btn-flat"
-                        data-href="{{ action('TaxController@create') }}?quick_add=1&type=product_tax" data-container=".view_modal"><i
-                            class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                        data-href="{{ action('TaxController@create') }}?quick_add=1&type=product_tax"
+                        data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
             </span>
         </div>

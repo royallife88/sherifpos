@@ -14,7 +14,6 @@
                             <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
                             {!! Form::open(['url' => action('ProductController@store'), 'id' => 'product-form', 'method' => 'POST', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                             @include('product.partial.create_product_form')
-                            <input type="hidden" name="active" value="1">
                             <div class="row">
                                 <div class="col-md-4 mt-5">
                                     <div class="form-group">

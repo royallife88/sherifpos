@@ -22,6 +22,7 @@
                                     <th>@lang('lang.name')</th>
                                     <th>@lang('lang.description')</th>
                                     <th>@lang('lang.sort')</th>
+                                    <th>@lang('lang.active')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
                             </thead>
@@ -33,6 +34,13 @@
                                         <td>{{ $product_class->name }}</td>
                                         <td>{{ $product_class->description }}</td>
                                         <td>{{ $product_class->sort }}</td>
+                                        <td>
+                                            @if ($product_class->status == 1)
+                                                @lang('lang.yes')
+                                            @else
+                                                @lang('lang.no')
+                                            @endif
+                                        </td>
 
                                         <td>
                                             <div class="btn-group">

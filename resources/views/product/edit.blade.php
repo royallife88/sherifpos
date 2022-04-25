@@ -14,7 +14,7 @@
                             <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
                             {!! Form::open(['url' => action('ProductController@update', $product->id), 'id' => 'product-edit-form', 'method' => 'PUT', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-4">
                                     <div class="i-checks">
                                         <input id="is_service" name="is_service" type="checkbox"
                                             @if (!empty($product->is_service)) checked @endif value="1"
@@ -27,6 +27,16 @@
                                                 @endif
                                             </strong></label>
                                     </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="i-checks">
+                                        <input id="active" name="active" type="checkbox" @if (!empty($product->active)) checked @endif value="1" class="form-control-custom">
+                                        <label for="active"><strong>
+                                                @lang('lang.active')
+                                            </strong></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
                                 </div>
 
                                 <div class="col-md-4">

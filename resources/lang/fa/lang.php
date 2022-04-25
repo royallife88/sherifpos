@@ -902,7 +902,7 @@ return [
     'pay_now' => 'الان پرداخت کن',
     'pending' => 'در انتظار',
     'product_code' => 'کد محصول',
-    'add_new_service' => 'این محصول موجودی ندارد',
+    'add_new_service' => 'این محصول سرویس است یا موجودی ندارد',
     'select_products' => 'محصولات را انتخاب کنید',
     'unlimited' => 'نامحدود',
     'creation_date' => 'تاریخ ایجاد',
@@ -980,7 +980,7 @@ return [
     'added_by' => 'اضافه شده توسط',
     'enjoy_your_meal_please_come_again' => 'از غذایتان لذت ببرید، لطفا دوباره بیایید',
 
-    'or_add_new_product' => 'این محصول موجودی ندارد',
+    'or_add_new_product' => 'این محصول سرویس است یا موجودی ندارد',
     'last_session_closed_at' => 'آخرین جلسه در ساعت بسته شد',
     'condition_products' => 'محصولات شرایط',
 
@@ -1174,4 +1174,7 @@ return [
     'items_quantity' => 'تعداد اقلام',
     'product_tax' => 'مالیات بر محصول',
     'general_tax' => 'مالیات عمومی',
+
+    'representative_name' => 'نام نماینده',
+    'active' => 'فعال',
 ];

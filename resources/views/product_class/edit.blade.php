@@ -16,8 +16,8 @@
                 <div class="input-group my-group">
                     {!! Form::text('name', $product_class->name, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required', 'readonly' => $product_class->name == 'Extras' ? true : false]) !!}
                     <span class="input-group-btn">
-                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button" data-type="product_class"><i
-                                class="dripicons-web text-primary fa-lg"></i></button>
+                        <button class="btn btn-default bg-white btn-flat translation_btn" type="button"
+                            data-type="product_class"><i class="dripicons-web text-primary fa-lg"></i></button>
                     </span>
                 </div>
             </div>
@@ -33,6 +33,15 @@
             <div class="form-group">
                 {!! Form::label('sort', __('lang.sort') . ':*') !!}
                 {!! Form::number('sort', $product_class->sort, ['class' => 'form-control', 'placeholder' => __('lang.sort'), 'required']) !!}
+            </div>
+            <div class="form-group">
+                <div class="i-checks">
+                    <input id="status" name="status" type="checkbox" @if ($product_class->status == 1) checked @endif
+                        value="1" class="form-control-custom">
+                    <label for="status"><strong>
+                            @lang('lang.active')
+                        </strong></label>
+                </div>
             </div>
             @include('layouts.partials.image_crop', [
                 'image_url' => $product_class->getFirstMediaUrl('product_class') ?? null,

@@ -68,7 +68,8 @@ class ProductClassController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'name' => ['required', 'max:255', 'unique:product_classes,name']
+            'name' => ['required', 'max:255', 'unique:product_classes,name'],
+            'status' => ['required', 'boolean'],
         ]);
         if ($validator->fails()) {
             if ($request->ajax()) {
@@ -82,6 +83,7 @@ class ProductClassController extends Controller
         try {
             $data = $request->except('_token', 'quick_add');
             $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
+            $data['status'] = !empty($data['status']) ? 1 : 0;
 
             $class = ProductClass::create($data);
 
@@ -149,12 +151,14 @@ class ProductClassController extends Controller
     {
         $this->validate(
             $request,
-            ['name' => ['required', 'max:255']]
+            ['name' => ['required', 'max:255']],
+            ['status' => ['required', 'max:255']]
         );
 
         try {
             $data = $request->only('name', 'description', 'sort', 'translations');
             $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
+            $data['status'] = !empty($data['status']) ? 1 : 0;
             $class = ProductClass::where('id', $id)->first();
             $class->update($data);
 
