@@ -18,7 +18,7 @@
                         <b>@lang('lang.mobile'):</b> <span class="customer_mobile_span"></span>
                     </div>
                     <div class="col-md-4">
-                        <b>@lang('lang.due'):</b> <span class="customer_due_span"></span>
+                        <b>@lang('lang.due_sale_list'):</b> <span class="customer_due_span"></span>
                     </div>
                     <div class="col-md-4">
                         <b>@lang('lang.points'):</b> <span class="customer_points_span"></span>

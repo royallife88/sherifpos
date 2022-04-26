@@ -2499,7 +2499,7 @@ $(document).on("change", "#delivery_zone_id", function () {
         url: "/delivery-zone/get-details/" + delivery_zone_id,
         data: {},
         success: function (result) {
-            $("#delivery_cost").val(result.cost);
+            __write_number($("#delivery_cost"), result.cost);
             $("#deliveryman_id").val(result.deliveryman_id);
             $("#deliveryman_id").selectpicker("refresh");
             $("#deliveryman_id").change();
