@@ -99,6 +99,7 @@
     $('.selectpicker').selectpicker('refresh');
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
+        todayHighlight: true,
     });
     $('#method').change(function(){
         var method = $(this).val();

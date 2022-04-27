@@ -327,6 +327,7 @@ class TransactionPaymentController extends Controller
 
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                     $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
 
                     if ($request->upload_documents) {
                         foreach ($request->file('upload_documents', []) as $key => $doc) {
