@@ -236,7 +236,7 @@
                                         )
                                     </div>
                                 </div>
-                                @if (session('system_mode') == 'restaurant')
+                                @if(session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
                                     <div class="col-md-4">
                                         <div class="i-checks">
                                             <input id="automatic_consumption" name="automatic_consumption" type="checkbox"
