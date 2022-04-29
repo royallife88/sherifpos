@@ -16,9 +16,9 @@
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][variation_id]" class="variation_id"
             value="{{$product->variation_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][price_hidden]" class="price_hidden"
-            value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
+            value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price / $exchange_rate)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][purchase_price]" class="purchase_price"
-            value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price)}}@else{{0}}@endif">
+            value="@if(isset($product->default_purchase_price)){{@num_format($product->default_purchase_price / $exchange_rate)}}@else{{0}}@endif">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_id]" class="tax_id"
             value="{{$product->tax_id}}">
         <input type="hidden" name="transaction_sell_line[{{$loop->index + $index}}][tax_method]" class="tax_method"
@@ -75,7 +75,7 @@
         <input type="text" class="form-control sell_price"
             name="transaction_sell_line[{{$loop->index + $index}}][sell_price]" required
             @if(!auth()->user()->can('product_module.sell_price.create_and_edit')) readonly @endif
-        value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price)}}@else{{0}}@endif">
+        value="@if(isset($product->default_sell_price)){{@num_format($product->default_sell_price / $exchange_rate)}}@else{{0}}@endif">
     </td>
     <td style="width: @if(session('system_mode')  != 'restaurant') 13% @else 15% @endif">
         <input type="hidden" class="form-control product_discount_type"

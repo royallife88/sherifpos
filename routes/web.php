@@ -340,6 +340,10 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('guide/tutorials/{category_id}', 'TutorialController@getTutorialsGuideByCategory');
     Route::resource('tutorials', TutorialController::class);
     Route::resource('tutorials-category', TutorialCategoryController::class);
+
+    Route::get('exchange-rate/get-currency-dropdown', 'ExchangeRateController@getExchangeRateCurrencyDropdown');
+    Route::get('exchange-rate/get-exchange-rate-by-currency', 'ExchangeRateController@getExchangeRateByCurrency');
+    Route::resource('exchange-rate', ExchangeRateController::class);
 });
 
 

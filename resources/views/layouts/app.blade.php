@@ -99,6 +99,8 @@
         base_path = "{{url('/')}}";
         current_url = "{{url()->current()}}";
     </script>
+
+    @include('layouts.partials.currencies_obj')
     @include('layouts.partials.javascript')
     <script>
         $.ajaxSetup({

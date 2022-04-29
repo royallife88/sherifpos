@@ -55,7 +55,15 @@
                                     <input type="datetime-local" id="transaction_date" name="transaction_date"
                                         value="{{ date('Y-m-d\TH:i') }}" class="form-control">
                                 </div>
-
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
+                                        <input type="hidden" name="default_currency_id" id="default_currency_id"
+                                            value="{{ !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : '' }}">
+                                        {!! Form::label('paying_currency_id', __('lang.paying_currency') . ':', []) !!}
+                                        {!! Form::select('paying_currency_id', $exchange_rate_currencies, !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required']) !!}
+                                    </div>
+                                </div>
                             </div>
                             <br>
                             <br>
@@ -104,7 +112,9 @@
                                 </div>
                             </div>
                             <div class="col-md-12 text-center">
-                                <h4>@lang('lang.items_count'): <span class="items_count_span" style="margin-right: 15px;">0</span>  @lang('lang.items_quantity'): <span class="items_quantity_span" style="margin-right: 15px;">0</span></h4>
+                                <h4>@lang('lang.items_count'): <span class="items_count_span"
+                                        style="margin-right: 15px;">0</span> @lang('lang.items_quantity'): <span
+                                        class="items_quantity_span" style="margin-right: 15px;">0</span></h4>
                             </div>
                             <br>
                             <div class="col-md-12">

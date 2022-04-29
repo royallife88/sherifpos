@@ -63,6 +63,10 @@ class CreateTransactionsTable extends Migration
             $table->string('ref_no')->nullable();
             $table->decimal('grand_total', 15, 4)->nullable();
             $table->decimal('final_total', 15, 4)->default(0.0000);
+            $table->decimal('exchange_rate', 15, 4)->default(1);
+            $table->unsignedBigInteger('default_currency_id')->nullable()->comment('system default currency id');
+            $table->unsignedBigInteger('received_currency_id')->nullable()->comment('currency id of received currency');
+            $table->unsignedBigInteger('paying_currency_id')->nullable()->comment('currency id of paying currency');
             $table->unsignedBigInteger('deliveryman_id')->nullable()->comment('employee id foriegn key from employees table');
             $table->string('delivery_status')->nullable();
             $table->decimal('delivery_cost', 15, 4)->default(0);

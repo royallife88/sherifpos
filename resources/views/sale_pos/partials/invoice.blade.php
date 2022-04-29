@@ -211,7 +211,12 @@ if (empty($invoice_lang)) {
                                 {{ @num_format($line->quantity) }}</td>
                             @if (empty($print_gift_invoice))
                                 <td style="text-align:center;vertical-align:bottom; width: 30%;">
-                                    {{ @num_format($line->sub_total + $line->product_discount_amount) }}</td>
+                                    @if ($line->product_discount_type != 'surplus')
+                                        {{ @num_format($line->sub_total + $line->product_discount_amount) }}
+                                    @else
+                                        {{ @num_format($line->sub_total) }}
+                                    @endif
+                                </td>
                             @endif
                         </tr>
                     @endforeach
@@ -221,14 +226,14 @@ if (empty($invoice_lang)) {
                         <tr>
                             <th style="font-size: 16px;" colspan="3">@lang('lang.total', [], $invoice_lang)</th>
                             <th style="font-size: 16px; text-align:right;">
-                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->sum('product_discount_amount')) }}
+                                {{ @num_format($transaction->grand_total +$transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                             </th>
                         </tr>
-                        @if ($transaction->transaction_sell_lines->sum('product_discount_amount') > 0)
+                        @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount') > 0)
                             <tr>
                                 <th style="font-size: 16px;" colspan="3">@lang('lang.discount', [], $invoice_lang)</th>
                                 <th style="font-size: 16px; text-align:right;">
-                                    {{ @num_format($transaction->transaction_sell_lines->sum('product_discount_amount')) }}
+                                    {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                 </th>
                             </tr>
                         @endif

@@ -6,6 +6,7 @@ use App\Models\Brand;
 use App\Models\CashRegister;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\DeliveryZone;
@@ -112,6 +113,7 @@ class SellPosController extends Controller
         $languages = System::getLanguageDropdown();
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         if (empty($store_pos)) {
             $output = [
@@ -141,6 +143,7 @@ class SellPosController extends Controller
             'languages',
             'service_fees',
             'delivery_zones',
+            'exchange_rate_currencies',
         ));
     }
 
@@ -168,6 +171,9 @@ class SellPosController extends Controller
             'store_id' => $request->store_id,
             'customer_id' => $request->customer_id,
             'store_pos_id' => $request->store_pos_id,
+            'exchange_rate' => !empty($request->exchange_rate) ? $request->exchange_rate : 1,
+            'default_currency_id' => $request->default_currency_id,
+            'received_currency_id' => $request->received_currency_id,
             'type' => 'sell',
             'final_total' => $this->commonUtil->num_uf($request->final_total),
             'grand_total' => $this->commonUtil->num_uf($request->grand_total),
@@ -479,6 +485,7 @@ class SellPosController extends Controller
         $languages = System::getLanguageDropdown();
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -500,6 +507,7 @@ class SellPosController extends Controller
             'languages',
             'service_fees',
             'delivery_zones',
+            'exchange_rate_currencies',
         ));
     }
 
@@ -766,10 +774,14 @@ class SellPosController extends Controller
 
         $products = $query->groupBy('variations.id')->get();
 
-        $html = '';
+        $currency_id = $request->currency_id;
+        $currency = Currency::find($currency_id);
+        $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
 
         return view('sale_pos.partials.filtered_products')->with(compact(
-            'products'
+            'products',
+            'currency',
+            'exchange_rate'
         ));
     }
 
@@ -906,10 +918,15 @@ class SellPosController extends Controller
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
             $customer_id = $request->input('customer_id');
+            $currency_id = $request->input('currency_id');
             $dining_table_id = $request->input('dining_table_id');
             $is_direct_sale = $request->input('is_direct_sale');
             $edit_quantity = !empty($request->input('edit_quantity')) ? $request->input('edit_quantity') : 1;
             $added_products = json_decode($request->input('added_products'), true);
+
+            $currency_id = $request->currency_id;
+            $currency = Currency::find($currency_id);
+            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
 
             //Check for weighing scale barcode
             $weighing_barcode = request()->get('weighing_scale_barcode');
@@ -935,7 +952,7 @@ class SellPosController extends Controller
                 // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
                 $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
                 $html_content =  view('sale_pos.partials.product_row')
-                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale', 'dining_table_id'))->render();
+                    ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'is_direct_sale', 'dining_table_id', 'exchange_rate'))->render();
 
                 $output['success'] = true;
                 $output['html_content'] = $html_content;

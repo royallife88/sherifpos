@@ -192,8 +192,16 @@
                             <th>@lang('lang.total_tax'):</th>
                             <td>{{@num_format($sale->total_tax + $sale->total_item_tax)}}</td>
                         </tr>
+                        @if ($sale->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount') > 0)
+                            <tr>
+                                <th>@lang('lang.discount')</th>
+                                <td>
+                                    {{ @num_format($sale->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                </td>
+                            </tr>
+                        @endif
                         <tr>
-                            <th>@lang('lang.discount'):</th>
+                            <th>@lang('lang.order_discount'):</th>
                             <td>{{@num_format($sale->discount_amount)}}</td>
                         </tr>
                         @if(!empty($sale->rp_earned))

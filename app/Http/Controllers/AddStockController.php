@@ -9,6 +9,7 @@ use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Color;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Email;
@@ -19,6 +20,7 @@ use App\Models\Size;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Supplier;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\Unit;
@@ -72,12 +74,14 @@ class AddStockController extends Controller
     public function index(Request $request)
     {
         if (request()->ajax()) {
+            $default_currency_id = System::getProperty('currency');
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
             $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
                 ->leftjoin('suppliers', 'transactions.supplier_id', '=', 'suppliers.id')
                 ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
+                ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
                 ->where('type', 'add_stock')->where('status', '!=', 'draft');
 
             if (!empty($store_id)) {
@@ -118,18 +122,30 @@ class AddStockController extends Controller
                 'transactions.*',
                 'users.name as created_by_name',
                 'suppliers.name as supplier',
+                'paying_currency.symbol as paying_currency_symbol'
             )->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
             return DataTables::of($add_stocks)
                 ->editColumn('created_at', '{{@format_datetime($created_at)}}')
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
                 ->editColumn('due_date', '@if(!empty($add_stock->due_date) && $add_stock->payment_status != "paid"){{@format_datetime($due_date)}}@endif')
                 ->editColumn('created_by', '{{$created_by_name}}')
-                ->editColumn('final_total', '{{@num_format($final_total)}}')
-                ->addColumn('paid_amount', function ($row) {
-                    return  $this->commonUtil->num_f($row->transaction_payments->sum('amount'));
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    $final_total =  $row->final_total;
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
                 })
-                ->addColumn('due', function ($row) {
-                    return  $this->commonUtil->num_f($row->final_total - $row->transaction_payments->sum('amount'));
+                ->addColumn('paid_amount', function ($row) use ($default_currency_id) {
+                    $amount_paid =  $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $due =  $row->final_total - $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                })
+                ->editColumn('paying_currency_symbol', function ($row) {
+                    return $row->paying_currency_symbol ?? session('currency')['symbol'];
                 })
                 ->addColumn(
                     'action',
@@ -189,6 +205,8 @@ class AddStockController extends Controller
                     'created_at',
                     'due_date',
                     'final_total',
+                    'paid_amount',
+                    'due',
                     'created_by',
                 ])
                 ->make(true);
@@ -240,6 +258,7 @@ class AddStockController extends Controller
         $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -267,6 +286,7 @@ class AddStockController extends Controller
             'grades',
             'taxes_array',
             'customer_types',
+            'exchange_rate_currencies',
             'discount_customer_types',
             'users',
         ));
@@ -292,6 +312,9 @@ class AddStockController extends Controller
                 'supplier_id' => $data['supplier_id'],
                 'type' => 'add_stock',
                 'status' => $data['status'],
+                'paying_currency_id' => $data['paying_currency_id'],
+                'default_currency_id' => $data['default_currency_id'],
+                'exchange_rate' => $this->commonUtil->num_uf($data['exchange_rate']),
                 'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
                 'transaction_date' => !empty($data['transaction_date']) ? Carbon::createFromTimestamp(strtotime($data['transaction_date']))->format('Y-m-d H:i:s') : Carbon::now(),
                 'payment_status' => $data['payment_status'],
@@ -449,6 +472,7 @@ class AddStockController extends Controller
         $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -474,6 +498,7 @@ class AddStockController extends Controller
             'grades',
             'taxes_array',
             'customer_types',
+            'exchange_rate_currencies',
             'discount_customer_types',
             'users',
         ));
@@ -501,6 +526,9 @@ class AddStockController extends Controller
                 'supplier_id' => $data['supplier_id'],
                 'type' => 'add_stock',
                 'status' => $data['status'],
+                'paying_currency_id' => $data['paying_currency_id'],
+                'default_currency_id' => $data['default_currency_id'],
+                'exchange_rate' => $this->commonUtil->num_uf($data['exchange_rate']),
                 'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
                 'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
                 'payment_status' => $data['payment_status'],
@@ -670,6 +698,10 @@ class AddStockController extends Controller
     public function addProductRow(Request $request)
     {
         if ($request->ajax()) {
+            $currency_id = $request->currency_id;
+            $currency = Currency::find($currency_id);
+            $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+
             $product_id = $request->input('product_id');
             $variation_id = $request->input('variation_id');
             $store_id = $request->input('store_id');
@@ -679,7 +711,7 @@ class AddStockController extends Controller
                 $products = $this->productUtil->getDetailsFromProduct($product_id, $variation_id, $store_id);
 
                 return view('add_stock.partials.product_row')
-                    ->with(compact('products', 'index'));
+                    ->with(compact('products', 'index', 'currency', 'exchange_rate'));
             }
         }
     }

@@ -547,6 +547,9 @@ class TransactionUtil extends Util
     public function updateSellTransaction($request, $id)
     {
         $transaction_data = [
+            'exchange_rate' => !empty($request->exchange_rate) ? $request->exchange_rate : 1,
+            'default_currency_id' => $request->default_currency_id,
+            'received_currency_id' => $request->received_currency_id,
             'customer_id' => $request->customer_id,
             'final_total' => $this->num_uf($request->final_total),
             'grand_total' => $this->num_uf($request->grand_total),

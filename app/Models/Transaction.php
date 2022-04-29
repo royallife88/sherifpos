@@ -193,4 +193,20 @@ class Transaction extends Model  implements HasMedia
     {
         return $this->belongsTo(DiningRoom::class);
     }
+    public function received_currency()
+    {
+        $default_currency_id = System::getProperty('currency');
+        $default_currency = Currency::where('id', $default_currency_id)->first();
+        $symbol = !empty($default_currency) ? $default_currency->symbol : '';
+
+        return $this->belongsTo(Currency::class, 'received_currency_id');
+    }
+    public function paying_currency()
+    {
+        $default_currency_id = System::getProperty('currency');
+        $default_currency = Currency::where('id', $default_currency_id)->first();
+        $symbol = !empty($default_currency) ? $default_currency->symbol : '';
+
+        return $this->belongsTo(Currency::class, 'paying_currency_id')->withDefault(['symbol' => $symbol]);
+    }
 }

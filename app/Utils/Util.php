@@ -3,6 +3,7 @@
 namespace App\Utils;
 
 use App\Models\Currency;
+use App\Models\ExchangeRate;
 use App\Models\Invoice;
 use App\Models\InvoicePayment;
 use App\Models\Notification;
@@ -428,15 +429,98 @@ class Util
      *
      * @return array
      */
-    public function allCurrencies()
+    public function allCurrencies($exclude_array = [])
     {
-        $currencies = Currency::select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))
-            ->orderBy('country')
-            ->pluck('info', 'id');
+        $query = Currency::select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))
+            ->orderBy('country');
+        if (!empty($exclude_array)) {
+            $query->whereNotIn('id', $exclude_array);
+        }
+
+        $currencies = $query->pluck('info', 'id');
 
         return $currencies;
     }
 
+    /**
+     * Gives a list of exchange rate currencies
+     *
+     * @return array
+     */
+    public function getCurrenciesExchangeRateArray($include_default = false)
+    {
+        $store_id = request()->store_id;
+
+        $query = ExchangeRate::leftjoin('currencies', 'exchange_rates.received_currency_id', '=', 'currencies.id')
+            ->where(function ($q) {
+                $q->whereNull('expiry_date')
+                    ->orWhereDate('expiry_date', '>=', date('Y-m-d'));
+            });
+        if (!empty($store_id)) {
+            $query->where('exchange_rates.store_id', $store_id);
+        }
+        $query->select('received_currency_id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))
+            ->orderBy('country');
+        $exchange_rate_currencies = $query->pluck('info', 'received_currency_id')->toArray();
+
+        if (!empty($include_default)) {
+            $default_currency_id = System::getProperty('currency');
+            $default_currency = Currency::where('id', $default_currency_id)->select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))->pluck('info', 'id')->toArray();
+
+            $exchange_rate_currencies = $exchange_rate_currencies + $default_currency;
+        }
+
+        return $exchange_rate_currencies;
+    }
+
+    /**
+     * list exchange rate currencies
+     *
+     * @return array
+     */
+    public function getExchangeRateCurrencies($include_default = false)
+    {
+        $currencies = ExchangeRate::leftjoin('currencies', 'exchange_rates.received_currency_id', 'currencies.id')
+            ->where(function ($q) {
+                $q->whereNull('expiry_date')
+                    ->orWhereDate('expiry_date', '>=', date('Y-m-d'));
+            })->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')->get()->toArray();
+        if (!empty($include_default)) {
+            $default_currency_id = System::getProperty('currency');
+            $default_currency = Currency::where('id', $default_currency_id)->select('id as currency_id', 'symbol')->first()->toArray();
+            $d['currency_id'] = $default_currency['currency_id'];
+            $d['symbol'] = $default_currency['symbol'];
+            $d['conversion_rate'] = 1;
+            $currencies[] = $d;
+        }
+        return $currencies;
+    }
+
+    /**
+     * get the exchange rate of the currency
+     *
+     * @param int $currency_id
+     * @param int $store_id
+     * @return void
+     */
+    public function getExchangeRateByCurrency($currency_id, $store_id = null)
+    {
+        $default_currency_id = System::getProperty('currency');
+
+        if ($default_currency_id == $currency_id) {
+            return 1;
+        }
+
+        $query = ExchangeRate::where('received_currency_id', $currency_id);
+        if (!empty($store_id)) {
+            $query->where('store_id', $store_id);
+        }
+        $exchange_rate = $query->first();
+        if (!empty($exchange_rate)) {
+            return $exchange_rate->conversion_rate;
+        }
+        return 1;
+    }
     /**
      * Gives a list of all timezone with gmt offset
      *

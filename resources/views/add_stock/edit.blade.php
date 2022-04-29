@@ -10,7 +10,7 @@
                         <div class="card-header d-flex align-items-center">
                             <h4>@lang('lang.edit_stock')</h4>
                         </div>
-                        {!! Form::open(['url' => action('AddStockController@update', $add_stock->id), 'method' => 'put', 'id' => 'add_stock_form', 'enctype' => 'multipart/form-data']) !!}
+                        {!! Form::open(['url' => action('AddStockController@update', $add_stock->id), 'method' => 'put', 'id' => 'edit_stock_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="row_count" id="row_count"
                             value="{{ $add_stock->add_stock_lines->count() }}">
                         <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
@@ -44,7 +44,15 @@
                                         {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
-
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
+                                        <input type="hidden" name="default_currency_id" id="default_currency_id"
+                                            value="{{ !empty($add_stock->default_currency_id) ? $add_stock->default_currency_id : App\Models\System::getProperty('currency') }}">
+                                        {!! Form::label('paying_currency_id', __('lang.paying_currency') . ':', []) !!}
+                                        {!! Form::select('paying_currency_id', $exchange_rate_currencies, !empty($add_stock->paying_currency_id) ? $add_stock->paying_currency_id : App\Models\System::getProperty('currency'), ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required']) !!}
+                                    </div>
+                                </div>
 
                             </div>
                             <br>
@@ -63,7 +71,9 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    @include('quotation.partial.product_selection')
+                                    @include(
+                                        'quotation.partial.product_selection'
+                                    )
                                 </div>
                             </div>
                             <br>
@@ -171,7 +181,11 @@
                                 </div>
                             </div>
                             <div class="col-md-12 text-center">
-                                <h4>@lang('lang.items_count'): <span class="items_count_span" style="margin-right: 15px;">{{$add_stock->add_stock_lines->count()}}</span>  @lang('lang.items_quantity'): <span class="items_quantity_span" style="margin-right: 15px;">{{$add_stock->add_stock_lines->sum('quantity')}}</span></h4>
+                                <h4>@lang('lang.items_count'): <span class="items_count_span"
+                                        style="margin-right: 15px;">{{ $add_stock->add_stock_lines->count() }}</span>
+                                    @lang('lang.items_quantity'): <span class="items_quantity_span"
+                                        style="margin-right: 15px;">{{ $add_stock->add_stock_lines->sum('quantity') }}</span>
+                                </h4>
                             </div>
                             <br>
                             <div class="col-md-12">

@@ -15,6 +15,7 @@ use App\Models\DeliveryZone;
 use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
+use App\Models\ExchangeRate;
 use App\Models\Grade;
 use App\Models\ProductClass;
 use App\Models\ServiceFee;
@@ -77,6 +78,8 @@ class SellController extends Controller
     public function index(Request $request)
     {
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        $default_currency_id = System::getProperty('currency');
+
         if (request()->ajax()) {
             // $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $store_id = request()->store_id;
@@ -89,6 +92,7 @@ class SellController extends Controller
                 ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
                 ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
 
             if (!empty(request()->product_class_id) &&  !empty(array_filter(request()->product_class_id))) {
@@ -183,7 +187,9 @@ class SellController extends Controller
                 'stores.name as store_name',
                 'users.name as created_by_name',
                 'customers.name as customer_name',
-                'customers.mobile_number'
+                'customers.mobile_number',
+                'received_currency.symbol as received_currency_symbol',
+                'received_currency_id'
             )->with([
                 'return_parent',
                 'customer',
@@ -191,7 +197,7 @@ class SellController extends Controller
                 'deliveryman',
                 'canceled_by_user',
                 'sell_products',
-                'sell_variations',
+                'sell_variations'
             ])
                 ->groupBy('transactions.id');
 
@@ -212,11 +218,36 @@ class SellController extends Controller
 
                     return $string;
                 })
-                ->editColumn('final_total', function ($row) {
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
                     if (!empty($row->return_parent)) {
-                        return $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                    } else {
+                        $final_total = $this->commonUtil->num_f($row->final_total);
                     }
-                    return $this->commonUtil->num_f($row->final_total);
+
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="'. $received_currency_id .'">' . $final_total . '</span>';
+                })
+                ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="'. $received_currency_id .'">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $paid = $row->transaction_payments->sum('amount');
+                    $due = $row->final_total - $paid;
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="'. $received_currency_id .'">' . $this->commonUtil->num_f($due) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -224,6 +255,9 @@ class SellController extends Controller
                     } else {
                         return '';
                     }
+                })
+                ->editColumn('received_currency_symbol', function ($row) {
+                    return $row->received_currency_symbol ?? session('currency')['symbol'];
                 })
                 ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
@@ -261,23 +295,6 @@ class SellController extends Controller
                         }
                     }
                     return $ref_numbers;
-                })
-                ->addColumn('paid', function ($row) use ($request) {
-                    $amount_paid = 0;
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
-                    } else {
-                        $payments = $row->transaction_payments;
-                    }
-                    foreach ($payments as $payment) {
-                        $amount_paid += $payment->amount;
-                    }
-                    return $this->commonUtil->num_f($amount_paid);
-                })
-                ->addColumn('due', function ($row) {
-                    $paid = $row->transaction_payments->sum('amount');
-                    $due = $row->final_total - $paid;
-                    return $this->commonUtil->num_f($due);
                 })
                 ->editColumn('payment_status', function ($row) {
                     if ($row->payment_status == 'pending') {
@@ -409,6 +426,8 @@ class SellController extends Controller
                     'payment_status',
                     'transaction_date',
                     'final_total',
+                    'paid',
+                    'due',
                     'status',
                     'store_name',
                     'created_by',
@@ -429,6 +448,7 @@ class SellController extends Controller
         $taxes = Tax::pluck('name', 'id');
         $dining_rooms = DiningRoom::pluck('name', 'id');
         $dining_tables = DiningTable::pluck('name', 'id');
+        $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -444,7 +464,8 @@ class SellController extends Controller
             'payment_status_array',
             'taxes',
             'dining_rooms',
-            'dining_tables'
+            'dining_tables',
+            'exchange_rate_currencies'
         ));
     }
 
@@ -563,6 +584,7 @@ class SellController extends Controller
         $weighing_scale_setting = System::getProperty('weighing_scale_setting') ?  json_decode(System::getProperty('weighing_scale_setting'), true) : [];
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -576,7 +598,8 @@ class SellController extends Controller
             'payment_status_array',
             'weighing_scale_setting',
             'service_fees',
-            'delivery_zones'
+            'delivery_zones',
+            'exchange_rate_currencies'
         ));
     }
 

@@ -101,7 +101,9 @@ $(document).on("click", ".filter-by", function () {
 //on change event jquery
 $(document).on("change", "#store_id", function () {
     getFilterProductRightSide();
-
+    if ($("form#edit_pos_form").length == 0) {
+        getCurrencyDropDown();
+    }
     if ($("#store_id").val()) {
         $.ajax({
             method: "get",
@@ -118,6 +120,40 @@ $(document).on("change", "#store_id", function () {
     }
 });
 
+function getCurrencyDropDown() {
+    let store_id = $("#store_id").val();
+    let default_currency_id = $("#default_currency_id").val();
+
+    $.ajax({
+        method: "get",
+        url: "/exchange-rate/get-currency-dropdown",
+        data: { store_id: store_id },
+        success: function (result) {
+            $("#received_currency_id").html(result);
+            $("#received_currency_id").val(default_currency_id);
+            $("#received_currency_id").change();
+            $("#received_currency_id").selectpicker("refresh");
+        },
+    });
+}
+
+$(document).on("change", "select#received_currency_id", function () {
+    let currency_id = $(this).val();
+    let store_id = $("#store_id").val();
+    getFilterProductRightSide();
+    $.ajax({
+        method: "GET",
+        url: "/exchange-rate/get-exchange-rate-by-currency",
+        data: {
+            store_id: store_id,
+            currency_id: currency_id,
+        },
+        success: function (result) {
+            $("#exchange_rate").val(result.conversion_rate);
+            $("#exchange_rate").change();
+        },
+    });
+});
 $(document).on("change", "input[name=restaurant_filter]", function () {
     let product_class_id = null;
     if ($(this).val() === "all") {
@@ -146,6 +182,7 @@ function getFilterProductRightSide(
     var sale_promo_filter = getFilterCheckboxValue("sale_promo_filter");
     var sorting_filter = getFilterCheckboxValue("sorting_filter");
     var store_id = $("#store_id").val();
+    let currency_id = $("#received_currency_id").val();
 
     $.ajax({
         method: "get",
@@ -161,6 +198,7 @@ function getFilterProductRightSide(
             sub_category_id,
             brand_id,
             product_class_id,
+            currency_id,
         },
         dataType: "html",
         success: function (result) {
@@ -287,6 +325,8 @@ function get_label_product_row(
     if (add_via_ajax) {
         var store_id = $("#store_id").val();
         var customer_id = $("#customer_id").val();
+        let currency_id = $("#received_currency_id").val();
+
         if (edit_row_count !== 0) {
             row_count = edit_row_count;
         } else {
@@ -305,6 +345,7 @@ function get_label_product_row(
                 variation_id: variation_id,
                 store_id: store_id,
                 customer_id: customer_id,
+                currency_id: currency_id,
                 edit_quantity: edit_quantity,
                 weighing_scale_barcode: weighing_scale_barcode,
                 dining_table_id: $("#dining_table_id").val(),
@@ -475,6 +516,7 @@ function calculate_sub_totals() {
     var total_item_tax = 0;
     var total_tax_payable = 0;
     var total_coupon_discount = 0;
+    var exchange_rate = __read_number($("#exchange_rate"));
     $("#product_table > tbody  > tr").each((ele, tr) => {
         let quantity = __read_number($(tr).find(".quantity"));
         let sell_price = __read_number($(tr).find(".sell_price"));
@@ -483,14 +525,15 @@ function calculate_sub_totals() {
 
         if (sell_price > price_hidden) {
             let price_discount = (sell_price - price_hidden) * quantity;
+
             $(tr).find(".product_discount_type").val("surplus");
             __write_number(
                 $(tr).find(".product_discount_value"),
-                price_discount
+                price_discount / exchange_rate
             );
             __write_number(
                 $(tr).find(".product_discount_amount"),
-                price_discount
+                price_discount / exchange_rate
             );
             $(tr).find(".plus_sign_text").text("+");
             sub_total = sell_price * quantity;
@@ -499,11 +542,11 @@ function calculate_sub_totals() {
             $(tr).find(".product_discount_type").val("fixed");
             __write_number(
                 $(tr).find(".product_discount_value"),
-                price_discount
+                price_discount / exchange_rate
             );
             __write_number(
                 $(tr).find(".product_discount_amount"),
-                price_discount
+                price_discount / exchange_rate
             );
             $(tr).find(".plus_sign_text").text("-");
             sub_total = price_hidden * quantity;
@@ -550,6 +593,7 @@ function calculate_sub_totals() {
         if (main_tax_type == "product_tax") {
             if (main_tax_id == tax_id) {
                 let item_tax = (sub_total * tax_rate) / 100;
+                item_tax = item_tax / exchange_rate;
                 __write_number($(tr).find(".item_tax"), item_tax);
                 total_item_tax += item_tax;
                 if (tax_method === "exclusive") {
@@ -619,6 +663,7 @@ function calculate_sub_totals() {
     if ($("#delivery_cost_paid_by_customer").prop("checked")) {
         delivery_cost = __read_number($("#delivery_cost"));
     }
+    delivery_cost = delivery_cost / exchange_rate;
     total += delivery_cost;
 
     //calculate service fee
@@ -635,6 +680,7 @@ function calculate_sub_totals() {
         $(".service_value_span").text(
             __currency_trans_from_en(service_fee_value, false)
         );
+        service_fee_value = service_fee_value / exchange_rate;
         total += service_fee_value;
     }
 
@@ -657,7 +703,7 @@ function calculate_product_surplus(tr) {
 }
 function calculate_product_discount(tr) {
     let discount = 0;
-
+    let exchange_rate = __read_number($("#exchange_rate"));
     let value = __read_number($(tr).find(".product_discount_value"));
     let type = $(tr).find(".product_discount_type").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
@@ -667,6 +713,7 @@ function calculate_product_discount(tr) {
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
     }
+    discount = discount / exchange_rate;
     __write_number($(tr).find(".product_discount_amount"), discount);
     if (type == "surplus") {
         discount = 0;
@@ -675,7 +722,7 @@ function calculate_product_discount(tr) {
 }
 function calculate_promotion_discount(tr) {
     let discount = 0;
-
+    let exchange_rate = __read_number($("#exchange_rate"));
     let value = __read_number($(tr).find(".promotion_discount_value"));
     let type = $(tr).find(".promotion_discount_type").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
@@ -685,11 +732,12 @@ function calculate_promotion_discount(tr) {
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
     }
-
+    discount = discount / exchange_rate;
     $(tr).find(".promotion_discount_amount").val(discount);
 }
 
 function apply_promotion_discounts() {
+    let exchange_rate = __read_number($("#exchange_rate"));
     let promo_discount = 0;
     let final_total = __read_number($("#final_total"));
     $("#product_table > tbody  > tr").each((ele, tr) => {
@@ -715,13 +763,13 @@ function apply_promotion_discounts() {
         $("#total_pp_discount")
     );
     let total_sp_discount = total_package_promotion_discount + promo_discount;
-    $("#total_sp_discount").val(total_sp_discount);
+    $("#total_sp_discount").val(total_sp_discount / exchange_rate);
 
     return promo_discount;
 }
 function calculate_coupon_discount(tr) {
     let discount = 0;
-
+    let exchange_rate = __read_number($("#exchange_rate"));
     let value = __read_number($(tr).find(".coupon_discount_value"));
     let type = $(tr).find(".coupon_discount_type").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
@@ -731,7 +779,7 @@ function calculate_coupon_discount(tr) {
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
     }
-
+    discount = discount / exchange_rate;
     $(tr).find(".coupon_discount_amount").val(discount);
 
     return discount;
@@ -759,6 +807,7 @@ function get_tax_amount(total) {
     let tax_type = $("#tax_type").val();
     let tax_method = $("#tax_method").val();
     let tax_amount = 0;
+    let exchange_rate = __read_number($("#exchange_rate"));
     if (tax_type == "general_tax") {
         if (!isNaN(tax_rate)) {
             tax_amount = __get_percent_value(total, tax_rate);
@@ -770,6 +819,7 @@ function get_tax_amount(total) {
     } else {
         $("#tax").text(__currency_trans_from_en(0, false));
     }
+    tax_amount = tax_amount;
     __write_number($("#total_tax"), tax_amount);
 
     if (tax_method == "exclusive") {
@@ -780,17 +830,17 @@ function get_tax_amount(total) {
 function get_discount_amount(total) {
     let discount_type = $("#discount_type").val();
     let discount_value = __read_number($("#discount_value"));
-
+    let exchange_rate = __read_number($("#exchange_rate"));
     let discount_amount = 0;
     if (discount_value) {
         if (discount_type === "fixed") {
-            discount_amount = discount_value;
+            discount_amount = discount_value / exchange_rate;
         }
         if (discount_type === "percentage") {
             discount_amount = __get_percent_value(total, discount_value);
         }
     }
-
+    discount_amount = discount_amount;
     $("#discount").text(__currency_trans_from_en(discount_amount, false));
     __write_number($("#discount_amount"), discount_amount);
     return discount_amount;

@@ -29,24 +29,33 @@
                             <div class="row">
                                 <div class="col-md-12 main_settings">
                                     <div class="row">
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 {!! Form::label('store_id', __('lang.store') . ':*', []) !!}
                                                 {!! Form::select('store_id', $stores, $store_pos->store_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 {!! Form::label('store_pos_id', __('lang.pos') . ':*', []) !!}
                                                 {!! Form::select('store_pos_id', $store_poses, $store_pos->id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
                                                     value="{{ !empty(App\Models\System::getProperty('invoice_lang'))? App\Models\System::getProperty('invoice_lang'): 'en' }}">
                                                 {!! Form::label('invoice_lang', __('lang.invoice_lang') . ':', []) !!}
                                                 {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="hidden" name="exchange_rate" id="exchange_rate" value="1">
+                                                <input type="hidden" name="default_currency_id" id="default_currency_id"
+                                                    value="{{ !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : '' }}">
+                                                {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!}
+                                                {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty(App\Models\System::getProperty('currency')) ? App\Models\System::getProperty('currency') : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required']) !!}
                                             </div>
                                         </div>
 
@@ -310,7 +319,8 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <button style="background-color: #ff0000;" type="button"
-                                                    class="btn text-white" id="cancel-btn" onclick="return confirmCancel()">
+                                                    class="btn text-white" id="cancel-btn"
+                                                    onclick="return confirmCancel()">
                                                     @lang('lang.cancel')</button>
                                             </div>
                                         </div>

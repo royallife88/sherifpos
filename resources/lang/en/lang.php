@@ -1182,4 +1182,19 @@ return [
 
     'representative_name' => 'Representative name',
     'active' => 'Active',
+
+
+    'expiry_in' => 'Expire In',
+    'currencies' => 'Currencies',
+    'exchange_rate' => 'Exchange Rate',
+    'add_exchange_rate' => 'Add Exchange Rate',
+    'edit_exchange_rate' => 'Edit Exchange Rate',
+    'received_currency' => 'Recieved Currency',
+    'default_currency' => 'Default Currency',
+    'created_on' => 'Created On',
+    'conversion_rate' => 'Conversion Rate',
+    'add_new_rate' => 'Add New Rate',
+    'enter_the_rate' => 'Enter the Rate',
+    'edit_rate' => 'Edit Rate',
+    'paying_currency' => 'Paying Currency',
 ];

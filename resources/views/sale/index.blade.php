@@ -182,6 +182,7 @@
                                 <th>@lang('lang.payment_status')</th>
                                 <th>@lang('lang.payment_type')</th>
                                 <th>@lang('lang.ref_number')</th>
+                                <th class="currencies">@lang('lang.received_currency')</th>
                                 <th class="sum">@lang('lang.grand_total')</th>
                                 <th class="sum">@lang('lang.paid')</th>
                                 <th class="sum">@lang('lang.due_sale_list')</th>
@@ -207,6 +208,7 @@
                                 <td></td>
                                 <td></td>
                                 <th style="text-align: right">@lang('lang.totals')</th>
+                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -285,24 +287,24 @@
                     },
                     @if (session('system_mode') == 'restaurant')
                         {
-                        targets: [18],
+                        targets: [19],
                         orderable: false,
                         searchable: false,
                         },
                         {
-                        targets: [17],
+                        targets: [18],
                         visible: false,
                         orderable: false,
                         searchable: false,
                         },
                     @else
                         {
-                        targets: [16],
+                        targets: [17],
                         orderable: false,
                         searchable: false,
                         },
                         {
-                        targets: [15],
+                        targets: [16],
                         visible: false,
                         orderable: false,
                         searchable: false,
@@ -344,6 +346,11 @@
                     {
                         data: "ref_number",
                         name: "transaction_payments.ref_number"
+                    },
+                    {
+                        data: "received_currency_symbol",
+                        name: "received_currency_symbol",
+                        searchable: false
                     },
                     {
                         data: "final_total",
@@ -400,29 +407,48 @@
                     };
 
                     this.api()
+                        .columns(".currencies", {
+                            page: "current"
+                        }).every(function() {
+                            var column = this;
+                            let currencies_html = '';
+                            $.each(currency_obj, function(key, value) {
+                                currencies_html += `<h6>${value.symbol}</h6>`
+                                $(column.footer()).html(currencies_html);
+                            });
+                        })
+                    this.api()
                         .columns(".sum", {
                             page: "current"
                         })
                         .every(function() {
                             var column = this;
-                            if (column.data().count()) {
-                                var sum = column.data().reduce(function(a, b) {
-                                    a = intVal(a);
-                                    if (isNaN(a)) {
-                                        a = 0;
-                                    }
+                            var currency_total = [];
+                            $.each(currency_obj, function(key, value) {
+                                currency_total[value.currency_id] = 0;
+                            });
+                            column.data().each(function(group, i) {
+                                b = $(group).text();
+                                currency_id = $(group).data('currency_id');
 
-                                    b = intVal(b);
-                                    if (isNaN(b)) {
-                                        b = 0;
+                                $.each(currency_obj, function(key, value) {
+                                    if (currency_id == value.currency_id) {
+                                        currency_total[value.currency_id] += intVal(
+                                            b);
                                     }
-
-                                    return a + b;
                                 });
-                                $(column.footer()).html(
-                                    __currency_trans_from_en(sum, false)
-                                );
-                            }
+
+
+
+                            });
+                            var footer_html = '';
+                            $.each(currency_obj, function(key, value) {
+                                footer_html +=
+                                    `<h6>${__currency_trans_from_en(currency_total[value.currency_id], false)}</h6>`
+                            });
+                            $(column.footer()).html(
+                                footer_html
+                            );
                         });
                 },
             });

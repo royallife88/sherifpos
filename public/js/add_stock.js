@@ -51,6 +51,46 @@ $(document).ready(function () {
     }
 });
 
+$(document).on("change", "#store_id", function () {
+    if ($("form#edit_stock_form").length == 0) {
+        getCurrencyDropDown();
+    }
+});
+
+function getCurrencyDropDown() {
+    let store_id = $("#store_id").val();
+    let default_currency_id = $("#default_currency_id").val();
+
+    $.ajax({
+        method: "get",
+        url: "/exchange-rate/get-currency-dropdown",
+        data: { store_id: store_id },
+        success: function (result) {
+            $("#paying_currency_id").html(result);
+            $("#paying_currency_id").val(default_currency_id);
+            $("#paying_currency_id").change();
+            $("#paying_currency_id").selectpicker("refresh");
+        },
+    });
+}
+
+$(document).on("change", "select#paying_currency_id", function () {
+    let currency_id = $(this).val();
+    let store_id = $("#store_id").val();
+    $.ajax({
+        method: "GET",
+        url: "/exchange-rate/get-exchange-rate-by-currency",
+        data: {
+            store_id: store_id,
+            currency_id: currency_id,
+        },
+        success: function (result) {
+            $("#exchange_rate").val(result.conversion_rate);
+            $("#exchange_rate").change();
+        },
+    });
+});
+
 function get_label_product_row(product_id, variation_id) {
     //Get item addition method
     var add_via_ajax = true;
@@ -79,6 +119,7 @@ function get_label_product_row(product_id, variation_id) {
 
     if (add_via_ajax) {
         var row_count = parseInt($("#row_count").val());
+        let currency_id = $('#paying_currency_id').val()
         $("#row_count").val(row_count + 1);
         $.ajax({
             method: "GET",
@@ -89,6 +130,7 @@ function get_label_product_row(product_id, variation_id) {
                 row_count: row_count,
                 variation_id: variation_id,
                 store_id: store_id,
+                currency_id: currency_id,
             },
             success: function (result) {
                 $("table#product_table tbody").prepend(result);
