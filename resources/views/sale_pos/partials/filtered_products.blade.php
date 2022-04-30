@@ -12,9 +12,15 @@
                 <p><span
                         style="font-size:12px !important; font-weight: bold; color: black;">{{ $product->name }}</span>
                     <br> <span style="color: black; font-weight: bold;">{{ $product->sub_sku }}</span> <br>
-                    <span
-                        style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($product->sell_price / $exchange_rate) . ' ' . $currency->symbol }}
-                    </span>
+                    @if (!empty($currency))
+                        <span
+                            style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($product->sell_price / $exchange_rate) . ' ' . $currency->symbol }}
+                        </span>
+                    @else
+                        <span
+                            style="font-size:12px !important; font-weight: bold; color: black;">{{ @num_format($product->sell_price / $exchange_rate) . ' ' . session('currency.symbol') }}
+                        </span>
+                    @endif
                 </p>
             </td>
         @endforeach

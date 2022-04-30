@@ -55,7 +55,7 @@
                                                 <input type="hidden" name="default_currency_id" id="default_currency_id"
                                                     value="{{ !empty($transaction->default_currency_id)? $transaction->default_currency_id: App\Models\System::getProperty('currency') }}">
                                                 {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!}
-                                                {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty($transaction->received_currency_id) ? $transaction->received_currency_id : App\Models\System::getProperty('currency'), ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required']) !!}
+                                                {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty($transaction->received_currency_id) ? $transaction->received_currency_id : App\Models\System::getProperty('currency'), ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
                                         </div>
                                         <div class="col-md-1">

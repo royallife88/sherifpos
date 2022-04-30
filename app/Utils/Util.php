@@ -480,20 +480,29 @@ class Util
      */
     public function getExchangeRateCurrencies($include_default = false)
     {
-        $currencies = ExchangeRate::leftjoin('currencies', 'exchange_rates.received_currency_id', 'currencies.id')
+        $currencies_obj = ExchangeRate::leftjoin('currencies', 'exchange_rates.received_currency_id', 'currencies.id')
             ->where(function ($q) {
-                $q->whereNull('expiry_date')
-                    ->orWhereDate('expiry_date', '>=', date('Y-m-d'));
-            })->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')->get()->toArray();
-        if (!empty($include_default)) {
-            $default_currency_id = System::getProperty('currency');
-            $default_currency = Currency::where('id', $default_currency_id)->select('id as currency_id', 'symbol')->first()->toArray();
-            $d['currency_id'] = $default_currency['currency_id'];
-            $d['symbol'] = $default_currency['symbol'];
-            $d['conversion_rate'] = 1;
-            $currencies[] = $d;
+                $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', date('Y-m-d'));
+            })
+            ->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')
+            ->get();
+
+        foreach ($currencies_obj as $cur_obj) {
+            $currencies_obj[] = ['currency_id' => $cur_obj->currency_id, 'symbol' => $cur_obj->symbol, 'conversion_rate' => $cur_obj->conversion_rate];
         }
-        return $currencies;
+
+        $default_currency_id = System::getProperty('currency');
+        if (!empty($default_currency_id)) {
+            $default_currency = Currency::where('id', $default_currency_id)
+                ->select('id as currency_id', 'symbol')
+                ->first();
+
+            $d['currency_id'] = $default_currency->currency_id;
+            $d['symbol'] = $default_currency->symbol;
+            $d['conversion_rate'] = 1;
+            $currencies_obj[] = $d;
+        }
+        return $currencies_obj;
     }
 
     /**

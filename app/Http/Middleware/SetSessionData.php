@@ -39,6 +39,7 @@ class SetSessionData
             } else {
                 $currency = Currency::find($currency_id);
                 $currency_data = [
+                    'id' => $currency->id,
                     'country' => $currency->country,
                     'code' => $currency->code,
                     'symbol' => $currency->symbol,

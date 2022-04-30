@@ -448,7 +448,7 @@ class SellController extends Controller
         $taxes = Tax::pluck('name', 'id');
         $dining_rooms = DiningRoom::pluck('name', 'id');
         $dining_tables = DiningTable::pluck('name', 'id');
-        $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
+        // $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -465,7 +465,7 @@ class SellController extends Controller
             'taxes',
             'dining_rooms',
             'dining_tables',
-            'exchange_rate_currencies'
+            // 'exchange_rate_currencies'
         ));
     }
 
