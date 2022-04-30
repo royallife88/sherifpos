@@ -8,15 +8,15 @@
 
 // $currencies_obj = !empty($currencies_obj) && $currencies_obj->count() > 0 ? $currencies_obj->toArray() : [];
 
-$default_currency_id = App\Models\System::getProperty('currency');
-$default_currency = App\Models\Currency::where('id', $default_currency_id)
-    ->select('id as currency_id', 'symbol')
-    ->first()
-    ->toArray();
-$d['currency_id'] = $default_currency['currency_id'];
-$d['symbol'] = $default_currency['symbol'];
-$d['conversion_rate'] = 1;
-$currencies_obj[] = $d;
+// $default_currency_id = App\Models\System::getProperty('currency');
+// $default_currency = App\Models\Currency::where('id', $default_currency_id)
+//     ->select('id as currency_id', 'symbol')
+//     ->first()
+//     ->toArray();
+// $d['currency_id'] = $default_currency['currency_id'];
+// $d['symbol'] = $default_currency['symbol'];
+// $d['conversion_rate'] = 1;
+$currencies_obj[] = [];
 
 @endphp
 <script>
