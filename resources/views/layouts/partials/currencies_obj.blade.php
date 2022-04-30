@@ -5,7 +5,7 @@ $currencies_obj = App\Models\ExchangeRate::leftjoin('currencies', 'exchange_rate
     })
     ->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')
     ->get()
-    $currencies_obj = !empty($currencies_obj) $currencies_obj->toArray() : array();
+    $currencies_obj = !empty($currencies_obj) ? $currencies_obj->toArray() : array();
 
 $default_currency_id = App\Models\System::getProperty('currency');
 $default_currency = App\Models\Currency::where('id', $default_currency_id)
