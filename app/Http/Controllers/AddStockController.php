@@ -144,8 +144,9 @@ class AddStockController extends Controller
                     $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
                     return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
                 })
-                ->editColumn('paying_currency_symbol', function ($row) {
-                    return $row->paying_currency_symbol ?? session('currency')['symbol'];
+                ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->paying_currency_symbol ?? $default_currency->symbol;
                 })
                 ->addColumn(
                     'action',

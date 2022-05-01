@@ -981,6 +981,10 @@ class SellPosController extends Controller
         $customer_id = $request->customer_id;
         $dining_table_id = $request->dining_table_id;
 
+        $currency_id = $request->currency_id;
+        $currency = Currency::find($currency_id);
+        $exchange_rate = $this->commonUtil->getExchangeRateByCurrency($currency_id, $request->store_id);
+
         $product_details = $this->productUtil->getNonIdentifiableProductDetails($name, $sell_price, $purchase_price, $request);
         if (!empty($product_details)) {
             $product_id = $product_details->product_id;
@@ -1001,7 +1005,7 @@ class SellPosController extends Controller
             // $sale_promotion_details = $this->productUtil->getSalesPromotionDetail($product_id, $store_id, $customer_id, $added_products);
             $sale_promotion_details = null; //changed, now in pos.js check_for_sale_promotion method
             $html_content =  view('sale_pos.partials.product_row')
-                ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'dining_table_id'))->render();
+                ->with(compact('products', 'index', 'sale_promotion_details', 'product_discount_details', 'edit_quantity', 'dining_table_id', 'exchange_rate'))->render();
 
             $output['success'] = true;
             $output['html_content'] = $html_content;

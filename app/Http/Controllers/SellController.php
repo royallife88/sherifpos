@@ -8,6 +8,7 @@ use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Color;
 use App\Models\Coupon;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
@@ -226,7 +227,7 @@ class SellController extends Controller
                     }
 
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
-                    return '<span data-currency_id="'. $received_currency_id .'">' . $final_total . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
                 })
                 ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
                     $amount_paid = 0;
@@ -240,14 +241,14 @@ class SellController extends Controller
                     }
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="'. $received_currency_id .'">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
                 })
                 ->addColumn('due', function ($row) use ($default_currency_id) {
                     $paid = $row->transaction_payments->sum('amount');
                     $due = $row->final_total - $paid;
                     $received_currency_id = $row->received_currency_id ?? $default_currency_id;
 
-                    return '<span data-currency_id="'. $received_currency_id .'">' . $this->commonUtil->num_f($due) . '</span>';
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
                 })
                 ->addColumn('customer_type', function ($row) {
                     if (!empty($row->customer->customer_type)) {
@@ -256,8 +257,9 @@ class SellController extends Controller
                         return '';
                     }
                 })
-                ->editColumn('received_currency_symbol', function ($row) {
-                    return $row->received_currency_symbol ?? session('currency')['symbol'];
+                ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->received_currency_symbol ?? $default_currency->symbol;
                 })
                 ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
@@ -448,7 +450,6 @@ class SellController extends Controller
         $taxes = Tax::pluck('name', 'id');
         $dining_rooms = DiningRoom::pluck('name', 'id');
         $dining_tables = DiningTable::pluck('name', 'id');
-        // $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
 
         return view('sale.index')->with(compact(
             'product_classes',
@@ -464,8 +465,7 @@ class SellController extends Controller
             'payment_status_array',
             'taxes',
             'dining_rooms',
-            'dining_tables',
-            // 'exchange_rate_currencies'
+            'dining_tables'
         ));
     }
 

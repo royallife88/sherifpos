@@ -207,7 +207,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <th style="text-align: right">@lang('lang.totals')</th>
+                                <th class="table_totals" style="text-align: right">@lang('lang.totals')</th>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -413,7 +413,8 @@
                             var column = this;
                             let currencies_html = '';
                             $.each(currency_obj, function(key, value) {
-                                currencies_html += `<h6>${value.symbol}</h6>`
+                                currencies_html +=
+                                    `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`
                                 $(column.footer()).html(currencies_html);
                             });
                         })
@@ -437,14 +438,11 @@
                                             b);
                                     }
                                 });
-
-
-
                             });
                             var footer_html = '';
                             $.each(currency_obj, function(key, value) {
                                 footer_html +=
-                                    `<h6>${__currency_trans_from_en(currency_total[value.currency_id], false)}</h6>`
+                                    `<h6 class="currency_total currency_total_${value.currency_id}" data-currency_id="${value.currency_id}" data-is_default="${value.is_default}" data-conversion_rate="${value.conversion_rate}" data-base_conversion="${currency_total[value.currency_id] * value.conversion_rate}" data-orig_value="${currency_total[value.currency_id]}">${__currency_trans_from_en(currency_total[value.currency_id], false)}</h6>`
                             });
                             $(column.footer()).html(
                                 footer_html
