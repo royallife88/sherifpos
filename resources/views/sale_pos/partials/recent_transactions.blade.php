@@ -24,7 +24,7 @@
         <tfoot>
             <tr>
                 <td></td>
-                <th class="table_totals" style="text-align: right">@lang('lang.totals')</th>
+                <th class="table_totals " style="text-align: right">@lang('lang.totals')</th>
                 <td></td>
                 <td></td>
                 <td></td>
