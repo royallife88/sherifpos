@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Currency;
 use App\Models\System;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 

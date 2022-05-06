@@ -19,11 +19,11 @@
                             <thead>
                                 <tr>
                                     <th>@lang('lang.received_currency')</th>
-                                    <th>@lang('lang.rate')</th>
+                                    <th>@lang('lang.rate_ex')</th>
                                     <th>@lang('lang.default_currency')</th>
                                     <th>@lang('lang.created_by')</th>
                                     <th>@lang('lang.created_on')</th>
-                                    <th>@lang('lang.expiry_date')</th>
+                                    <th>@lang('lang.expiry_date_in')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
                             </thead>

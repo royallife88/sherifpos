@@ -226,6 +226,7 @@
                         <tr>
                             <th colspan="2" style="text-align:left">
                                 {{ @num_format($transaction->grand_total +$transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                {{ $transaction->received_currency->symbol }}
                             </th>
                             <th colspan="2" style="text-align:right">{{ __('lang.total', [], 'ar') }} <br>
                                 @lang('lang.total',[], 'en') </th>
@@ -234,6 +235,7 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.discount', [], 'ar') }} <br>
                                     @lang('lang.discount',[], 'en') </th>
@@ -243,6 +245,7 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->total_item_tax) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.tax', [], 'ar') }} <br>
                                     @lang('lang.tax',[], 'en') </th>
@@ -251,7 +254,9 @@
                         @if ($transaction->service_fee_value > 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">
-                                    {{ @num_format($transaction->service_fee_value) }}</th>
+                                    {{ @num_format($transaction->service_fee_value) }}
+                                    {{ $transaction->received_currency->symbol }}
+                                </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.service', [], 'ar') }} <br>
                                     @lang('lang.service',[], 'en') </th>
                             </tr>
@@ -259,6 +264,7 @@
                         @if ($transaction->total_tax != 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">{{ @num_format($transaction->total_tax) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ $transaction->tax->name ?? '' }}</th>
                             </tr>
@@ -266,7 +272,9 @@
                         @if ($transaction->discount_amount != 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">
-                                    {{ @num_format($transaction->discount_amount) }}</th>
+                                    {{ @num_format($transaction->discount_amount) }}
+                                    {{ $transaction->received_currency->symbol }}
+                                </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.order_discount', [], 'ar') }}
                                     <br>
                                     @lang('lang.order_discount',[],
@@ -277,7 +285,9 @@
                         @if ($transaction->total_sp_discount != 0)
                             <tr>
                                 <th colspan="2" style="text-align:left">
-                                    {{ @num_format($transaction->total_sp_discount) }}</th>
+                                    {{ @num_format($transaction->total_sp_discount) }}
+                                    {{ $transaction->received_currency->symbol }}
+                                </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.sales_promotion', [], 'ar') }}
                                     <br>
                                     @lang('lang.sales_promotion' , [], 'en')
@@ -288,6 +298,7 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->transaction_sell_lines->sum('coupon_discount')) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.coupon_discount', [], 'ar') }}
                                     <br>
@@ -300,6 +311,7 @@
                             <tr>
                                 <th colspan="2" style="text-align:left">
                                     {{ @num_format($transaction->delivery_cost) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.delivery_cost', [], 'ar') }}
                                     <br>
@@ -321,7 +333,8 @@
                             </tr>
                         @endif
                         <tr>
-                            <th colspan="2" style="text-align:left">{{ @num_format($transaction->final_total) }}</th>
+                            <th colspan="2" style="text-align:left">{{ @num_format($transaction->final_total) }}
+                                {{ $transaction->received_currency->symbol }}</th>
                             <th colspan="2" style="text-align:right">{{ __('lang.grand_total', [], 'ar') }} <br>
                                 @lang('lang.grand_total',[], 'en')</th>
                         </tr>
@@ -346,7 +359,7 @@
                                         @endif
                                     </td>
                                     <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
-                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }}</td>
+                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                             @if (!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
@@ -354,7 +367,7 @@
                                     <td style="padding: 7px;width:30%">{{ __('lang.change', [], 'ar') }} <br>
                                         {{ __('lang.change', [], 'en') }}</td>
                                     <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                        {{ @num_format($payment_data->change_amount) }}</td>
+                                        {{ @num_format($payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -381,7 +394,7 @@
                                 <td style="padding: 7px;width:30%">{{ __('lang.due_sale_list', [], 'ar') }} <br>
                                     {{ __('lang.due', [], 'en') }}</td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                    {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
+                                    {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }} {{ $transaction->received_currency->symbol }}
                                 </td>
                             </tr>
                         @endif

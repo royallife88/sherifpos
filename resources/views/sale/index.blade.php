@@ -305,7 +305,7 @@
                         },
                         {
                         targets: [16],
-                        visible: false,
+                        visible: true,
                         orderable: false,
                         searchable: false,
                         },

@@ -161,3 +161,9 @@ input[type="number"] {
 .disabled {
     pointer-events: none;
 }
+.footer_currency{
+    cursor: pointer;
+}
+.table_totals{
+    cursor: pointer;
+}

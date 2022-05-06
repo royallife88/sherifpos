@@ -63,9 +63,12 @@ class ExchangeRateController extends Controller
         $currencies_all  = $this->commonUtil->allCurrencies();
         $currencies_excl  = $this->commonUtil->allCurrencies([$default_currency->id]);
 
+        $default_store = Store::first();
+
         return view('exchange_rate.create')->with(compact(
             'stores',
             'default_currency',
+            'default_store',
             'currencies_all',
             'currencies_excl'
         ));

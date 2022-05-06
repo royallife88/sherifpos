@@ -1031,7 +1031,6 @@ class ReportController extends Controller
                     ->orOn('tsl.product_id', 'p.id');
             })
             ->whereIn('transactions.type', ['sell', 'add_stock'])
-            ->where('transactions.payment_status', 'paid')
             ->whereIn('transactions.status', ['final', 'received']);
 
         if (!empty($request->start_date)) {

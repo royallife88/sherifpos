@@ -15,7 +15,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('store_id', __('lang.store') . ':*') !!}
-                        {!! Form::select('store_id', $stores, false, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select'), 'required']) !!}
+                        {!! Form::select('store_id', $stores, !empty($default_store) ? $default_store->id : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select'), 'required']) !!}
                     </div>
                 </div>
             </div>

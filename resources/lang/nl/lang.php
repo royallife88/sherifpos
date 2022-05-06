@@ -1181,4 +1181,20 @@ return [
     'representative_name' => 'Representatieve naam',
     'active' => 'Actief',
 
+    'rate_ex' => 'Tarief',
+    'expiry_in' => 'Verlopen in',
+    'expiry_date_in' => 'Vervaldatum',
+    'currencies' => 'Valuta\'s',
+    'exchange_rate' => 'Wisselkoers',
+    'add_exchange_rate' => 'Wisselkoers toevoegen',
+    'edit_exchange_rate' => 'Wisselkoers bewerken',
+    'received_currency' => 'Ontvangen valuta',
+    'default_currency' => 'Standaardvaluta',
+    'created_on' => 'Gemaakt op',
+    'conversion_rate' => 'Conversieratio',
+    'add_new_rate' => 'Nieuw tarief toevoegen',
+    'enter_the_rate' => 'Voer het tarief in',
+    'edit_rate' => 'Tarief bewerken',
+    'paying_currency' => 'Betaalvaluta',
+
 ];

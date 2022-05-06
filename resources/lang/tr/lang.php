@@ -1180,4 +1180,20 @@ return [
     'representative_name' => 'Temsilci ismi',
     'active' => 'Aktif',
 
+    'rate_ex' => 'Oran',
+    'expiry_in' => 'Sona Erme Tarihi',
+    'expiry_date_in' => 'Son kullanma tarihi',
+    'currencies' => 'para birimleri',
+    'exchange_rate' => 'Döviz kuru',
+    'add_exchange_rate' => 'Döviz Kuru Ekle',
+    'edit_exchange_rate' => 'Döviz Kurunu Düzenle',
+    'received_currency' => 'Alınan Para Birimi',
+    'default_currency' => 'Varsayılan Para Birimi',
+    'created_on' => 'Oluşturma Tarihi',
+    'conversion_rate' => 'Dönüşüm oranı',
+    'add_new_rate' => 'Yeni Fiyat Ekle',
+    'enter_the_rate' => 'Oranı Girin',
+    'edit_rate' => 'Oranı Düzenle',
+    'paying_currency' => 'Ödeme Para Birimi',
+
 ];

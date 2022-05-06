@@ -1177,4 +1177,20 @@ return [
 
     'representative_name' => 'نام نماینده',
     'active' => 'فعال',
+
+    'rate_ex' => 'نرخ',
+    'expiry_in' => 'منقضی می شود',
+    'expiry_date_in' => 'تاریخ انقضا',
+    'currencies' => 'ارزها',
+    'exchange_rate' => 'قیمت ارز',
+    'add_exchange_rate' => 'اضافه کردن نرخ ارز',
+    'edit_exchange_rate' => 'ویرایش نرخ ارز',
+    'received_currency' => 'ارز دریافت شده',
+    'default_currency' => 'ارز پیش فرض',
+    'created_on' => 'ایجاد شد',
+    'conversion_rate' => 'نرخ تبدیل',
+    'add_new_rate' => 'اضافه کردن نرخ جدید',
+    'enter_the_rate' => 'نرخ را وارد کنید',
+    'edit_rate' => 'نرخ ویرایش',
+    'paying_currency' => 'پرداخت ارز',
 ];

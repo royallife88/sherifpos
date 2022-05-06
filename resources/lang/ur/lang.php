@@ -1178,4 +1178,20 @@ return [
 
     'representative_name' => 'نمائندہ نام',
     'active' => 'فعال',
+
+    'rate_ex' => 'شرح',
+    'expiry_in' => 'میعاد ختم',
+    'expiry_date_in' => 'ختم ہونے کی تاریخ',
+    'currencies' => 'کرنسیاں',
+    'exchange_rate' => 'زر مبادلہ کی شرح',
+    'add_exchange_rate' => 'ایکسچینج ریٹ شامل کریں۔',
+    'edit_exchange_rate' => 'شرح تبادلہ میں ترمیم کریں۔',
+    'received_currency' => 'حاصل شدہ کرنسی',
+    'default_currency' => 'ڈیفالٹ کرنسی',
+    'created_on' => 'پر بنایا',
+    'conversion_rate' => 'تبادلوں کی شرح',
+    'add_new_rate' => 'نیا ریٹ شامل کریں۔',
+    'enter_the_rate' => 'شرح درج کریں۔',
+    'edit_rate' => 'شرح میں ترمیم کریں۔',
+    'paying_currency' => 'ادائیگی کرنسی',
 ];

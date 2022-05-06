@@ -1109,6 +1109,7 @@ class SellPosController extends Controller
     {
         if (request()->ajax()) {
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $default_currency_id = System::getProperty('currency');
 
             $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
             $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
@@ -1116,6 +1117,7 @@ class SellPosController extends Controller
                 ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
                 ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('type', 'sell')->where('status', '!=', 'draft');
 
             if (!empty($store_id)) {
@@ -1145,13 +1147,6 @@ class SellPosController extends Controller
                 $query->whereIn('transactions.store_id', $stores_ids);
             }
 
-            // $transactions = $query->select(
-            //     'transactions.*',
-            //     'users.name as created_by_name',
-            //     'customers.name as customer_name',
-            //     'customers.mobile_number',
-            // )
-
             $transactions = $query->select(
                 'transactions.final_total',
                 'transactions.payment_status',
@@ -1164,7 +1159,9 @@ class SellPosController extends Controller
                 'users.name as created_by_name',
                 'customers.name as customer_name',
                 'customer_types.name as customer_type_name',
-                'customers.mobile_number'
+                'customers.mobile_number',
+                'received_currency.symbol as received_currency_symbol',
+                'received_currency_id'
             )->with([
                 'return_parent',
                 'customer',
@@ -1186,7 +1183,20 @@ class SellPosController extends Controller
 
                     return $string;
                 })
-                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    if (!empty($row->return_parent)) {
+                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                    } else {
+                        $final_total = $this->commonUtil->num_f($row->final_total);
+                    }
+
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                })
+                ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->received_currency_symbol ?? $default_currency->symbol;
+                })
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
                     $methods = '';
                     if (!empty($request->method)) {

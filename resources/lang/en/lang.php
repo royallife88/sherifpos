@@ -1184,12 +1184,13 @@ return [
     'active' => 'Active',
 
 
+    'rate_ex' => 'Rate',
     'expiry_in' => 'Expire In',
     'currencies' => 'Currencies',
     'exchange_rate' => 'Exchange Rate',
     'add_exchange_rate' => 'Add Exchange Rate',
     'edit_exchange_rate' => 'Edit Exchange Rate',
-    'received_currency' => 'Recieved Currency',
+    'received_currency' => 'Received Currency',
     'default_currency' => 'Default Currency',
     'created_on' => 'Created On',
     'conversion_rate' => 'Conversion Rate',

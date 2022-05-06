@@ -1178,4 +1178,20 @@ return [
 
     'representative_name' => 'प्रतिनिधि का नाम',
     'active' => 'सक्रिय',
+
+    'rate_ex' => 'दर',
+    'expiry_in' => 'समाप्ति में',
+    'expiry_date_in' => 'समाप्त होने की तिथि',
+    'currencies' => 'मुद्राओं',
+    'exchange_rate' => 'विनिमय दर',
+    'add_exchange_rate' => 'विनिमय दर जोड़ें',
+    'edit_exchange_rate' => 'विनिमय दर संपादित करें',
+    'received_currency' => 'प्राप्त मुद्रा',
+    'default_currency' => 'डिफ़ॉल्ट मुद्रा',
+    'created_on' => 'को निर्मित',
+    'conversion_rate' => 'रूपांतरण दर',
+    'add_new_rate' => 'नई दर जोड़ें',
+    'enter_the_rate' => 'दर दर्ज करें',
+    'edit_rate' => 'दर संपादित करें',
+    'paying_currency' => 'भुगतान मुद्रा',
 ];

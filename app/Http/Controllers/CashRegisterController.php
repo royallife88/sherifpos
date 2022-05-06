@@ -88,6 +88,10 @@ class CashRegisterController extends Controller
             $user_id = Auth::user()->id;
             $store_pos = StorePos::where('user_id', $user_id)->first();
 
+            $register = $this->cashRegisterUtil->getCurrentCashRegister($user_id);
+            if (!empty($register)) {
+                return redirect()->action('SellPosController@create');
+            }
             $register = CashRegister::create([
                 'user_id' => $user_id,
                 'status' => 'open',

@@ -8,9 +8,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
         <!-- Sidebar Navigation Menus-->
         <div class="main-menu">
             <ul id="side-main-menu" class="side-menu list-unstyled">
+                @if (!empty($module_settings['dashboard']))
                 <li><a href="{{url('/home')}}"> <i class="dripicons-meter"></i><span>{{ __('lang.dashboard')
                             }}</span></a></li>
-
+                @endif
                 @if( !empty($module_settings['product_module']) )
                 @if(auth()->user()->can('product_module.product.create_and_edit') ||
                 auth()->user()->can('product_module.product.view') ||

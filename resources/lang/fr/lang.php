@@ -1177,4 +1177,20 @@ return [
 
     'representative_name' => 'Nom du représentant',
     'active' => 'Actif',
+
+    'rate_ex' => 'Taux',
+    'expiry_in' => 'Expire dans',
+    'expiry_date_in' => 'Date d\'expiration',
+    'currencies' => 'Devises',
+    'exchange_rate' => 'Taux de change',
+    'add_exchange_rate' => 'Ajouter un taux de change',
+    'edit_exchange_rate' => 'Modifier le taux de change',
+    'received_currency' => 'Devise reçue',
+    'default_currency' => 'devise par défaut',
+    'created_on' => 'Créé sur',
+    'conversion_rate' => 'Taux de conversion',
+    'add_new_rate' => 'Ajouter un nouveau tarif',
+    'enter_the_rate' => 'Entrez le tarif',
+    'edit_rate' => 'Modifier le tarif',
+    'paying_currency' => 'Devise de paiement',
 ];
