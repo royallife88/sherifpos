@@ -120,13 +120,14 @@
                         <div role="tabpanel" class="tab-pane fade @if (request()->show == 'purchases') show active @endif"
                             id="purchases">
                             <div class="table-responsive">
-                                <table class="table dataTable">
+                                <table class="table" id="sales_table">
                                     <thead>
                                         <tr>
                                             <th>@lang('lang.date')</th>
                                             <th>@lang('lang.reference_no')</th>
                                             <th>@lang('lang.customer')</th>
                                             <th>@lang('lang.product')</th>
+                                            <th class="currencies">@lang('lang.received_currency')</th>
                                             <th class="sum">@lang('lang.discount')</th>
                                             <th class="sum">@lang('lang.grand_total')</th>
                                             <th class="sum">@lang('lang.paid')</th>
@@ -138,130 +139,14 @@
                                             <th>@lang('lang.action')</th>
                                         </tr>
                                     </thead>
-
                                     <tbody>
-                                        @php
-                                            $total_purchase_payments = 0;
-                                            $total_purchase_due = 0;
-                                        @endphp
-                                        @foreach ($sales as $sale)
-                                            @if (empty($sale->return_parent))
-                                                <tr>
-                                                    <td>{{ @format_date($sale->transaction_date) }}</td>
-                                                    <td>{{ $sale->invoice_no }}</td>
-                                                    <td>
-                                                        @if (!empty($sale->customer))
-                                                            {{ $sale->customer->name }}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @foreach ($sale->transaction_sell_lines as $line)
-                                                            ({{ @num_format($line->quantity) }})
-                                                            @if (!empty($line->product))
-                                                                {{ $line->product->name }}
-                                                            @endif <br>
-                                                        @endforeach
-                                                    </td>
-                                                    <td>{{ @num_format($sale->discount_amount) }}</td>
-                                                    <td>{{ @num_format($sale->final_total) }}</td>
-                                                    <td>{{ @num_format($sale->transaction_payments->sum('amount')) }}
-                                                    </td>
-                                                    <td>{{ @num_format($sale->final_total - $sale->transaction_payments->sum('amount')) }}
-                                                    </td>
-                                                    <td>
-                                                        @if ($sale->transaction_payments->count() > 0)
-                                                            {{ @format_date($sale->transaction_payments->last()->paid_on) }}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        @if ($sale->status == 'final' && $sale->payment_status == 'paid')
-                                                            <span class="badge badge-success">@lang('lang.completed')</span>
-                                                        @else
-                                                            @if ($sale->payment_status == 'pending')
-                                                                <span
-                                                                    class="badge badge-danger">@lang('lang.pay_later')</span>
-                                                            @elseif($sale->payment_status == 'partial')
-                                                                <span
-                                                                    class="badge badge-danger">@lang('lang.partial')</span>
-                                                            @endif
-                                                        @endif
-                                                    </td>
-                                                    <td>{{ @num_format($sale->rp_earned) }}</td>
-                                                    <td>
-                                                        @if ($sale->transaction_payments->count() > 0)
-                                                            {{ $sale->transaction_payments->last()->created_by_user->name }}
-                                                        @endif
-                                                    </td>
-                                                    <td>
-                                                        <div class="btn-group">
-                                                            <button type="button"
-                                                                class="btn btn-default btn-sm dropdown-toggle"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">@lang('lang.action')
-                                                                <span class="caret"></span>
-                                                                <span class="sr-only">Toggle Dropdown</span>
-                                                            </button>
-                                                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
-                                                                user="menu">
-                                                                @can('sale.pos.view')
-                                                                    <li>
-                                                                        <a data-href="{{ action('SellController@print', $sale->id) }}"
-                                                                            class="btn print-invoice"><i
-                                                                                class="dripicons-print"></i>
-                                                                            @lang('lang.generate_invoice')</a>
-                                                                    </li>
-                                                                    <li>
-                                                                        <a data-href="{{ action('SellController@show', $sale->id) }}"
-                                                                            data-container=".view_modal"
-                                                                            class="btn btn-modal"><i
-                                                                                class="fa fa-eye"></i>
-                                                                            @lang('lang.view')</a>
-                                                                    </li>
-                                                                    <li class="divider"></li>
-                                                                @endcan
-                                                                @can('sale.pos.create_and_edit')
-                                                                    <li>
-                                                                        <a href="{{ action('SellController@edit', $sale->id) }}"
-                                                                            class="btn"><i
-                                                                                class="dripicons-document-edit"></i>
-                                                                            @lang('lang.edit')</a>
-                                                                    </li>
-                                                                    <li class="divider"></li>
-                                                                @endcan
-                                                                @if ($sale->payment_status != 'paid')
-                                                                    <li>
-                                                                        <a data-href="{{ action('TransactionPaymentController@addPayment', ['id' => $sale->id]) }}"
-                                                                            data-container=".view_modal"
-                                                                            class="btn btn-modal"><i
-                                                                                class="fa fa-plus"></i>
-                                                                            @lang('lang.add_payment')</a>
-                                                                    </li>
-                                                                @endif
-                                                                @can('sale.pos.delete')
-                                                                    <li>
-                                                                        <a data-href="{{ action('SellController@destroy', $sale->id) }}"
-                                                                            data-check_password="{{ action('UserController@checkPassword', Auth::user()->id) }}"
-                                                                            class="btn text-red delete_item"><i
-                                                                                class="fa fa-trash"></i>
-                                                                            @lang('lang.delete')</a>
-                                                                    </li>
-                                                                @endcan
-                                                            </ul>
-                                                        </div>
-                                                </tr>
-                                            @endif
-                                            @php
-                                                $total_purchase_payments += $sale->transaction_payments->sum('amount');
-                                                $total_purchase_due += $sale->final_total - $sale->transaction_payments->sum('amount');
-                                            @endphp
-                                        @endforeach
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td></td>
                                             <td></td>
                                             <td></td>
-                                            <th style="text-align: right">@lang('lang.total')</th>
+                                            <th class="table_totals" style="text-align: right">@lang('lang.total')</th>
                                             <td></td>
                                             <td></td>
                                             <td></td>
@@ -443,8 +328,7 @@
                                                 </td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <button type="button"
-                                                            class="btn btn-default btn-sm dropdown-toggle"
+                                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
                                                             data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="false">@lang('lang.action')
                                                             <span class="caret"></span>
@@ -734,5 +618,156 @@
             __currency_convert_recursively($("#receipt_section"));
             __print_receipt("receipt_section");
         }
+
+        $(document).ready(function() {
+            sales_table = $("#sales_table").DataTable({
+                lengthChange: true,
+                paging: true,
+                info: false,
+                bAutoWidth: false,
+                // order: [],
+                language: {
+                    url: dt_lang_url,
+                },
+                lengthMenu: [
+                    [10, 25, 50, 75, 100, 200, 500, -1],
+                    [10, 25, 50, 75, 100, 200, 500, "All"],
+                ],
+                dom: "lBfrtip",
+                stateSave: true,
+                buttons: buttons,
+                processing: true,
+                serverSide: true,
+                aaSorting: [
+                    [0, "desc"]
+                ],
+                initComplete: function() {
+                    $(this.api().table().container()).find('input').parent().wrap('<form>').parent()
+                        .attr('autocomplete', 'off');
+                },
+                ajax: {
+                    url: "/customer/{{ $customer->id }}",
+                    data: function(d) {},
+                },
+                columnDefs: [{
+                    targets: "date",
+                    type: "date-eu",
+                }],
+                columns: [{
+                        data: "transaction_date",
+                        name: "transaction_date"
+                    },
+                    {
+                        data: "invoice_no",
+                        name: "invoice_no"
+                    },
+                    {
+                        data: "customer_name",
+                        name: "customers.name"
+                    },
+                    {
+                        data: "products",
+                        name: "products.name"
+                    },
+                    {
+                        data: "received_currency_symbol",
+                        name: "received_currency_symbol",
+                        searchable: false
+                    },
+                    {
+                        data: "discount_amount",
+                        name: "discount_amount"
+                    },
+                    {
+                        data: "final_total",
+                        name: "final_total"
+                    },
+                    {
+                        data: "paid",
+                        name: "transaction_payments.amount",
+                        searchable: false
+                    },
+                    {
+                        data: "due",
+                        name: "transaction_payments.amount",
+                        searchable: false
+                    },
+                    {
+                        data: "paid_on",
+                        name: "transaction_payments.paid_on"
+                    },
+                    {
+                        data: "status",
+                        name: "transactions.status"
+                    },
+                    {
+                        data: "rp_earned",
+                        name: "rp_earned"
+                    },
+
+                    {
+                        data: "created_by",
+                        name: "users.name"
+                    },
+                    {
+                        data: "action",
+                        name: "action"
+                    },
+                ],
+                createdRow: function(row, data, dataIndex) {},
+                footerCallback: function(row, data, start, end, display) {
+                    var intVal = function(i) {
+                        return typeof i === "string" ?
+                            i.replace(/[\$,]/g, "") * 1 :
+                            typeof i === "number" ?
+                            i :
+                            0;
+                    };
+
+                    this.api()
+                        .columns(".currencies", {
+                            page: "current"
+                        }).every(function() {
+                            var column = this;
+                            let currencies_html = '';
+                            $.each(currency_obj, function(key, value) {
+                                currencies_html +=
+                                    `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`
+                                $(column.footer()).html(currencies_html);
+                            });
+                        })
+                    this.api()
+                        .columns(".sum", {
+                            page: "current"
+                        })
+                        .every(function() {
+                            var column = this;
+                            var currency_total = [];
+                            $.each(currency_obj, function(key, value) {
+                                currency_total[value.currency_id] = 0;
+                            });
+                            column.data().each(function(group, i) {
+                                b = $(group).text();
+                                currency_id = $(group).data('currency_id');
+
+                                $.each(currency_obj, function(key, value) {
+                                    if (currency_id == value.currency_id) {
+                                        currency_total[value.currency_id] += intVal(
+                                            b);
+                                    }
+                                });
+                            });
+                            var footer_html = '';
+                            $.each(currency_obj, function(key, value) {
+                                footer_html +=
+                                    `<h6 class="currency_total currency_total_${value.currency_id}" data-currency_id="${value.currency_id}" data-is_default="${value.is_default}" data-conversion_rate="${value.conversion_rate}" data-base_conversion="${currency_total[value.currency_id] * value.conversion_rate}" data-orig_value="${currency_total[value.currency_id]}">${__currency_trans_from_en(currency_total[value.currency_id], false)}</h6>`
+                            });
+                            $(column.footer()).html(
+                                footer_html
+                            );
+                        });
+                },
+            });
+        });
     </script>
 @endsection

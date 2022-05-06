@@ -108,7 +108,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             'type' => 'product',
         ])
     </div>
-    <div class="col-md-4 @if (session('system_mode') == 'restaurant') hide @endif">
+    <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku'), []) !!}
             {!! Form::text('sku', null, ['class' => 'form-control', 'placeholder' => __('lang.sku')]) !!}

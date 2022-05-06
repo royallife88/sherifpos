@@ -197,16 +197,14 @@ class Transaction extends Model  implements HasMedia
     {
         $default_currency_id = System::getProperty('currency');
         $default_currency = Currency::where('id', $default_currency_id)->first();
-        $symbol = !empty($default_currency) ? $default_currency->symbol : '';
 
-        return $this->belongsTo(Currency::class, 'received_currency_id');
+        return $this->belongsTo(Currency::class, 'received_currency_id')->withDefault($default_currency);
     }
     public function paying_currency()
     {
         $default_currency_id = System::getProperty('currency');
         $default_currency = Currency::where('id', $default_currency_id)->first();
-        $symbol = !empty($default_currency) ? $default_currency->symbol : '';
 
-        return $this->belongsTo(Currency::class, 'paying_currency_id')->withDefault(['symbol' => $symbol]);
+        return $this->belongsTo(Currency::class, 'paying_currency_id')->withDefault($default_currency);
     }
 }

@@ -159,6 +159,10 @@ class SettingController extends Controller
                 ['value' => $request->language, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             System::updateOrCreate(
+                ['key' => 'show_the_window_printing_prompt'],
+                ['value' => $request->show_the_window_printing_prompt ?? 0, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
                 ['key' => 'currency'],
                 ['value' => $request->currency, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );

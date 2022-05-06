@@ -1,12 +1,11 @@
 <!-- payment modal -->
-<div id="add-payment" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true"
-    class="modal fade text-left">
+<div id="add-payment" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" class="modal fade text-left">
     <div role="document" class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="exampleModalLabel" class="modal-title">@lang('lang.finalize_sale')</h5>
-                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span aria-hidden="true"><i
-                            class="dripicons-cross"></i></span></button>
+                <button type="button" data-dismiss="modal" aria-label="Close" class="close"><span
+                        aria-hidden="true"><i class="dripicons-cross"></i></span></button>
             </div>
             <div class="modal-body">
                 <div class="row">
@@ -31,13 +30,13 @@
                                     <div class="col-md-6 mt-1">
                                         <label class="change_text">@lang('lang.change'): </label>
                                         <spand class="change" class="ml-2">0.00</spand>
-                                        <input type="hidden" name="payments[0][change_amount]" class="change_amount" id="change_amount">
+                                        <input type="hidden" name="payments[0][change_amount]" class="change_amount"
+                                            id="change_amount">
                                         <input type="hidden" name="payments[0][pending_amount]" class="pending_amount">
                                     </div>
                                     <div class="col-md-6 mt-1">
                                         <label>@lang('lang.payment_method'): *</label>
-                                        {!! Form::select('payments[0][method]', $payment_types, null, ['class' =>
-                                        'form-control method', 'required']) !!}
+                                        {!! Form::select('payments[0][method]', $payment_types, null, ['class' => 'form-control method', 'required']) !!}
                                     </div>
                                     <div class="col-md-6 mt-1 text-red">
                                         <label class="discount_lable">@lang('lang.discount'):</label>
@@ -51,7 +50,8 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <label>@lang('lang.card_number') *</label>
-                                                <input type="text" name="payments[0][card_number]" class="form-control">
+                                                <input type="text" name="payments[0][card_number]"
+                                                    class="form-control">
                                             </div>
                                             {{-- <div class="col-md-3">
                                                 <label>@lang('lang.card_security')</label>
@@ -60,7 +60,8 @@
                                             </div> --}}
                                             <div class="col-md-2">
                                                 <label>@lang('lang.month')</label>
-                                                <input type="text" name="payments[0][card_month]" class="form-control">
+                                                <input type="text" name="payments[0][card_month]"
+                                                    class="form-control">
                                             </div>
                                             <div class="col-md-2">
                                                 <label>@lang('lang.year')</label>
@@ -85,7 +86,8 @@
                                 <hr>
                             </div>
                             <div class="col-md-12 mb-2 btn-add-payment">
-                                <button type="button" id="add_payment_row" class="btn btn-primary btn-block"> @lang('lang.add_payment_row')</button>
+                                <button type="button" id="add_payment_row" class="btn btn-primary btn-block">
+                                    @lang('lang.add_payment_row')</button>
                             </div>
                             <div class="col-md-6 deposit-fields hide">
                                 <h6 class="bg-success" style="color: #fff; padding: 10px 15px;">
@@ -118,10 +120,14 @@
                                     </div>
                                 </div>
                             </div>
+                            @php
+                                $show_the_window_printing_prompt = App\Models\System::getProperty('show_the_window_printing_prompt');
+                            @endphp
                             <div class="col-md-12">
                                 <div class="i-checks">
                                     <input id="print_the_transaction" name="print_the_transaction" type="checkbox"
-                                        checked value="1" class="form-control-custom">
+                                        @if (!empty($show_the_window_printing_prompt) && $show_the_window_printing_prompt == '1') checked @endif value="1"
+                                        class="form-control-custom">
                                     <label
                                         for="print_the_transaction"><strong>@lang('lang.print_the_transaction')</strong></label>
                                 </div>
@@ -162,18 +168,19 @@
                             </div>
                             <div class="form-group col-md-12">
                                 <label>@lang('lang.payment_note')</label>
-                                <textarea id="payment_note" rows="2" class="form-control"
-                                    name="payment_note"></textarea>
+                                <textarea id="payment_note" rows="2" class="form-control" name="payment_note"></textarea>
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 form-group">
                                 <label>@lang('lang.sale_note')</label>
-                                <textarea rows="3" class="form-control" name="sale_note" id="sale_note">{{!empty($transaction)? $transaction->sale_note: ''}}</textarea>
+                                <textarea rows="3" class="form-control" name="sale_note"
+                                    id="sale_note">{{ !empty($transaction) ? $transaction->sale_note : '' }}</textarea>
                             </div>
                             <div class="col-md-6 form-group">
                                 <label>@lang('lang.staff_note')</label>
-                                <textarea rows="3" class="form-control" name="staff_note">{{!empty($transaction)? $transaction->staff_note: ''}}</textarea>
+                                <textarea rows="3" class="form-control"
+                                    name="staff_note">{{ !empty($transaction) ? $transaction->staff_note : '' }}</textarea>
                             </div>
                         </div>
                         <div class="mt-3">

@@ -126,7 +126,7 @@
                                         ]
                                     )
                                 </div>
-                                <div class="col-md-4  @if (session('system_mode') == 'restaurant') hide @endif">
+                                <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('sku', __('lang.sku') . ' *', []) !!}
                                         {!! Form::text('sku', $product->sku, ['class' => 'form-control', 'required', 'placeholder' => __('lang.sku')]) !!}

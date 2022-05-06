@@ -40,14 +40,12 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 href="{{action('ProductClassificationTreeController@index')}}">{{__('lang.product_classification_tree')}}</a>
                         </li>
                         @endcan
-                        @if(session('system_mode') != 'restaurant')
                         @can('product_module.barcode.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'barcode' && request()->segment(2) == 'print-barcode')) active @endif">
                             <a href="{{action('BarcodeController@create')}}">{{__('lang.print_barcode')}}</a>
                         </li>
                         @endcan
-                        @endif
                     </ul>
                 </li>
                 @endif

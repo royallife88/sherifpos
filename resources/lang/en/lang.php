@@ -1198,4 +1198,7 @@ return [
     'enter_the_rate' => 'Enter the Rate',
     'edit_rate' => 'Edit Rate',
     'paying_currency' => 'Paying Currency',
+
+
+    'show_the_window_printing_prompt' => 'Show the window printing prompt',
 ];

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
+use App\Models\System;
 use App\Models\Transaction;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
@@ -14,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Yajra\DataTables\Facades\DataTables;
 
 class CustomerController extends Controller
 {
@@ -166,6 +169,289 @@ class CustomerController extends Controller
     {
         $customer_id = $id;
         $customer = Customer::find($id);
+
+        if (request()->ajax()) {
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $default_currency_id = System::getProperty('currency');
+            $request = request();
+            $store_id = request()->store_id;
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
+                ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
+
+            $query->where('customer_id', $id);
+
+
+            $sales = $query->select(
+                'transactions.final_total',
+                'transactions.payment_status',
+                'transactions.status',
+                'transactions.id',
+                'transactions.transaction_date',
+                'transactions.service_fee_value',
+                'transactions.invoice_no',
+                'transactions.discount_amount',
+                'transactions.rp_earned',
+                'transaction_payments.paid_on',
+                'stores.name as store_name',
+                'users.name as created_by_name',
+                'customers.name as customer_name',
+                'customers.mobile_number',
+                'received_currency.symbol as received_currency_symbol',
+                'received_currency_id'
+            )->with([
+                'return_parent',
+                'customer',
+                'transaction_payments',
+                'deliveryman',
+                'canceled_by_user',
+                'sell_products',
+                'sell_variations'
+            ])
+                ->groupBy('transactions.id');
+
+            return DataTables::of($sales)
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('invoice_no', function ($row) {
+                    $string = $row->invoice_no . ' ';
+                    if (!empty($row->return_parent)) {
+                        $string .= '<a
+                        data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>';
+                    }
+                    if ($row->payment_status == 'pending') {
+                        $string .= '<a
+                            data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                            class="btn btn-modal" style="color: #007bff;">P</a>';
+                    }
+
+                    return $string;
+                })
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    if (!empty($row->return_parent)) {
+                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                    } else {
+                        $final_total = $this->commonUtil->num_f($row->final_total);
+                    }
+
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                })
+                ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $paid = $row->transaction_payments->sum('amount');
+                    $due = $row->final_total - $paid;
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                })
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('discount_amount', '{{@num_format($discount_amount)}}')
+                ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->received_currency_symbol ?? $default_currency->symbol;
+                })
+                ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methods .= $payment_types[$payment->method] . '<br>';
+                        }
+                    }
+                    return $methods;
+                })
+                ->addColumn('deliveryman', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->employee_name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('store_name', '{{$store_name}}')
+                ->addColumn('ref_number', function ($row) use ($request) {
+                    $ref_numbers = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->ref_number)) {
+                            $ref_numbers .= $payment->ref_number . '<br>';
+                        }
+                    }
+                    return $ref_numbers;
+                })
+                ->editColumn('payment_status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
+                    }
+                })
+                ->addColumn('products', function ($row) {
+                    $string = '';
+                    foreach ($row->transaction_sell_lines as $line) {
+                        $string .= '( ' . $this->commonUtil->num_f($line->quantity) . ')';
+                        if (!empty($line->product)) {
+                        }
+                        $string .= $line->product->name;
+                        $string .= '<br>';
+                    }
+
+
+                    return $string;
+                })
+                ->editColumn('service_fee_value', '{{@num_format($service_fee_value)}}')
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('canceled_by', function ($row) {
+                    return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+
+                        if (auth()->user()->can('sale.pos.create_and_edit')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@print', $row->id) . '"
+                                    class="btn print-invoice"><i class="dripicons-print"></i>
+                                    ' . __('lang.generate_invoice') . '</a>
+                            </li>';
+                        }
+                        if (auth()->user()->can('sale.pos.create_and_edit')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@print', $row->id) . '?print_gift_invoice=true"
+                                    class="btn print-invoice"><i class="fa fa-gift"></i>
+                                    ' . __('lang.print_gift_invoice') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                                    class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                                <a href="' . action('SellController@edit', $row->id) . '" class="btn"><i
+                                        class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('return.sell_return.create_and_edit')) {
+                            if (empty($row->return_parent)) {
+                                $html .=
+                                    '<li>
+                                    <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
+                                        class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
+                                    </li>';
+                            }
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.create_and_edit')) {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
+                                $html .=
+                                    ' <li>
+                                    <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
+                                        data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                        ' . __('lang.add_payment') . '</a>
+                                    </li>';
+                            }
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('TransactionPaymentController@show', $row->id) . '"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                    ' . __('lang.view_payments') . '</a>
+                                </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@destroy', $row->id) . '"
+                                    data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                    ' . __('lang.delete') . '</a>
+                                </li>';
+                        }
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'method',
+                    'invoice_no',
+                    'ref_number',
+                    'payment_status',
+                    'transaction_date',
+                    'final_total',
+                    'paid',
+                    'due',
+                    'status',
+                    'store_name',
+                    'products',
+                    'created_by',
+                ])
+                ->make(true);
+        }
 
         $sale_query = Transaction::whereIn('transactions.type', ['sell'])
             ->whereIn('transactions.status', ['final']);
