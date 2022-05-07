@@ -296,13 +296,7 @@
                         targets: [17],
                         orderable: false,
                         searchable: false,
-                        },
-                        {
-                        targets: [16],
-                        visible: true,
-                        orderable: false,
-                        searchable: false,
-                        },
+                        }
                     @endif
                 ],
                 columns: [{
