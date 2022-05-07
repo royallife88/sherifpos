@@ -182,7 +182,8 @@ function getFilterProductRightSide(
     var sale_promo_filter = getFilterCheckboxValue("sale_promo_filter");
     var sorting_filter = getFilterCheckboxValue("sorting_filter");
     var store_id = $("#store_id").val();
-    let currency_id = $("#received_currency_id").val();
+    let currency_id = $("select#received_currency_id").val();
+    console.log(currency_id, 'currency_idcurrency_id');
 
     $.ajax({
         method: "get",
@@ -1458,6 +1459,12 @@ function reset_pos_form() {
         $("#invoice_lang").val("en");
         $("#invoice_lang").selectpicker("refresh");
     }
+
+    let default_currency_id = $("#default_currency_id").val();
+    $("#received_currency_id").val(default_currency_id);
+    $("#received_currency_id").change();
+    console.log('sdfsdfsdfsdf');
+    $("#received_currency_id").selectpicker("refresh");
 }
 $(document).ready(function () {
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());

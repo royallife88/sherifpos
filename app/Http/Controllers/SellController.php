@@ -203,6 +203,7 @@ class SellController extends Controller
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)
+                // ->setTotalRecords()
                 ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
                 ->editColumn('invoice_no', function ($row) {
                     $string = $row->invoice_no . ' ';
@@ -681,7 +682,7 @@ class SellController extends Controller
      */
     public function print($id)
     {
-        // try {
+        try {
             $transaction = Transaction::find($id);
 
             $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
@@ -691,8 +692,7 @@ class SellController extends Controller
                 $invoice_lang = request()->session()->get('language');
             }
 
-            if(empty($transaction->received_currency_id)){
-
+            if (empty($transaction->received_currency_id)) {
             }
 
             $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types);
@@ -702,13 +702,13 @@ class SellController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }
