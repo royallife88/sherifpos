@@ -317,14 +317,13 @@ class SellController extends Controller
                 })
                 ->addColumn('products', function ($row) {
                     $string = '';
-                    foreach ($row->sell_products as $sell_product) {
-                        if (!empty($sell_product)) {
-                            $string .= $sell_product->name  . '-';
-                        }
-                    }
                     foreach ($row->sell_variations as $sell_variation) {
                         if (!empty($sell_variation)) {
-                            $string .= $sell_variation->sub_sku . '-';
+                            if ($sell_variation->name != 'Default') {
+                                $string .= $sell_variation->name . ' ' . $sell_variation->sub_sku . '<br>';
+                            } else {
+                                $string .= $sell_variation->product->name . '-' . $sell_variation->product->sku . '<br>';
+                            }
                         }
                     }
 
@@ -433,6 +432,7 @@ class SellController extends Controller
                     'due',
                     'status',
                     'store_name',
+                    'products',
                     'created_by',
                 ])
                 ->make(true);

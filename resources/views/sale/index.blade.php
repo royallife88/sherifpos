@@ -290,13 +290,7 @@
                         targets: [19],
                         orderable: false,
                         searchable: false,
-                        },
-                        {
-                        targets: [18],
-                        visible: false,
-                        orderable: false,
-                        searchable: false,
-                        },
+                        }
                     @else
                         {
                         targets: [17],
