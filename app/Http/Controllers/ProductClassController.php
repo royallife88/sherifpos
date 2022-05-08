@@ -152,11 +152,10 @@ class ProductClassController extends Controller
         $this->validate(
             $request,
             ['name' => ['required', 'max:255']],
-            ['status' => ['required', 'max:255']]
         );
 
         try {
-            $data = $request->only('name', 'description', 'sort', 'translations');
+            $data = $request->only('name', 'description', 'sort', 'translations', 'status');
             $data['translations'] = !empty($data['translations']) ? $data['translations'] : [];
             $data['status'] = !empty($data['status']) ? 1 : 0;
             $class = ProductClass::where('id', $id)->first();

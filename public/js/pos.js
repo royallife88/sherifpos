@@ -183,7 +183,6 @@ function getFilterProductRightSide(
     var sorting_filter = getFilterCheckboxValue("sorting_filter");
     var store_id = $("#store_id").val();
     let currency_id = $("select#received_currency_id").val();
-    console.log(currency_id, 'currency_idcurrency_id');
 
     $.ajax({
         method: "get",
@@ -1322,6 +1321,15 @@ $(document).ready(function () {
                             }
                         }
                         if (
+                            $("#print_the_transaction").prop("checked") == false
+                        ) {
+                            if ($("#edit_pos_form").length > 0) {
+                                setTimeout(() => {
+                                    window.close();
+                                }, 1500);
+                            }
+                        }
+                        if (
                             $("#print_the_transaction").prop("checked") &&
                             $("#status").val() !== "draft" &&
                             $("#dining_action_type").val() !== "save"
@@ -1463,7 +1471,6 @@ function reset_pos_form() {
     let default_currency_id = $("#default_currency_id").val();
     $("#received_currency_id").val(default_currency_id);
     $("#received_currency_id").change();
-    console.log('sdfsdfsdfsdf');
     $("#received_currency_id").selectpicker("refresh");
 }
 $(document).ready(function () {
@@ -2487,12 +2494,10 @@ function show_value(row, name) {
     $("." + name + "_span").text(cm_size);
 }
 $(document).on("click", ".add_size_btn", function () {
-    console.log("adfasdfsfsdfsfd");
     $(".add_size_div").removeClass("hide");
 });
 $(document).on("click", "#submit-btn-add-product", function (e) {
     e.preventDefault();
-    console.log("click");
     var sku = $("#sku").val();
     if ($("#product-form-quick-add").valid()) {
         tinyMCE.triggerSave();

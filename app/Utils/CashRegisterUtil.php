@@ -225,10 +225,13 @@ class CashRegisterUtil extends Util
                 ];
 
                 foreach ($payments as $payment) {
+                    $amount = $this->num_uf($payment['amount']);
+                    $change_amount = !empty($payment['change_amount']) ? $this->num_uf($payment['change_amount']) : 0;
+                    $amount = $amount - $change_amount;
                     if (isset($payment['is_return']) && $payment['is_return'] == 1) {
-                        $payment_diffs[$payment['method']] += $this->num_uf($payment['amount']);
+                        $payment_diffs[$payment['method']] += $this->num_uf($amount);
                     } else {
-                        $payment_diffs[$payment['method']] -= $this->num_uf($payment['amount']);
+                        $payment_diffs[$payment['method']] -= $this->num_uf($amount);
                     }
                 }
                 $payments_formatted = [];
