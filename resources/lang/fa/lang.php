@@ -1193,4 +1193,14 @@ return [
     'enter_the_rate' => 'نرخ را وارد کنید',
     'edit_rate' => 'نرخ ویرایش',
     'paying_currency' => 'پرداخت ارز',
+
+    'show_the_window_printing_prompt' => 'اعلان چاپ پنجره را نشان دهید',
+    'generation_start_date' => 'تاریخ شروع نسل',
+    'generation_end_date' => 'تاریخ پایان نسل',
+    'generation_start_time' => 'زمان شروع نسل',
+    'generation_end_time' => 'زمان پایان نسل',
+    'payment_start_date' => 'تاریخ شروع پرداخت',
+    'payment_end_date' => 'تاریخ پایان پرداخت',
+    'payment_start_time' => 'زمان شروع پرداخت',
+    'payment_end_time' => 'زمان پایان پرداخت',
 ];

@@ -486,9 +486,9 @@ class Util
             })
             ->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')
             ->get();
-
+        $currencies = [];
         foreach ($currencies_obj as $cur_obj) {
-            $currencies_obj[] = ['currency_id' => $cur_obj->currency_id, 'symbol' => $cur_obj->symbol, 'conversion_rate' => $cur_obj->conversion_rate];
+            $currencies[] = ['currency_id' => $cur_obj->currency_id, 'symbol' => $cur_obj->symbol, 'conversion_rate' => $cur_obj->conversion_rate, 'is_default' => false];
         }
 
         $default_currency_id = System::getProperty('currency');
@@ -500,9 +500,10 @@ class Util
             $d['currency_id'] = $default_currency->currency_id;
             $d['symbol'] = $default_currency->symbol;
             $d['conversion_rate'] = 1;
-            $currencies_obj[] = $d;
+            $d['is_default'] = true;
+            $currencies[] = $d;
         }
-        return $currencies_obj;
+        return $currencies;
     }
 
     /**

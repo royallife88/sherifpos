@@ -23,7 +23,7 @@
                                     <th>@lang('lang.default_currency')</th>
                                     <th>@lang('lang.created_by')</th>
                                     <th>@lang('lang.created_on')</th>
-                                    <th>@lang('lang.expiry_date_in')</th>
+                                    <th>@lang('lang.expiry_in')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
                             </thead>

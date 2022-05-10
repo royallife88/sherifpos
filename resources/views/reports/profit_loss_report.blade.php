@@ -19,10 +19,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('start_time', __('lang.start_time'), []) !!}
-                                {!! Form::text('start_time', request()->start_time, [
-    'class' => 'form-control
-                            time_picker sale_filter',
-]) !!}
+                                {!! Form::text('start_time', request()->start_time, ['class' => 'form-control time_picker sale_filter']) !!}
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -34,10 +31,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 {!! Form::label('end_time', __('lang.end_time'), []) !!}
-                                {!! Form::text('end_time', request()->end_time, [
-    'class' => 'form-control time_picker
-                            sale_filter',
-]) !!}
+                                {!! Form::text('end_time', request()->end_time, ['class' => 'form-control time_picker sale_filter']) !!}
                             </div>
                         </div>
 
@@ -184,13 +178,13 @@
                     @endphp
                     <div class="col-md-12">
                         <label for="">@lang('lang.total_expenses'):
-                            {{                             @num_format($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount')) }}</label>
+                            {{ @num_format($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount')) }}</label>
                     </div>
                 </div>
                 <br>
                 <div class="col-md-12">
                     <h2><b>@lang('lang.profit_and_loss'):
-                            {{                             @num_format($sales->sum('total_amount') - ($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount'))) }}</b>
+                            {{ @num_format($sales->sum('total_amount') - ($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount'))) }}</b>
                     </h2>
                 </div>
             </div>

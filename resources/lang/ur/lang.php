@@ -1194,4 +1194,14 @@ return [
     'enter_the_rate' => 'شرح درج کریں۔',
     'edit_rate' => 'شرح میں ترمیم کریں۔',
     'paying_currency' => 'ادائیگی کرنسی',
+
+    'show_the_window_printing_prompt' => 'ونڈو پرنٹنگ پرامپٹ دکھائیں۔',
+    'generation_start_date' => 'جنریشن شروع ہونے کی تاریخ',
+    'generation_end_date' => 'جنریشن کی آخری تاریخ',
+    'generation_start_time' => 'جنریشن شروع ہونے کا وقت',
+    'generation_end_time' => 'جنریشن اینڈ ٹائم',
+    'payment_start_date' => 'ادائیگی شروع ہونے کی تاریخ',
+    'payment_end_date' => 'ادائیگی کی آخری تاریخ',
+    'payment_start_time' => 'ادائیگی شروع ہونے کا وقت',
+    'payment_end_time' => 'ادائیگی کا اختتامی وقت',
 ];

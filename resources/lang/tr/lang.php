@@ -1196,4 +1196,14 @@ return [
     'edit_rate' => 'Oranı Düzenle',
     'paying_currency' => 'Ödeme Para Birimi',
 
+    'show_the_window_printing_prompt' => 'Pencere yazdırma istemini göster',
+    'generation_start_date' => 'Üretim Başlangıç ​​Tarihi',
+    'generation_end_date' => 'Üretim Bitiş Tarihi',
+    'generation_start_time' => 'Nesil Başlangıç ​​Zamanı',
+    'generation_end_time' => 'Nesil Bitiş Zamanı',
+    'payment_start_date' => 'Ödeme Başlangıç ​​Tarihi',
+    'payment_end_date' => 'Ödeme Bitiş Tarihi',
+    'payment_start_time' => 'Ödeme Başlangıç ​​Zamanı',
+    'payment_end_time' => 'Ödeme Bitiş Zamanı',
+
 ];

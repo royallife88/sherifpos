@@ -1197,4 +1197,14 @@ return [
     'edit_rate' => 'Tarief bewerken',
     'paying_currency' => 'Betaalvaluta',
 
+    'show_the_window_printing_prompt' => 'Toon de prompt voor het afdrukken van vensters',
+    'generation_start_date' => 'Startdatum generatie',
+    'generation_end_date' => 'Einddatum generatie',
+    'generation_start_time' => 'Starttijd generatie',
+    'generation_end_time' => 'Eindtijd generatie',
+    'payment_start_date' => 'Begindatum betaling',
+    'payment_end_date' => 'Einddatum betaling',
+    'payment_start_time' => 'Begintijd betaling',
+    'payment_end_time' => 'Eindtijd betaling',
+
 ];

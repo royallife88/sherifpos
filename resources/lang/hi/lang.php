@@ -1194,4 +1194,14 @@ return [
     'enter_the_rate' => 'दर दर्ज करें',
     'edit_rate' => 'दर संपादित करें',
     'paying_currency' => 'भुगतान मुद्रा',
+
+    'show_the_window_printing_prompt' => 'विंडो प्रिंटिंग प्रॉम्प्ट दिखाएं',
+    'generation_start_date' => 'जनरेशन प्रारंभ तिथि',
+    'generation_end_date' => 'पीढ़ी की समाप्ति तिथि',
+    'generation_start_time' => 'जनरेशन प्रारंभ समय',
+    'generation_end_time' => 'पीढ़ी समाप्ति समय',
+    'payment_start_date' => 'भुगतान प्रारंभ तिथि',
+    'payment_end_date' => 'भुगतान समाप्ति तिथि',
+    'payment_start_time' => 'भुगतान प्रारंभ समय',
+    'payment_end_time' => 'भुगतान समाप्ति समय',
 ];

@@ -1199,6 +1199,13 @@ return [
     'edit_rate' => 'Edit Rate',
     'paying_currency' => 'Paying Currency',
 
-
     'show_the_window_printing_prompt' => 'Show the window printing prompt',
+    'generation_start_date' => 'Generation Start Date',
+    'generation_end_date' => 'Generation End Date',
+    'generation_start_time' => 'Generation Start Time',
+    'generation_end_time' => 'Generation End Time',
+    'payment_start_date' => 'Payment Start Date',
+    'payment_end_date' => 'Payment End Date',
+    'payment_start_time' => 'Payment Start Time',
+    'payment_end_time' => 'Payment End Time',
 ];

@@ -1194,4 +1194,14 @@ return [
     'enter_the_rate' => 'ادخل سعر الصرف',
     'edit_rate' => 'معدل التحرير',
     'paying_currency' => 'العملة المدفوعة',
+
+    'show_the_window_printing_prompt' => 'Show the window printing prompt',
+    'generation_start_date' => 'بتاريخ إنشاء الفاتورة - من',
+    'generation_end_date' => 'اريخ إنشاء الفاتورة - إلى',
+    'generation_start_time' => 'وقت انشاء الفاتورة - من',
+    'generation_end_time' => 'وقت انشاء الفاتورة - إلى',
+    'payment_start_date' => 'اريخ الدفع – من',
+    'payment_end_date' => 'اريخ الدفع – إلى',
+    'payment_start_time' => 'توقيت الدفع – من',
+    'payment_end_time' => 'توقيت الدفع – إلى',
 ];

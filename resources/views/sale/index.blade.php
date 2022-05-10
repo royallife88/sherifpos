@@ -109,49 +109,49 @@
 
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('start_date', __('lang.generation') . ' ' . __('lang.start_date'), []) !!}
+                                        {!! Form::label('start_date', __('lang.generation_start_date'), []) !!}
                                         {!! Form::text('start_date', request()->start_date, ['class' => 'form-control sale_filter']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('start_time', __('lang.generation') . ' ' . __('lang.start_time'), []) !!}
+                                        {!! Form::label('start_time', __('lang.generation_start_time'), []) !!}
                                         {!! Form::text('start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('end_date', __('lang.generation') . ' ' . __('lang.end_date'), []) !!}
+                                        {!! Form::label('end_date', __('lang.generation_end_date'), []) !!}
                                         {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('end_time', __('lang.generation') . ' ' . __('lang.end_time'), []) !!}
+                                        {!! Form::label('end_time', __('lang.generation_end_time'), []) !!}
                                         {!! Form::text('end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('payment_start_date', __('lang.payment') . ' ' . __('lang.start_date'), []) !!}
+                                        {!! Form::label('payment_start_date', __('lang.payment_start_date'), []) !!}
                                         {!! Form::text('start_date', request()->start_date, ['class' => 'form-control datepicker sale_filter', 'id' => 'payment_start_date']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('payment_start_time', __('lang.payment') . ' ' . __('lang.start_time'), []) !!}
+                                        {!! Form::label('payment_start_time', __('lang.payment_start_time'), []) !!}
                                         {!! Form::text('payment_start_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('payment_end_date', __('lang.payment') . ' ' . __('lang.end_date'), []) !!}
+                                        {!! Form::label('payment_end_date', __('lang.payment_end_date'), []) !!}
                                         {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter', 'id' => 'payment_end_date']) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        {!! Form::label('payment_end_time', __('lang.payment') . ' ' . __('lang.end_time'), []) !!}
+                                        {!! Form::label('payment_end_time', __('lang.payment_end_time'), []) !!}
                                         {!! Form::text('payment_end_time', null, ['class' => 'form-control time_picker sale_filter']) !!}
                                     </div>
                                 </div>

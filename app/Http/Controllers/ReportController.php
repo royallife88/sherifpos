@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AddStockLine;
 use App\Models\CashRegister;
+use App\Models\Currency;
 use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\DiningRoom;
@@ -14,6 +15,7 @@ use App\Models\ProductStore;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Supplier;
+use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Models\User;
@@ -296,44 +298,325 @@ class ReportController extends Controller
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        $sale_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
-            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
-            ->where('transactions.type', 'sell')
-            ->where('transactions.payment_status', 'paid')
-            ->where('transactions.status', 'final');
+        if (request()->ajax()) {
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $default_currency_id = System::getProperty('currency');
+            $store_id = request()->store_id;
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
-        if (!empty($request->start_date)) {
-            $sale_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $sale_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $sale_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $sale_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($request->customer_id)) {
-            $sale_query->where('customer_id', $request->customer_id);
-        }
-        if (!empty($request->customer_type_id)) {
-            $sale_query->where('customer_type_id', $request->customer_type_id);
-        }
-        if (!empty($store_id)) {
-            $sale_query->where('store_id', $store_id);
-        }
-        if (!empty($pos_id)) {
-            $sale_query->where('store_pos_id', $pos_id);
-        }
-        if (!empty($request->product_id)) {
-            $sale_query->where('product_id', $request->product_id);
-        }
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
+                ->where('transactions.payment_status', 'paid')
+                ->where('transactions.type', 'sell')->whereIn('status', ['final']);
 
-        $sales = $sale_query->select('transactions.*')
-            ->groupBy('transactions.id')->get();
+
+            if (!empty(request()->customer_id)) {
+                $query->where('customer_id', request()->customer_id);
+            }
+            if (!empty(request()->customer_type_id)) {
+                if (request()->customer_type_id == 'dining_in') {
+                    $query->whereNotNull('dining_table_id');
+                } else {
+                    $query->where('customer_type_id', request()->customer_type_id);
+                }
+            }
+
+            if (!empty(request()->status)) {
+                $query->where('status', request()->status);
+            }
+            if (!empty($store_id)) {
+                $query->where('store_id', $store_id);
+            }
+            if (!empty(request()->pos_id)) {
+                $query->where('store_pos_id', request()->pos_id);
+            }
+            if (!empty(request()->payment_status)) {
+                $query->where('payment_status', request()->payment_status);
+            }
+            if (!empty(request()->created_by)) {
+                $query->where('transactions.created_by', request()->created_by);
+            }
+
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+
+            $sales = $query->select(
+                'transactions.final_total',
+                'transactions.payment_status',
+                'transactions.status',
+                'transactions.id',
+                'transactions.transaction_date',
+                'transactions.service_fee_value',
+                'transactions.invoice_no',
+                'transaction_payments.paid_on',
+                'stores.name as store_name',
+                'users.name as created_by_name',
+                'customers.name as customer_name',
+                'customers.mobile_number',
+                'received_currency.symbol as received_currency_symbol',
+                'received_currency_id'
+            )->with([
+                'return_parent',
+                'customer',
+                'transaction_payments',
+                'deliveryman',
+                'canceled_by_user',
+                'sell_products',
+                'sell_variations'
+            ])
+                ->groupBy('transactions.id');
+
+            return DataTables::of($sales)
+                // ->setTotalRecords()
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('invoice_no', function ($row) {
+                    $string = $row->invoice_no . ' ';
+                    if (!empty($row->return_parent)) {
+                        $string .= '<a
+                        data-href="' . action('SellReturnController@show', $row->id) . '" data-container=".view_modal"
+                        class="btn btn-modal" style="color: #007bff;">R</a>';
+                    }
+                    if ($row->payment_status == 'pending') {
+                        $string .= '<a
+                            data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                            class="btn btn-modal" style="color: #007bff;">P</a>';
+                    }
+
+                    return $string;
+                })
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    if (!empty($row->return_parent)) {
+                        $final_total = $this->commonUtil->num_f($row->final_total - $row->return_parent->final_total);
+                    } else {
+                        $final_total = $this->commonUtil->num_f($row->final_total);
+                    }
+
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $final_total . '</span>';
+                })
+                ->addColumn('paid', function ($row) use ($request, $default_currency_id) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $paid = $row->transaction_payments->sum('amount');
+                    $due = $row->final_total - $paid;
+                    $received_currency_id = $row->received_currency_id ?? $default_currency_id;
+
+                    return '<span data-currency_id="' . $received_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                })
+                ->addColumn('customer_type', function ($row) {
+                    if (!empty($row->customer->customer_type)) {
+                        return $row->customer->customer_type->name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->received_currency_symbol ?? $default_currency->symbol;
+                })
+                ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methods .= $payment_types[$payment->method] . '<br>';
+                        }
+                    }
+                    return $methods;
+                })
+                ->addColumn('deliveryman', function ($row) {
+                    if (!empty($row->deliveryman)) {
+                        return $row->deliveryman->employee_name;
+                    } else {
+                        return '';
+                    }
+                })
+                ->addColumn('store_name', '{{$store_name}}')
+                ->addColumn('ref_number', function ($row) use ($request) {
+                    $ref_numbers = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->ref_number)) {
+                            $ref_numbers .= $payment->ref_number . '<br>';
+                        }
+                    }
+                    return $ref_numbers;
+                })
+                ->editColumn('payment_status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
+                    }
+                })
+                ->addColumn('products', function ($row) {
+                    $string = '';
+                    foreach ($row->sell_variations as $sell_variation) {
+                        if (!empty($sell_variation)) {
+                            if ($sell_variation->name != 'Default') {
+                                $string .= $sell_variation->name . ' ' . $sell_variation->sub_sku . '<br>';
+                            } else {
+                                $string .= $sell_variation->product->name . '-' . $sell_variation->product->sku . '<br>';
+                            }
+                        }
+                    }
+
+                    return $string;
+                })
+                ->editColumn('service_fee_value', '{{@num_format($service_fee_value)}}')
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('canceled_by', function ($row) {
+                    return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+
+                        if (auth()->user()->can('sale.pos.create_and_edit')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@print', $row->id) . '"
+                                    class="btn print-invoice"><i class="dripicons-print"></i>
+                                    ' . __('lang.generate_invoice') . '</a>
+                            </li>';
+                        }
+                        if (auth()->user()->can('sale.pos.create_and_edit')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@print', $row->id) . '?print_gift_invoice=true"
+                                    class="btn print-invoice"><i class="fa fa-gift"></i>
+                                    ' . __('lang.print_gift_invoice') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@show', $row->id) . '" data-container=".view_modal"
+                                    class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                                <a href="' . action('SellController@edit', $row->id) . '" class="btn"><i
+                                        class="dripicons-document-edit"></i> ' . __('lang.edit') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('return.sell_return.create_and_edit')) {
+                            if (empty($row->return_parent)) {
+                                $html .=
+                                    '<li>
+                                    <a href="' . action('SellReturnController@add', $row->id) . '" class="btn"><i
+                                        class="fa fa-undo"></i> ' . __('lang.sale_return') . '</a>
+                                    </li>';
+                            }
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.create_and_edit')) {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
+                                $html .=
+                                    ' <li>
+                                    <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
+                                        data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                        ' . __('lang.add_payment') . '</a>
+                                    </li>';
+                            }
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('TransactionPaymentController@show', $row->id) . '"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                    ' . __('lang.view_payments') . '</a>
+                                </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@destroy', $row->id) . '"
+                                    data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                    ' . __('lang.delete') . '</a>
+                                </li>';
+                        }
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'method',
+                    'invoice_no',
+                    'ref_number',
+                    'payment_status',
+                    'transaction_date',
+                    'final_total',
+                    'paid',
+                    'due',
+                    'status',
+                    'store_name',
+                    'products',
+                    'created_by',
+                ])
+                ->make(true);
+        }
 
 
         $stores = Store::getDropdown();
@@ -344,7 +627,6 @@ class ReportController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
 
         return view('reports.receivable_report')->with(compact(
-            'sales',
             'store_pos',
             'products',
             'customers',
@@ -364,41 +646,139 @@ class ReportController extends Controller
         $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
         $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
 
+        if (request()->ajax()) {
+            $default_currency_id = System::getProperty('currency');
+            $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+            $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
+                ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
+                ->leftjoin('users', 'transactions.created_by', '=', 'users.id')
+                ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
+                ->where('transactions.type', 'add_stock')
+                ->where('transactions.payment_status', 'paid');
 
-        $add_stock_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('add_stock_lines', 'transactions.id', 'add_stock_lines.transaction_id')
-            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('suppliers', 'transactions.supplier_id', 'suppliers.id')
-            ->where('transactions.type', 'add_stock')
-            ->where('transactions.payment_status', 'paid');
+            if (!empty($request->start_date)) {
+                $add_stock_query->whereDate('transaction_date', '>=', $request->start_date);
+            }
+            if (!empty($request->end_date)) {
+                $add_stock_query->whereDate('transaction_date', '<=', $request->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $add_stock_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $add_stock_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+            if (!empty($request->supplier_id)) {
+                $add_stock_query->where('supplier_id', $request->supplier_id);
+            }
+            if (!empty($store_id)) {
+                $add_stock_query->where('store_id', $store_id);
+            }
+            if (!empty($pos_id)) {
+                $add_stock_query->where('store_pos_id', $pos_id);
+            }
+            if (!empty($request->product_id)) {
+                $add_stock_query->where('product_id', $request->product_id);
+            }
 
-        if (!empty($request->start_date)) {
-            $add_stock_query->whereDate('transaction_date', '>=', $request->start_date);
-        }
-        if (!empty($request->end_date)) {
-            $add_stock_query->whereDate('transaction_date', '<=', $request->end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $add_stock_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $add_stock_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($request->supplier_id)) {
-            $add_stock_query->where('supplier_id', $request->supplier_id);
-        }
-        if (!empty($store_id)) {
-            $add_stock_query->where('store_id', $store_id);
-        }
-        if (!empty($pos_id)) {
-            $add_stock_query->where('store_pos_id', $pos_id);
-        }
-        if (!empty($request->product_id)) {
-            $add_stock_query->where('product_id', $request->product_id);
-        }
+            $add_stocks = $add_stock_query->select(
+                'transactions.*',
+                'paying_currency.symbol as paying_currency_symbol',
+                'users.name as created_by_name',
+                'suppliers.name as supplier_name',
+            )->groupBy('transactions.id');
 
-        $add_stocks = $add_stock_query->select('transactions.*')->groupBy('transactions.id')->get();
+            return DataTables::of($add_stocks)
+                ->editColumn('created_at', '{{@format_datetime($created_at)}}')
+                ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
+                ->editColumn('due_date', '@if(!empty($add_stock->due_date) && $add_stock->payment_status != "paid"){{@format_datetime($due_date)}}@endif')
+                ->editColumn('created_by', '{{$created_by_name}}')
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    $final_total =  $row->final_total;
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
+                })
+                ->addColumn('paid_amount', function ($row) use ($default_currency_id) {
+                    $amount_paid =  $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $due =  $row->final_total - $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
+                })
+                ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->paying_currency_symbol ?? $default_currency->symbol;
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = ' <div class="btn-group">
+                            <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
 
+                        if (auth()->user()->can('stock.add_stock.view')) {
+                            $html .=
+                                '<li>
+                            <a href="' . action('AddStockController@show', $row->id) . '" class=""><i
+                            class="fa fa-eye btn"></i> ' . __('lang.view') . '</a>
+                         </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                        <a href="' . action('AddStockController@edit', $row->id) . '"><i
+                                class="dripicons-document-edit btn"></i>' . __('lang.edit') . '</a>
+                        </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('superadmin')) {
+                            $html .=
+                                '<li>
+                        <a data-href="' . action('AddStockController@destroy', $row->id) . '"
+                            data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                            class="btn text-red delete_item"><i class="dripicons-trash"></i>
+                            ' . __('lang.delete') . '</a>
+                        </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('stock.pay.create_and_edit')) {
+                            if ($row->payment_status != 'paid') {
+                                $html .=
+                                    '<li>
+                            <a data-href="' . action('TransactionPaymentController@addPayment', ['id' => $row->id]) . '"
+                                data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                ' . __('lang.pay') . '</a>
+                            </li>';
+                            }
+                        }
+
+                        $html .= '</ul></div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'transaction_date',
+                    'created_at',
+                    'due_date',
+                    'final_total',
+                    'paid_amount',
+                    'due',
+                    'created_by',
+                ])
+                ->make(true);
+        }
 
         $stores = Store::getDropdown();
         $store_pos = StorePos::orderBy('name', 'asc')->pluck('name', 'id');
@@ -407,7 +787,6 @@ class ReportController extends Controller
         $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('reports.payable_report')->with(compact(
-            'add_stocks',
             'store_pos',
             'products',
             'suppliers',

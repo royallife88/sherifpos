@@ -1193,4 +1193,14 @@ return [
     'enter_the_rate' => 'Entrez le tarif',
     'edit_rate' => 'Modifier le tarif',
     'paying_currency' => 'Devise de paiement',
+
+    'show_the_window_printing_prompt' => 'Afficher l\'invite d\'impression de la fenêtre',
+    'generation_start_date' => 'Date de début de génération',
+    'generation_end_date' => 'Date de fin de génération',
+    'generation_start_time' => 'Heure de début de la génération',
+    'generation_end_time' => 'Heure de fin de génération',
+    'payment_start_date' => 'Date de début de paiement',
+    'payment_end_date' => 'Date de fin de paiement',
+    'payment_start_time' => 'Heure de début du paiement',
+    'payment_end_time' => 'Heure de fin de paiement',
 ];

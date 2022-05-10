@@ -125,13 +125,28 @@ class CashRegisterUtil extends Util
         $register =  $this->getCurrentCashRegisterOrCreate($user_id);
 
 
-        $payments_formatted[] = new CashRegisterTransaction([
-            'amount' => $this->num_uf($payment['amount']),
-            'pay_method' => $payment['method'],
-            'type' => $type,
-            'transaction_type' => $transaction->type,
-            'transaction_id' => $transaction->id
-        ]);
+        if ($transaction->type == 'sell_return') {
+            $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
+            if (!empty($cr_transaction)) {
+                $cr_transaction->update([
+                    'amount' => $this->num_uf($payment['amount']),
+                    'pay_method' => $payment['method'],
+                    'type' => $type,
+                    'transaction_type' => $transaction->type,
+                    'transaction_id' => $transaction->id
+                ]);
+
+                return true;
+            }
+        } else {
+            $payments_formatted[] = new CashRegisterTransaction([
+                'amount' => $this->num_uf($payment['amount']),
+                'pay_method' => $payment['method'],
+                'type' => $type,
+                'transaction_type' => $transaction->type,
+                'transaction_id' => $transaction->id
+            ]);
+        }
 
 
         //add to cash register pos return amount as sell amount
@@ -204,7 +219,8 @@ class CashRegisterUtil extends Util
     public function updateSellPayments($transaction, $payments)
     {
         $user_id = auth()->user()->id;
-        $register =  CashRegister::where('user_id', $user_id)
+        $transaction = Transaction::find($transaction->id);
+        $register =  CashRegister::where('user_id', $transaction->created_by)
             ->where('status', 'open')
             ->first();
         if ($transaction->status == 'final') {
