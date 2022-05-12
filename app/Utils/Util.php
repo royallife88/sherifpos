@@ -431,7 +431,7 @@ class Util
      */
     public function allCurrencies($exclude_array = [])
     {
-        $query = Currency::select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ') as info"))
+        $query = Currency::select('id', DB::raw("concat(country, ' - ',currency, '(', code, ') ', symbol) as info"))
             ->orderBy('country');
         if (!empty($exclude_array)) {
             $query->whereNotIn('id', $exclude_array);
