@@ -1011,6 +1011,24 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 @endif
                 @endif
 
+                @if( !empty($module_settings['safe_module']) )
+                @if(auth()->user()->can('safe_module.money_safe.create_and_edit') ||
+                auth()->user()->can('safe_module.money_safe.view') )
+                <li><a href="#money_safe" aria-expanded="false" data-toggle="collapse"> <i
+                            class="dripicons-box "></i><span>{{__('lang.money_safe')}}</span><span></a>
+                    <ul id="money_safe"
+                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['money-safe', 'money-safe-transfer'])) show @endif">
+                        @can('safe_module.money_safe.view')
+                        <li class="@if(request()->segment(1) == 'money-safe' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('MoneySafeController@index')}}">{{__('lang.view_all_money_safe')}}</a>
+                        </li>
+                        @endcan
+                    </ul>
+                </li>
+                @endif
+                @endif
+
+
                 @if( !empty($module_settings['sms_module']) )
                 @if(auth()->user()->can('sms_module.sms.create_and_edit') ||
                 auth()->user()->can('sms_module.sms.view') )

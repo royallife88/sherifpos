@@ -6,6 +6,7 @@ use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\JobType;
+use App\Models\MoneySafe;
 use App\Models\ProductClass;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -96,7 +97,7 @@ class DatabaseSeeder extends Seeder
             'created_by' => 1,
         ]);
 
-        Store::create([
+        $store = Store::create([
             'name' => 'Default Store',
             'location' => '',
             'phone_number' => '',
@@ -112,6 +113,16 @@ class DatabaseSeeder extends Seeder
             'store_id' => 1,
             'user_id' => 1,
             'created_by' => 1
+        ]);
+
+        MoneySafe::create([
+            'name' => 'Bank Safe',
+            'store_id' => $store->id,
+            'currency_id' => 120,
+            'type' => 'bank',
+            'add_money_users' => [],
+            'take_money_users' => [],
+            'created_by' => 1,
         ]);
 
         JobType::insert(

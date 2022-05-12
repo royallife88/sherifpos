@@ -19,7 +19,7 @@ class SizeController extends Controller
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param Util $commonUtil
      * @return void
      */
     public function __construct(Util $commonUtil)

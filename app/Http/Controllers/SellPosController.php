@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Brand;
 use App\Models\CashRegister;
+use App\Models\CashRegisterTransaction;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Currency;
@@ -23,10 +24,13 @@ use App\Models\Tax;
 use App\Models\TermsAndCondition;
 use App\Models\Transaction;
 use App\Models\DiningTable;
+use App\Models\MoneySafeTransaction;
 use App\Models\ServiceFee;
+use App\Models\TransactionPayment;
 use App\Models\TransactionSellLine;
 use App\Models\Variation;
 use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -50,6 +54,7 @@ class SellPosController extends Controller
     protected $productUtil;
     protected $notificationUtil;
     protected $cashRegisterUtil;
+    protected $moneysafeUtil;
 
     /**
      * Constructor
@@ -57,13 +62,14 @@ class SellPosController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
         $this->transactionUtil = $transactionUtil;
         $this->notificationUtil = $notificationUtil;
         $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->moneysafeUtil = $moneysafeUtil;
     }
 
 
@@ -314,9 +320,12 @@ class SellPosController extends Controller
                         'change_amount' => $payment['change_amount'] ?? 0,
                     ];
 
-                    $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                    $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                     $transaction = $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                     $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                    if ($payment_data['method'] == 'bank_transfer' || $payment_data['method'] == 'card') {
+                        $this->moneysafeUtil->addPayment($transaction, $payment_data, 'credit', $transaction_payment->id);
+                    }
                 }
             }
 
@@ -520,7 +529,7 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // try {
             DB::beginTransaction();
             $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
@@ -558,6 +567,10 @@ class SellPosController extends Controller
                 if (!empty($request->payments)) {
                     foreach ($request->payments as $payment) {
                         $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
+                        $old_tp = null;
+                        if (!empty($payment['transaction_payment_id'])) {
+                            $old_tp = TransactionPayment::find($payment['transaction_payment_id']);
+                        }
                         $payment_data = [
                             'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
                             'transaction_id' => $transaction->id,
@@ -578,11 +591,20 @@ class SellPosController extends Controller
                             'change_amount' => $payment['change_amount'] ?? 0,
                         ];
                         if ($amount > 0) {
-                            $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                            $transaction_payment =  $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                         }
                         $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+
+                        $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
                     }
                     $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
+                }
+
+                if ($request->payment_status == 'pending') {
+                    TransactionPayment::where('transaction_id', $transaction->id)->delete();
+                    CashRegisterTransaction::where('transaction_id', $transaction->id)->delete();
+                    MoneySafeTransaction::where('transaction_id', $transaction->id)->delete();
+                    $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
                 }
 
 
@@ -653,13 +675,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return $output;
     }

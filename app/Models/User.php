@@ -85,6 +85,7 @@ class User extends Authenticatable
             'coupons_and_gift_cards' => __('lang.coupons_and_gift_cards'),
             'loyalty_points' => __('lang.loyalty_points'),
             'sp_module' => __('lang.sp_module'),
+            'safe_module' => __('lang.safe_module'),
             'sms_module' => __('lang.sms_module'),
             'email_module' => __('lang.email_module'),
             'settings' => __('lang.settings'),
@@ -226,6 +227,12 @@ class User extends Authenticatable
             ],
             'sp_module' => [
                 'sales_promotion' => __('lang.sales_promotion'),
+            ],
+            'safe_module' => [
+                'money_safe' => __('lang.money_safe'),
+                'add_money_to_safe' => __('lang.add_money_to_safe'),
+                'take_money_from_safe' => __('lang.take_money_from_safe'),
+                'statement' => __('lang.statement'),
             ],
             'sms_module' => [
                 'sms' => __('lang.sms'),

@@ -8,6 +8,7 @@ use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -23,19 +24,24 @@ class TransactionPaymentController extends Controller
     protected $commonUtil;
     protected $transactionUtil;
     protected $cashRegisterUtil;
+    protected $moneysafeUtil;
 
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param Util $commonUtil
+     * @param TransactionUtil $transactionUtil
+     * @param CashRegisterUtil $cashRegisterUtil
+     * @param MoneySafeUtil $moneysafeUtil
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, CashRegisterUtil $cashRegisterUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
         $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->moneysafeUtil = $moneysafeUtil;
     }
 
     /**
@@ -129,6 +135,10 @@ class TransactionPaymentController extends Controller
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
             if ($transaction->type == 'sell') {
                 $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+
+                if ($payment_data['method'] == 'bank_transfer' || $payment_data['method'] == 'card') {
+                    $this->moneysafeUtil->addPayment($transaction, $payment_data, 'credit', $transaction_payment->id);
+                }
             }
             DB::commit();
             $output = [
@@ -196,6 +206,7 @@ class TransactionPaymentController extends Controller
         try {
             $data = $request->except('_token');
             $transaction_payment = TransactionPayment::find($id);
+            $old_tp = $transaction_payment;
             $transaction_id = $transaction_payment->transaction_id;
 
             $payment_data = [
@@ -221,6 +232,7 @@ class TransactionPaymentController extends Controller
             if ($transaction->type == 'sell') {
                 $payments[] = $payment_data;
                 $this->cashRegisterUtil->updateSellPayments($transaction, $payments);
+                $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
             }
 
             $output = [

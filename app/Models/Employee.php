@@ -20,6 +20,7 @@ class Employee extends Model implements HasMedia
      * @var array
      */
     protected $guarded = ['id'];
+    protected $hidden = ['pass_string'];
 
     /**
      * The attributes that should be cast to native types.

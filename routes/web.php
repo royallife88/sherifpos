@@ -228,6 +228,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
         Route::get('get-employee-details-by-id/{id}', 'EmployeeController@getDetails');
         Route::get('send-login-details/{employee_id}', 'EmployeeController@sendLoginDetails');
         Route::get('toggle-active/{employee_id}', 'EmployeeController@toggleActive');
+        Route::get('employee/get-dropdown', 'EmployeeController@getDropdown');
         Route::resource('employee', EmployeeController::class);
         Route::resource('leave-type', LeaveTypeController::class);
 
@@ -344,6 +345,16 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('exchange-rate/get-currency-dropdown', 'ExchangeRateController@getExchangeRateCurrencyDropdown');
     Route::get('exchange-rate/get-exchange-rate-by-currency', 'ExchangeRateController@getExchangeRateByCurrency');
     Route::resource('exchange-rate', ExchangeRateController::class);
+
+    Route::post('money-safe-transfer/get-add-money-to-safe/{id}', 'MoneySafeTransferController@postAddMoneyToSafe');
+    Route::get('money-safe-transfer/get-add-money-to-safe/{id}', 'MoneySafeTransferController@getAddMoneyToSafe');
+    Route::post('money-safe-transfer/get-take-money-to-safe/{id}', 'MoneySafeTransferController@postTakeMoneyFromSafe');
+    Route::get('money-safe-transfer/get-take-money-to-safe/{id}', 'MoneySafeTransferController@getTakeMoneyFromSafe');
+    Route::get('money-safe-transfer/get-statement/{id}', 'MoneySafeTransferController@getStatement');
+    Route::resource('money-safe-transfer', MoneySafeTransferController::class);
+    Route::get('money-safe/get-dropdown', 'MoneySafeController@getDropdown');
+    Route::get('money-safe/get-details-by-id/{id}', 'MoneySafeController@getDetailsById');
+    Route::resource('money-safe', MoneySafeController::class);
 });
 
 

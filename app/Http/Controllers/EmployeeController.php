@@ -493,9 +493,9 @@ class EmployeeController extends Controller
     public function getDetails($id)
     {
         $employee = Employee::leftjoin('users', 'employees.user_id', 'users.id')
-            ->leftjoin('jobs', 'employees.job_type_id', 'jobs.id')
+            ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
             ->where('employees.id', $id)
-            ->select('users.name', 'employees.*', 'jobs.job_title')->first();
+            ->select('users.name', 'employees.*', 'job_types.job_title')->first();
 
         $no_of_emplyee_same_job = Employee::where('job_type_id', $employee->job_type_id)->count();
         $leave_balance = Employee::getBalanceLeave($id);
@@ -578,5 +578,18 @@ class EmployeeController extends Controller
         }
 
         return $output;
+    }
+
+    /**
+     * get dropdown html
+     *
+     * @return void
+     */
+    public function getDropdown()
+    {
+        $employees = Employee::orderBy('employee_name', 'asc')->pluck('employee_name', 'id');
+        $employees_dp = $this->commonUtil->createDropdownHtml($employees, 'Please Select');
+
+        return $employees_dp;
     }
 }
