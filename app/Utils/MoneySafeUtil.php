@@ -53,7 +53,11 @@ class MoneySafeUtil extends Util
                 $amount = $amount;
             } else {
                 $amount_to_base = $amount;
-                $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
+                if(!empty($to_currency_exchange_rate)){
+                    $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
+                }else{
+                    $amount = $amount;
+                }
             }
         }
 
