@@ -18,10 +18,10 @@
                     {!! Form::text('card_number',  $code, ['class' => 'form-control', 'placeholder' => __(
                     'lang.card_number' ), 'required' ]);
                     !!}
-                    <div class="input-group-append">
+                    {{-- <div class="input-group-append">
                         <button type="button"
                             class="btn btn-default btn-sm refresh_code"><i class="fa fa-refresh"></i></button>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
 
@@ -54,24 +54,6 @@
     $('.datepicker').datepicker({
         language: '{{session('language')}}',
     });
-    $('.selectpicker').selectpicker('render');
-    $('.selectpicker').selectpicker('selectAll');
-
-    $('.all_products').change(function(){
-        if(!$(this).prop('checked')){
-            $('.selectpicker').selectpicker('deselectAll');
-        }else{
-            $('.selectpicker').selectpicker('selectAll');
-        }
-    })
-    $('.amount_to_be_purchase_checkbox').change(function(){
-        if($(this).prop('checked')){
-            $('.amount_to_be_purchase').attr('required', true);
-        }else{
-            $('.amount_to_be_purchase').attr('required', false);
-        }
-    })
-
     $('.refresh_code').click()
     $(document).on('click', '.refresh_code', function(){
         $.ajax({

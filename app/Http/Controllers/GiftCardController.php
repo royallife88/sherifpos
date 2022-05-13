@@ -116,6 +116,7 @@ class GiftCardController extends Controller
             $output = [
                 'success' => true,
                 'gift_card_id' => $gift_card_id,
+                'card_number' => $gift_card->card_number,
                 'msg' => __('lang.success')
             ];
         } catch (\Exception $e) {
@@ -127,7 +128,7 @@ class GiftCardController extends Controller
         }
 
 
-        if ($request->quick_add) {
+        if ($request->ajax()) {
             return $output;
         }
 

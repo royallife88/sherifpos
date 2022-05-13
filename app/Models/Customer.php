@@ -62,4 +62,28 @@ class Customer extends Model implements HasMedia
 
         return $customer_array;
     }
+
+    public static function referred_by_users($id)
+    {
+        $referred_by_users = [];
+        $referreds = Referred::where('customer_id', $id)->get();
+        foreach ($referreds as $referred) {
+            foreach ($referred->referred_by as $referred_by) {
+                if ($referred->referred_type == 'customer') {
+                    $customer = Customer::where('id', $referred_by)->first();
+                    $referred_by_users[] = $customer->name ?? '';
+                }
+                if ($referred->referred_type == 'employee') {
+                    $employee = Employee::where('id', $referred_by)->first();
+                    $referred_by_users[] = $employee->employee_name ?? '';
+                }
+                if ($referred->referred_type == 'supplier') {
+                    $supplier = Supplier::where('id', $referred_by)->first();
+                    $referred_by_users[] = $supplier->name ?? '';
+                }
+            }
+        }
+
+        return implode(', ', $referred_by_users);
+    }
 }

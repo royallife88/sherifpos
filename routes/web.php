@@ -82,6 +82,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('barcode/print-barcode', 'BarcodeController@printBarcode');
     Route::resource('barcode', BarcodeController::class);
 
+    Route::get('customer/get-referral-row', 'CustomerController@getReferralRow');
+    Route::get('customer/get-referred-by-details-html', 'CustomerController@getReferredByDetailsHtml');
     Route::get('customer/get-dropdown', 'CustomerController@getDropdown');
     Route::get('customer/get-details-by-transaction-type/{customer_id}/{type}', 'CustomerController@getDetailsByTransactionType');
     Route::get('customer/get-customer-balance/{customer_id}', 'CustomerController@getCustomerBalance');
@@ -90,6 +92,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer/get-important-date-row', 'CustomerController@getImportantDateRow');
     Route::post('customer/update-address/{customer_id}', 'CustomerController@updateAddress');
     Route::resource('customer', CustomerController::class);
+    Route::get('reward-system/get-details-by-customer/{customer_id}', 'RewardSystemController@getDetailsByCustomer');
+    Route::resource('reward-system', RewardSystemController::class);
 
     Route::get('customer-sizes/print/{id}', 'CustomerSizeController@print');
     Route::get('customer-sizes/add/{customer_id}', 'CustomerSizeController@add');
@@ -102,6 +106,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('customer-type/get-product-point-row', 'CustomerTypeController@getProductPointRow');
     Route::resource('customer-type', CustomerTypeController::class);
 
+    Route::get('supplier/get-dropdown', 'SupplierController@getDropdown');
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);

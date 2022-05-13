@@ -19,6 +19,8 @@ use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\PurchaseOrderLine;
 use App\Models\RedemptionOfPoint;
+use App\Models\Referred;
+use App\Models\RewardSystem;
 use App\Models\Store;
 use App\Models\System;
 use App\Models\Tax;
@@ -1239,5 +1241,72 @@ class TransactionUtil extends Util
 
             $customer_important_date->save();
         }
+    }
+
+    /**
+     * create referred reward system for customer
+     *
+     * @param int $customer_id
+     * @param Request $request
+     * @return void
+     */
+    public function createReferredRewardSystem($customer_id, $request)
+    {
+        foreach ($request->ref as $key => $ref) {
+            if (!empty($ref['referred_type']) && !empty($ref['referred_by'])) {
+                $referred = Referred::create([
+                    'customer_id' => $customer_id,
+                    'referred_type' => $ref['referred_type'],
+                    'referred_by' => $ref['referred_by'] ?? [],
+                ]);
+                $referred_by = $ref['referred_by'];
+                $reward_system = $request->reward_system[$key];
+                foreach ($referred_by as $by) {
+                    $reward_systems = $request->referred[$key][$by]['reward_system'];
+                    $reward_system_data = $request->reward_system[$key][$by];
+
+                    foreach ($reward_systems as $reward_system) {
+                        $data = $reward_system_data[$reward_system];
+                        $data['type'] = $reward_system;
+                        $data['referred_id'] = $referred->id;
+                        $data['referred_type'] = $referred->referred_type;
+                        $data['referred_by'] = $by;
+                        $data['amount'] = !empty($data['amount']) ? $data['amount'] : 0;
+
+                        if (!empty($request->pct[$key][$by]) && $data['type'] == 'discount') {
+                            $data['product_ids'] = $this->extractProductIdsfromProductTree($request->pct[$key][$by]);
+                        } else {
+                            $data['product_ids'] = [];
+                        }
+                        $data['pct_data'] = $request->pct[$key][$by] ?? [];
+                        RewardSystem::create($data);
+                        if ($referred->referred_type  == 'customer' && $data['type'] == 'loyalty_point') {
+                            $this->updateCustomerRewardPoints($by, $data['loyalty_points'], 0, 0, 0);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * extract products using product tree selection
+     *
+     * @param array $data_selected
+     * @return array
+     */
+    public function extractProductIdsfromProductTree($data_selected)
+    {
+        $product_ids = [];
+
+        if (!empty($data_selected['product_selected'])) {
+            $p = array_values(Product::whereIn('id', $data_selected['product_selected'])->select('id')->pluck('id')->toArray());
+            $product_ids = array_merge($product_ids, $p);
+        }
+
+        $product_ids  = array_unique($product_ids);
+
+        $product_ids = !empty($product_ids) ? $product_ids : [];
+        return (array)$product_ids;
     }
 }

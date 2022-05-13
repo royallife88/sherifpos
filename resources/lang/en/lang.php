@@ -1229,4 +1229,13 @@ return [
     'comments' => 'Comments',
     'statement' => 'Statement',
     'view_statement' => 'View Statement',
+
+    'referral' => 'Referral',
+    'referred_type' => 'Referred Type',
+    'referred_by' => 'Referred By',
+    'reward_system' => 'Reward System',
+    'money' => 'Money',
+    'loyalty_point' => 'Loyalty Point',
+    'rewards' => 'Rewards',
+
 ];

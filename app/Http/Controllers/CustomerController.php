@@ -7,8 +7,15 @@ use App\Models\Customer;
 use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerSize;
 use App\Models\CustomerType;
+use App\Models\Employee;
+use App\Models\Product;
+use App\Models\ProductClass;
+use App\Models\Referred;
+use App\Models\Store;
+use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Transaction;
+use App\Models\User;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -81,10 +88,12 @@ class CustomerController extends Controller
 
         $quick_add = request()->quick_add ?? null;
         $getAttributeListArray = CustomerSize::getAttributeListArray();
+        $customers = Customer::getCustomerArrayWithMobile();
 
         if ($quick_add) {
             return view('customer.quick_add')->with(compact(
                 'customer_types',
+                'customers',
                 'getAttributeListArray',
                 'quick_add'
             ));
@@ -92,6 +101,7 @@ class CustomerController extends Controller
 
         return view('customer.create')->with(compact(
             'customer_types',
+            'customers',
             'getAttributeListArray',
             'quick_add'
         ));
@@ -111,45 +121,47 @@ class CustomerController extends Controller
             ['customer_type_id' => ['required', 'max:255']]
         );
 
-        try {
-            $data = $request->except('_token', 'quick_add', 'size_data');
-            $data['created_by'] = Auth::user()->id;
+        // try {
+        $data = $request->except('_token', 'quick_add', 'size_data', 'reward_system', 'referred', 'referred_type', 'referred_by');
+        $data['created_by'] = Auth::user()->id;
 
-            DB::beginTransaction();
-            $customer = Customer::create($data);
+        DB::beginTransaction();
+        $customer = Customer::create($data);
 
-            if ($request->has('image')) {
-                $customer->addMedia($request->image)->toMediaCollection('customer_photo');
-            }
-
-            $size_data = $request->size_data;
-
-            if (!empty($size_data)) {
-                $size_data['customer_id'] = $customer->id;
-                $size_data['created_by'] = Auth::user()->id;
-
-                $customer_size = CustomerSize::create($size_data);
-            }
-
-            $customer_id = $customer->id;
-
-            if (!empty($request->important_dates)) {
-                $this->transactionUtil->createOrUpdateCustomerImportantDate($customer_id, $request->important_dates);
-            }
-
-            DB::commit();
-            $output = [
-                'success' => true,
-                'customer_id' => $customer_id,
-                'msg' => __('lang.success')
-            ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
+        if ($request->has('image')) {
+            $customer->addMedia($request->image)->toMediaCollection('customer_photo');
         }
+
+        $size_data = $request->size_data;
+
+        if (!empty($size_data)) {
+            $size_data['customer_id'] = $customer->id;
+            $size_data['created_by'] = Auth::user()->id;
+
+            $customer_size = CustomerSize::create($size_data);
+        }
+
+        $customer_id = $customer->id;
+
+        if (!empty($request->important_dates)) {
+            $this->transactionUtil->createOrUpdateCustomerImportantDate($customer_id, $request->important_dates);
+        }
+
+        $this->transactionUtil->createReferredRewardSystem($customer_id, $request);
+
+        DB::commit();
+        $output = [
+            'success' => true,
+            'customer_id' => $customer_id,
+            'msg' => __('lang.success')
+        ];
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
 
         if ($request->quick_add) {
@@ -533,6 +545,7 @@ class CustomerController extends Controller
         $customers = Customer::pluck('name', 'id');
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $balance = $this->transactionUtil->getCustomerBalance($customer->id)['balance'];
+        $referred_by = $customer->referred_by_users($customer->id);
 
         return view('customer.show')->with(compact(
             'sales',
@@ -542,7 +555,8 @@ class CustomerController extends Controller
             'customers',
             'customer',
             'customer_sizes',
-            'balance'
+            'balance',
+            'referred_by',
         ));
     }
 
@@ -782,5 +796,50 @@ class CustomerController extends Controller
         }
 
         return $output;
+    }
+
+    public function getReferralRow()
+    {
+        $index = request()->index ?? 0;
+        $customers = Customer::getCustomerArrayWithMobile();
+
+        return view('customer.partial.referral_row')->with(compact(
+            'index',
+            'customers',
+        ));
+    }
+    public function getreferredByDetailsHtml(Request $request)
+    {
+        $referred_by = $request->referred_by;
+        $referred_type = $request->referred_type;
+        $index = request()->index ?? 0;
+
+        $data = [];
+        if ($referred_type == 'customer') {
+            $data = Customer::whereIn('id', $referred_by)->pluck('name', 'id');
+        } else if ($referred_type == 'supplier') {
+            $data = Supplier::whereIn('id', $referred_by)->pluck('name', 'id');
+        } else if ($referred_type == 'employee') {
+            $data = Employee::whereIn('id', $referred_by)->select('employee_name as name', 'id')->pluck('name', 'id');
+        }
+
+
+        $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $payment_status_array = $this->commonUtil->getPaymentStatusArray();
+        $users = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::get();
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+
+        return view('customer.partial.referred_by_details')->with(compact(
+            'data',
+            'index',
+            'payment_type_array',
+            'payment_status_array',
+            'users',
+            'stores',
+            'product_classes',
+            'products',
+        ));
     }
 }

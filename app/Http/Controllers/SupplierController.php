@@ -301,7 +301,12 @@ class SupplierController extends Controller
 
         return $output;
     }
-
+    /**
+     * get detaisl of resource
+     *
+     * @param  int  $id
+     * @return void
+     */
     public function getDetails($id)
     {
         $supplier = Supplier::find($id);
@@ -312,5 +317,18 @@ class SupplierController extends Controller
             'supplier',
             'is_purchase_order'
         ));
+    }
+
+    /**
+     * get dropdown html
+     *
+     * @return void
+     */
+    public function getDropdown()
+    {
+        $supplier = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $supplier_dp = $this->commonUtil->createDropdownHtml($supplier, 'Please Select');
+
+        return $supplier_dp;
     }
 }

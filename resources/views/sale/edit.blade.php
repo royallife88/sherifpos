@@ -39,7 +39,7 @@
                                             <input type="hidden" name="exchange_rate" id="exchange_rate"
                                                 value="@if (!empty($sale->exchange_rate)) {{ $sale->exchange_rate }}@else{{ 1 }} @endif">
                                             <input type="hidden" name="default_currency_id" id="default_currency_id"
-                                                value="{{ !empty($sale->default_currency_id)? $sale->default_currency_id: App\Models\System::getProperty('currency') }}">
+                                                value="{{ !empty($sale->default_currency_id) ? $sale->default_currency_id : App\Models\System::getProperty('currency') }}">
                                             {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!}
                                             {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty($sale->received_currency_id) ? $sale->received_currency_id : App\Models\System::getProperty('currency'), ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required']) !!}
                                         </div>
@@ -289,6 +289,16 @@
     <script>
         $(document).ready(function() {
             $('.method').change()
+            @if ($sale->payment_status == 'pending')
+                $('.received_amount').attr('required', false);
+            @endif
+            $(document).on('change', 'select#payment_status', function() {
+                if ($(this).val() == 'pending') {
+                    $('.received_amount').attr('required', false);
+                } else {
+                    $('.received_amount').attr('required', true);
+                }
+            })
         })
     </script>
 @endsection

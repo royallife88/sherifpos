@@ -54,6 +54,10 @@
                             <a class="nav-link @if (request()->show == 'points') active @endif" href="#store-point"
                                 role="tab" data-toggle="tab">@lang('lang.points')</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link @if (request()->show == 'rewards') active @endif" href="#store-rewards"
+                                role="tab" data-toggle="tab">@lang('lang.rewards')</a>
+                        </li>
                         @if (session('system_mode') == 'garments')
                             @can('customer_module.customer_sizes.view')
                                 <li class="nav-item">
@@ -104,6 +108,9 @@
                                         <div class="col-md-12">
                                             <b>@lang('lang.balance'):</b> <span
                                                 class="balance @if ($balance < 0) text-red @endif">{{ $balance }}</span>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <b>@lang('lang.referred_by'):</b> {{ $referred_by }}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
@@ -493,6 +500,31 @@
                                 </table>
                             </div>
                         </div>
+                        <div role="tabpanel" class="tab-pane fade @if (request()->show == 'rewards') show active @endif"
+                            id="store-rewards">
+                            <div class="table-responsive">
+                                <table class="table" id="rewards_table">
+                                    <thead>
+                                        <tr>
+                                            <th>@lang('lang.date')</th>
+                                            <th>@lang('lang.type')</th>
+                                            <th>@lang('lang.amount')</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            {{-- <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th style="text-align: right">@lang('lang.total')</th>
+                                            <th></th> --}}
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
                         @if (session('system_mode') == 'garments')
                             <div role="tabpanel"
                                 class="tab-pane fade @if (request()->show == 'sizes') show active @endif"
@@ -769,5 +801,94 @@
                 },
             });
         });
+
+        $(document).ready(function() {
+            rewards_table = $("#rewards_table").DataTable({
+                lengthChange: true,
+                paging: true,
+                searching: true,
+                info: false,
+                bAutoWidth: false,
+                language: {
+                    url: dt_lang_url,
+                },
+                dom: "lBfrtip",
+                stateSave: true,
+                buttons: buttons,
+                processing: true,
+                serverSide: true,
+                ordering: true,
+                aaSorting: [
+                    // [0, "desc"]
+                ],
+                initComplete: function() {
+                    $(this.api().table().container()).find('input').parent().wrap('<form>').parent()
+                        .attr('autocomplete', 'off');
+                },
+                ajax: {
+                    url: "/reward-system/get-details-by-customer/{{ $customer->id }}",
+                    data: function(d) {
+                        d.start_date = $('#start_date').val();
+                        d.end_date = $('#end_date').val();
+                    },
+                },
+                columns: [{
+                        data: "created_at",
+                        name: "created_at"
+                    },
+                    {
+                        data: "type",
+                        name: "type"
+                    },
+                    {
+                        data: "value",
+                        name: "value"
+                    },
+                ],
+                createdRow: function(row, data, dataIndex) {},
+                footerCallback: function(row, data, start, end, display) {
+                    var intVal = function(i) {
+                        return typeof i === "string" ?
+                            i.replace(/[\$,]/g, "") * 1 :
+                            typeof i === "number" ?
+                            i :
+                            0;
+                    };
+                    this.api()
+                        .columns(".sum", {
+                            page: "current"
+                        })
+                        .every(function() {
+                            var column = this;
+                            if (column.data().count()) {
+                                var sum = column.data().reduce(function(a, b) {
+                                    a = intVal(a);
+                                    if (isNaN(a)) {
+                                        a = 0;
+                                    }
+
+                                    b = intVal(b);
+                                    if (isNaN(b)) {
+                                        b = 0;
+                                    }
+
+                                    return a + b;
+                                });
+                                $(column.footer()).html(
+                                    __currency_trans_from_en(sum, false)
+                                );
+                            }
+                        });
+                },
+            });
+            $(document).on('click', '.clear_filter', function() {
+                $('.sale_filter').val('');
+                $('.sale_filter').selectpicker('refresh');
+                rewards_table.ajax.reload();
+            });
+            $(document).on('change', '.sale_filter', function() {
+                rewards_table.ajax.reload();
+            });
+        })
     </script>
 @endsection

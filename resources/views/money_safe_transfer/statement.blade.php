@@ -21,7 +21,10 @@
                                     {!! Form::text('end_date', request()->end_date, ['class' => 'form-control sale_filter']) !!}
                                 </div>
                             </div>
-
+                            <div class="col-md-3">
+                                <button type="button"
+                                    class="btn btn-danger mt-4 ml-2 clear_filter">@lang('lang.clear_filter')</button>
+                            </div>
                         </div>
                     </div>
                     <div class="table-responsive">
@@ -147,6 +150,11 @@
                         __currency_trans_from_en(balance, false)
                     );
                 },
+            });
+            $(document).on('click', '.clear_filter', function() {
+                $('.sale_filter').val('');
+                $('.sale_filter').selectpicker('refresh');
+                safe_statement_table.ajax.reload();
             });
             $(document).on('change', '.sale_filter', function() {
                 safe_statement_table.ajax.reload();
