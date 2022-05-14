@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Supplier;
+use App\Models\SupplierCategory;
 use App\Models\Transaction;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -37,17 +38,25 @@ class SupplierController extends Controller
      */
     public function index()
     {
-        $suppliers = Supplier::leftjoin('transactions', 'suppliers.id', 'transactions.supplier_id')
-            ->select(
-                'suppliers.*',
-                DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', final_total, 0)) as total_invoice"),
-                DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_paid"),
-                DB::raw('COUNT(CASE WHEN transactions.type="purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
-                DB::raw('SUM(IF(transactions.type="add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
-            )->groupBy('suppliers.id')->get();
+        $query = Supplier::leftjoin('transactions', 'suppliers.id', 'transactions.supplier_id');
+
+        if (!empty(request()->supplier_category_id)) {
+            $query->where('supplier_category_id', request()->supplier_category_id);
+        }
+
+        $suppliers =   $query->select(
+            'suppliers.*',
+            DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', final_total, 0)) as total_invoice"),
+            DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_paid"),
+            DB::raw('COUNT(CASE WHEN transactions.type="purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
+            DB::raw('SUM(IF(transactions.type="add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
+        )->groupBy('suppliers.id')->get();
+
+        $supplier_categories = SupplierCategory::pluck('name', 'id');
 
         return view('supplier.index')->with(compact(
-            'suppliers'
+            'suppliers',
+            'supplier_categories',
         ));
     }
 
@@ -60,15 +69,11 @@ class SupplierController extends Controller
     {
         $quick_add = request()->quick_add ?? null;
 
-        if ($quick_add) {
-            return view('supplier.quick_add')->with(compact(
-                'supplier_types',
-                'quick_add'
-            ));
-        }
+        $supplier_categories = SupplierCategory::pluck('name', 'id');
 
         return view('supplier.create')->with(compact(
-            'quick_add'
+            'supplier_categories',
+            'quick_add',
         ));
     }
 
@@ -205,9 +210,11 @@ class SupplierController extends Controller
     public function edit($id)
     {
         $supplier = Supplier::find($id);
+        $supplier_categories = SupplierCategory::pluck('name', 'id');
 
         return view('supplier.edit')->with(compact(
             'supplier',
+            'supplier_categories',
         ));
     }
 

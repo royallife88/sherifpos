@@ -18,6 +18,10 @@ class Supplier extends Model implements HasMedia
      */
     protected $guarded = ['id'];
 
+    public function supplier_category()
+    {
+        return $this->belongsTo(SupplierCategory::class);
+    }
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');

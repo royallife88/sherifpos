@@ -109,6 +109,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('supplier/get-dropdown', 'SupplierController@getDropdown');
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
+    Route::get('supplier-category/get-dropdown', 'SupplierCategoryController@getDropdown');
+    Route::resource('supplier-category', SupplierCategoryController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
 
     Route::get('store/get-dropdown', 'StoreController@getDropdown');

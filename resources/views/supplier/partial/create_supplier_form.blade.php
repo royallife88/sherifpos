@@ -1,6 +1,21 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
+            {!! Form::label('supplier_category_id', __('lang.category') . ':*') !!}
+            <div class="input-group my-group">
+                {!! Form::select('supplier_category_id', $supplier_categories, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'supplier_category_id']) !!}
+                <span class="input-group-btn">
+                    @can('product_module.product_class.create_and_edit')
+                        <button class="btn-modal btn btn-default bg-white btn-flat"
+                            data-href="{{ action('SupplierCategoryController@create') }}?quick_add=1"
+                            data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                    @endcan
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
             {!! Form::label('name', __('lang.representative_name') . ':*') !!}
             {!! Form::text('name', null, ['class' => 'form-control', 'placeholder' => __('lang.name'), 'required']) !!}
         </div>

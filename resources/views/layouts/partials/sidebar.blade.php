@@ -1139,6 +1139,11 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <a href="{{action('SizeController@index')}}">{{__('lang.size')}}</a>
                         </li>
                         @endcan
+                        @can('supplier_module.category.view')
+                        <li class="@if(request()->segment(1) == 'supplier-category' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SupplierCategoryController@index')}}">{{__('lang.supplier_category')}}</a>
+                        </li>
+                        @endcan
                         @if(session('system_mode') == 'restaurant')
                         @can('settings.service_fee.view')
                         <li

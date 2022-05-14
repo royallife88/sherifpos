@@ -130,6 +130,7 @@ class User extends Authenticatable
             ],
             'supplier_module' => [
                 'supplier' => __('lang.supplier'),
+                'category' => __('lang.category'),
             ],
             'sale' => [
                 'pos' => __('lang.pos'),

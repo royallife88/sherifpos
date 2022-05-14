@@ -1237,5 +1237,7 @@ return [
     'money' => 'Money',
     'loyalty_point' => 'Loyalty Point',
     'rewards' => 'Rewards',
+    'supplier_category' => 'Supplier Category',
+    'add_supplier_category' => 'Add Supplier Category',
 
 ];
