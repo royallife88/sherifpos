@@ -135,8 +135,7 @@ class SupplierServiceController extends Controller
                     return $row->paying_currency_symbol ?? $default_currency->symbol;
                 })
                 ->addColumn('files', function ($row) {
-                    $transaction = Transaction::where('parent_sale_id', $row->id)->first();
-                    return $transaction;
+                    $transaction = Transaction::where('id', $row->parent_sale_id)->first();
                     if (!empty($transaction)) {
                         return ' <a data-href="' . action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $transaction->id, 'collection_name' => 'sell']) . '"
                         data-container=".view_modal"

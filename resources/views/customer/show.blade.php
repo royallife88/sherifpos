@@ -143,6 +143,7 @@
                                             <th>@lang('lang.status')</th>
                                             <th>@lang('lang.points_earned')</th>
                                             <th>@lang('lang.cashier')</th>
+                                            <th>@lang('lang.files')</th>
                                             <th>@lang('lang.action')</th>
                                         </tr>
                                     </thead>
@@ -740,6 +741,10 @@
                     {
                         data: "created_by",
                         name: "users.name"
+                    },
+                    {
+                        data: "files",
+                        name: "files"
                     },
                     {
                         data: "action",

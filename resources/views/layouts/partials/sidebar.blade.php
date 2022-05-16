@@ -185,25 +185,6 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 @endif
                 @endif
 
-                @if( !empty($module_settings['service_provider']) )
-                @if(auth()->user()->can('service_provider.supplier_service.view')
-                ||auth()->user()->can('service_provider.supplier_service.create_and_edit')
-                )
-                <li><a href="#service_provider" aria-expanded="false" data-toggle="collapse"> <i
-                            class="fa fa-anchor"></i><span>{{__('lang.service_provider')}}</span><span></a>
-                    <ul id="service_provider"
-                        class="collapse list-unstyled @if(in_array(request()->segment(1), ['supplier-service'])) show @endif">
-                        @can('service_provider.supplier_service.create_and_edit')
-                        <li
-                            class="@if(request()->segment(1) == 'supplier-service' && empty(request()->segment(2))) active @endif">
-                            <a href="{{action('SupplierServiceController@index')}}">{{__('lang.all_supplier_service')}}</a>
-                        </li>
-                        @endcan
-                    </ul>
-                </li>
-                @endif
-                @endif
-
                 @if( !empty($module_settings['stock']) )
                 @if(auth()->user()->can('stock.add_stock.view')
                 ||auth()->user()->can('stock.add_stock.create_and_edit')
@@ -859,6 +840,12 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         <li
                             class="@if(request()->segment(1) == 'supplier' && empty(request()->segment(2))) active @endif">
                             <a href="{{action('SupplierController@index')}}">{{__('lang.view_all_supplier')}}</a>
+                        </li>
+                        @endcan
+                        @can('service_provider.supplier_service.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'supplier-service' && empty(request()->segment(2))) active @endif">
+                            <a href="{{action('SupplierServiceController@index')}}">{{__('lang.all_supplier_service')}}</a>
                         </li>
                         @endcan
                     </ul>

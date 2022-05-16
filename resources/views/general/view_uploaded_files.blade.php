@@ -12,14 +12,14 @@
             <div class="row">
                 <div class="col-md-12">
                     <table class="table table-bordered">
-                        <th>
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>@lang('lang.content')</th>
                             </tr>
-                        </th>
+                        </thead>
                         <tbody>
-                            @foreach ($uploaded_files as $file)
+                            @forelse ($uploaded_files as $file)
                                 @if (!empty($file))
                                     @if (strpos($file, 'jpg') > 0 || strpos($file, 'png') > 0 || strpos($file, 'jpeg') > 0)
                                         <tr>
@@ -36,7 +36,11 @@
                                         </tr>
                                     @endif
                                 @endif
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="text-center">@lang('lang.no_file_uploaded')</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
