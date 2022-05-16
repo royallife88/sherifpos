@@ -1422,7 +1422,7 @@ function reset_pos_form() {
         "span.grand_total_span, span#subtotal, span.subtotal, span.discount_span, span.service_value_span, span#item, span#discount, span#tax, span#delivery-cost, span.final_total_span, span.customer_points_span, span.customer_points_value_span, span.customer_total_redeemable_span, .remaining_balance_text, .current_deposit_balance, span.gift_card_current_balance "
     ).text(0);
     $(
-        "#amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id, #print_and_draft_hidden, #manual_delivery_zone"
+        "#uploaded_file_names, #amount,.received_amount, .change_amount, #paying_amount, #discount_value, #final_total, #grand_total,  #gift_card_id, #total_tax, #total_item_tax, #coupon_id, #change, .delivery_address, .delivery_cost, #delivery_cost, #customer_points_value, #customer_total_redeemable, #rp_redeemed, #rp_redeemed_value, #is_redeem_points, #add_to_deposit, #remaining_deposit_balance, #used_deposit_balance, #current_deposit_balance, #change_amount, #total_sp_discount, #customer_size_id_hidden, #customer_size_id, #sale_note_draft, #sale_note, #deliveryman_id_hidden, #total_sp_discount, #total_pp_discount, #dining_table_id, #print_and_draft_hidden, #manual_delivery_zone"
     ).val("");
     $("#dining_action_type").val("");
     $("#status").val("final");
@@ -2653,11 +2653,9 @@ function readFileAsText(file) {
 
 $(document).on("change", "#upload_documents", function (event) {
     var files = this.files;
-
+    var files_names = [];
     if (files.length > 0) {
-        console.log(files.length, 'files.length');
         for (var i = 0; i < files.length; i++) {
-            console.log(i, 'files.length');
             var form = new FormData();
             clone = files[i].slice(i, files[i].size, files[i].type);
             console.log(clone, "clone");
@@ -2672,9 +2670,8 @@ $(document).on("change", "#upload_documents", function (event) {
                 processData: false,
                 success: function (data) {
                     if (data.success) {
-                        $("#uploaded_image").attr("src", data.url);
-                        $("#uploaded_image_name").val(data.filename);
-                        $modal.modal("hide");
+                        files_names.push(data.filename);
+                        $("#uploaded_file_names").val(files_names.toString());
                     }
                 },
             });
@@ -2683,62 +2680,3 @@ $(document).on("change", "#upload_documents", function (event) {
         console.log("nada");
     }
 });
-
-function readmultifiles(files) {
-    var reader = new FileReader();
-    function readFile(index) {
-        if (index >= files.length) return;
-        var file = files[index];
-        reader.onload = function (e) {
-            // get file content
-            var data = e.target.result;
-            $.ajax({
-                url: "/general/upload-file-temp",
-                method: "POST",
-                data: { data: data },
-                success: function (data) {
-                    if (data.success) {
-                        $("#uploaded_image").attr("src", data.url);
-                        $("#uploaded_image_name").val(data.filename);
-                        $modal.modal("hide");
-                    }
-                },
-            });
-            readFile(index + 1);
-        };
-        reader.readAsText(file);
-    }
-    readFile(0);
-}
-
-// $(document).on("change", "#upload_documents", function (event) {
-//     var files = event.target.files;
-//     readmultifiles(files);
-// let readers = [];
-// // console.log(files, "files");
-// let reader = readFileAsText(files[0]);
-// readers.push(reader);
-
-// if (files && files.length > 0) {
-//     for (let i = 0; i < files.length; i++) {
-//         const file = files[i];
-//         reader = new FileReader();
-//         reader.onload = function (event) {
-//             // console.log(, 'reader.result');
-//             $.ajax({
-//                 url: "/general/upload-file-temp",
-//                 method: "POST",
-//                 data: { data: reader.result },
-//                 success: function (data) {
-//                     if (data.success) {
-//                         $("#uploaded_image").attr("src", data.url);
-//                         $("#uploaded_image_name").val(data.filename);
-//                         $modal.modal("hide");
-//                     }
-//                 },
-//             });
-//         };
-//         reader.readAsDataURL(files[i]);
-//     }
-// }
-// });

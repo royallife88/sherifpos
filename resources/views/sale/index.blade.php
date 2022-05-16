@@ -193,8 +193,9 @@
                                     <th>@lang('lang.service')</th>
                                     <th>@lang('lang.canceled_by')</th>
                                 @endif
-                                <th class="hidden">@lang('lang.commissions')</th>
-                                <th class="hidden">@lang('lang.products')</th>
+                                <th>@lang('lang.commissions')</th>
+                                <th>@lang('lang.products')</th>
+                                <th>@lang('lang.files')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
                         </thead>
@@ -384,6 +385,12 @@
                     {
                         data: "products",
                         name: "products.name"
+                    },
+                    {
+                        data: "files",
+                        name: "files",
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: "action",

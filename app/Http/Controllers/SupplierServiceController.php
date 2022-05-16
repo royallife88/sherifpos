@@ -134,6 +134,15 @@ class SupplierServiceController extends Controller
                     $default_currency = Currency::find($default_currency_id);
                     return $row->paying_currency_symbol ?? $default_currency->symbol;
                 })
+                ->addColumn('files', function ($row) {
+                    $transaction = Transaction::where('parent_sale_id', $row->id)->first();
+                    return $transaction;
+                    if (!empty($transaction)) {
+                        return ' <a data-href="' . action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $transaction->id, 'collection_name' => 'sell']) . '"
+                        data-container=".view_modal"
+                        class="btn btn-default btn-modal">' . __('lang.view') . '</a>';
+                    }
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -212,6 +221,7 @@ class SupplierServiceController extends Controller
                     'final_total',
                     'paid_amount',
                     'due',
+                    'files',
                     'created_by',
                 ])
                 ->make(true);

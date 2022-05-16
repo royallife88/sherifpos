@@ -83,6 +83,7 @@
                         <th class="sum">@lang('lang.pending_amount')</th>
                         <th>@lang('lang.due_date')</th>
                         <th>@lang('lang.notes')</th>
+                        <th>@lang('lang.files')</th>
                         <th class="notexport">@lang('lang.action')</th>
                     </tr>
                 </thead>
@@ -185,6 +186,12 @@
                     {
                         data: 'notes',
                         name: 'notes'
+                    },
+                    {
+                        data: 'files',
+                        name: 'files',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'action',

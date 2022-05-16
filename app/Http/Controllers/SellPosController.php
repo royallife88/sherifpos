@@ -173,7 +173,7 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-        try {
+        // try {
             $transaction_data = [
                 'store_id' => $request->store_id,
                 'customer_id' => $request->customer_id,
@@ -357,9 +357,10 @@ class SellPosController extends Controller
                 $this->transactionUtil->createOrUpdateTransactionCommissionedEmployee($transaction, $request->commissioned_employees);
             }
 
-            if ($request->upload_documents) {
-                foreach ($request->file('upload_documents', []) as $key => $doc) {
-                    $transaction->addMedia($doc)->toMediaCollection('transaction');
+            if (!empty($request->uploaded_file_names)) {
+                $files = explode(',', $request->uploaded_file_names);
+                foreach ($files as $key => $doc) {
+                    $transaction->addMediaFromDisk($doc, 'temp')->toMediaCollection('sell');
                 }
             }
 
@@ -457,13 +458,13 @@ class SellPosController extends Controller
                 'html_content' => $html_content,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
         if ($request->action == 'send' && $transaction->is_direct_sale == 1) {
             return redirect()->back()->with('status', $output);
         }

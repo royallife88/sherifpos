@@ -18,7 +18,7 @@ class GeneralController extends Controller
         $uploaded_files = [];
         if (!empty($item)) {
             if (!empty($collection_name)) {
-                $uploaded_files[] = $item->getFirstMediaUrl($collection_name);
+                $uploaded_files = $item->getMedia($collection_name);
             }
         }
 
@@ -58,18 +58,9 @@ class GeneralController extends Controller
         $data = $request->all();
         $file = $data['file'];
 
-
-        //upload base64 image in laravel
-        // $file_name = time() . '.' . explode('/', explode(':', substr($data, 0, strpos($data, ';')))[1])[1];
-
         $file_name = time() . '_' . $file->getClientOriginalName();
 
-        // print_r(public_path('temp')); die();
-        $file->storeAs('temp', $file_name);
-        // \Image::make($data)->save(public_path('temp/' . $file_name));
-
-
-
+        $file->move(public_path('temp'), $file_name);;
 
         return ['success' => true, 'url' => url('/temp/' . $file_name), 'filename' => $file_name];
     }

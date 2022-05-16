@@ -183,6 +183,7 @@
                                     name="staff_note">{{ !empty($transaction) ? $transaction->staff_note : '' }}</textarea>
                             </div>
                             <div class="col-md-4 payment_fields">
+                                <input type="hidden" name="uploaded_file_names" id="uploaded_file_names" value="">
                                 <div class="form-group">
                                     {!! Form::label('upload_documents', __('lang.upload_documents') . ':', []) !!} <br>
                                     <input type="file" name="upload_documents[]" id="upload_documents" multiple>

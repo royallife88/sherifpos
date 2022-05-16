@@ -342,6 +342,11 @@ class SellController extends Controller
                 ->editColumn('canceled_by', function ($row) {
                     return !empty($row->canceled_by_user) ? $row->canceled_by_user->name : '';
                 })
+                ->addColumn('files', function ($row) {
+                    return ' <a data-href="' . action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $row->id, 'collection_name' => 'sell']) . '"
+                    data-container=".view_modal"
+                    class="btn btn-default btn-modal">' . __('lang.view') . '</a>';
+                })
                 ->addColumn(
                     'action',
                     function ($row) {
@@ -441,6 +446,7 @@ class SellController extends Controller
                     'status',
                     'store_name',
                     'products',
+                    'files',
                     'created_by',
                 ])
                 ->make(true);

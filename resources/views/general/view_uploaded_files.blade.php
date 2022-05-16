@@ -11,15 +11,34 @@
         <div class="modal-body">
             <div class="row">
                 <div class="col-md-12">
-                    @foreach ($uploaded_files as $file)
-                    @if(!empty($file))
-                    @if(strpos($file, 'jpg') > 0 || strpos($file, 'png') > 0 || strpos($file, 'jpeg') > 0)
-                    <img src="{{$file}}" style="width: 100%; border: 2px solid #fff; padding: 4px;" />
-                    @else
-                    <a href="{{$file}}">@lang('lang.download')</a>
-                    @endif
-                    @endif
-                    @endforeach
+                    <table class="table table-bordered">
+                        <th>
+                            <tr>
+                                <th>#</th>
+                                <th>@lang('lang.content')</th>
+                            </tr>
+                        </th>
+                        <tbody>
+                            @foreach ($uploaded_files as $file)
+                                @if (!empty($file))
+                                    @if (strpos($file, 'jpg') > 0 || strpos($file, 'png') > 0 || strpos($file, 'jpeg') > 0)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td> <img src="{{ $file->getUrl() }}"
+                                                    style="width: 250px; border: 2px solid #fff; padding: 4px;" /></td>
+                                        </tr>
+                                    @else
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>
+                                                <a href="{{ $file->getUrl() }}">{{ $file->file_name }}</a>
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
