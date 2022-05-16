@@ -7,6 +7,7 @@ use App\Models\Employee;
 use App\Models\JobType;
 use App\Models\LeaveType;
 use App\Models\NumberOfLeave;
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\System;
 use App\Models\User;
@@ -46,11 +47,42 @@ class EmployeeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $employees = Employee::leftjoin('users', 'employees.user_id', 'users.id')
-            ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id')
-            ->select('users.name', 'users.email', 'users.is_active', 'employees.*', 'job_types.job_title')->get();
+        $query = Employee::leftjoin('users', 'employees.user_id', 'users.id')
+            ->leftjoin('transactions', 'employees.id', 'transactions.employee_id')
+            ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id');
+
+        if (!empty($request->start_date)) {
+            $query->whereDate('transaction_date', '>=', $request->start_date);
+        }
+        if (!empty($request->end_date)) {
+            $query->whereDate('transaction_date', '<=', $request->end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
+        if (!empty($request->employee_id)) {
+            $query->where('transactions.employee_id', $request->employee_id);
+        }
+        if (!empty($request->payment_status)) {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        $employees =  $query->select(
+            'users.name',
+            'users.email',
+            'users.is_active',
+            'employees.*',
+            'job_types.job_title',
+            DB::raw('SUM(transactions.final_total) as total_commission'),
+            DB::raw('SUM(transaction_payments.amount) as total_commission_paid'),
+        )
+            ->groupBy('employees.id')->get();
 
         return view('employee.index')->with(compact(
             'employees'
@@ -74,7 +106,7 @@ class EmployeeController extends Controller
         $stores = Store::getDropdown();
         $customer_types = CustomerType::getDropdown();
         $cashiers = Employee::getDropdownByJobType('Cashier');
-
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
         $leave_types = LeaveType::get();
 
         return view('employee.create')->with(compact(
@@ -88,6 +120,7 @@ class EmployeeController extends Controller
             'commission_type',
             'commission_calculation_period',
             'modulePermissionArray',
+            'products',
             'subModulePermissionArray'
         ));
     }
@@ -148,6 +181,7 @@ class EmployeeController extends Controller
                 'commission_value' => $data['commission_value'] ?? 0,
                 'commission_type' => $data['commission_type'],
                 'commission_calculation_period' => $data['commission_calculation_period'],
+                'commissioned_products' => !empty($data['commissioned_products']) ? $data['commissioned_products'] : [],
                 'commission_customer_types' => !empty($data['commission_customer_types']) ? $data['commission_customer_types'] : [],
                 'commission_stores' => !empty($data['commission_stores']) ? $data['commission_stores'] : [],
                 'commission_cashiers' => !empty($data['commission_cashiers']) ? $data['commission_cashiers'] : [],
@@ -287,7 +321,7 @@ class EmployeeController extends Controller
         $stores = Store::getDropdown();
         $customer_types = CustomerType::getDropdown();
         $cashiers = Employee::getDropdownByJobType('Cashier');
-
+        $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
 
         $number_of_leaves = LeaveType::leftjoin('number_of_leaves', function ($join) use ($id) {
             $join->on('leave_types.id', 'number_of_leaves.leave_type_id')->where('employee_id', $id);
@@ -306,6 +340,7 @@ class EmployeeController extends Controller
             'week_days',
             'payment_cycle',
             'commission_type',
+            'products',
             'commission_calculation_period',
             'number_of_leaves',
             'modulePermissionArray',
@@ -363,6 +398,7 @@ class EmployeeController extends Controller
                 'commission_value' => $data['commission_value'] ?? 0,
                 'commission_type' => $data['commission_type'],
                 'commission_calculation_period' => $data['commission_calculation_period'],
+                'commissioned_products' => !empty($data['commissioned_products']) ? $data['commissioned_products'] : [],
                 'commission_customer_types' => !empty($data['commission_customer_types']) ? $data['commission_customer_types'] : [],
                 'commission_stores' => !empty($data['commission_stores']) ? $data['commission_stores'] : [],
                 'commission_cashiers' => !empty($data['commission_cashiers']) ? $data['commission_cashiers'] : [],

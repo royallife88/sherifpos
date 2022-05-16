@@ -67,12 +67,7 @@
 
                                         <div class="col-sm-6">
                                             <label for="job_type">@lang('lang.job_type')</label>
-                                            {!! Form::select('job_type_id', $jobs, null, [
-    'class' => 'form-control
-                                        selectpicker',
-    'placeholder' => __('lang.select_job_type'),
-    'data-live-search' => 'true',
-]) !!}
+                                            {!! Form::select('job_type_id', $jobs, null, ['class' => 'form-control selectpicker', 'placeholder' => __('lang.select_job_type'), 'data-live-search' => 'true']) !!}
                                         </div>
                                         <div class="col-sm-6">
                                             <label for="mobile">@lang('lang.mobile'):*</label>

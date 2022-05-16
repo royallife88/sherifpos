@@ -193,6 +193,7 @@
                                     <th>@lang('lang.service')</th>
                                     <th>@lang('lang.canceled_by')</th>
                                 @endif
+                                <th class="hidden">@lang('lang.commissions')</th>
                                 <th class="hidden">@lang('lang.products')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -287,15 +288,15 @@
                     },
                     @if (session('system_mode') == 'restaurant')
                         {
-                        targets: [19],
-                        orderable: false,
-                        searchable: false,
+                            targets: [19],
+                            orderable: false,
+                            searchable: false,
                         }
                     @else
                         {
-                        targets: [17],
-                        orderable: false,
-                        searchable: false,
+                            targets: [17],
+                            orderable: false,
+                            searchable: false,
                         }
                     @endif
                 ],
@@ -368,14 +369,19 @@
                     },
                     @if (session('system_mode') == 'restaurant')
                         {
-                        data: "service_fee_value",
-                        name: "service_fee_value"
-                        },
-                        {
-                        data: "canceled_by",
-                        name: "canceled_by"
+                            data: "service_fee_value",
+                            name: "service_fee_value"
+                        }, {
+                            data: "canceled_by",
+                            name: "canceled_by"
                         },
                     @endif {
+                        data: "commissions",
+                        name: "commissions",
+                        orderable: false,
+                        searchable: false,
+                    },
+                    {
                         data: "products",
                         name: "products.name"
                     },

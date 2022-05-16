@@ -172,15 +172,21 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-4 form-group">
                                 <label>@lang('lang.sale_note')</label>
                                 <textarea rows="3" class="form-control" name="sale_note"
                                     id="sale_note">{{ !empty($transaction) ? $transaction->sale_note : '' }}</textarea>
                             </div>
-                            <div class="col-md-6 form-group">
+                            <div class="col-md-4 form-group">
                                 <label>@lang('lang.staff_note')</label>
                                 <textarea rows="3" class="form-control"
                                     name="staff_note">{{ !empty($transaction) ? $transaction->staff_note : '' }}</textarea>
+                            </div>
+                            <div class="col-md-4 payment_fields">
+                                <div class="form-group">
+                                    {!! Form::label('upload_documents', __('lang.upload_documents') . ':', []) !!} <br>
+                                    <input type="file" name="upload_documents[]" id="upload_documents" multiple>
+                                </div>
                             </div>
                         </div>
                         <div class="mt-3">

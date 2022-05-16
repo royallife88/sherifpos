@@ -147,4 +147,9 @@ class Product extends Model implements HasMedia
         }
         return $name;
     }
+
+    public function supplier()
+    {
+        return $this->hasOneThrough(Supplier::class, SupplierProduct::class, 'product_id', 'id', 'id', 'supplier_id');
+    }
 }

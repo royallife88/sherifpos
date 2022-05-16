@@ -14,6 +14,7 @@ use App\Models\CustomerBalanceAdjustment;
 use App\Models\CustomerImportantDate;
 use App\Models\DiningTable;
 use App\Models\EarningOfPoint;
+use App\Models\Employee;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ProductStore;
@@ -249,6 +250,130 @@ class TransactionUtil extends Util
     }
 
 
+    /**
+     * create or update transaction supplier service
+     *
+     * @param object $transaction
+     * @param object $request
+     * @return void
+     */
+    public function createOrUpdateTransactionSupplierService($transaction, $request)
+    {
+        $transaction_sell_lines = $transaction->transaction_sell_lines;
+        $default_currency = System::getProperty('currency');
+        $keep_supplier_service = [];
+        $keep_supplier_service_lines = [];
+        foreach ($transaction_sell_lines as $sell_line) {
+            $product = $sell_line->product;
+            if (!empty($product->supplier->id)) {
+                $transaction_data = [
+                    'store_id' => $transaction->store_id,
+                    'supplier_id' => $product->supplier->id,
+                    'type' => 'supplier_service',
+                    'status' => 'final',
+                    'paying_currency_id' => $default_currency,
+                    'exchange_rate' => 1,
+                    'order_date' => !empty($transaction) ? $transaction->transaction_date : Carbon::now(),
+                    'transaction_date' => !empty($transaction->transaction_date) ? $transaction->transaction_date : Carbon::now(),
+                    'payment_status' => 'pending',
+                    'parent_sale_id' => $transaction->id,
+                    'grand_total' => $sell_line->quantity * $sell_line->product->purchase_price,
+                    'final_total' => $sell_line->quantity * $sell_line->product->purchase_price,
+                    'discount_amount' => 0,
+                    'other_payments' => 0,
+                    'other_expenses' => 0,
+                    'created_by' => Auth::user()->id,
+                ];
+                $supplier_service = Transaction::updateOrCreate(['supplier_id' => $product->supplier->id, 'parent_sale_id' => $transaction->id], $transaction_data);
+                $keep_supplier_service[] = $supplier_service->id;
+
+                $supplier_service_line = AddStockLine::updateOrCreate(
+                    [
+                        'transaction_id' => $supplier_service->id,
+                        'product_id' => $sell_line->product_id,
+                        'variation_id' => $sell_line->variation_id
+                    ],
+                    [
+                        'product_id' => $sell_line->product_id,
+                        'variation_id' => $sell_line->variation_id,
+                        'quantity' => $sell_line->quantity,
+                        'quantity_sold' => $sell_line->quantity,
+                        'purchase_price' => $sell_line->product->purchase_price,
+                        'sub_total' => $sell_line->quantity * $sell_line->product->purchase_price
+                    ]
+                );
+                $final_total = $supplier_service->add_stock_lines->sum('sub_total');
+                $supplier_service->final_total = $final_total;
+                $supplier_service->grand_total = $final_total;
+                $supplier_service->save();
+
+                $keep_supplier_service_lines[] = $supplier_service_line->id;
+            }
+        }
+
+        if (!empty($keep_supplier_service_lines)) {
+            AddStockLine::whereIn('transaction_id', $keep_supplier_service)->whereNotIn('id', $keep_supplier_service_lines)->delete();
+        }
+    }
+    /**
+     * create or update transaction supplier service
+     *
+     * @param object $transaction
+     * @param object $request
+     * @return void
+     */
+    public function createOrUpdateTransactionCommissionedEmployee($transaction, $request)
+    {
+        $commissioned_employees = $transaction->commissioned_employees;
+        $default_currency = System::getProperty('currency');
+        $keep_employee_commission = [];
+        $sell_product_ids = $transaction->transaction_sell_lines->pluck('product_id')->toArray();
+        foreach ($commissioned_employees as $commissioned_employee) {
+            $employee = Employee::find($commissioned_employee);
+            $commissioned_products = $employee->commissioned_products;
+            $commission_total = 0;
+            if (!empty($employee->commission)) {
+                foreach ($commissioned_products as $commissioned_product) {
+                    if (in_array($commissioned_product, $sell_product_ids)) {
+                        $sell_line = TransactionSellLine::where('transaction_id', $transaction->id)->where('product_id', $commissioned_product)->first();
+                        if ($employee->commission_type == 'sales') {
+                            $commission_total += $sell_line->sub_total * ($employee->commission_value / 100);
+                        }
+                        if ($employee->commission_type == 'profit') {
+                            $profit = $sell_line->sub_total - ($sell_line->product->purchase_price * $sell_line->quantity);
+                            $commission_total += $profit * ($employee->commission_value / 100);
+                        }
+                    }
+                }
+
+                if ($commission_total > 0) {
+                    $transaction_data = [
+                        'store_id' => $transaction->store_id,
+                        'employee_id' => $employee->id,
+                        'type' => 'employee_commission',
+                        'status' => 'final',
+                        'paying_currency_id' => $default_currency,
+                        'exchange_rate' => 1,
+                        'transaction_date' => !empty($transaction->transaction_date) ? $transaction->transaction_date : Carbon::now(),
+                        'payment_status' => 'pending',
+                        'parent_sale_id' => $transaction->id,
+                        'grand_total' => $commission_total,
+                        'final_total' => $commission_total,
+                        'created_by' => Auth::user()->id,
+                    ];
+
+                    $employee_commission = Transaction::updateOrCreate(['employee_id' => $employee->id, 'parent_sale_id' => $transaction->id], $transaction_data);
+                    $keep_employee_commission[] = $employee_commission->id;
+                }
+            }
+
+            if (!empty($keep_employee_commission)) {
+                Transaction::where('parent_sale_id', $transaction->id)->whereNotIn('id', $keep_employee_commission)->delete();
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Updates reward point of a customer
@@ -591,6 +716,8 @@ class TransactionUtil extends Util
             'service_fee_id' => !empty($request->service_fee_id_hidden) ? $request->service_fee_id_hidden : null,
             'service_fee_rate' => !empty($request->service_fee_rate) ? $this->num_uf($request->service_fee_rate) : null,
             'service_fee_value' => !empty($request->service_fee_value) ? $this->num_uf($request->service_fee_value) : null,
+            'commissioned_employees' => !empty($request->commissioned_employees) ? $request->commissioned_employees : [],
+            'shared_commission' => !empty($request->shared_commission) ? 1 : 0,
         ];
         if (!empty($request->dining_table_id)) {
             $dining_table = DiningTable::find($request->dining_table_id);

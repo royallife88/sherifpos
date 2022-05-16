@@ -120,6 +120,7 @@ class SellPosController extends Controller
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
+        $employees = Employee::getCommissionEmployeeDropdown();
 
         if (empty($store_pos)) {
             $output = [
@@ -149,6 +150,7 @@ class SellPosController extends Controller
             'languages',
             'service_fees',
             'delivery_zones',
+            'employees',
             'exchange_rate_currencies',
         ));
     }
@@ -171,7 +173,6 @@ class SellPosController extends Controller
      */
     public function store(Request $request)
     {
-
         try {
             $transaction_data = [
                 'store_id' => $request->store_id,
@@ -225,6 +226,8 @@ class SellPosController extends Controller
                 'service_fee_id' => !empty($request->service_fee_id_hidden) ? $request->service_fee_id_hidden : null,
                 'service_fee_rate' => !empty($request->service_fee_rate) ? $this->commonUtil->num_uf($request->service_fee_rate) : null,
                 'service_fee_value' => !empty($request->service_fee_value) ? $this->commonUtil->num_uf($request->service_fee_value) : null,
+                'commissioned_employees' => !empty($request->commissioned_employees) ? $request->commissioned_employees : [],
+                'shared_commission' => !empty($request->shared_commission) ? 1 : 0,
                 'created_by' => Auth::user()->id,
             ];
 
@@ -346,6 +349,18 @@ class SellPosController extends Controller
 
             if (!empty($request->transaction_customer_size)) {
                 $this->transactionUtil->createOrUpdateTransactionCustomerSize($transaction, $request->transaction_customer_size);
+            }
+
+            $this->transactionUtil->createOrUpdateTransactionSupplierService($transaction, $request);
+
+            if (!empty($request->commissioned_employees)) {
+                $this->transactionUtil->createOrUpdateTransactionCommissionedEmployee($transaction, $request->commissioned_employees);
+            }
+
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $transaction->addMedia($doc)->toMediaCollection('transaction');
+                }
             }
 
 
@@ -495,6 +510,7 @@ class SellPosController extends Controller
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
+        $employees = Employee::getCommissionEmployeeDropdown();
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -515,6 +531,7 @@ class SellPosController extends Controller
             'store_poses',
             'languages',
             'service_fees',
+            'employees',
             'delivery_zones',
             'exchange_rate_currencies',
         ));
@@ -529,161 +546,175 @@ class SellPosController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
-        DB::beginTransaction();
-        $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
+        try {
+            DB::beginTransaction();
+            $transaction = $this->transactionUtil->updateSellTransaction($request, $id);
 
-        if ($transaction->status == 'final') {
-            //if transaction is final then calculate the reward points
-            $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
-            $transaction->rp_earned = $points_earned;
-            if ($request->is_redeem_points) {
-                // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
-                $transaction->rp_redeemed_value = $request->rp_redeemed_value;
-                $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
-                $transaction->rp_redeemed = $rp_redeemed;
+            if ($transaction->status == 'final') {
+                //if transaction is final then calculate the reward points
+                $points_earned =  $this->transactionUtil->calculateRewardPoints($transaction);
+                $transaction->rp_earned = $points_earned;
+                if ($request->is_redeem_points) {
+                    // $transaction->rp_redeemed = $request->rp_redeemed; //logic in front end
+                    $transaction->rp_redeemed_value = $request->rp_redeemed_value;
+                    $rp_redeemed = $this->transactionUtil->calcuateRedeemPoints($transaction); //back end
+                    $transaction->rp_redeemed = $rp_redeemed;
+                }
+                $transaction->total_sp_discount = $request->total_sp_discount;
+                $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
+                $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
+                $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
+
+                $transaction->save();
+
+                $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
+
+                //update customer deposit balance if any
+                $customer = Customer::find($transaction->customer_id);
+                if ($request->used_deposit_balance > 0) {
+                    $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
+                }
+                if ($request->add_to_deposit > 0) {
+                    $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
+                }
+                $customer->save();
             }
-            $transaction->total_sp_discount = $request->total_sp_discount;
-            $transaction->total_product_discount = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['fixed', 'percentage'])->sum('product_discount_amount');
-            $transaction->total_product_surplus = $transaction->transaction_sell_lines->whereIn('product_discount_type', ['surplus'])->sum('product_discount_amount');
-            $transaction->total_coupon_discount = $transaction->transaction_sell_lines->sum('coupon_discount_amount');
 
-            $transaction->save();
+            if ($transaction->status != 'draft') {
+                if (!empty($request->payments)) {
+                    foreach ($request->payments as $payment) {
+                        $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
+                        $old_tp = null;
+                        if (!empty($payment['transaction_payment_id'])) {
+                            $old_tp = TransactionPayment::find($payment['transaction_payment_id']);
+                        }
+                        $payment_data = [
+                            'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
+                            'transaction_id' => $transaction->id,
+                            'amount' => $amount,
+                            'method' => $payment['method'],
+                            'paid_on' => $transaction->transaction_date,
+                            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                            'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
+                            'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
+                            'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
+                            'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
+                            'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
+                            'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
+                            'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
+                            'gift_card_number' => $request->gift_card_number,
+                            'amount_to_be_used' => $request->amount_to_be_used,
+                            'payment_note' => $request->payment_note,
+                            'change_amount' => $payment['change_amount'] ?? 0,
+                        ];
+                        if ($amount > 0) {
+                            $transaction_payment =  $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                        }
+                        $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
 
-            $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, $points_earned, 0, $request->rp_redeemed, 0);
-
-            //update customer deposit balance if any
-            $customer = Customer::find($transaction->customer_id);
-            if ($request->used_deposit_balance > 0) {
-                $customer->deposit_balance = $customer->deposit_balance - $request->used_deposit_balance;
-            }
-            if ($request->add_to_deposit > 0) {
-                $customer->deposit_balance = $customer->deposit_balance + $request->add_to_deposit;
-            }
-            $customer->save();
-        }
-
-        if ($transaction->status != 'draft') {
-            if (!empty($request->payments)) {
-                foreach ($request->payments as $payment) {
-                    $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
-                    $old_tp = null;
-                    if (!empty($payment['transaction_payment_id'])) {
-                        $old_tp = TransactionPayment::find($payment['transaction_payment_id']);
+                        if (!empty($transaction_payment)) {
+                            $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
+                        }
                     }
-                    $payment_data = [
-                        'transaction_payment_id' => !empty($payment['transaction_payment_id']) ? $payment['transaction_payment_id'] : null,
-                        'transaction_id' => $transaction->id,
-                        'amount' => $amount,
-                        'method' => $payment['method'],
-                        'paid_on' => $transaction->transaction_date,
-                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
-                        'card_number' => !empty($payment['card_number']) ? $payment['card_number'] : null,
-                        'card_security' => !empty($payment['card_security']) ? $payment['card_security'] : null,
-                        'card_month' => !empty($payment['card_month']) ? $payment['card_month'] : null,
-                        'card_year' => !empty($payment['card_year']) ? $payment['card_year'] : null,
-                        'cheque_number' => !empty($payment['cheque_number']) ? $payment['cheque_number'] : null,
-                        'bank_name' => !empty($payment['bank_name']) ? $payment['bank_name'] : null,
-                        'ref_number' => !empty($payment['ref_number']) ? $payment['ref_number'] : null,
-                        'gift_card_number' => $request->gift_card_number,
-                        'amount_to_be_used' => $request->amount_to_be_used,
-                        'payment_note' => $request->payment_note,
-                        'change_amount' => $payment['change_amount'] ?? 0,
-                    ];
-                    if ($amount > 0) {
-                        $transaction_payment =  $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
-                    }
+                    $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
+                }
+
+                if ($request->payment_status == 'pending') {
+                    TransactionPayment::where('transaction_id', $transaction->id)->delete();
+                    CashRegisterTransaction::where('transaction_id', $transaction->id)->delete();
+                    MoneySafeTransaction::where('transaction_id', $transaction->id)->delete();
                     $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+                }
 
-                    if (!empty($transaction_payment)) {
-                        $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
+
+                if (!empty($transaction->coupon_id)) {
+                    Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+                }
+
+                if (!empty($transaction->gift_card_id)) {
+                    $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
+                    $used = 0;
+                    if ($remaining_balance == 0) {
+                        $used = 1;
                     }
+                    GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
                 }
-                $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
+                $transaction = $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
             }
 
-            if ($request->payment_status == 'pending') {
-                TransactionPayment::where('transaction_id', $transaction->id)->delete();
-                CashRegisterTransaction::where('transaction_id', $transaction->id)->delete();
-                MoneySafeTransaction::where('transaction_id', $transaction->id)->delete();
-                $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
+            if (!empty($request->transaction_customer_size)) {
+                $this->transactionUtil->createOrUpdateTransactionCustomerSize($transaction, $request->transaction_customer_size);
             }
 
+            $this->transactionUtil->createOrUpdateTransactionSupplierService($transaction, $request);
 
-            if (!empty($transaction->coupon_id)) {
-                Coupon::where('id', $transaction->coupon_id)->update(['used' => 1]);
+            if (!empty($request->commissioned_employees)) {
+                $this->transactionUtil->createOrUpdateTransactionCommissionedEmployee($transaction, $request->commissioned_employees);
             }
 
-            if (!empty($transaction->gift_card_id)) {
-                $remaining_balance = $this->commonUtil->num_uf($request->remaining_balance);
-                $used = 0;
-                if ($remaining_balance == 0) {
-                    $used = 1;
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $transaction->addMedia($doc)->toMediaCollection('transaction');
                 }
-                GiftCard::where('id', $transaction->gift_card_id)->update(['balance' => $remaining_balance, 'used' => $used]);
             }
-            $transaction = $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-        }
 
-        if (!empty($request->transaction_customer_size)) {
-            $this->transactionUtil->createOrUpdateTransactionCustomerSize($transaction, $request->transaction_customer_size);
-        }
-        if (!empty($request->dining_table_id)) {
-            $dining_table = DiningTable::find($request->dining_table_id);
-            $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
-        }
 
-        if (session('system_mode') == 'restaurant') {
-            $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
-            if (!empty($transaction->dining_table_id)) {
-                $dining_table->current_transaction_id = $transaction->id;
-                $old_status = $dining_table->status;
-                if ($old_status == 'available') {
-                    $dining_table->status = 'order';
-                }
-                $dining_table->save();
-                if ($old_status == 'reserve') {
-                    if (Carbon::now()->gt(Carbon::parse($dining_table->date_and_time))) {
-                        $dining_table->status = 'available';
-                        $dining_table->current_transaction_id = null;
-                        $dining_table->customer_name = null;
-                        $dining_table->customer_mobile_number = null;
-                        $dining_table->date_and_time = null;
+            if (!empty($request->dining_table_id)) {
+                $dining_table = DiningTable::find($request->dining_table_id);
+                $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
+            }
+
+            if (session('system_mode') == 'restaurant') {
+                $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
+                if (!empty($transaction->dining_table_id)) {
+                    $dining_table->current_transaction_id = $transaction->id;
+                    $old_status = $dining_table->status;
+                    if ($old_status == 'available') {
+                        $dining_table->status = 'order';
                     }
-                }
-
-
-                if ($old_status != 'reserve') {
-                    if ($transaction->status == 'final' && $transaction->payment_status != 'pending') {
-                        $dining_table->status = 'available';
-                        $dining_table->current_transaction_id = null;
-                        $dining_table->customer_name = null;
-                        $dining_table->customer_mobile_number = null;
-                        $dining_table->date_and_time = null;
+                    $dining_table->save();
+                    if ($old_status == 'reserve') {
+                        if (Carbon::now()->gt(Carbon::parse($dining_table->date_and_time))) {
+                            $dining_table->status = 'available';
+                            $dining_table->current_transaction_id = null;
+                            $dining_table->customer_name = null;
+                            $dining_table->customer_mobile_number = null;
+                            $dining_table->date_and_time = null;
+                        }
                     }
+
+
+                    if ($old_status != 'reserve') {
+                        if ($transaction->status == 'final' && $transaction->payment_status != 'pending') {
+                            $dining_table->status = 'available';
+                            $dining_table->current_transaction_id = null;
+                            $dining_table->customer_name = null;
+                            $dining_table->customer_mobile_number = null;
+                            $dining_table->date_and_time = null;
+                        }
+                    }
+                    $dining_table->save();
                 }
-                $dining_table->save();
             }
+
+            DB::commit();
+
+
+            $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+            $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
+
+            $output = [
+                'success' => true,
+                'html_content' => $html_content,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
-
-        DB::commit();
-
-
-        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
-        $html_content = $this->transactionUtil->getInvoicePrint($transaction, $payment_types, $request->invoice_lang);
-
-        $output = [
-            'success' => true,
-            'html_content' => $html_content,
-            'msg' => __('lang.success')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
 
         return $output;
     }

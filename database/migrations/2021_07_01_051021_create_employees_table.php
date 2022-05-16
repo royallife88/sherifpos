@@ -48,6 +48,7 @@ class CreateEmployeesTable extends Migration
                 'six_month',
                 'one_year'
             ])->nullable();
+            $table->text('commissioned_products')->nullable();
             $table->text('commission_customer_types')->nullable();
             $table->text('commission_stores')->nullable();
             $table->text('commission_cashiers')->nullable();

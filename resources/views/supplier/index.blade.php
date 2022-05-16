@@ -94,6 +94,14 @@
                                                         </li>
                                                         <li class="divider"></li>
                                                     @endcan
+                                                    @can('supplier_module.supplier.view')
+                                                        <li>
+                                                            <a href="{{ action('SupplierController@show', $supplier->id) }}?show=service_provided"
+                                                                class="btn"><i class="fa fa-anchor"></i>
+                                                                @lang('lang.supplier_services')</a>
+                                                        </li>
+                                                        <li class="divider"></li>
+                                                    @endcan
                                                     @can('supplier_module.supplier.create_and_edit')
                                                         <li>
                                                             <a href="{{ action('SupplierController@edit', $supplier->id) }}"><i

@@ -37,6 +37,10 @@
                     {!! Form::select('commission_calculation_period', $commission_calculation_period, !empty($employee->commission_calculation_period) ? $employee->commission_calculation_period : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.select_commission_calculation_period')]) !!}
                     <br>
                     <br>
+                    {!! Form::label('commissioned_products', __('lang.products') . ':', ['class' => 'text-muted']) !!}
+                    {!! Form::select('commissioned_products[]', $products, !empty($employee->commissioned_products) ? $employee->commissioned_products : null, ['class' => 'form-control selectpicker', 'multiple', 'data-live-search' => 'true']) !!}
+                    <br>
+                    <br>
                     {!! Form::label('commission_customer_types', __('lang.customer_types') . ':', ['class' => 'text-muted']) !!}
                     {!! Form::select('commission_customer_types[]', $customer_types, !empty($employee->commission_customer_types) ? $employee->commission_customer_types : null, ['class' => 'form-control selectpicker', 'multiple', 'data-live-search' => 'true']) !!}
                     <br>

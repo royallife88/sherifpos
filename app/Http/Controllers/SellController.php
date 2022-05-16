@@ -258,6 +258,14 @@ class SellController extends Controller
                         return '';
                     }
                 })
+                ->addColumn('commissions', function ($row) {
+                    $commissions = Transaction::where('parent_sale_id', $row->id)->get();
+                    $total = 0;
+                    foreach ($commissions as $commission) {
+                        $total +=  $commission->final_total;
+                    }
+                    return $this->commonUtil->num_f($total);
+                })
                 ->editColumn('received_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
                     return $row->received_currency_symbol ?? $default_currency->symbol;
@@ -586,6 +594,7 @@ class SellController extends Controller
         $service_fees = ServiceFee::pluck('name', 'id');
         $delivery_zones = DeliveryZone::pluck('name', 'id');
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
+        $employees = Employee::getCommissionEmployeeDropdown();
 
         return view('sale.edit')->with(compact(
             'sale',
@@ -600,7 +609,8 @@ class SellController extends Controller
             'weighing_scale_setting',
             'service_fees',
             'delivery_zones',
-            'exchange_rate_currencies'
+            'exchange_rate_currencies',
+            'employees'
         ));
     }
 
@@ -652,6 +662,7 @@ class SellController extends Controller
                 $transaction_sell_line->delete();
             }
             Transaction::where('return_parent_id', $id)->delete();
+            Transaction::where('parent_sale_id', $id)->delete();
 
             $this->transactionUtil->updateCustomerRewardPoints($transaction->customer_id, 0, $transaction->rp_earned, 0, $transaction->rp_redeemed);
 

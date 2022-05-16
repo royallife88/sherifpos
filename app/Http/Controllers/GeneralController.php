@@ -52,4 +52,25 @@ class GeneralController extends Controller
 
         return ['success' => true, 'url' => url('/temp/' . $image_name), 'filename' => $image_name];
     }
+
+    public function uploadFileTemp(Request $request)
+    {
+        $data = $request->all();
+        $file = $data['file'];
+
+
+        //upload base64 image in laravel
+        // $file_name = time() . '.' . explode('/', explode(':', substr($data, 0, strpos($data, ';')))[1])[1];
+
+        $file_name = time() . '_' . $file->getClientOriginalName();
+
+        // print_r(public_path('temp')); die();
+        $file->storeAs('temp', $file_name);
+        // \Image::make($data)->save(public_path('temp/' . $file_name));
+
+
+
+
+        return ['success' => true, 'url' => url('/temp/' . $file_name), 'filename' => $file_name];
+    }
 }

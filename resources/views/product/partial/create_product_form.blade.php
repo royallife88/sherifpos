@@ -28,6 +28,10 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         </div>
     </div>
     <div class="col-md-4">
+        <div class="form-group supplier_div">
+            {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+            {!! Form::select('supplier_id', $suppliers, !empty($recent_product->supplier) ? $recent_product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+        </div>
     </div>
     <div class="col-md-4">
         @if (session('system_mode') == 'restaurant')
@@ -195,7 +199,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             ])
         </div>
     </div>
-    @if(session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
+    @if (session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
         <div class="col-md-4">
             <div class="i-checks">
                 <input id="automatic_consumption" name="automatic_consumption" type="checkbox" value="1"
@@ -316,15 +320,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="form-group">
             {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
                 title="@lang('lang.discount_customer_info')"></i>
-            {!! Form::select('discount_customer_types[]', $discount_customer_types, !empty($recent_product) ? $recent_product->discount_customer_types : false, [
-    'class' => 'selectpicker
-            form-control',
-    'data-live-search' => 'true',
-    'style' => 'width: 80%',
-    'multiple',
-    'data-actions-box' => 'true',
-    'id' => 'discount_customer_types',
-]) !!}
+            {!! Form::select('discount_customer_types[]', $discount_customer_types, !empty($recent_product) ? $recent_product->discount_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple', 'data-actions-box' => 'true', 'id' => 'discount_customer_types']) !!}
         </div>
     </div>
     <div class="col-md-4">
@@ -341,13 +337,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                 {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), []) !!}
                 <i class="dripicons-question" data-toggle="tooltip"
                     title="@lang('lang.show_to_customer_types_info')"></i>
-                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, [
-    'class' => 'selectpicker
-                form-control',
-    'data-live-search' => 'true',
-    'style' => 'width: 80%',
-    'multiple',
-]) !!}
+                {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
             </div>
         </div>
     </div>

@@ -14,9 +14,9 @@
                     </source>
                 </audio>
                 <div class="@if (session('system_mode') == 'pos') col-md-7 @else col-md-6 @endif">
+                    {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' => true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                     <div class="card">
                         <div class="card-body" style="padding: 0px 10px; !important">
-                            {!! Form::open(['url' => action('SellPosController@update', $transaction->id), 'method' => 'PUT', 'files' => true, 'class' => 'pos-form', 'id' => 'edit_pos_form']) !!}
                             <input type="hidden" name="transaction_id" id="transaction_id" value="{{ $transaction->id }}">
                             <input type="hidden" name="store_id" id="store_id" value="{{ $store_pos->store_id }}">
                             <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
@@ -43,7 +43,7 @@
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <input type="hidden" name="setting_invoice_lang" id="setting_invoice_lang"
-                                                    value="{{ !empty(App\Models\System::getProperty('invoice_lang'))? App\Models\System::getProperty('invoice_lang'): 'en' }}">
+                                                    value="{{ !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en' }}">
                                                 {!! Form::label('invoice_lang', __('lang.invoice_lang') . ':', []) !!}
                                                 {!! Form::select('invoice_lang', $languages + ['ar_and_en' => 'Arabic and English'], !empty(App\Models\System::getProperty('invoice_lang')) ? App\Models\System::getProperty('invoice_lang') : 'en', ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
@@ -53,7 +53,7 @@
                                                 <input type="hidden" name="exchange_rate" id="exchange_rate"
                                                     value="@if (!empty($transaction->exchange_rate)) {{ $transaction->exchange_rate }}@else{{ 1 }} @endif">
                                                 <input type="hidden" name="default_currency_id" id="default_currency_id"
-                                                    value="{{ !empty($transaction->default_currency_id)? $transaction->default_currency_id: App\Models\System::getProperty('currency') }}">
+                                                    value="{{ !empty($transaction->default_currency_id) ? $transaction->default_currency_id : App\Models\System::getProperty('currency') }}">
                                                 {!! Form::label('received_currency_id', __('lang.received_currency') . ':', []) !!}
                                                 {!! Form::select('received_currency_id', $exchange_rate_currencies, !empty($transaction->received_currency_id) ? $transaction->received_currency_id : App\Models\System::getProperty('currency'), ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                                             </div>
@@ -337,10 +337,8 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
-                            @include('sale_pos.partials.customer_sizes_modal')
                         </div>
                         <div class="payment-amount table_room_hide">
                             <h2>{{ __('lang.grand_total') }} <span class="final_total_span">0.00</span></h2>
@@ -349,30 +347,44 @@
                             value="{{ $transaction->terms_and_condition_id }}">
                         <div class="row table_room_hide">
                             <div class="col-md-12">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
-                                        <select name="terms_and_condition_id" id="terms_and_condition_id"
-                                            class="form-control selectpicker" data-live-searcg="true">
-                                            <option value="">@lang('lang.please_select')</option>
-                                            @foreach ($tac as $key => $item)
-                                                <option @if ($transaction->terms_and_condition_id == $key) selected @endif
-                                                    value="{{ $key }}">{{ $item }}</option>
-                                            @endforeach
-                                        </select>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            {!! Form::label('terms_and_condition_id', __('lang.terms_and_conditions'), []) !!}
+                                            <select name="terms_and_condition_id" id="terms_and_condition_id"
+                                                class="form-control selectpicker" data-live-search="true">
+                                                <option value="">@lang('lang.please_select')</option>
+                                                @foreach ($tac as $key => $item)
+                                                    <option @if ($transaction->terms_and_condition_id == $key) selected @endif
+                                                        value="{{ $key }}">{{ $item }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="tac_description_div"><span></span></div>
                                     </div>
-                                    <div class="tac_description_div"><span></span></div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), []) !!}
+                                            {!! Form::select('commissioned_employees[]', $employees, $transaction->commissioned_employees, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'multiple', 'id' => 'commissioned_employees']) !!}
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="col-md-4 @if ($transaction->shared_commission != 1) hide @endif shared_commission_div">
+                                        <div class="i-checks" style="margin-top: 37px;">
+                                            <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
+                                                @if ($transaction->shared_commission == 1) checked @endif
+                                                class="form-control-custom">
+                                            <label for="shared_commission"><strong>
+                                                    @lang('lang.shared_commission')
+                                                </strong></label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="payment-options row table_room_hide"
                             style=" width: @if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') 100%; @else 50%; @endif">
-                            {{-- <div class="column-5">
-                                <button data-method="card" style="background: #0984e3" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="credit-card-btn"><i class="fa fa-credit-card"></i> @lang('lang.card')</button>
-                            </div> --}}
                             <div class="column-5">
                                 <button data-method="cash" style="background: #0094ce" type="button"
                                     class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
@@ -412,33 +424,11 @@
                                     @lang('lang.online_orders') <span
                                         class="badge badge-danger online-order-badge hide">0</span></button>
                             </div>
-                            {{-- <div class="column-5">
-                                <button data-method="cheque" style="background-color: #fd7272" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="cheque-btn"><i class="fa fa-money"></i> @lang('lang.cheque')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="bank_transfer" style="background-color: #56962b" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="bank-transfer-btn"><i class="fa fa-building-o"></i>
-                                    @lang('lang.bank_transfer')</button>
-                            </div> --}}
                             <div class="column-5">
                                 <button data-method="pay-later" style="background-color: #cf2929" type="button"
                                     class="btn btn-custom" id="pay-later-btn"><i class="fa fa-hourglass-start"></i>
                                     @lang('lang.pay_later')</button>
                             </div>
-                            {{-- <div class="column-5">
-                                <button data-method="gift_card" style="background-color: #5f27cd" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="gift-card-btn"><i class="fa fa-credit-card-alt"></i>
-                                    @lang('lang.gift_card')</button>
-                            </div>
-                            <div class="column-5">
-                                <button data-method="deposit" style="background-color: #b33771" type="button"
-                                    class="btn btn-custom payment-btn" data-toggle="modal" data-target="#add-payment"
-                                    id="deposit-btn"><i class="fa fa-university"></i> @lang('lang.deposit')</button>
-                            </div> --}}
                             <div class="column-5">
                                 <button data-method="cash" style="background-color: #d63031;" type="button"
                                     class="btn btn-custom" id="cancel-btn" onclick="return confirmCancel()"><i
@@ -454,19 +444,21 @@
                             </div>
                         </div>
                     </div>
+
+
+                    @include('sale_pos.partials.payment_modal')
+                    @include('sale_pos.partials.discount_modal')
+                    {{-- @include('sale_pos.partials.tax_modal') --}}
+                    @include('sale_pos.partials.delivery_cost_modal')
+                    @include('sale_pos.partials.coupon_modal')
+                    @include('sale_pos.partials.contact_details_modal')
+                    @include('sale_pos.partials.weighing_scale_modal')
+                    @include('sale_pos.partials.customer_sizes_modal')
+
+
+
+                    {!! Form::close() !!}
                 </div>
-
-                @include('sale_pos.partials.payment_modal')
-                @include('sale_pos.partials.discount_modal')
-                {{-- @include('sale_pos.partials.tax_modal') --}}
-                @include('sale_pos.partials.delivery_cost_modal')
-                @include('sale_pos.partials.coupon_modal')
-                @include('sale_pos.partials.contact_details_modal')
-                @include('sale_pos.partials.weighing_scale_modal')
-
-
-
-                {!! Form::close() !!}
                 <!-- product list -->
                 <div class="@if (session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket') col-md-5 @else col-md-6 @endif">
                     <!-- navbar-->
@@ -754,8 +746,9 @@
     <script>
         $(document).ready(function() {
             @foreach ($transaction->transaction_sell_lines as $line)
-                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }}, {{ $line->quantity }},
-                {{ $loop->index }})
+                get_label_product_row({{ $line->product_id }}, {{ $line->variation_id }},
+                    {{ $line->quantity }},
+                    {{ $loop->index }})
             @endforeach
         })
         @if (!empty($transaction->dining_table))

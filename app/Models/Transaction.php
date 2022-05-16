@@ -17,6 +17,16 @@ class Transaction extends Model  implements HasMedia
      * @var array
      */
     protected $guarded = ['id'];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'commissioned_employees' => 'array'
+    ];
+
     public function getSourceNameAttribute()
     {
         $source_type = $this->source_type;
@@ -56,6 +66,10 @@ class Transaction extends Model  implements HasMedia
         return $this->belongsTo(Transaction::class, 'return_parent_id', 'id');
     }
 
+    public function parent_sale()
+    {
+        return $this->belongsTo(Transaction::class, 'parent_sale_id', 'id');
+    }
     public function return_parent()
     {
         return $this->hasOne(Transaction::class, 'return_parent_id');
@@ -93,6 +107,10 @@ class Transaction extends Model  implements HasMedia
         return $this->belongsTo(User::class, 'declined_by', 'id')->withDefault(['name' => '']);
     }
 
+    public function employee()
+    {
+        return $this->belongsTo(Employee::class)->withDefault(['employee_name' => '']);
+    }
     public function supplier()
     {
         return $this->belongsTo(Supplier::class)->withDefault(['name' => '']);

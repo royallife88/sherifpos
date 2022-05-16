@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\SupplierCategory;
+use App\Models\SupplierProduct;
 use App\Models\Transaction;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -70,10 +72,12 @@ class SupplierController extends Controller
         $quick_add = request()->quick_add ?? null;
 
         $supplier_categories = SupplierCategory::pluck('name', 'id');
+        $products = Product::pluck('name', 'id');
 
         return view('supplier.create')->with(compact(
             'supplier_categories',
             'quick_add',
+            'products',
         ));
     }
 
@@ -119,6 +123,10 @@ class SupplierController extends Controller
 
             if ($request->has('image')) {
                 $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
+            }
+
+            foreach ($request->products as $product) {
+                SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
             }
 
             $supplier_id = $supplier->id;
@@ -190,12 +198,29 @@ class SupplierController extends Controller
         )->groupBy('transactions.id')->get();
 
 
+        $service_provided_query = Transaction::whereIn('transactions.type', ['supplier_service'])
+            ->where('status', 'final');
+
+        if (!empty(request()->start_date)) {
+            $service_provided_query->where('transaction_date', '>=', request()->start_date);
+        }
+        if (!empty(request()->end_date)) {
+            $service_provided_query->where('transaction_date', '<=', request()->end_date);
+        }
+        if (!empty($supplier_id)) {
+            $service_provided_query->where('transactions.supplier_id', $supplier_id);
+        }
+        $service_provided = $service_provided_query->select(
+            'transactions.*'
+        )->groupBy('transactions.id')->get();
+
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
 
         return view('supplier.show')->with(compact(
             'add_stocks',
             'purchase_orders',
+            'service_provided',
             'status_array',
             'supplier'
         ));
@@ -211,10 +236,12 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::find($id);
         $supplier_categories = SupplierCategory::pluck('name', 'id');
+        $products = Product::pluck('name', 'id');
 
         return view('supplier.edit')->with(compact(
             'supplier',
             'supplier_categories',
+            'products',
         ));
     }
 
@@ -266,6 +293,11 @@ class SupplierController extends Controller
                 }
                 $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
             }
+
+            foreach ($request->products as $product) {
+                SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
+            }
+            SupplierProduct::whereNotIn('product_id', $request->products)->where('supplier_id', $supplier->id)->delete();
 
 
             DB::commit();

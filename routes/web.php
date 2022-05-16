@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('my-transactions/{year}/{month}', 'HomeController@myTransaction');
     Route::get('my-holidays/{year}/{month}', 'HomeController@myHoliday');
     Route::post('general/upload-image-temp', 'GeneralController@uploadImageTemp');
+    Route::post('general/upload-file-temp', 'GeneralController@uploadFileTemp');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
     Route::get('product/get-raw-material-details/{raw_material_id}', 'ProductController@getRawMaterialDetail');
     Route::get('product/get-raw-material-row', 'ProductController@getRawMaterialRow');
@@ -109,6 +110,9 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('supplier/get-dropdown', 'SupplierController@getDropdown');
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
     Route::resource('supplier', SupplierController::class);
+    Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
+    Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
+    Route::resource('supplier-service', SupplierServiceController::class);
     Route::get('supplier-category/get-dropdown', 'SupplierCategoryController@getDropdown');
     Route::resource('supplier-category', SupplierCategoryController::class);
     Route::resource('product-classification-tree', ProductClassificationTreeController::class);
@@ -310,6 +314,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('report/get-due-report', 'ReportController@getDueReport');
     Route::get('report/get-pos-details-by-store', 'ReportController@getPosDetailsByStores');
     Route::get('report/get-dining-report', 'ReportController@getDiningRoomReport');
+    Route::delete('report/delete-employee-commission/{id}', 'ReportController@deleteEmployeeCommission');
+    Route::get('report/get-sales-per-employee-report', 'ReportController@getSalesPerEmployeeReport');
 
     Route::post('sms/save-setting', 'SmsController@saveSetting');
     Route::get('sms/setting', 'SmsController@getSetting');

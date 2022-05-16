@@ -29,6 +29,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
@@ -2796,7 +2797,7 @@ class ReportController extends Controller
                                     class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
                             </li>';
                         }
-
+                        $html .= '</div>';
                         return $html;
                     }
                 )
@@ -2823,5 +2824,211 @@ class ReportController extends Controller
             'dining_rooms',
             'dining_tables',
         ));
+    }
+    /**
+     * show the sales of per dining room report
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function getSalesPerEmployeeReport(Request $request)
+    {
+        $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
+        if (request()->ajax()) {
+
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('employees', 'transactions.employee_id', 'employees.id')
+                ->where('transactions.type', 'employee_commission')
+                ->where('transactions.status', 'final');
+
+            if (!empty(request()->employee_id)) {
+                $query->where('transactions.employee_id', request()->employee_id);
+            }
+            if (!empty(request()->method)) {
+                $query->where('transaction_payments.method', request()->method);
+            }
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+            if (!auth()->user()->can('reports.sales_per_employee.view')) {
+                $employee = Employee::where('user_id', Auth::id())->first();
+                if (!empty($employee)) {
+                    $query->where('transactions.employee_id', $employee->id);
+                }
+            }
+
+            $sales = $query->select(
+                'transactions.*',
+                'transaction_payments.paid_on',
+                'employees.employee_name',
+            )->orderBy('transaction_date', 'desc')
+                ->groupBy('transactions.id');
+
+            return DataTables::of($sales)
+                ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
+                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
+                ->addColumn('method', function ($row) use ($payment_types, $request) {
+                    $methods = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->method)) {
+                            $methods .= $payment_types[$payment->method] . '<br>';
+                        }
+                    }
+                    return $methods;
+                })
+
+                ->addColumn('ref_number', function ($row) use ($request) {
+                    $ref_numbers = '';
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        if (!empty($payment->ref_number)) {
+                            $ref_numbers .= $payment->ref_number . '<br>';
+                        }
+                    }
+                    return $ref_numbers;
+                })
+                ->addColumn('paid', function ($row) use ($request) {
+                    $amount_paid = 0;
+                    if (!empty($request->method)) {
+                        $payments = $row->transaction_payments->where('method', $request->method);
+                    } else {
+                        $payments = $row->transaction_payments;
+                    }
+                    foreach ($payments as $payment) {
+                        $amount_paid += $payment->amount;
+                    }
+                    return $this->commonUtil->num_f($amount_paid);
+                })
+                ->addColumn('due', function ($row) {
+                    $paid = $row->transaction_payments->sum('amount');
+                    $due = $row->final_total - $paid;
+                    return $this->commonUtil->num_f($due);
+                })
+                ->editColumn('payment_status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                    } else {
+                        return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                    }
+                })
+                ->addColumn('invoice_no', function ($row) {
+                    return $row->parent_sale->invoice_no ?? '';
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+                        if (auth()->user()->can('sale.pos.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('SellController@show', $row->parent_sale_id) . '" data-container=".view_modal"
+                                    class="btn btn-modal"><i class="fa fa-eye"></i> ' . __('lang.view') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.create_and_edit')) {
+                            if ($row->status != 'draft' && $row->payment_status != 'paid' && $row->status != 'canceled') {
+                                $html .=
+                                    ' <li>
+                                    <a data-href="' . action('TransactionPaymentController@addPayment', $row->id) . '"
+                                        data-container=".view_modal" class="btn btn-modal"><i class="fa fa-plus"></i>
+                                        ' . __('lang.add_payment') . '</a>
+                                    </li>';
+                            }
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sale.pay.view')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('TransactionPaymentController@show', $row->id) . '"
+                                    data-container=".view_modal" class="btn btn-modal"><i class="fa fa-money"></i>
+                                    ' . __('lang.view_payments') . '</a>
+                                </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('hr_management.employee_commission.delete')) {
+                            $html .=
+                                '<li>
+                                <a data-href="' . action('ReportController@deleteEmployeeCommission', $row->id) . '"
+                                    data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                    class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                    ' . __('lang.delete') . '</a>
+                                </li>';
+                        }
+                        $html .= '</div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'method',
+                    'ref_number',
+                    'payment_status',
+                    'transaction_date',
+                    'final_total',
+                    'status',
+                    'store_name',
+                    'created_by',
+                ])
+                ->make(true);
+        }
+
+        $employees = Employee::pluck('employee_name', 'id');
+
+        return view('reports.sales_per_employee')->with(compact(
+            'payment_types',
+            'employees',
+        ));
+    }
+
+    public function deleteEmployeeCommission($id)
+    {
+        try {
+            $transaction = Transaction::findOrFail($id);
+            $transaction->delete();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
+        return $output;
     }
 }

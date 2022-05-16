@@ -72,6 +72,7 @@ class User extends Authenticatable
             'raw_material_module' => __('lang.raw_material_module'),
             'customer_module' => __('lang.customer_module'),
             'supplier_module' => __('lang.supplier_module'),
+            'service_provider' => __('lang.service_provider'),
             'hr_management' => __('lang.hr_management'),
             'purchase_order' => __('lang.purchase_order'),
             'sale' => __('lang.sale'),
@@ -132,6 +133,10 @@ class User extends Authenticatable
                 'supplier' => __('lang.supplier'),
                 'category' => __('lang.category'),
             ],
+            'service_provider' => [
+                'supplier_services' => __('lang.supplier_services'),
+                'cancel_service' => __('lang.cancel_service'),
+            ],
             'sale' => [
                 'pos' => __('lang.pos'),
                 'pay' => __('lang.payment'),
@@ -147,6 +152,7 @@ class User extends Authenticatable
             ],
             'hr_management' => [
                 'employee' => __('lang.employee'),
+                'employee_commission' => __('lang.employee_commission'),
                 'suspend' => __('lang.suspend'),
                 'send_credentials' => __('lang.send_credentials'),
                 'jobs' => __('lang.jobs'),
@@ -198,6 +204,7 @@ class User extends Authenticatable
                 'expected_payable_report' => __('lang.expected_payable_report'),
                 'summary_report' => __('lang.summary_report'),
                 'dining_in_sales' => __('lang.dining_in_sales'),
+                'sales_per_employee' => __('lang.sales_per_employee'),
                 'best_seller_report' => __('lang.best_seller_report'),
                 'product_report' => __('lang.product_report'),
                 'daily_sale_report' => __('lang.daily_sale_report'),

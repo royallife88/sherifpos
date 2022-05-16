@@ -18,6 +18,16 @@ class Supplier extends Model implements HasMedia
      */
     protected $guarded = ['id'];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'products' => 'array'
+    ];
+
+
     public function supplier_category()
     {
         return $this->belongsTo(SupplierCategory::class);
@@ -25,5 +35,10 @@ class Supplier extends Model implements HasMedia
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');
+    }
+
+    public function supplier_products()
+    {
+        return $this->hasMany(SupplierProduct::class);
     }
 }

@@ -1444,6 +1444,9 @@ function reset_pos_form() {
     $("#deliveryman_id").selectpicker("refresh");
     $("#delivery_zone_id").val("");
     $("#delivery_zone_id").selectpicker("refresh");
+    $("#commissioned_employees").val("");
+    $("#commissioned_employees").selectpicker("refresh");
+    $(".shared_commission_div").addClass("hide");
     $("#terms_and_condition_id").val($("#terms_and_condition_hidden").val());
     $("#terms_and_condition_id").selectpicker("render");
     $("tr.product_row").remove();
@@ -2622,3 +2625,120 @@ $(document).on("click", "#update_customer_address", function () {
         },
     });
 });
+
+$(document).on("change", "select#commissioned_employees", function () {
+    let commissioned_employees = $(this).val();
+    if (commissioned_employees.length > 1) {
+        $(".shared_commission_div").removeClass("hide");
+    } else {
+        $(".shared_commission_div").addClass("hide");
+    }
+});
+
+function readFileAsText(file) {
+    return new Promise(function (resolve, reject) {
+        let fr = new FileReader();
+
+        fr.onload = function () {
+            resolve(fr.result);
+        };
+
+        fr.onerror = function () {
+            reject(fr);
+        };
+
+        fr.readAsText(file);
+    });
+}
+
+$(document).on("change", "#upload_documents", function (event) {
+    var files = this.files;
+
+    if (files.length > 0) {
+        console.log(files.length, 'files.length');
+        for (var i = 0; i < files.length; i++) {
+            console.log(i, 'files.length');
+            var form = new FormData();
+            clone = files[i].slice(i, files[i].size, files[i].type);
+            console.log(clone, "clone");
+            form.append("file", files[i]);
+
+            $.ajax({
+                url: "/general/upload-file-temp",
+                method: "POST",
+                data: form,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.success) {
+                        $("#uploaded_image").attr("src", data.url);
+                        $("#uploaded_image_name").val(data.filename);
+                        $modal.modal("hide");
+                    }
+                },
+            });
+        }
+    } else {
+        console.log("nada");
+    }
+});
+
+function readmultifiles(files) {
+    var reader = new FileReader();
+    function readFile(index) {
+        if (index >= files.length) return;
+        var file = files[index];
+        reader.onload = function (e) {
+            // get file content
+            var data = e.target.result;
+            $.ajax({
+                url: "/general/upload-file-temp",
+                method: "POST",
+                data: { data: data },
+                success: function (data) {
+                    if (data.success) {
+                        $("#uploaded_image").attr("src", data.url);
+                        $("#uploaded_image_name").val(data.filename);
+                        $modal.modal("hide");
+                    }
+                },
+            });
+            readFile(index + 1);
+        };
+        reader.readAsText(file);
+    }
+    readFile(0);
+}
+
+// $(document).on("change", "#upload_documents", function (event) {
+//     var files = event.target.files;
+//     readmultifiles(files);
+// let readers = [];
+// // console.log(files, "files");
+// let reader = readFileAsText(files[0]);
+// readers.push(reader);
+
+// if (files && files.length > 0) {
+//     for (let i = 0; i < files.length; i++) {
+//         const file = files[i];
+//         reader = new FileReader();
+//         reader.onload = function (event) {
+//             // console.log(, 'reader.result');
+//             $.ajax({
+//                 url: "/general/upload-file-temp",
+//                 method: "POST",
+//                 data: { data: reader.result },
+//                 success: function (data) {
+//                     if (data.success) {
+//                         $("#uploaded_image").attr("src", data.url);
+//                         $("#uploaded_image_name").val(data.filename);
+//                         $modal.modal("hide");
+//                     }
+//                 },
+//             });
+//         };
+//         reader.readAsDataURL(files[i]);
+//     }
+// }
+// });

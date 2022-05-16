@@ -30,13 +30,19 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="i-checks">
-                                        <input id="active" name="active" type="checkbox" @if (!empty($product->active)) checked @endif value="1" class="form-control-custom">
+                                        <input id="active" name="active" type="checkbox"
+                                            @if (!empty($product->active)) checked @endif value="1"
+                                            class="form-control-custom">
                                         <label for="active"><strong>
                                                 @lang('lang.active')
                                             </strong></label>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
+                                    <div class="form-group supplier_div">
+                                        {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+                                        {!! Form::select('supplier_id', $suppliers, !empty($product->supplier) ? $product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                    </div>
                                 </div>
 
                                 <div class="col-md-4">
@@ -236,7 +242,7 @@
                                         )
                                     </div>
                                 </div>
-                                @if(session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
+                                @if (session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
                                     <div class="col-md-4">
                                         <div class="i-checks">
                                             <input id="automatic_consumption" name="automatic_consumption" type="checkbox"

@@ -1239,5 +1239,18 @@ return [
     'rewards' => 'Rewards',
     'supplier_category' => 'Supplier Category',
     'add_supplier_category' => 'Add Supplier Category',
+    'commissioned_employees' => 'Commissioned Employees',
+    'shared_commission' => 'Shared Commission',
+    'supplier_services' => 'Supplier Services',
+    'edit_supplier_service' => 'Edit Supplier Service',
+    'supplier_service' => 'Supplier Service',
+    'all_supplier_service' => 'All Supplier Services',
+    'service_provider' => 'Service Provider',
+    'commissions' => 'Commissions',
+    'commission' => 'Commission',
+    'sales_per_employee' => 'Sales per Employee',
+    'employee_commission' => 'Employee Commission',
+    'cancel_service' => 'Cancel Service',
+    'service_provided' => 'Service Provided',
 
 ];

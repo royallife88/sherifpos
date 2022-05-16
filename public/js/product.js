@@ -765,3 +765,11 @@ $(document).on("change", "#discount", function () {
         $("#discount_customer_types").attr("required", false);
     }
 });
+
+$(document).on("change", "#is_service", function () {
+    if ($(this).prop("checked")) {
+        $(".supplier_div").removeClass("hide");
+    } else {
+        $(".supplier_div").addClass("hide");
+    }
+});

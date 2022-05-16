@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', __('lang.edit_stock'))
+@section('title', __('lang.edit_supplier_service'))
 
 @section('content')
     <section class="forms">
@@ -8,9 +8,9 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header d-flex align-items-center">
-                            <h4>@lang('lang.edit_stock')</h4>
+                            <h4>@lang('lang.edit_supplier_service')</h4>
                         </div>
-                        {!! Form::open(['url' => action('AddStockController@update', $add_stock->id), 'method' => 'put', 'id' => 'edit_stock_form', 'enctype' => 'multipart/form-data']) !!}
+                        {!! Form::open(['url' => action('SupplierServiceController@update', $add_stock->id), 'method' => 'put', 'id' => 'edit_supplier_service_form', 'enctype' => 'multipart/form-data']) !!}
                         <input type="hidden" name="row_count" id="row_count"
                             value="{{ $add_stock->add_stock_lines->count() }}">
                         <input type="hidden" name="is_add_stock" id="is_add_stock" value="1">
@@ -30,18 +30,11 @@
                                         {!! Form::select('supplier_id', $suppliers, $add_stock->supplier_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
-                                <div class="col-md-3">
-                                    <div class="form-group">
-                                        {!! Form::label('po_no', __('lang.po_no'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
-                                            title="@lang('lang.po_no_add_stock_info')"></i>
-                                        {!! Form::select('po_no', $po_nos, $add_stock->purchase_order_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
-                                    </div>
-                                </div>
 
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('status', __('lang.status') . ':*', []) !!}
-                                        {!! Form::select('status', ['received' => 'Received', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('status', ['final' => 'Completed', 'partially_received' => 'Partially Received', 'pending' => 'Pending'], $add_stock->status, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">

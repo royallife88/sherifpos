@@ -14,6 +14,8 @@ use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
+use App\Models\Supplier;
+use App\Models\SupplierProduct;
 use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\Unit;
@@ -118,6 +120,7 @@ class ProductController extends Controller
                 ->leftjoin('categories', 'products.category_id', 'categories.id')
                 ->leftjoin('categories as sub_categories', 'products.sub_category_id', 'sub_categories.id')
                 ->leftjoin('brands', 'products.brand_id', 'brands.id')
+                ->leftjoin('supplier_products', 'products.id', 'supplier_products.product_id')
                 ->leftjoin('users', 'products.created_by', 'users.id')
                 ->leftjoin('users as edited', 'products.edited_by', 'users.id')
                 ->leftjoin('taxes', 'products.tax_id', 'taxes.id')
@@ -153,6 +156,10 @@ class ProductController extends Controller
 
             if (!empty(request()->brand_id)) {
                 $products->where('products.brand_id', request()->brand_id);
+            }
+
+            if (!empty(request()->supplier_id)) {
+                $products->where('supplier_products.supplier_id', request()->supplier_id);
             }
 
             if (!empty(request()->unit_id)) {
@@ -206,7 +213,7 @@ class ProductController extends Controller
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
-            )
+            )->with(['supplier'])
                 ->groupBy('variations.id');
 
             return DataTables::of($products)
@@ -228,6 +235,9 @@ class ProductController extends Controller
                     $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->id) . '"
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
+                })
+                ->editColumn('supplier_name', function ($row) {
+                    return $row->supplier->name ?? '';
                 })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('default_sell_price', '{{@num_format($default_sell_price)}}')
@@ -370,6 +380,7 @@ class ProductController extends Controller
         $customers = Customer::orderBy('name', 'asc')->pluck('name', 'id');
         $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
         $discount_customer_types = Customer::getCustomerTreeArray();
+        $suppliers = Supplier::pluck('name', 'id');
 
         $stores  = Store::getDropdown();
         $users = User::pluck('name', 'id');
@@ -388,7 +399,8 @@ class ProductController extends Controller
             'customer_types',
             'discount_customer_types',
             'users',
-            'stores'
+            'stores',
+            'suppliers'
         ));
     }
 
@@ -420,10 +432,12 @@ class ProductController extends Controller
         $quick_add = request()->quick_add;
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $suppliers = Supplier::pluck('name', 'id');
 
         if ($quick_add) {
             return view('product.create_quick_add')->with(compact(
                 'quick_add',
+                'suppliers',
                 'raw_materials',
                 'raw_material_units',
                 'product_classes',
@@ -443,6 +457,7 @@ class ProductController extends Controller
         }
 
         return view('product.create')->with(compact(
+            'suppliers',
             'raw_materials',
             'raw_material_units',
             'product_classes',
@@ -541,6 +556,12 @@ class ProductController extends Controller
                 }
             }
 
+            if (!empty($request->supplier_id)) {
+                SupplierProduct::updateOrCreate(
+                    ['product_id' => $product->id, 'supplier_id' => $request->supplier_id]
+                );
+            }
+
 
             DB::commit();
             $output = [
@@ -633,6 +654,7 @@ class ProductController extends Controller
 
         $raw_materials  = Product::where('is_raw_material', 1)->orderBy('name', 'asc')->pluck('name', 'id');
         $raw_material_units  = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $suppliers = Supplier::pluck('name', 'id');
 
 
         return view('product.edit')->with(compact(
@@ -652,6 +674,7 @@ class ProductController extends Controller
             'customer_types',
             'discount_customer_types',
             'stores',
+            'suppliers',
         ));
     }
 
@@ -737,6 +760,13 @@ class ProductController extends Controller
                 foreach ($request->images as $image) {
                     $product->addMedia($image)->toMediaCollection('product');
                 }
+            }
+
+            if (!empty($request->supplier_id)) {
+                SupplierProduct::updateOrCreate(
+                    ['product_id' => $product->id],
+                    ['supplier_id' => $request->supplier_id]
+                );
             }
 
 

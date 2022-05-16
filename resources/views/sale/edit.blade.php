@@ -250,6 +250,8 @@
                                     <label>@lang('lang.staff_note')</label>
                                     <textarea rows="3" class="form-control" name="staff_note">{{ $sale->staff_note }}</textarea>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <input type="hidden" name="terms_and_condition_hidden" id="terms_and_condition_hidden"
                                     value="{{ $sale->terms_and_condition_id }}">
                                 <div class="col-md-4">
@@ -258,6 +260,21 @@
                                         {!! Form::select('terms_and_condition_id', $tac, $sale->terms_and_condition_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'id' => 'terms_and_condition_id']) !!}
                                     </div>
                                     <div class="tac_description_div"><span></span></div>
+                                </div>
+                                <div class="col-md-4 @if(!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif">
+                                    <div class="form-group">
+                                        {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), []) !!}
+                                        {!! Form::select('commissioned_employees[]', $employees, $sale->commissioned_employees, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'multiple', 'id' => 'commissioned_employees']) !!}
+                                    </div>
+                                </div>
+                                <div class="col-md-4  @if(!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif @if ($transaction->shared_commission != 1) hide @endif shared_commission_div">
+                                    <div class="i-checks" style="margin-top: 37px;">
+                                        <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
+                                            @if ($sale->shared_commission) checked @endif class="form-control-custom">
+                                        <label for="shared_commission"><strong>
+                                                @lang('lang.shared_commission')
+                                            </strong></label>
+                                    </div>
                                 </div>
                             </div>
                         </div>

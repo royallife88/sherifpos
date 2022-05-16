@@ -1,11 +1,11 @@
 @extends('layouts.app')
-@section('title', __('lang.dining_in_sales'))
+@section('title', __('lang.sales_per_employee'))
 
 @section('content')
     <div class="col-md-12  no-print">
         <div class="card">
             <div class="card-header d-flex align-items-center">
-                <h4>@lang('lang.dining_in_sales')</h4>
+                <h4>@lang('lang.sales_per_employee')</h4>
             </div>
             <form action="">
                 <div class="col-md-12">
@@ -36,26 +36,13 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                {!! Form::label('dining_room_id', __('lang.dining_room'), []) !!}
-                                {!! Form::select('dining_room_id', $dining_rooms, request()->dining_room_id, ['class' => 'form-control filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
+                                {!! Form::label('employee_id', __('lang.employee'), []) !!}
+                                {!! Form::select('employee_id', $employees, request()->employee_id, ['class' => 'form-control filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {!! Form::label('dining_table_id', __('lang.dining_table'), []) !!}
-                                {!! Form::select('dining_table_id', $dining_tables, request()->dining_table_id, ['class' => 'form-control filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                {!! Form::label('method', __('lang.payment_type'), []) !!}
-                                {!! Form::select('method', $payment_types, request()->method, ['class' => 'form-control filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true']) !!}
-                            </div>
-                        </div>
-
                         <div class="col-md-3">
                             <br>
-                            <button href="{{ action('ReportController@getDiningRoomReport') }}" type="button"
+                            <button href="{{ action('ReportController@getDueReport') }}" type="button"
                                 class="btn btn-danger mt-2 ml-2 clear_filter">@lang('lang.clear_filter')</button>
                         </div>
                     </div>
@@ -69,13 +56,12 @@
                                 <tr>
                                     <th>@lang('lang.date')</th>
                                     <th>@lang('lang.reference')</th>
-                                    <th>@lang('lang.customer')</th>
-                                    <th>@lang('lang.dining_room')</th>
-                                    <th>@lang('lang.dining_table')</th>
-                                    <th class="sum">@lang('lang.amount')</th>
+                                    <th>@lang('lang.employee')</th>
+                                    <th class="sum">@lang('lang.commission')</th>
                                     <th class="sum">@lang('lang.paid')</th>
                                     <th class="sum">@lang('lang.due')</th>
                                     <th>@lang('lang.payment_type')</th>
+                                    <th>@lang('lang.payment_status')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
                             </thead>
@@ -133,10 +119,9 @@
                         .attr('autocomplete', 'off');
                 },
                 ajax: {
-                    url: "/report/get-dining-report",
+                    url: "/report/get-sales-per-employee-report",
                     data: function(d) {
-                        d.dining_room_id = $("#dining_room_id").val();
-                        d.dining_table_id = $("#dining_table_id").val();
+                        d.employee_id = $("#employee_id").val();
                         d.method = $("#method").val();
                         d.start_date = $("#start_date").val();
                         d.start_time = $("#start_time").val();
@@ -150,7 +135,7 @@
                         type: "date-eu",
                     },
                     {
-                        targets: [8],
+                        targets: [7],
                         orderable: false,
                         searchable: false,
                     },
@@ -164,16 +149,8 @@
                         name: "invoice_no"
                     },
                     {
-                        data: "customer_name",
-                        name: "customers.name"
-                    },
-                    {
-                        data: "dining_room",
-                        name: "dining_rooms.name"
-                    },
-                    {
-                        data: "dining_table",
-                        name: "dining_tables.name"
+                        data: "employee_name",
+                        name: "employees.employee_name"
                     },
                     {
                         data: "final_total",
@@ -192,6 +169,10 @@
                     {
                         data: "method",
                         name: "transaction_payments.method",
+                    },
+                    {
+                        data: "payment_status",
+                        name: "payment_status",
                     },
                     {
                         data: "action",

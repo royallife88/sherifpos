@@ -57,6 +57,14 @@
                 @endif
                 <div class="col-md-3">
                     <div class="form-group">
+                        {!! Form::label('supplier_id', __('lang.supplier') . ':', []) !!}
+                        {!! Form::select('supplier_id', $suppliers, request()->supplier_id, ['class' => 'form-control
+                        filter_product
+                        selectpicker', 'data-live-search' =>'true', 'placeholder' => __('lang.all')]) !!}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
                         {!! Form::label('unit_id', __('lang.unit') . ':', []) !!}
                         {!! Form::select('unit_id', $units, request()->unit_id, ['class' => 'form-control
                         filter_product
@@ -299,7 +307,7 @@
                 [10, 25, 50, 75, 100, 200, 500, "All"],
             ],
             dom: "lBfrtip",
-            stateSave: true,
+            // stateSave: true,
             buttons: buttons,
             processing: true,
             serverSide: true,
@@ -312,6 +320,7 @@
                     d.category_id = $('#category_id').val();
                     d.sub_category_id = $('#sub_category_id').val();
                     d.brand_id = $('#brand_id').val();
+                    d.supplier_id = $('#supplier_id').val();
                     d.unit_id = $('#unit_id').val();
                     d.color_id = $('#color_id').val();
                     d.size_id = $('#size_id').val();
@@ -356,7 +365,7 @@
                 @can('product_module.purchase_price.view')
                 { data: 'default_purchase_price', name: 'default_purchase_price', searchable: false},
                 @endcan
-                { data: 'supplier', name: 'supplier'},
+                { data: 'supplier_name', name: 'supplier.name'},
                 { data: 'created_by', name: 'users.name'},
                 { data: 'edited_by_name', name: 'edited.name'},
                 { data: 'action', name: 'action'},
