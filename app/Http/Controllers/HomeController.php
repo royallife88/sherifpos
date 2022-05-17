@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Leave;
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\System;
 use App\Models\Transaction;

@@ -123,7 +123,7 @@ class AddStockController extends Controller
                 'users.name as created_by_name',
                 'suppliers.name as supplier',
                 'paying_currency.symbol as paying_currency_symbol'
-            )->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
+            )->with(['add_stock_variations'])->groupBy('transactions.id')->orderBy('transaction_date', 'desc')->get();
             return DataTables::of($add_stocks)
                 ->editColumn('created_at', '{{@format_datetime($created_at)}}')
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')
@@ -147,6 +147,20 @@ class AddStockController extends Controller
                 ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
                     $default_currency = Currency::find($default_currency_id);
                     return $row->paying_currency_symbol ?? $default_currency->symbol;
+                })
+                ->addColumn('products', function ($row) use ($default_currency_id) {
+                    $string = '';
+                    foreach ($row->add_stock_variations as $add_stock_variation) {
+                        if (!empty($add_stock_variation)) {
+                            if ($add_stock_variation->name != 'Default') {
+                                $string .= $add_stock_variation->name . ' ' . $add_stock_variation->sub_sku . '<br>';
+                            } else {
+                                $string .= $add_stock_variation->product->name . '-' . $add_stock_variation->product->sku . '<br>';
+                            }
+                        }
+                    }
+
+                    return $string;
                 })
                 ->addColumn(
                     'action',
@@ -207,6 +221,7 @@ class AddStockController extends Controller
                     'due_date',
                     'final_total',
                     'paid_amount',
+                    'products',
                     'due',
                     'created_by',
                 ])

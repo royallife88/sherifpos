@@ -120,6 +120,16 @@ class Transaction extends Model  implements HasMedia
         return $this->belongsTo(Customer::class, 'customer_id', 'id')->withDefault(['name' => '']);
     }
 
+    public function add_stock_variations()
+    {
+        return $this->hasManyThrough(Product::class, AddStockLine::class, 'transaction_id', 'id', 'id', 'variation_id');
+    }
+
+    public function add_stock_products()
+    {
+        return $this->hasManyThrough(Product::class, AddStockLine::class, 'transaction_id', 'id', 'id', 'product_id');
+    }
+
     public function sell_products()
     {
         return $this->hasManyThrough(Product::class, TransactionSellLine::class, 'transaction_id', 'id', 'id', 'product_id');
@@ -197,7 +207,7 @@ class Transaction extends Model  implements HasMedia
     }
     public function deliveryman()
     {
-        return $this->belongsTo(Employee::class, 'deliveryman_id')->withDefault(['employee_name' => '']);
+        return $this->belongsTo(Employee::class, 'deliveryman_id', 'id')->withDefault(['employee_name' => '']);
     }
     public function wages_and_compensation()
     {

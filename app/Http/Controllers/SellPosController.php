@@ -1214,6 +1214,7 @@ class SellPosController extends Controller
                 'transactions.transaction_date',
                 'transactions.service_fee_value',
                 'transactions.invoice_no',
+                'transactions.deliveryman_id',
                 'transaction_payments.paid_on',
                 'users.name as created_by_name',
                 'customers.name as customer_name',
