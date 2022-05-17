@@ -89,6 +89,7 @@
                             <th class="sum">@lang('lang.wages_and_compensation')</th>
                             <th class="sum">@lang('lang.current_cash')</th>
                             <th class="sum">@lang('lang.closing_cash')</th>
+                            <th class="sum">@lang('lang.closing_at')</th>
                             <th>@lang('lang.cash_given_to')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>
@@ -115,6 +116,7 @@
                                 $cash_register->total_cash_in - $cash_register->total_cash_out -
                                 $cash_register->total_purchases -$cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return)}}</td>
                             <td>{{@num_format($cash_register->closing_amount)}}</td>
+                            <td>{{@format_datetime($cash_register->closed_at)}}</td>
                             <td>{{!empty($cash_register->cash_given_to_user) ? $cash_register->cash_given_to_user->name : ''}}</td>
                             <td>
                                 <div class="btn-group">
