@@ -18,6 +18,7 @@ use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\ExchangeRate;
 use App\Models\Grade;
+use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\ServiceFee;
 use App\Models\Size;
@@ -199,11 +200,11 @@ class SellController extends Controller
                 'canceled_by_user',
                 'sell_products',
                 'sell_variations'
-            ])
+            ])->take(100)
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)
-                // ->setTotalRecords()
+                // ->setTotalRecords(100)
                 ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
                 ->editColumn('invoice_no', function ($row) {
                     $string = $row->invoice_no . ' ';
@@ -663,7 +664,10 @@ class SellController extends Controller
             $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
             foreach ($transaction_sell_lines as $transaction_sell_line) {
                 if ($transaction->status == 'final') {
-                    $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                    $product = Product::find($transaction_sell_line->product_id);
+                    if (!$product->is_service) {
+                        $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                    }
                 }
                 $transaction_sell_line->delete();
             }

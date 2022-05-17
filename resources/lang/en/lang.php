@@ -1252,5 +1252,6 @@ return [
     'employee_commission' => 'Employee Commission',
     'cancel_service' => 'Cancel Service',
     'service_provided' => 'Service Provided',
+    'closing_date_and_time' => 'Closing Date and Time',
 
 ];

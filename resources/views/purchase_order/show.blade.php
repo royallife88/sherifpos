@@ -52,7 +52,7 @@
                                         @foreach ($purchase_order->purchase_order_lines as $line)
                                         <tr>
                                             <td>
-                                                {{$line->product->name}}
+                                                {{$line->product->name ?? ''}}
 
                                                 @if(!empty($line->variation))
                                                 @if($line->variation->name != "Default")
@@ -63,7 +63,7 @@
                                             </td>
                                             @if(session('system_mode') == 'pos' || session('system_mode') == 'garments' || session('system_mode') == 'supermarket')
                                             <td>
-                                                {{$line->product->sku}}
+                                                {{$line->product->sku ?? ''}}
                                             </td>
                                             @endif
                                             <td>

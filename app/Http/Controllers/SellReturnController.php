@@ -9,6 +9,7 @@ use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\GiftCard;
+use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\Tax;
@@ -234,7 +235,10 @@ class SellReturnController extends Controller
                         $old_quantity = $line->quantity_returned;
                         $line->quantity_returned = $sell_line['quantity'];
                         $line->save();
-                        $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $sell_return->store_id, $sell_line['quantity'], $old_quantity);
+                        $product = Product::find($line->product_id);
+                        if (!$product->is_service) {
+                            $this->productUtil->updateProductQuantityStore($line->product_id, $line->variation_id, $sell_return->store_id, $sell_line['quantity'], $old_quantity);
+                        }
                     }
                 }
                 if ($request->files) {

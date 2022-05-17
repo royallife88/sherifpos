@@ -89,7 +89,7 @@
                             <th class="sum">@lang('lang.wages_and_compensation')</th>
                             <th class="sum">@lang('lang.current_cash')</th>
                             <th class="sum">@lang('lang.closing_cash')</th>
-                            <th class="sum">@lang('lang.closing_at')</th>
+                            <th class="sum">@lang('lang.closing_date_and_time')</th>
                             <th>@lang('lang.cash_given_to')</th>
                             <th class="notexport">@lang('lang.action')</th>
                         </tr>

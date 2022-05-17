@@ -347,7 +347,7 @@ class TransactionUtil extends Util
                     }
                 }
 
-                if($request->shared_commission){
+                if ($request->shared_commission) {
                     $commission_total = $commission_total / $employee_count;
                 }
 
@@ -785,8 +785,11 @@ class TransactionUtil extends Util
                 $transaction_sell_line->save();
                 $qty =  $this->num_uf($line['quantity']);
                 $keep_sell_lines[] = $line['transaction_sell_line_id'];
-                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty, $old_qty);
-                if ($is_block_qty) {
+                $product = Product::find($line['product_id']);
+                if (!$product->is_service) {
+                    $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty, $old_qty);
+                }
+                if ($is_block_qty && !$product->is_service) {
                     $block_qty = $transaction_sell_line->quantity;
                     $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
                 }
@@ -814,8 +817,11 @@ class TransactionUtil extends Util
                 $transaction_sell_line->save();
                 $qty =  $this->num_uf($line['quantity']);
                 $keep_sell_lines[] = $transaction_sell_line->id;
-                $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty);
-                if ($transaction->block_qty) {
+                $product = Product::find($line['product_id']);
+                if (!$product->is_service) {
+                    $this->productUtil->decreaseProductQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $qty);
+                }
+                if ($transaction->block_qty && !$product->is_service) {
                     $block_qty = $transaction_sell_line->quantity;
                     $this->productUtil->updateBlockQuantity($line['product_id'], $line['variation_id'], $transaction->store_id, $block_qty, 'subtract');
                 }
@@ -828,7 +834,10 @@ class TransactionUtil extends Util
         $deleted_lines = TransactionSellLine::where('transaction_id', $transaction->id)->whereNotIn('id', $keep_sell_lines)->get();
         foreach ($deleted_lines as $deleted_line) {
             if ($transaction_status != 'draft') {
-                $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity);
+                $product = Product::find($deleted_line->product_id);
+                if (!$product->is_service) {
+                    $this->productUtil->updateProductQuantityStore($deleted_line->product_id, $deleted_line->variation_id, $transaction->store_id, $deleted_line->quantity);
+                }
             }
             $deleted_line->delete();
         }
