@@ -77,6 +77,7 @@ class ProductController extends Controller
         $discount_customer_types = Customer::getCustomerTreeArray();
         $stores  = Store::getDropdown();
         $users  = User::orderBy('name', 'asc')->pluck('name', 'id');
+        $suppliers = Supplier::pluck('name', 'id');
         $page = 'product_stock';
 
         return view('product.index')->with(compact(
@@ -94,6 +95,7 @@ class ProductController extends Controller
             'customer_types',
             'discount_customer_types',
             'stores',
+            'suppliers',
             'page'
         ));
     }

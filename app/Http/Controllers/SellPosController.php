@@ -354,7 +354,7 @@ class SellPosController extends Controller
             $this->transactionUtil->createOrUpdateTransactionSupplierService($transaction, $request);
 
             if (!empty($request->commissioned_employees)) {
-                $this->transactionUtil->createOrUpdateTransactionCommissionedEmployee($transaction, $request->commissioned_employees);
+                $this->transactionUtil->createOrUpdateTransactionCommissionedEmployee($transaction, $request);
             }
 
             if (!empty($request->uploaded_file_names)) {

@@ -523,7 +523,7 @@ return [
     'no_file_uploaded' => 'لم يتم تحميل أي ملف',
     'payment_start_date' => 'تاريخ بدء الدفع',
     'payment_end_date' => 'تاريخ انتهاء الدفع',
-    'due' => 'بطاقة',
+    'due' => 'متأخرات',
     'deliveryman' => 'رجل التوصيل',
     'delivery_cost_paid_by_customer' => 'تكلفة التوصيل التي يدفعها العميل',
     'delivery_cost' => 'تكلفة التوصيل',

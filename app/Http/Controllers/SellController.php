@@ -663,7 +663,7 @@ class SellController extends Controller
             $transaction_sell_lines = TransactionSellLine::where('transaction_id', $id)->get();
             foreach ($transaction_sell_lines as $transaction_sell_line) {
                 if ($transaction->status == 'final') {
-                    $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity);
+                    $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
                 }
                 $transaction_sell_line->delete();
             }

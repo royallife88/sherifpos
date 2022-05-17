@@ -328,6 +328,7 @@ class TransactionUtil extends Util
         $default_currency = System::getProperty('currency');
         $keep_employee_commission = [];
         $sell_product_ids = $transaction->transaction_sell_lines->pluck('product_id')->toArray();
+        $employee_count = count($commissioned_employees);
         foreach ($commissioned_employees as $commissioned_employee) {
             $employee = Employee::find($commissioned_employee);
             $commissioned_products = $employee->commissioned_products;
@@ -344,6 +345,10 @@ class TransactionUtil extends Util
                             $commission_total += $profit * ($employee->commission_value / 100);
                         }
                     }
+                }
+
+                if($request->shared_commission){
+                    $commission_total = $commission_total / $employee_count;
                 }
 
                 if ($commission_total > 0) {
