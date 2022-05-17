@@ -185,6 +185,7 @@ class SellController extends Controller
                 'transactions.transaction_date',
                 'transactions.service_fee_value',
                 'transactions.invoice_no',
+                'transactions.deliveryman_id',
                 'transaction_payments.paid_on',
                 'stores.name as store_name',
                 'users.name as created_by_name',
