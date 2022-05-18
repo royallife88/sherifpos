@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
-                                        @include('transaction_payment.partials.payment_form')
+                                        @include('expense.partial.payment_form')
 
                                     </div>
                                     <div class="col-md-4">
@@ -73,8 +73,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="details">@lang('lang.details')</label> <br>
-                                            <textarea class="form-control" name="details" id="details"
-                                                rows="3"></textarea>
+                                            <textarea class="form-control" name="details" id="details" rows="3"></textarea>
                                         </div>
                                     </div>
                                 </div>

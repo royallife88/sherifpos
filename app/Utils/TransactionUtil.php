@@ -87,6 +87,9 @@ class TransactionUtil extends Util
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
             $transaction_payment->created_by = !empty($payment_data['created_by']) ? $payment_data['created_by'] : Auth::user()->id;
             $transaction_payment->is_return = !empty($payment_data['is_return']) ? 1 : 0;
+            if ($transaction->type == 'expense') {
+                $transaction_payment->paid_on = $payment_data['paid_on'];
+            }
             $transaction_payment->save();
         } else {
             $transaction_payment = null;

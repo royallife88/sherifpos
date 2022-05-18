@@ -45,9 +45,18 @@
                                             {!! Form::select('source_id', $users, $expense->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
                                         </div>
                                     </div>
+                                    <div
+                                        class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
+                                        <div class="form-group">
+                                            {!! Form::label('transaction_date', __('lang.creation_date') . ':', []) !!} <br>
+                                            {!! Form::text('transaction_date', !empty($expense->transaction_date) ? @format_date($expense->transaction_date) : @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'placeholder' => __('lang.payment_date')]) !!}
+                                        </div>
+                                    </div>
+
                                     <div class="col-md-12">
-                                        @include('transaction_payment.partials.payment_form', ['payment'
-                                        =>$expense->transaction_payments->first()])
+                                        @include('expense.partial.payment_form', [
+                                            'payment' => $expense->transaction_payments->first(),
+                                        ])
 
                                     </div>
                                     <div class="col-md-4">
@@ -75,8 +84,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label for="details">@lang('lang.details')</label> <br>
-                                            <textarea class="form-control" name="details" id="details"
-                                                rows="3">{{ $expense->details }}</textarea>
+                                            <textarea class="form-control" name="details" id="details" rows="3">{{ $expense->details }}</textarea>
                                         </div>
                                     </div>
                                 </div>

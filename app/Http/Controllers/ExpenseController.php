@@ -138,7 +138,7 @@ class ExpenseController extends Controller
                 'type' => 'expense',
                 'status' => 'final',
                 'invoice_no' => $this->productUtil->getNumberByType('expense'),
-                'transaction_date' => !empty($data['paid_on']) ? $this->commonUtil->uf_date($data['paid_on']) : Carbon::now(),
+                'transaction_date' => !empty($data['transaction_date']) ? $this->commonUtil->uf_date($data['transaction_date']) : Carbon::now(),
                 'expense_category_id' => $data['expense_category_id'],
                 'expense_beneficiary_id' => $data['expense_beneficiary_id'],
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
@@ -164,7 +164,7 @@ class ExpenseController extends Controller
                 'transaction_id' =>  $expense->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
                 'method' => $request->method,
-                'paid_on' => $data['paid_on'],
+                'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                 'ref_number' => $request->ref_number,
                 'card_number' => $request->card_number,
                 'card_month' => $request->card_month,
@@ -262,7 +262,7 @@ class ExpenseController extends Controller
             $expense_data = [
                 'grand_total' => $this->commonUtil->num_uf($data['amount']),
                 'final_total' => $this->commonUtil->num_uf($data['amount']),
-                'transaction_date' => !empty($data['paid_on']) ? $this->commonUtil->uf_date($data['paid_on']) : Carbon::now(),
+                'transaction_date' => !empty($data['transaction_date']) ? $this->commonUtil->uf_date($data['transaction_date']) : $expense->transaction_date,
                 'expense_category_id' => $data['expense_category_id'],
                 'expense_beneficiary_id' => $data['expense_beneficiary_id'],
                 'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
@@ -287,7 +287,7 @@ class ExpenseController extends Controller
                 'transaction_id' =>  $expense->id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
                 'method' => $request->method,
-                'paid_on' => $data['paid_on'],
+                'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
                 'ref_number' => $request->ref_number,
                 'card_number' => $request->card_number,
                 'card_month' => $request->card_month,
@@ -297,7 +297,6 @@ class ExpenseController extends Controller
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,
             ];
-
             $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
 
