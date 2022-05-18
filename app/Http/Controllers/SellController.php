@@ -201,7 +201,7 @@ class SellController extends Controller
                 'canceled_by_user',
                 'sell_products',
                 'sell_variations'
-            ])->take(100)
+            ])
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)
