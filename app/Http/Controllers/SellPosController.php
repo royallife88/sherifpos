@@ -121,6 +121,7 @@ class SellPosController extends Controller
         $delivery_zones = DeliveryZone::pluck('name', 'id');
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
         $employees = Employee::getCommissionEmployeeDropdown();
+        $delivery_men = Employee::getDropdownByJobType('Deliveryman');
 
         if (empty($store_pos)) {
             $output = [
@@ -151,6 +152,7 @@ class SellPosController extends Controller
             'service_fees',
             'delivery_zones',
             'employees',
+            'delivery_men',
             'exchange_rate_currencies',
         ));
     }
@@ -515,6 +517,7 @@ class SellPosController extends Controller
         $delivery_zones = DeliveryZone::pluck('name', 'id');
         $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
         $employees = Employee::getCommissionEmployeeDropdown();
+        $delivery_men = Employee::getDropdownByJobType('Deliveryman');
 
         return view('sale_pos.edit')->with(compact(
             'transaction',
@@ -537,6 +540,7 @@ class SellPosController extends Controller
             'service_fees',
             'employees',
             'delivery_zones',
+            'delivery_men',
             'exchange_rate_currencies',
         ));
     }
@@ -1191,6 +1195,9 @@ class SellPosController extends Controller
             if (!empty(request()->customer_id)) {
                 $query->where('customer_id', request()->customer_id);
             }
+            if (!empty(request()->deliveryman_id)) {
+                $query->where('transactions.deliveryman_id', request()->deliveryman_id);
+            }
             if (!empty(request()->created_by)) {
                 $query->where('transactions.created_by', request()->created_by);
             }
@@ -1397,13 +1404,16 @@ class SellPosController extends Controller
             if (!empty(request()->end_date)) {
                 $query->whereDate('transaction_date', '<=', request()->end_date);
             }
+            if (!empty(request()->deliveryman_id)) {
+                $query->where('transactions.deliveryman_id', request()->deliveryman_id);
+            }
 
             $transactions = $query->select(
                 'transactions.*',
                 'customer_types.name as customer_type_name',
                 'customers.name as customer_name',
                 'customers.mobile_number',
-            );
+            )->with(['deliveryman']);
 
             return DataTables::of($transactions)
                 ->editColumn('transaction_date', '{{@format_datetime($transaction_date)}}')

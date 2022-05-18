@@ -366,7 +366,7 @@
                     },
                     {
                         data: "deliveryman",
-                        name: "deliveryman"
+                        name: "deliveryman.employee_name"
                     },
                     @if (session('system_mode') == 'restaurant')
                         {

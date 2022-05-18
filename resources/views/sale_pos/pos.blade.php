@@ -647,6 +647,12 @@
                                                 {!! Form::select('rt_created_by', $cashiers, false, ['class' => 'form-control selectpicker', 'id' => 'rt_created_by', 'data-live-search' => 'true', 'placeholder' => __('lang.all')]) !!}
                                             </div>
                                         </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('rt_deliveryman_id', __('lang.deliveryman'), []) !!}
+                                                {!! Form::select('rt_deliveryman_id', $delivery_men, null, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'id' => 'rt_deliveryman_id']) !!}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
@@ -687,6 +693,12 @@
                                             <div class="form-group">
                                                 {!! Form::label('draft_end_date', __('lang.end_date'), []) !!}
                                                 {!! Form::text('end_date', null, ['class' => 'form-control', 'id' => 'draft_end_date']) !!}
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                {!! Form::label('draft_deliveryman_id', __('lang.deliveryman'), []) !!}
+                                                {!! Form::select('draft_deliveryman_id', $delivery_men, null, ['class' => 'form-control sale_filter', 'placeholder' => __('lang.all'), 'data-live-search' => 'true', 'id' => 'draft_deliveryman_id']) !!}
                                             </div>
                                         </div>
                                     </div>

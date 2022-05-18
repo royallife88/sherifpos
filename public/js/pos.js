@@ -1660,6 +1660,7 @@ $(document).ready(function () {
                 d.method = $("#rt_method").val();
                 d.created_by = $("#rt_created_by").val();
                 d.customer_id = $("#rt_customer_id").val();
+                d.deliveryman_id = $("#rt_deliveryman_id").val();
             },
         },
         columnDefs: [
@@ -1684,7 +1685,7 @@ $(document).ready(function () {
             { data: "method", name: "transaction_payments.method" },
             { data: "ref_number", name: "transaction_payments.ref_number" },
             { data: "status", name: "transactions.status" },
-            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "deliveryman_name", name: "deliveryman.employee_name" },
             { data: "created_by", name: "users.name" },
             { data: "canceled_by", name: "canceled_by" },
             { data: "action", name: "action" },
@@ -1785,6 +1786,7 @@ $(document).ready(function () {
             data: function (d) {
                 d.start_date = $("#draft_start_date").val();
                 d.end_date = $("#draft_end_date").val();
+                d.deliveryman_id = $("#draft_deliveryman_id").val();
             },
         },
         columnDefs: [
@@ -1803,7 +1805,7 @@ $(document).ready(function () {
             { data: "mobile_number", name: "customers.mobile_number" },
             { data: "method", name: "transaction_payments.method" },
             { data: "status", name: "transactions.status" },
-            { data: "deliveryman_name", name: "deliveryman_name" },
+            { data: "deliveryman_name", name: "deliveryman.employee_name" },
             { data: "action", name: "action" },
         ],
         createdRow: function (row, data, dataIndex) {},
@@ -1944,9 +1946,13 @@ $(document).on("click", "#view-online-order-btn", function () {
     online_order_table.ajax.reload();
 });
 $(document).ready(function () {
-    $(document).on("change", "#draft_start_date, #draft_end_date", function () {
-        draft_table.ajax.reload();
-    });
+    $(document).on(
+        "change",
+        "#draft_start_date, #draft_end_date, #draft_deliveryman_id",
+        function () {
+            draft_table.ajax.reload();
+        }
+    );
     $(document).on(
         "change",
         "#online_order_start_date, #online_order_end_date",
@@ -1956,7 +1962,7 @@ $(document).ready(function () {
     );
     $(document).on(
         "change",
-        "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method",
+        "#rt_start_date, #rt_end_date, #rt_customer_id, #rt_created_by, #rt_method, #rt_deliveryman_id",
         function () {
             get_recent_transactions();
         }
