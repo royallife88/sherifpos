@@ -213,7 +213,7 @@ class TransactionPaymentController extends Controller
                 'transaction_payment_id' =>  $id,
                 'amount' => $this->commonUtil->num_uf($request->amount),
                 'method' => $request->method,
-                'paid_on' => $data['paid_on'],
+                'paid_on' => $this->commonUtil->uf_date($data['paid_on']) . ' ' . date('H:i:s'),
                 'ref_number' => $request->ref_number,
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,

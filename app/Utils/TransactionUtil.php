@@ -71,7 +71,6 @@ class TransactionUtil extends Util
             $transaction_payment = TransactionPayment::find($payment_data['transaction_payment_id']);
             $transaction_payment->amount = $payment_data['amount'];
             $transaction_payment->method = $payment_data['method'];
-            $transaction_payment->paid_on = $payment_data['paid_on'];
             $transaction_payment->payment_for = !empty($payment_data['payment_for']) ? $payment_data['payment_for'] : $transaction->customer_id;
             $transaction_payment->ref_number = !empty($payment_data['ref_number']) ? $payment_data['ref_number'] : null;
             $transaction_payment->source_type = !empty($payment_data['source_type']) ? $payment_data['source_type'] : null;
