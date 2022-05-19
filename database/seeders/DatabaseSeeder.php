@@ -118,7 +118,7 @@ class DatabaseSeeder extends Seeder
         MoneySafe::create([
             'name' => 'Bank Safe',
             'store_id' => $store->id,
-            'currency_id' => 120,
+            'currency_id' => 119,
             'type' => 'bank',
             'add_money_users' => [],
             'take_money_users' => [],

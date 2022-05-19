@@ -10,6 +10,7 @@ use App\Models\CustomerType;
 use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
+use App\Models\ExchangeRate;
 use App\Models\Product;
 use App\Models\ProductStore;
 use App\Models\Store;
@@ -61,6 +62,8 @@ class ReportController extends Controller
      */
     public function getProfitLoss(Request $request)
     {
+        $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
+        $stores = Store::select('name', 'id')->get();
         $store_id = $request->get('store_id');
         $pos_id = $request->get('pos_id');
 
@@ -95,14 +98,41 @@ class ReportController extends Controller
             $sale_query->where('product_id', $request->product_id);
         }
 
-        $sales = $sale_query->select(
-            'stores.name as store_name',
-            'stores.id as store_id',
-            DB::raw('SUM(transactions.final_total) as total_amount')
-        )->groupBy('stores.id')->get();
+        $s_query = clone $sale_query;
+        $sales = [];
+        $sales_totals = [];
+        $i = 0;
+        foreach ($stores as $store) {
+            $sales[$i]['store_id'] = $store->id;
+            $sales[$i]['store_name'] = $store->name;
+            $currency_array = [];
+            foreach ($exchange_rate_currencies as $currency) {
+                $s_query = clone $sale_query;
+                $currency_array[$currency['currency_id']]['currency_id'] = $currency['currency_id'];
+                $currency_array[$currency['currency_id']]['symbol'] = $currency['symbol'];
+                $currency_array[$currency['currency_id']]['is_default'] = $currency['is_default'];
+                $currency_array[$currency['currency_id']]['conversion_rate'] = $currency['conversion_rate'];
+                if (!$currency['is_default']) {
+                    $currency_array[$currency['currency_id']]['total'] = $s_query->where('stores.id', $store->id)->where('received_currency_id', $currency['currency_id'])->sum('final_total');
+                } else {
+                    $currency_array[$currency['currency_id']]['total'] = $s_query->where('stores.id', $store->id)
+                        ->where(function ($q) use ($currency) {
+                            $q->where('received_currency_id', $currency['currency_id'])->orWhereNull('received_currency_id');
+                        })
+                        ->sum('final_total');
+                }
+                if (!empty($sales_totals[$currency['currency_id']])) {
+                    $sales_totals[$currency['currency_id']] += $currency_array[$currency['currency_id']]['total'];
+                } else {
+                    $sales_totals[$currency['currency_id']] = $currency_array[$currency['currency_id']]['total'];
+                }
+            }
+            $sales[$i]['currency'] = (array) $currency_array;
 
-        $purchase_query = Transaction::leftjoin('stores', 'transactions.store_id', 'stores.id')
-            ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            $i++;
+        }
+
+        $purchase_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
             ->where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
@@ -124,9 +154,45 @@ class ReportController extends Controller
             $purchase_query->where('store_id', $store_id);
         }
 
-        $purchases = $purchase_query->select(
-            DB::raw('SUM(products.purchase_price * transaction_sell_lines.quantity) as total_amount')
-        )->first();
+        $purchase_totals = [];
+        $currency_array = [];
+        foreach ($exchange_rate_currencies as $currency) {
+            $p_query = clone $purchase_query;
+            $currency_array[$currency['currency_id']]['currency_id'] = $currency['currency_id'];
+            $currency_array[$currency['currency_id']]['symbol'] = $currency['symbol'];
+            $currency_array[$currency['currency_id']]['is_default'] = $currency['is_default'];
+            $currency_array[$currency['currency_id']]['conversion_rate'] = $currency['conversion_rate'];
+            if (!$currency['is_default']) {
+                $exchange_rate = ExchangeRate::find($currency['currency_id']);
+                if (!empty($exchange_rate)) {
+                    $exchange_rate = $exchange_rate->conversion_rate;
+                } else {
+                    $exchange_rate = 1;
+                }
+
+                $p_total = $p_query->where('received_currency_id', $currency['currency_id'])->select(
+                    DB::raw('SUM(products.purchase_price * transaction_sell_lines.quantity) as total_amount')
+                )->first();
+                $currency_array[$currency['currency_id']]['total'] = !empty($p_total->total_amount) ? $p_total->total_amount / $exchange_rate : 0;
+            } else {
+                $exchange_rate = 1;
+                $p_total = $p_query
+                    ->where(function ($q) use ($currency) {
+                        $q->where('received_currency_id', $currency['currency_id'])->orWhereNull('received_currency_id');
+                    })
+                    ->select(
+                        DB::raw('SUM(products.purchase_price * transaction_sell_lines.quantity) as total_amount')
+                    )->first();
+                $currency_array[$currency['currency_id']]['total'] = !empty($p_total->total_amount) ? $p_total->total_amount  / $exchange_rate : 0;
+            }
+            if (!empty($purchase_totals[$currency['currency_id']])) {
+                $purchase_totals[$currency['currency_id']] += $currency_array[$currency['currency_id']]['total'];
+            } else {
+                $purchase_totals[$currency['currency_id']] = $currency_array[$currency['currency_id']]['total'];
+            }
+        }
+        $purchases[$i]['currency'] = (array) $currency_array;
+        $i++;
 
 
         $expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
@@ -192,10 +258,13 @@ class ReportController extends Controller
 
         // TODO:: filter for all adjustments
         return view('reports.profit_loss_report')->with(compact(
+            'sales_totals',
             'sales',
+            'exchange_rate_currencies',
             'wages',
             'expenses',
             'purchases',
+            'purchase_totals',
             'store_pos',
             'products',
             'employees',
@@ -213,6 +282,8 @@ class ReportController extends Controller
     public function getDailySalesSummary(Request $request)
     {
         if (request()->ajax()) {
+            $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
+
             $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id')
                 ->leftjoin('transactions', 'cash_register_transactions.transaction_id', 'transactions.id');
 
@@ -232,35 +303,54 @@ class ReportController extends Controller
                 $query->where('cash_registers.user_id', request()->user_id);
             }
 
-            $cash_register = $query->select(
-                'cash_registers.*',
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in"),
-                DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
-                DB::raw("SUM(IF(transaction_type = 'refund', amount, 0)) as total_refund"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cash_sales"),
-                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cash"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_card_sales"),
-                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'card' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_card"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'credit', amount, 0)) as total_bank_transfer_sales"),
-                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_bank_transfer"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_gift_card_sales"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cheque_sales"),
-                DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cheque' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cheque"),
-                DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_purchases"),
-                DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_expenses"),
-                DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
-                DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
-                DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
-            )
-                ->first();
+            $cr_data = [];
+            foreach ($exchange_rate_currencies as $currency) {
+                $cr_data[$currency['currency_id']]['currency'] = $currency;
+                $cr_query = clone $query;
 
-            $cash_register->total_cash_sales =  $cash_register->total_cash_sales - $cash_register->total_refund_cash;
-            $cash_register->total_card_sales =  $cash_register->total_card_sales - $cash_register->total_refund_card;
-            $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
-            $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
+                if (!$currency['is_default']) {
+                    $cr_query->where('transactions.received_currency_id', $currency['currency_id']);
+                } else {
+                    $cr_query->where(function ($q) use ($currency) {
+                        $q->where('transactions.received_currency_id', $currency['currency_id'])
+                            ->orWhereNull('transactions.received_currency_id');
+                    });
+                }
 
+                $cash_register = $cr_query->select(
+                    'cash_registers.*',
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in"),
+                    DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
+                    DB::raw("SUM(IF(transaction_type = 'refund', amount, 0)) as total_refund"),
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cash_sales"),
+                    DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cash"),
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_card_sales"),
+                    DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'card' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_card"),
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'credit', amount, 0)) as total_bank_transfer_sales"),
+                    DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_bank_transfer"),
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_gift_card_sales"),
+                    DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cheque_sales"),
+                    DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cheque' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cheque"),
+                    DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_purchases"),
+                    DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_expenses"),
+                    DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
+                    DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
+                    DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out")
+                )
+                    ->first();
 
-            return view('reports.partials.daily_sales_summary_table')->with(compact('cash_register'));
+                $cash_register->total_cash_sales =  $cash_register->total_cash_sales - $cash_register->total_refund_cash;
+                $cash_register->total_card_sales =  $cash_register->total_card_sales - $cash_register->total_refund_card;
+                $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
+                $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
+                $cr_data[$currency['currency_id']]['cash_register'] = $cash_register;
+            }
+            // print_r( $cr_data); die();
+
+            return view('reports.partials.daily_sales_summary_table')->with(compact(
+                'cr_data',
+                'cash_register'
+            ));
         }
 
         $stores = Store::getDropdown();

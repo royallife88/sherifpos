@@ -109,6 +109,32 @@
                 });
             }
         });
+
+        $(document).on("click", ".currency_total_td", function() {
+            let currency_id = $(this).data("currency_id");
+            let td = $(this).parent("td");
+
+            $.each(currency_obj, function(key, value) {
+                if (currency_id == value.currency_id) {
+                    converted_to_rate = value.conversion_rate;
+                }
+            });
+
+            let this_ele = $(td).find(".currency_total_" + currency_id);
+            let conversion_rate = this_ele.data("conversion_rate");
+            let total_base_value = parseFloat(this_ele.data("base_conversion"));
+            $(td)
+                .siblings()
+                .find('h6')
+                .each(function() {
+                    total_base_value += parseFloat($(this).data("base_conversion"));
+                    $(this).find(".total").text(__currency_trans_from_en(0, false));
+                });
+            let converted_value = total_base_value / conversion_rate;
+            $(this_ele)
+                .find(".total")
+                .text(__currency_trans_from_en(converted_value, false));
+        });
     </script>
 
 @endsection

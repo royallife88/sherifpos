@@ -164,6 +164,12 @@ input[type="number"] {
 .footer_currency {
     cursor: pointer;
 }
+.currency_total_th {
+    cursor: pointer;
+}
+.currency_total_td {
+    cursor: pointer;
+}
 .table_totals {
     cursor: pointer;
 }

@@ -107,19 +107,51 @@
                             <tbody>
                                 @foreach ($sales as $sale)
                                     <tr>
-                                        <td>{{ $sale->store_name }}</td>
-                                        <td>{{ @num_format($sale->total_amount) }}</td>
+                                        <td>{{ $sale['store_name'] }}</td>
+                                        <th>
+                                            @foreach ($sale['currency'] as $currency)
+                                                <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                    data-currency_id="{{ $currency['currency_id'] }}"
+                                                    data-is_default="{{ $currency['is_default'] }}"
+                                                    data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                    data-base_conversion="{{ $currency['conversion_rate'] * $currency['total'] }}"
+                                                    data-orig_value="{{ $currency['total'] }}">
+                                                    <span class="symbol" style="padding-right: 10px;">
+                                                        {{ $currency['symbol'] }}</span>
+                                                    <span
+                                                        class="total">{{ @num_format($currency['total']) }}</span>
+                                                </h6>
+                                            @endforeach
+                                        </th>
+
                                         <td>
-                                            <a href="{{ action('SellController@index') }}?store_id={{ $sale->store_id }}&start_date={{ request()->start_date }}&end_date={{ request()->end_date }}"
+                                            <a href="{{ action('SellController@index') }}?store_id={{ $sale['store_id'] }}&start_date={{ request()->start_date }}&end_date={{ request()->end_date }}"
                                                 class="btn btn-primary">@lang('lang.details')</a>
                                         </td>
                                     </tr>
                                 @endforeach
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>@lang('lang.total_income')</th>
+                                    <th>
+                                        @foreach ($exchange_rate_currencies as $currency)
+                                            <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                data-currency_id="{{ $currency['currency_id'] }}"
+                                                data-is_default="{{ $currency['is_default'] }}"
+                                                data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                data-base_conversion="{{ $currency['conversion_rate'] * $sales_totals[$currency['currency_id']] }}"
+                                                data-orig_value="{{ $sales_totals[$currency['currency_id']] }}">
+                                                <span class="symbol" style="padding-right: 10px;">
+                                                    {{ $currency['symbol'] }}</span>
+                                                <span
+                                                    class="total">{{ @num_format($sales_totals[$currency['currency_id']]) }}</span>
+                                            </h6>
+                                        @endforeach
+                                    </th>
+                                </tr>
+                            </tfoot>
                         </table>
-                    </div>
-                    <div class="col-md-12">
-                        <label for="">@lang('lang.total_income'): {{ @num_format($sales->sum('total_amount')) }}</label>
                     </div>
                 </div>
                 <br>
@@ -139,7 +171,28 @@
                                 @foreach ($expenses as $expense)
                                     <tr>
                                         <td>{{ $expense->expense_category_name }}</td>
-                                        <td>{{ @num_format($expense->total_amount) }}</td>
+                                        <th>
+                                            @foreach ($exchange_rate_currencies as $currency)
+                                                @php
+                                                    $expense_value = 0;
+                                                    if ($currency['is_default']) {
+                                                        $expense_value = $expense->total_amount;
+                                                    } else {
+                                                        $expense_value = 0;
+                                                    }
+                                                @endphp
+                                                <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                    data-currency_id="{{ $currency['currency_id'] }}"
+                                                    data-is_default="{{ $currency['is_default'] }}"
+                                                    data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                    data-base_conversion="{{ $currency['conversion_rate'] * $expense_value }}"
+                                                    data-orig_value="{{ $expense_value }}">
+                                                    <span class="symbol" style="padding-right: 10px;">
+                                                        {{ $currency['symbol'] }}</span>
+                                                    <span class="total">{{ @num_format($expense_value) }}</span>
+                                                </h6>
+                                            @endforeach
+                                        </th>
                                         <td>
                                             <a href="{{ action('ExpenseController@index') }}?expense_category_id={{ $expense->expense_category_id }}&start_date={{ request()->start_date }}&end_date={{ request()->end_date }}"
                                                 class="btn btn-primary">@lang('lang.details')</a>
@@ -148,12 +201,26 @@
                                 @endforeach
 
                                 <tr>
-                                    <td>@lang('lang.all_purchases')</td>
-                                    <td>
+                                    <th>@lang('lang.all_purchases')</th>
+                                    <th>
                                         @if (!empty($purchases))
-                                            {{ @num_format($purchases->total_amount) }}@else{{ @num_format(0) }}
+                                            @foreach ($purchases as $purchase)
+                                                @foreach ($purchase['currency'] as $currency)
+                                                    <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                        data-currency_id="{{ $currency['currency_id'] }}"
+                                                        data-is_default="{{ $currency['is_default'] }}"
+                                                        data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                        data-base_conversion="{{ $currency['conversion_rate'] * $currency['total'] }}"
+                                                        data-orig_value="{{ $currency['total'] }}">
+                                                        <span class="symbol" style="padding-right: 10px;">
+                                                            {{ $currency['symbol'] }}</span>
+                                                        <span
+                                                            class="total">{{ @num_format($currency['total']) }}</span>
+                                                    </h6>
+                                                @endforeach
+                                            @endforeach
                                         @endif
-                                    </td>
+                                    </th>
                                     <td>
                                         <a href="{{ action('AddStockController@index') }}?start_date={{ request()->start_date }}&end_date={{ request()->end_date }}"
                                             class="btn btn-primary">@lang('lang.details')</a>
@@ -162,7 +229,28 @@
                                 @foreach ($wages as $wage)
                                     <tr>
                                         <td>{{ ucfirst($wages_payment_types[$wage->payment_type]) }}</td>
-                                        <td>{{ @num_format($wage->total_amount) }}</td>
+                                        <th>
+                                            @foreach ($exchange_rate_currencies as $currency)
+                                                @php
+                                                    $wage_value = 0;
+                                                    if ($currency['is_default']) {
+                                                        $wage_value = $wage->total_amount;
+                                                    } else {
+                                                        $wage_value = 0;
+                                                    }
+                                                @endphp
+                                                <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                    data-currency_id="{{ $currency['currency_id'] }}"
+                                                    data-is_default="{{ $currency['is_default'] }}"
+                                                    data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                    data-base_conversion="{{ $currency['conversion_rate'] * $wage_value }}"
+                                                    data-orig_value="{{ $wage_value }}">
+                                                    <span class="symbol" style="padding-right: 10px;">
+                                                        {{ $currency['symbol'] }}</span>
+                                                    <span class="total">{{ @num_format($wage_value) }}</span>
+                                                </h6>
+                                            @endforeach
+                                        </th>
                                         <td>
                                             <a href="{{ action('WagesAndCompensationController@index') }}?payment_type={{ $wage->payment_type }}&start_date={{ request()->start_date }}&end_date={{ request()->end_date }}"
                                                 class="btn btn-primary">@lang('lang.details')</a>
@@ -171,21 +259,65 @@
                                 @endforeach
 
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>@lang('lang.total_expenses')</th>
+                                    <th>
+                                        @php
+                                            $total_exp = [];
+                                        @endphp
+                                        @foreach ($exchange_rate_currencies as $currency)
+                                            @php
+                                                $total_expenses = 0;
+                                                if ($currency['is_default']) {
+                                                    $total_expenses = $expenses->sum('total_amount') + $wages->sum('total_amount') + $purchase_totals[$currency['currency_id']];
+                                                } else {
+                                                    $total_expenses = $purchase_totals[$currency['currency_id']];
+                                                }
+                                                $total_exp[$currency['currency_id']] = $total_expenses;
+                                            @endphp
+                                            <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                                data-currency_id="{{ $currency['currency_id'] }}"
+                                                data-is_default="{{ $currency['is_default'] }}"
+                                                data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                                data-base_conversion="{{ $currency['conversion_rate'] * $total_expenses }}"
+                                                data-orig_value="{{ $total_expenses }}">
+                                                <span class="symbol" style="padding-right: 10px;">
+                                                    {{ $currency['symbol'] }}</span>
+                                                <span class="total">{{ @num_format($total_expenses) }}</span>
+                                            </h6>
+                                        @endforeach
+                                    </th>
+                                </tr>
+                            </tfoot>
                         </table>
-                    </div>
-                    @php
-                        $total_purchases = $purchases->total_amount ?? 0;
-                    @endphp
-                    <div class="col-md-12">
-                        <label for="">@lang('lang.total_expenses'):
-                            {{ @num_format($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount')) }}</label>
                     </div>
                 </div>
                 <br>
                 <div class="col-md-12">
-                    <h2><b>@lang('lang.profit_and_loss'):
-                            {{ @num_format($sales->sum('total_amount') - ($expenses->sum('total_amount') + $total_purchases + $wages->sum('total_amount'))) }}</b>
-                    </h2>
+                    <table class="table ">
+                        <thead>
+                            <tr>
+                                <th>@lang('lang.profit_and_loss')</th>
+                                <th>
+                                    @foreach ($exchange_rate_currencies as $currency)
+                                        <h6 class="currency_total_th currency_total_{{ $currency['currency_id'] }}"
+                                            data-currency_id="{{ $currency['currency_id'] }}"
+                                            data-is_default="{{ $currency['is_default'] }}"
+                                            data-conversion_rate="{{ $currency['conversion_rate'] }}"
+                                            data-base_conversion="{{ $currency['conversion_rate'] * ($sales_totals[$currency['currency_id']] - $total_exp[$currency['currency_id']]) }}"
+                                            data-orig_value="{{ $sales_totals[$currency['currency_id']] - $total_exp[$currency['currency_id']] }}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                {{ $currency['symbol'] }}</span>
+                                            <span
+                                                class="total">{{ @num_format($sales_totals[$currency['currency_id']] - $total_exp[$currency['currency_id']]) }}</span>
+                                        </h6>
+                                    @endforeach
+                                </th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
                 </div>
             </div>
         </div>

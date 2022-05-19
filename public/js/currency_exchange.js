@@ -42,7 +42,7 @@ $(document).on("click", ".currency_total_th", function () {
     let this_ele = $(th).find(".currency_total_" + currency_id);
     let conversion_rate = this_ele.data("conversion_rate");
     let total_base_value = parseFloat(this_ele.data("base_conversion"));
-    console.log(total_base_value, " currency_id");
+
     $(this_ele)
         .siblings()
         .each(function () {
