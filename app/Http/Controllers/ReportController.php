@@ -345,7 +345,6 @@ class ReportController extends Controller
                 $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
                 $cr_data[$currency['currency_id']]['cash_register'] = $cash_register;
             }
-            // print_r( $cr_data); die();
 
             return view('reports.partials.daily_sales_summary_table')->with(compact(
                 'cr_data',

@@ -854,6 +854,16 @@ $(document).on(
     }
 );
 
+$(document).on("change", ".sell_price", function () {
+    let tr = $(this).parents("tr");
+    let sell_price = __read_number($(this));
+    let purchase_price = __read_number($(tr).find(".purchase_price"));
+
+    if (sell_price < purchase_price) {
+        swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
+        return;
+    }
+});
 $(document).on("change", ".quantity, .sell_price", function () {
     check_for_sale_promotion();
     calculate_sub_totals();

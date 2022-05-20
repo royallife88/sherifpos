@@ -773,3 +773,12 @@ $(document).on("change", "#is_service", function () {
         $(".supplier_div").addClass("hide");
     }
 });
+$(document).on("change", "#sell_price", function () {
+    let sell_price = __read_number($(this));
+    let purchase_price = __read_number($("#purchase_price"));
+
+    if (sell_price < purchase_price) {
+        swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
+        return;
+    }
+});

@@ -87,7 +87,7 @@
                 @php
                     $current_cash = $data['cash_register']->total_cash_sales - $data['cash_register']->total_refund_cash + $data['cash_register']->total_cash_in - $data['cash_register']->total_cash_out - $data['cash_register']->total_purchases - $data['cash_register']->total_expenses - $data['cash_register']->total_sell_return;
                 @endphp
-                <h6 class="currency_total_td currency_total currency_total_{{ $data['currency']['currency_id'] }}"
+                <h6 class="currency_total_row_td currency_total currency_total_{{ $data['currency']['currency_id'] }}"
                     data-currency_id="{{ $data['currency']['currency_id'] }}"
                     data-is_default="{{ $data['currency']['is_default'] }}"
                     data-conversion_rate="{{ $data['currency']['conversion_rate'] }}"

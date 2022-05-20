@@ -111,9 +111,9 @@
 
         </div>
         <div style="width: 70%; float:left;">
-            <p style="padding: 0 7px;">@lang('lang.date',[], 'en'): {{ $transaction->transaction_date }}
+            <p style="padding: 0 7px;">@lang('lang.date', [], 'en'): {{ $transaction->transaction_date }}
                 {{ __('lang.date', [], 'ar') }}<br>
-                @lang('lang.reference',[], 'en'): {{ $transaction->invoice_no }}
+                @lang('lang.reference', [], 'en'): {{ $transaction->invoice_no }}
                 {{ __('lang.reference', [], 'ar') }}<br>
                 @if (!empty($transaction->customer) && $transaction->customer->is_default == 0)
                     {{ $transaction->customer->name }}<br>
@@ -121,30 +121,30 @@
                     {{ $transaction->customer->mobile_number }}<br>
                 @endif
                 @if (!empty($transaction->sale_note))
-                    @lang('lang.sale_note', [], 'en'): {{ $transaction->sale_note }} @lang('lang.address',[], 'ar')
+                    @lang('lang.sale_note', [], 'en'): {{ $transaction->sale_note }} @lang('lang.address', [], 'ar')
                     <br>
                 @endif
             </p>
             @if (session('system_mode') == 'garments')
                 <p>
                     @if (!empty($transaction->customer_size))
-                        @lang('lang.customer_size',[], 'en'): {{ $transaction->customer_size->name }}
+                        @lang('lang.customer_size', [], 'en'): {{ $transaction->customer_size->name }}
                         {{ __('lang.customer_size', [], 'ar') }} <br>
                     @endif
                     @if (!empty($transaction->fabric_name))
-                        @lang('lang.fabric_name',[], 'en'): {{ $transaction->fabric_name }}
+                        @lang('lang.fabric_name', [], 'en'): {{ $transaction->fabric_name }}
                         {{ __('lang.fabric_name', [], 'ar') }} <br>
                     @endif
                     @if (!empty($transaction->fabric_squatch))
-                        @lang('lang.fabric_squatch',[], 'en'): {{ $transaction->fabric_squatch }}
+                        @lang('lang.fabric_squatch', [], 'en'): {{ $transaction->fabric_squatch }}
                         {{ __('lang.fabric_squatch', [], 'ar') }} <br>
                     @endif
                     @if (!empty($transaction->prova_datetime))
-                        @lang('lang.prova',[], 'en'): {{ @format_datetime($transaction->prova_datetime) }}
+                        @lang('lang.prova', [], 'en'): {{ @format_datetime($transaction->prova_datetime) }}
                         {{ __('lang.prova', [], 'ar') }} <br>
                     @endif
                     @if (!empty($transaction->delivery_datetime))
-                        @lang('lang.delivery',[], 'en'): {{ @format_datetime($transaction->delivery_datetime) }}
+                        @lang('lang.delivery', [], 'en'): {{ @format_datetime($transaction->delivery_datetime) }}
                         {{ __('lang.delivery', [], 'ar') }} <br>
                     @endif
 
@@ -152,16 +152,20 @@
             @endif
             @if (session('system_mode') == 'restaurant')
                 @if (!empty($transaction->dining_room))
-                    @lang('lang.dining_room',[], 'en'): {{ $transaction->dining_room->name }}
+                    @lang('lang.dining_room', [], 'en'): {{ $transaction->dining_room->name }}
                     {{ __('lang.dining_room', [], 'ar') }} <br>
                 @endif
                 @if (!empty($transaction->dining_table))
-                    @lang('lang.dining_table',[], 'en'): {{ $transaction->dining_table->name }}
+                    @lang('lang.dining_table', [], 'en'): {{ $transaction->dining_table->name }}
                     {{ __('lang.dining_table', [], 'ar') }} <br>
                 @endif
             @endif
             @if (!empty($transaction->deliveryman))
                 <p style="padding-left: 7px;">{{ $transaction->deliveryman->employee_name }}</p>
+            @endif
+            @if (!empty($transaction->delivery_address))
+                <p style="padding-left: 7px;">@lang('lang.delivery_address'):
+                    {{ $transaction->delivery_address }} </p>
             @endif
         </div>
         @if (session('system_mode') == 'restaurant')
@@ -176,19 +180,18 @@
                 <thead>
                     <tr>
                         @if (empty($print_gift_invoice))
-                            <th style="width: 20%">{{ __('lang.amount', [], 'ar') }} <br> @lang('lang.amount',[],
-                                'en')
+                            <th style="width: 20%">{{ __('lang.amount', [], 'ar') }} <br> @lang('lang.amount', [], 'en')
                             </th>
                         @endif
-                        <th style="width: 20%">{{ __('lang.qty', [], 'ar') }} <br> @lang('lang.qty',[], 'en') </th>
+                        <th style="width: 20%">{{ __('lang.qty', [], 'ar') }} <br> @lang('lang.qty', [], 'en') </th>
                         @if (empty($print_gift_invoice))
                             <th style="width: 20%;text-align:center !important;">{{ __('lang.price', [], 'ar') }}
                                 <br>
-                                @lang('lang.price',[], 'en')
+                                @lang('lang.price', [], 'en')
                             </th>
                         @endif
                         <th style="width: 40%; padding: 0 50px !important;">{{ __('lang.item', [], 'ar') }} <br>
-                            @lang('lang.item',[], 'en') </th>
+                            @lang('lang.item', [], 'en') </th>
                     </tr>
                 </thead>
                 <tbody>
@@ -225,11 +228,11 @@
                     @if (empty($print_gift_invoice))
                         <tr>
                             <th colspan="2" style="text-align:left">
-                                {{ @num_format($transaction->grand_total +$transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                 {{ $transaction->received_currency->symbol }}
                             </th>
                             <th colspan="2" style="text-align:right">{{ __('lang.total', [], 'ar') }} <br>
-                                @lang('lang.total',[], 'en') </th>
+                                @lang('lang.total', [], 'en') </th>
                         </tr>
                         @if ($transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount') > 0)
                             <tr>
@@ -238,7 +241,7 @@
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.discount', [], 'ar') }} <br>
-                                    @lang('lang.discount',[], 'en') </th>
+                                    @lang('lang.discount', [], 'en') </th>
                             </tr>
                         @endif
                         @if ($transaction->total_item_tax != 0)
@@ -248,7 +251,7 @@
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.tax', [], 'ar') }} <br>
-                                    @lang('lang.tax',[], 'en') </th>
+                                    @lang('lang.tax', [], 'en') </th>
                             </tr>
                         @endif
                         @if ($transaction->service_fee_value > 0)
@@ -258,7 +261,7 @@
                                     {{ $transaction->received_currency->symbol }}
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.service', [], 'ar') }} <br>
-                                    @lang('lang.service',[], 'en') </th>
+                                    @lang('lang.service', [], 'en') </th>
                             </tr>
                         @endif
                         @if ($transaction->total_tax != 0)
@@ -277,8 +280,7 @@
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.order_discount', [], 'ar') }}
                                     <br>
-                                    @lang('lang.order_discount',[],
-                                    'en')
+                                    @lang('lang.order_discount', [], 'en')
                                 </th>
                             </tr>
                         @endif
@@ -290,7 +292,7 @@
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.sales_promotion', [], 'ar') }}
                                     <br>
-                                    @lang('lang.sales_promotion' , [], 'en')
+                                    @lang('lang.sales_promotion', [], 'en')
                                 </th>
                             </tr>
                         @endif
@@ -302,8 +304,7 @@
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.coupon_discount', [], 'ar') }}
                                     <br>
-                                    @lang('lang.coupon_discount',[],
-                                    'en')
+                                    @lang('lang.coupon_discount', [], 'en')
                                 </th>
                             </tr>
                         @endif
@@ -315,7 +316,7 @@
                                 </th>
                                 <th colspan="2" style="text-align:right">{{ __('lang.delivery_cost', [], 'ar') }}
                                     <br>
-                                    @lang('lang.delivery_cost' , [], 'en') @if (!empty($transaction->deliveryman->employee_name))
+                                    @lang('lang.delivery_cost', [], 'en') @if (!empty($transaction->deliveryman->employee_name))
                                         ({{ $transaction->deliveryman->employee_name }})
                                     @endif
                                 </th>
@@ -328,7 +329,7 @@
                                 <th colspan="2" style="text-align:right">
                                     {{ __('lang.redeemed_point_value', [], 'ar') }}
                                     <br>
-                                    @lang('lang.redeemed_point_value',[], 'en')
+                                    @lang('lang.redeemed_point_value', [], 'en')
                                 </th>
                             </tr>
                         @endif
@@ -336,7 +337,7 @@
                             <th colspan="2" style="text-align:left">{{ @num_format($transaction->final_total) }}
                                 {{ $transaction->received_currency->symbol }}</th>
                             <th colspan="2" style="text-align:right">{{ __('lang.grand_total', [], 'ar') }} <br>
-                                @lang('lang.grand_total',[], 'en')</th>
+                                @lang('lang.grand_total', [], 'en')</th>
                         </tr>
                         <tr>
 
@@ -359,7 +360,8 @@
                                         @endif
                                     </td>
                                     <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
-                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
+                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }}
+                                        {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                             @if (!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
@@ -367,7 +369,8 @@
                                     <td style="padding: 7px;width:30%">{{ __('lang.change', [], 'ar') }} <br>
                                         {{ __('lang.change', [], 'en') }}</td>
                                     <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                        {{ @num_format($payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
+                                        {{ @num_format($payment_data->change_amount) }}
+                                        {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -394,7 +397,8 @@
                                 <td style="padding: 7px;width:30%">{{ __('lang.due_sale_list', [], 'ar') }} <br>
                                     {{ __('lang.due', [], 'en') }}</td>
                                 <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                    {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }} {{ $transaction->received_currency->symbol }}
+                                    {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
+                                    {{ $transaction->received_currency->symbol }}
                                 </td>
                             </tr>
                         @endif
@@ -402,10 +406,10 @@
                     <tr>
                         <td class="centered" colspan="3">
                             @if (session('system_mode') == 'restaurant')
-                                @lang('lang.enjoy_your_meal_please_come_again',[], 'en')
+                                @lang('lang.enjoy_your_meal_please_come_again', [], 'en')
                                 {{ __('lang.enjoy_your_meal_please_come_again', [], 'ar') }}
                             @else
-                                @lang('lang.thank_you_and_come_again',[], 'en')
+                                @lang('lang.thank_you_and_come_again', [], 'en')
                                 {{ __('lang.thank_you_and_come_again', [], 'ar') }}
                             @endif
                         </td>

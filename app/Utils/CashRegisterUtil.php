@@ -124,7 +124,6 @@ class CashRegisterUtil extends Util
         }
         $register =  $this->getCurrentCashRegisterOrCreate($user_id);
 
-
         if ($transaction->type == 'sell_return') {
             $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
             if (!empty($cr_transaction)) {
@@ -136,6 +135,16 @@ class CashRegisterUtil extends Util
                     'transaction_id' => $transaction->id
                 ]);
 
+                return true;
+            } else {
+                CashRegisterTransaction::create([
+                    'cash_register_id' => $register->id,
+                    'amount' => $this->num_uf($payment['amount']),
+                    'pay_method' =>  $payment['method'],
+                    'type' => $type,
+                    'transaction_type' => $transaction->type,
+                    'transaction_id' => $transaction->id
+                ]);
                 return true;
             }
         } else {

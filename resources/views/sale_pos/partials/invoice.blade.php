@@ -166,6 +166,10 @@ if (empty($invoice_lang)) {
             @if (!empty($transaction->deliveryman))
                 <p>{{ $transaction->deliveryman->employee_name }}</p>
             @endif
+            @if (!empty($transaction->delivery_address))
+                @lang('lang.delivery_address'):
+                {{ $transaction->delivery_address }} <br>
+            @endif
         </div>
         @if (session('system_mode') == 'restaurant')
             <div style="width: 30%; float:right; text-align:center;">
@@ -226,7 +230,7 @@ if (empty($invoice_lang)) {
                         <tr>
                             <th style="font-size: 16px;" colspan="3">@lang('lang.total', [], $invoice_lang)</th>
                             <th style="font-size: 16px; text-align:right;">
-                                {{ @num_format($transaction->grand_total +$transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
+                                {{ @num_format($transaction->grand_total + $transaction->transaction_sell_lines->where('product_discount_type', '!=', 'surplus')->sum('product_discount_amount')) }}
                                 {{ $transaction->received_currency->symbol }}
                             </th>
                         </tr>
@@ -343,7 +347,8 @@ if (empty($invoice_lang)) {
                                         @endif
                                     </td>
                                     <td style="font-size: 16px; padding: 10px; text-align: right;" colspan="2">
-                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
+                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }}
+                                        {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                             @if (!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
@@ -351,7 +356,8 @@ if (empty($invoice_lang)) {
                                     <td style="font-size: 16px; padding: 7px;width:30%">@lang('lang.change', [],
                                         $invoice_lang)</td>
                                     <td colspan="2" style="font-size: 16px; padding: 7px;width:40%; text-align: right;">
-                                        {{ @num_format($payment_data->change_amount) }} {{ $transaction->received_currency->symbol }}</td>
+                                        {{ @num_format($payment_data->change_amount) }}
+                                        {{ $transaction->received_currency->symbol }}</td>
                                 </tr>
                             @endif
                         @endforeach
@@ -379,7 +385,8 @@ if (empty($invoice_lang)) {
                                     <td style="font-size: 16px; padding: 5px;width:30%">@lang('lang.due_sale_list', [],
                                         $invoice_lang)</td>
                                     <td colspan="2" style="font-size: 16px; padding: 5px;width:40%; text-align: right;">
-                                        {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }} {{ $transaction->received_currency->symbol }}
+                                        {{ @num_format($transaction->final_total - $transaction->transaction_payments->sum('amount')) }}
+                                        {{ $transaction->received_currency->symbol }}
                                     </td>
                                 </tr>
                             @endif

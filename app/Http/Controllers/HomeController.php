@@ -59,7 +59,7 @@ class HomeController extends Controller
             }
         }
 
-        $dashboard_data = $this->getDashboardData($start_date, $end_date, $store_ids, $store_pos_id);
+        $dashboard_data = $this->getDashboardDetails($start_date, $end_date, $store_ids, $store_pos_id);
 
         $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_ids, $store_pos_id);
         $yearly_best_sellings_qty = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'qty', $store_ids, $store_pos_id);
@@ -74,7 +74,7 @@ class HomeController extends Controller
             $start_date = date("Y-m", $start) . '-' . '01';
             $end_date = date("Y-m", $start) . '-' . '31';
 
-            $cash_flow_data  = $this->getDashboardData($start_date, $end_date, $store_ids, $store_pos_id);
+            $cash_flow_data  = $this->getDashboardDetails($start_date, $end_date, $store_ids, $store_pos_id);
 
             $payment_received[] = $cash_flow_data['payment_received'];
             $payment_sent[] = $cash_flow_data['payment_sent'];
@@ -177,7 +177,7 @@ class HomeController extends Controller
         $yearly_best_sellings_qty = $this->getBestSellings($start_date, $end_date, 'qty', $store_id);
         $yearly_best_sellings_price = $this->getBestSellings($start_date, $end_date, 'total_price', $store_id);
 
-        $dashboard_data = $this->getDashboardData($start_date, $end_date, $store_id, $store_pos_id);
+        $dashboard_data = $this->getDashboardDetails($start_date, $end_date, $store_id, $store_pos_id);
 
         //cash flow of last 6 months
         $start = strtotime($start_date);
@@ -188,7 +188,7 @@ class HomeController extends Controller
             $start_date = date("Y-m", $start) . '-' . '01';
             $end_date = date("Y-m", $start) . '-' . '31';
 
-            $cash_flow_data  = $this->getDashboardData($start_date, $end_date, $store_id, $store_pos_id);
+            $cash_flow_data  = $this->getDashboardDetails($start_date, $end_date, $store_id, $store_pos_id);
 
             $payment_received[] = $cash_flow_data['payment_received'];
             $payment_sent[] = $cash_flow_data['payment_sent'];
@@ -399,8 +399,10 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return double
      */
-    public function getTotalSaleItemTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
+    public function getTotalSaleItemTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null, $currency_id = null)
     {
+        $default_currency_id = System::getProperty('currency');
+
         $sell_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
             ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
             ->where('transactions.type', 'sell')
@@ -423,6 +425,19 @@ class HomeController extends Controller
         if (!empty($store_pos_id)) {
             $sell_query->where('store_pos_id', $store_pos_id);
         }
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $sell_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id)
+                        ->orWhereNull('received_currency_id');
+                });
+            } else {
+                $sell_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id);
+                });
+            }
+        }
+
         $sell_query = $sell_query->select(
             DB::raw('SUM(IF(products.tax_method = "inclusive", item_tax, 0)) as total_tax'),
             DB::raw('SUM(IF(products.tax_method = "inclusive", (item_tax / quantity) * quantity_returned, 0)) as total_return_tax')
@@ -443,8 +458,10 @@ class HomeController extends Controller
      * @param string $store_pos_id
      * @return double
      */
-    public function getTotalSaleGeneralTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null)
+    public function getTotalSaleGeneralTaxAmount($start_date, $end_date, $store_id = [], $store_pos_id = null, $currency_id = null)
     {
+        $default_currency_id = System::getProperty('currency');
+
         $sell_query = Transaction::where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
         if (!empty($start_date)) {
@@ -464,6 +481,18 @@ class HomeController extends Controller
         }
         if (!empty($store_pos_id)) {
             $sell_query->where('store_pos_id', $store_pos_id);
+        }
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $sell_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id)
+                        ->orWhereNull('received_currency_id');
+                });
+            } else {
+                $sell_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id);
+                });
+            }
         }
         $sell = $sell_query->select(
             DB::raw('SUM(IF(transactions.tax_method = "inclusive", total_tax, 0)) as total_tax'),
@@ -556,79 +585,151 @@ class HomeController extends Controller
      */
     public function getDashboardData($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
+        $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
+
+        $data = [];
+        $i = 0;
+        foreach ($exchange_rate_currencies as $currency) {
+            $data[$i]['currency'] = $currency;
+            $data[$i]['data'] = $this->getDashboardDetails($start_date, $end_date, $store_id, $store_pos_id, $currency['currency_id']);
+
+            $i++;
+        }
+
+        return $data;
+    }
+    /**
+     * get dashboard data for pos
+     *
+     * @param string $start_date
+     * @param string $end_date
+     * @param array $store_id
+     * @param string $store_pos_id
+     * @return void
+     */
+    public function getDashboardDetails($start_date, $end_date, $store_id = [], $store_pos_id = null, $currency_id = null)
+    {
+        $default_currency_id = System::getProperty('currency');
+
         if (!empty($store_id)) {
             $store_id = $store_id;
         } else {
             $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
         }
 
-        $revenue = $this->getSaleAmount($start_date, $end_date, $store_id, $store_pos_id);
         $total_sale_item_tax_inclusive = $this->getTotalSaleItemTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
         $total_sale_general_tax_inclusive = $this->getTotalSaleGeneralTaxAmount($start_date, $end_date, $store_id, $store_pos_id);
-        // print_r($total_sale_tax_exclusive); die();
 
-        $sell_return_query = Transaction::where('type', 'sell_return')->where('status', 'final');
+
+        $transaction_query = Transaction::whereIn('type', ['sell', 'sell_return', 'purchase_return', 'expense', 'add_stock'])->whereIn('status', ['final', 'received']);
         if (!empty($start_date)) {
-            $sell_return_query->whereDate('transaction_date', '>=', $start_date);
+            $transaction_query->whereDate('transaction_date', '>=', $start_date);
         }
         if (!empty($end_date)) {
-            $sell_return_query->whereDate('transaction_date', '<=', $end_date);
+            $transaction_query->whereDate('transaction_date', '<=', $end_date);
         }
         if (!empty(request()->start_time)) {
-            $sell_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            $transaction_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
         if (!empty(request()->end_time)) {
-            $sell_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            $transaction_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
-            $sell_return_query->whereIn('store_id', $store_id);
+            $transaction_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
-            $sell_return_query->where('store_pos_id', $store_pos_id);
+            $transaction_query->where('store_pos_id', $store_pos_id);
         }
-        $sell_return_query->select(
-            DB::raw('SUM(final_total) as total_returned'),
-            DB::raw('SUM(total_tax) as total_taxes'),
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $transaction_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id)
+                        ->orWhereNull('received_currency_id');
+                });
+            } else {
+                $transaction_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id);
+                });
+            }
+        }
+        $transaction_query->select(
+            DB::raw('SUM(IF(transactions.type="sell_return", final_total, 0)) as total_sell_return'),
+            DB::raw('SUM(IF(transactions.type="sell_return", gift_card_amount, 0)) as total_gift_card_amount'),
+            DB::raw('SUM(IF(transactions.type="purchase_return", final_total, 0)) as total_purchase_return'),
+            DB::raw('SUM(IF(transactions.type="expense", final_total, 0)) as total_expense'),
+            DB::raw('SUM(IF(transactions.type="add_stock", final_total, 0)) as total_purchases'),
+            DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_sell'),
         );
-        $sell_return_query = $sell_return_query->first();
+        $transaction_query = $transaction_query->first();
 
-        $gift_card_returned = Transaction::where('type', 'sell_return')->where('status', 'final')
-            ->where('gift_card_amount', '>', 0)
-            ->sum('gift_card_amount');
+        $gift_card_returned = $transaction_query->total_gift_card_amount ?? 0;
 
-        $sell_return  = $sell_return_query->total_returned - $gift_card_returned; // for gift card return no change in sell return
 
-        $purchase_return_query = Transaction::where('type', 'purchase_return')->where('status', 'final');
-        if (!empty($start_date)) {
-            $purchase_return_query->whereDate('transaction_date', '>=', $start_date);
-        }
-        if (!empty($end_date)) {
-            $purchase_return_query->whereDate('transaction_date', '<=', $end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $purchase_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $purchase_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $purchase_return_query->whereIn('store_id', $store_id);
-        }
-        if (!empty($store_pos_id)) {
-            $purchase_return_query->where('store_pos_id', $store_pos_id);
-        }
-        $purchase_return = $purchase_return_query->sum('final_total');
+        $revenue = $transaction_query->total_sell ?? 0;
 
-        $purchase =  $this->getPurchaseAmount($start_date, $end_date, $store_id);
+        $sell_return  = $transaction_query->total_sell_return - $gift_card_returned; // for gift card return no change in sell return
+
+        $purchase_return = $transaction_query->total_purchase_return ?? 0;
+
+        $purchase = $transaction_query->total_purchases ?? 0;
 
         $revenue -= $sell_return;
 
-        $cost_sold_product = $this->transactionUtil->getCostOfSoldProducts($start_date, $end_date, $store_id, $store_pos_id);
-        $cost_sold_returned_product = $this->transactionUtil->getCostOfSoldReturnedProducts($start_date, $end_date, $store_id, $store_pos_id);
-        $gift_card_sold = GiftCard::sum('balance');
+        $cost_query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+            ->where('transactions.type', 'sell')
+            ->where('transactions.status', 'final');
+
+        if (!empty($start_date)) {
+            $cost_query->whereDate('transaction_date', '>=', $start_date);
+        }
+        if (!empty($end_date)) {
+            $cost_query->whereDate('transaction_date',  '<=', $end_date);
+        }
+        if (!empty(request()->start_time)) {
+            $cost_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+        }
+        if (!empty(request()->end_time)) {
+            $cost_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+        }
+        if (!empty($store_id)) {
+            $cost_query->whereIn('store_id', $store_id);
+        }
+        if (!empty($store_pos_id)) {
+            $cost_query->where('store_pos_id', $store_pos_id);
+        }
+
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $cost_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id)
+                        ->orWhereNull('received_currency_id');
+                });
+            } else {
+                $cost_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id);
+                });
+            }
+        }
+
+        $cost_query = $cost_query->select(
+            DB::raw("SUM(transaction_sell_lines.quantity * transaction_sell_lines.purchase_price) as cost_of_sold_products"),
+            DB::raw("SUM(transaction_sell_lines.quantity_returned * transaction_sell_lines.purchase_price) as cost_of_sold_returned_products")
+        )->first();
+
+        $cost_sold_product = $cost_query->cost_of_sold_products ?? 0;
+        $cost_sold_returned_product = $cost_query->cost_of_sold_returned_products ?? 0;
+
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
+            } else {
+                $gift_card_sold = 0;
+            }
+        } else {
+            $gift_card_sold = GiftCard::whereDate('created_at', '>=', $start_date)->whereDate('created_at', '<=', $end_date)->sum('balance');
+        }
 
         $profit = $revenue - $cost_sold_product + $cost_sold_returned_product + $gift_card_sold - $gift_card_returned - $total_sale_item_tax_inclusive - $total_sale_general_tax_inclusive;  //excluding taxes from profit as its not part of profit
-
         $expense_query = Transaction::where('type', 'expense')->where('status', 'received');
         if (!empty($start_date)) {
             $expense_query->whereDate('transaction_date', '>=', $start_date);
@@ -648,98 +749,71 @@ class HomeController extends Controller
         if (!empty($store_pos_id)) {
             $expense_query->where('store_pos_id', $store_pos_id);
         }
-        $expense = $expense_query->sum('final_total');
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $expense = $expense_query->sum('final_total');
+            } else {
+                $expense = 0; //expense does not have currency
+            }
+        } else {
+            $expense = $expense_query->sum('final_total');
+        }
 
         //payment sent queries
-        $payment_received_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'sell')->where('status', 'final');
-        if (!empty($start_date)) {
-            $payment_received_query->whereDate('paid_on', '>=', $start_date);
-        }
-        if (!empty($end_date)) {
-            $payment_received_query->whereDate('paid_on', '<=', $end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $payment_received_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $payment_received_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $payment_received_query->whereIn('store_id', $store_id);
-        }
-        if (!empty($store_pos_id)) {
-            $payment_received_query->where('store_pos_id', $store_pos_id);
-        }
-        $payment_received = $payment_received_query->sum('amount');
 
-        $payment_purchase_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'purchase_return')->where('status', 'final');
+        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+            ->whereIn('type', ['sell', 'purchase_return', 'add_stock', 'expense', 'sell_return'])->where('status', 'final');
+
         if (!empty($start_date)) {
-            $payment_purchase_return_query->whereDate('paid_on', '>=', $start_date);
+            $payment_query->whereDate('paid_on', '>=', $start_date);
         }
         if (!empty($end_date)) {
-            $payment_purchase_return_query->whereDate('paid_on', '<=', $end_date);
+            $payment_query->whereDate('paid_on', '<=', $end_date);
         }
         if (!empty(request()->start_time)) {
-            $payment_purchase_return_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            $payment_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
         }
         if (!empty(request()->end_time)) {
-            $payment_purchase_return_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            $payment_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
         if (!empty($store_id)) {
-            $payment_purchase_return_query->whereIn('store_id', $store_id);
+            $payment_query->whereIn('store_id', $store_id);
         }
         if (!empty($store_pos_id)) {
-            $payment_purchase_return_query->where('store_pos_id', $store_pos_id);
+            $payment_query->where('store_pos_id', $store_pos_id);
         }
-        $payment_purchase_return = $payment_purchase_return_query->sum('amount');
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $payment_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id)
+                        ->orWhereNull('received_currency_id');
+                });
+            } else {
+                $payment_query->where(function ($q) use ($currency_id) {
+                    $q->where('received_currency_id', $currency_id);
+                });
+            }
+        }
+
+        $payment_query->select(
+            DB::raw('SUM(IF(transactions.type="sell", transaction_payments.amount, 0)) as total_sell_paid'),
+            DB::raw('SUM(IF(transactions.type="sell_return", transaction_payments.amount, 0)) as total_sell_return_paid'),
+            DB::raw('SUM(IF(transactions.type="purchase_return", transaction_payments.amount, 0)) as total_purchase_return_paid'),
+            DB::raw('SUM(IF(transactions.type="expense", transaction_payments.amount, 0)) as total_expense_paid'),
+            DB::raw('SUM(IF(transactions.type="add_stock", transaction_payments.amount, 0)) as total_add_stock_paid'),
+        );
+        $payment_query = $payment_query->first();
+
+        $payment_received = $payment_query->total_sell_paid ?? 0;
+
+        $payment_purchase_return = $payment_query->total_purchase_return_paid ?? 0;
         $payment_received_total = $payment_received - $payment_purchase_return;
 
-        //payment sent queries
-        $payment_purchase_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'add_stock')->where('status', 'final');
-        if (!empty($start_date)) {
-            $payment_purchase_query->whereDate('paid_on', '>=', $start_date);
-        }
-        if (!empty($end_date)) {
-            $payment_purchase_query->whereDate('paid_on', '<=', $end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $payment_purchase_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $payment_purchase_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $payment_purchase_query->whereIn('store_id', $store_id);
-        }
-        if (!empty($store_pos_id)) {
-            $payment_purchase_query->where('store_pos_id', $store_pos_id);
-        }
-        $payment_purchase = $payment_purchase_query->sum('amount');
+        $payment_purchase = $payment_query->total_add_stock_paid ?? 0;
 
-        $payment_expense_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->where('type', 'expense')->where('status', 'final');
-        if (!empty($start_date)) {
-            $payment_expense_query->whereDate('paid_on', '>=', $start_date);
-        }
-        if (!empty($end_date)) {
-            $payment_expense_query->whereDate('paid_on', '<=', $end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $payment_expense_query->where('paid_on', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $payment_expense_query->where('paid_on', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $payment_expense_query->whereIn('store_id', $store_id);
-        }
-        if (!empty($store_pos_id)) {
-            $payment_expense_query->where('store_pos_id', $store_pos_id);
-        }
-        $payment_expense = $payment_expense_query->sum('amount');
+        $payment_expense = $payment_query->total_expense_paid ?? 0;
+
+        $sell_return_payment = $payment_query->total_sell_return_paid ?? 0;
 
         $wages_query = WagesAndCompensation::where('id', '>', 0);
         if (!empty($start_date)) {
@@ -754,30 +828,27 @@ class HomeController extends Controller
         if (!empty(request()->end_time)) {
             $wages_query->where('payment_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
         }
-        $wages_payment = $wages_query->sum('net_amount');
-
-        $sell_return_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')->where('type', 'sell_return')->where('status', 'final');
-        if (!empty($start_date)) {
-            $sell_return_query->whereDate('transaction_date', '>=', $start_date);
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $wages_payment = $wages_query->sum('net_amount');
+            } else {
+                $wages_payment = 0; //expense does not have currency
+            }
+        } else {
+            $wages_payment = $wages_query->sum('net_amount');
         }
-        if (!empty($end_date)) {
-            $sell_return_query->whereDate('transaction_date', '<=', $end_date);
-        }
-        if (!empty(request()->start_time)) {
-            $sell_return_query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
-        }
-        if (!empty(request()->end_time)) {
-            $sell_return_query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
-        }
-        if (!empty($store_id)) {
-            $sell_return_query->whereIn('store_id', $store_id);
-        }
-        if (!empty($store_pos_id)) {
-            $sell_return_query->where('store_pos_id', $store_pos_id);
-        }
-        $sell_return_payment =  $sell_return_query->sum('amount');
 
         $payment_sent = $payment_purchase + $payment_expense + $wages_payment + $sell_return_payment;
+
+        if (!empty($currency_id)) {
+            if ($currency_id == $default_currency_id) {
+                $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+            } else {
+                $current_stock_value = 0; //expense does not have currency
+            }
+        } else {
+            $current_stock_value = $this->productUtil->getCurrentStockValueByStore($store_id);
+        }
 
         $data['revenue'] = $revenue;
         $data['sell_return'] = $sell_return;
@@ -787,7 +858,7 @@ class HomeController extends Controller
         $data['purchase_return'] = $purchase_return;
         $data['payment_received'] = $payment_received_total;
         $data['payment_sent'] = $payment_sent;
-        $data['current_stock_value'] = $this->productUtil->getCurrentStockValueByStore($store_id);
+        $data['current_stock_value'] = $current_stock_value;
 
         return $data;
     }

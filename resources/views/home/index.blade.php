@@ -59,11 +59,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                             <div class="col-sm-2">
                                 <div class="wrapper count-title text-center">
                                     <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i></div>
-                                    <div class="name"><strong
-                                            style="color: #498636">@lang('lang.current_stock_value')</strong>
+                                    <div class="name"><strong style="color: #498636">@lang('lang.current_stock_value')</strong>
                                     </div>
                                     <div class="count-number current_stock_value-data">
-                                        {{ @num_format($dashboard_data['current_stock_value']) }}</div>
+                                        {{ @num_format(0) }}</div>
                                 </div>
                             </div>
                             <!-- Count item widget-->
@@ -71,10 +70,9 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 <div class="wrapper count-title text-center">
                                     <div class="icon"><i class="dripicons-graph-bar" style="color: #733686"></i>
                                     </div>
-                                    <div class="name"><strong
-                                            style="color: #733686">@lang('lang.revenue')</strong>
+                                    <div class="name"><strong style="color: #733686">@lang('lang.revenue')</strong>
                                     </div>
-                                    <div class="count-number revenue-data">{{ @num_format($dashboard_data['revenue']) }}
+                                    <div class="count-number revenue-data">{{ @num_format(0) }}
                                     </div>
                                 </div>
                             </div>
@@ -83,10 +81,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 <div class="wrapper count-title text-center">
                                     <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i>
                                     </div>
-                                    <div class="name"><strong
-                                            style="color: #ff8952">@lang('lang.sale_return')</strong></div>
+                                    <div class="name"><strong style="color: #ff8952">@lang('lang.sale_return')</strong>
+                                    </div>
                                     <div class="count-number sell_return-data">
-                                        {{ @num_format($dashboard_data['sell_return']) }}
+                                        {{ @num_format(0) }}
                                     </div>
                                 </div>
                             </div>
@@ -95,10 +93,10 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                 <div class="wrapper count-title text-center">
                                     <div class="icon"><i class="dripicons-media-loop" style="color: #00c689"></i>
                                     </div>
-                                    <div class="name"><strong
-                                            style="color: #00c689">@lang('lang.purchase_return')</strong></div>
+                                    <div class="name"><strong style="color: #00c689">@lang('lang.purchase_return')</strong>
+                                    </div>
                                     <div class="count-number purchase_return-data">
-                                        {{ @num_format($dashboard_data['purchase_return']) }}</div>
+                                        {{ @num_format(0) }}</div>
                                 </div>
                             </div>
                             <!-- Count item widget-->
@@ -109,7 +107,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                                         </div>
                                         <div class="name"><strong style="color: #297ff9">@lang('lang.profit')</strong>
                                         </div>
-                                        <div class="count-number profit-data">{{ @num_format($dashboard_data['profit']) }}
+                                        <div class="count-number profit-data">{{ @num_format(0) }}
                                         </div>
                                     </div>
                                 </div>
@@ -173,26 +171,99 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 },
                 // processData: false,
                 success: function(result) {
+                    console.log(result, 'result');
                     $('.revenue-data').hide();
-                    $(".revenue-data").text(__currency_trans_from_en(result.revenue, false));
+                    // $(".revenue-data").text(__currency_trans_from_en(result.revenue, false));
+
+                    let currenct_stock_string = '<div>';
+                    let revenue_string = '<div>';
+                    let sell_return_string = '<div>';
+                    let purchase_return_string = '<div>';
+                    let profit_string = '<div>';
+                    result.forEach(element => {
+                        currenct_stock_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.current_stock_value}"
+                                            data-orig_value="${element.data.current_stock_value}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.current_stock_value, false)}</span>
+                                        </h3>`;
+
+                        revenue_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.revenue}"
+                                            data-orig_value="${element.data.revenue}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.revenue, false)}</span>
+                                        </h3>`;
+
+
+                        sell_return_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.sell_return}"
+                                            data-orig_value="${element.data.sell_return}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.sell_return, false)}</span>
+                                        </h3>`;
+                        purchase_return_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.purchase_return}"
+                                            data-orig_value="${element.data.purchase_return}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.purchase_return, false)}</span>
+                                        </h3>`;
+                        profit_string += `<h3 class="dashboard_currency currency_total_${element.currency.currency_id}"
+                                            data-currency_id="${element.currency.currency_id}"
+                                            data-is_default="${element.currency.is_default}"
+                                            data-conversion_rate="${element.currency.conversion_rate}"
+                                            data-base_conversion="${element.currency.conversion_rate * element.data.profit}"
+                                            data-orig_value="${element.data.profit}">
+                                            <span class="symbol" style="padding-right: 10px;">
+                                                ${element.currency.symbol}</span>
+                                            <span
+                                                class="total">${__currency_trans_from_en(element.data.profit, false)}</span>
+                                        </h3>`;
+                    });
+                    currenct_stock_string += `</div>`;
+                    revenue_string += `</div>`;
+                    sell_return_string += `</div>`;
+                    purchase_return_string += `</div>`;
+                    profit_string += `</div>`;
+                    $(".revenue-data").html(revenue_string);
+
+
                     $('.revenue-data').show(500);
 
                     $('.current_stock_value-data').hide();
-                    $(".current_stock_value-data").text(__currency_trans_from_en(result
-                        .current_stock_value, false));
+                    $(".current_stock_value-data").html(currenct_stock_string);
                     $('.current_stock_value-data').show(500);
 
                     $('.sell_return-data').hide();
-                    $(".sell_return-data").text(__currency_trans_from_en(result.sell_return, false));
+                    $(".sell_return-data").html(sell_return_string);
                     $('.sell_return-data').show(500);
 
                     $('.purchase_return-data').hide();
-                    $(".purchase_return-data").text(__currency_trans_from_en(result.purchase_return,
-                        false));
+                    $(".purchase_return-data").html(purchase_return_string);
                     $('.purchase_return-data').show(500);
 
                     $('.profit-data').hide();
-                    $(".profit-data").text(__currency_trans_from_en(result.profit, false));
+                    $(".profit-data").html(profit_string);
                     $('.profit-data').show(500);
                 },
             });

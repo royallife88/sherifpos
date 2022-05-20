@@ -87,7 +87,7 @@ class TransactionUtil extends Util
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
             $transaction_payment->created_by = !empty($payment_data['created_by']) ? $payment_data['created_by'] : Auth::user()->id;
             $transaction_payment->is_return = !empty($payment_data['is_return']) ? 1 : 0;
-            if ($transaction->type == 'expense') {
+            if ($transaction->type == 'expense' || $transaction->type == 'sell_return') {
                 $transaction_payment->paid_on = $payment_data['paid_on'];
             }
             $transaction_payment->save();
@@ -944,7 +944,6 @@ class TransactionUtil extends Util
     public function getCostOfSoldProducts($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
-            ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
             ->where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
 
@@ -987,7 +986,6 @@ class TransactionUtil extends Util
     public function getCostOfSoldReturnedProducts($start_date, $end_date, $store_id = [], $store_pos_id = null)
     {
         $query = Transaction::leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
-            ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
             ->where('transactions.type', 'sell')
             ->where('transactions.status', 'final');
 
