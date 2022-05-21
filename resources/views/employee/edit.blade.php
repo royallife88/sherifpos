@@ -17,23 +17,15 @@
 
                             <div class="col-sm-6">
                                 <label for="fname">@lang('lang.name'):*</label>
-                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}" id="name"
-                                    required placeholder="Name">
+                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}"
+                                    id="name" required placeholder="Name">
                             </div>
                             <div class="col-sm-6">
                                 <label for="store_id">@lang('lang.store')</label>
-                                {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id : [], [
-    'class' => 'form-control
-                            selectpicker',
-    'multiple',
-    'placeholder' => __('lang.please_select'),
-    'data-live-search' => 'true',
-    'id' => 'store_id',
-]) !!}
+                                {!! Form::select('store_id[]', $stores, !empty($employee->store_id) ? $employee->store_id : [], ['class' => 'form-control selectpicker', 'multiple', 'placeholder' => __('lang.please_select'), 'data-live-search' => 'true', 'id' => 'store_id']) !!}
                             </div>
                             <div class="col-sm-6">
-                                <label
-                                    for="email">@lang('lang.email'):*<small>(@lang('lang.it_will_be_used_for_login'))</small></label>
+                                <label for="email">@lang('lang.email'):*<small>(@lang('lang.it_will_be_used_for_login'))</small></label>
                                 <input type="email" class="form-control" name="email" value="{{ $employee->email }}"
                                     id="email" required placeholder="Email">
                             </div>
@@ -182,9 +174,7 @@
                         <div class="row mt-4">
 
                             <div class="col-sm-12">
-                                <button type="submit" class="btn btn-primary" id="submit-btn">@lang(
-                                    'lang.update_employee'
-                                    )</button>
+                                <button type="submit" class="btn btn-primary" id="submit-btn">@lang('lang.update_employee')</button>
                             </div>
 
                         </div>
@@ -315,6 +305,13 @@
         })
         $(document).on('focusout', '.check_out', function() {
             $('.check_out').val($(this).val())
+        })
+        $(document).on('click', '.salary_cancel', function() {
+            $('.salary_fields').val('');
+            $('.salary_select').val('');
+            $('.salary_select').selectpicker('refresh');
+            $('.salary_checkbox').prop('checked', false);
+
         })
     </script>
 @endsection
