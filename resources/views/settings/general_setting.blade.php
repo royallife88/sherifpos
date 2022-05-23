@@ -42,11 +42,18 @@
                         {!! Form::label('invoice_terms_and_conditions', __('lang.tac_to_be_printed'), []) !!}
                         {!! Form::select('invoice_terms_and_conditions', $terms_and_conditions, !empty($settings['invoice_terms_and_conditions']) ? $settings['invoice_terms_and_conditions'] : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select')]) !!}
                     </div>
-                    <div class="col-md-3">
-                        {!! Form::label('default_purchase_price_percentage', __('lang.default_purchase_price_percentage'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
-                            title="@lang('lang.default_purchase_price_percentage_info')"></i>
-                        {!! Form::number('default_purchase_price_percentage', !empty($settings['default_purchase_price_percentage']) ? $settings['default_purchase_price_percentage'] : null, ['class' => 'form-control']) !!}
-                    </div>
+                    @if (session('system_mode') != 'restaurant')
+                        <div class="col-md-3">
+                            {!! Form::label('default_purchase_price_percentage', __('lang.default_purchase_price_percentage'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
+                                title="@lang('lang.default_purchase_price_percentage_info')"></i>
+                            {!! Form::number('default_purchase_price_percentage', !empty($settings['default_purchase_price_percentage']) ? $settings['default_purchase_price_percentage'] : null, ['class' => 'form-control']) !!}
+                        </div>
+                    @else
+                        <div class="col-md-3">
+                            {!! Form::label('default_profit_percentage', __('lang.default_profit_percentage'), []) !!} <small>@lang('lang.without_%_symbol')</small>
+                            {!! Form::number('default_profit_percentage', !empty($settings['default_profit_percentage']) ? $settings['default_profit_percentage'] : null, ['class' => 'form-control']) !!}
+                        </div>
+                    @endif
                     <div class="col-md-3">
                         <div class="i-checks">
                             <input id="show_the_window_printing_prompt" name="show_the_window_printing_prompt"
@@ -57,17 +64,16 @@
                                 </strong></label>
                         </div>
                     </div>
-                    @if(session('system_mode') == 'restaurant')
-                    <div class="col-md-3">
-                        <div class="i-checks">
-                            <input id="enable_the_table_reservation"
-                                name="enable_the_table_reservation" type="checkbox"
-                                @if (!empty($settings['enable_the_table_reservation']) && $settings['enable_the_table_reservation'] == '1') checked @endif value="1" class="form-control-custom">
-                            <label for="enable_the_table_reservation"><strong>
-                                    @lang('lang.enable_the_table_reservation')
-                                </strong></label>
+                    @if (session('system_mode') == 'restaurant')
+                        <div class="col-md-3">
+                            <div class="i-checks">
+                                <input id="enable_the_table_reservation" name="enable_the_table_reservation" type="checkbox"
+                                    @if (!empty($settings['enable_the_table_reservation']) && $settings['enable_the_table_reservation'] == '1') checked @endif value="1" class="form-control-custom">
+                                <label for="enable_the_table_reservation"><strong>
+                                        @lang('lang.enable_the_table_reservation')
+                                    </strong></label>
+                            </div>
                         </div>
-                    </div>
                     @endif
                 </div>
                 <br>

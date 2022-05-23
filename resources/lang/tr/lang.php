@@ -350,7 +350,7 @@ return [
     'order_discount' => 'İndirim',
     'order_tax' => 'Sipariş Vergisi',
     'reference' => 'Referans',
-    'thank_you_and_come_again' => 'Bizden alışveriş yaptığınız için teşekkür ederiz. Lütfen bir daha gelin',
+    'thank_you_and_come_again' => 'Bizden alışveriş yaptığınız için teşekkür ederiz. Yine Bekleriz',
     'other_online_payments' => 'Diğer Çevrimiçi Ödemeler',
     'print_the_transaction' => 'İşlemi Yazdır',
     'delivery_man' => 'Kurye',

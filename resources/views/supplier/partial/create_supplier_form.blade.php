@@ -23,7 +23,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('products', __('lang.products')) !!}
-            {!! Form::select('products[]', $products, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'products', 'multiple']) !!}
+            {!! Form::select('products[]', $products, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'id' => 'products', 'multiple']) !!}
         </div>
     </div>
     <div class="col-md-4">

@@ -142,11 +142,14 @@ class WagesAndCompensationController extends Controller
             $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
             $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
             $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
+            $data['acount_period_start_date'] = !empty($data['acount_period_start_date']) ? $this->commonUtil->uf_date($data['acount_period_start_date']) : null;
+            $data['acount_period_end_date'] = !empty($data['acount_period_end_date']) ? $this->commonUtil->uf_date($data['acount_period_end_date']) : null;
 
             DB::beginTransaction();
             $wages_and_compensation = WagesAndCompensation::create($data);
             $transaction_data = [
                 'type' => 'wages_and_compensation',
+                'employee_id' => $wages_and_compensation->employee_id,
                 'transaction_date' => Carbon::now(),
                 'grand_total' => $this->commonUtil->num_uf($data['net_amount']),
                 'final_total' => $this->commonUtil->num_uf($data['net_amount']),
@@ -407,6 +410,7 @@ class WagesAndCompensationController extends Controller
     public function calculateSalaryAndCommission($employee_id, $payment_type)
     {
         $employee = Employee::find($employee_id);
+        $user_id = $employee->user_id;
         $amount = 0;
 
         if ($payment_type == 'salary') {
@@ -430,7 +434,12 @@ class WagesAndCompensationController extends Controller
         }
 
         if ($payment_type == 'commission') {
-            if ($employee->commission == 1) {
+            $wages_and_compensation = WagesAndCompensation::where('employee_id', $employee_id)
+                ->whereDate('acount_period_start_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date))
+                ->whereDate('acount_period_end_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date))
+                ->first();
+
+            if ($employee->commission == 1 && empty($wages_and_compensation)) {
 
                 $sold_value = 0;
                 if ($employee->commission_type == 'sales') {
@@ -439,11 +448,12 @@ class WagesAndCompensationController extends Controller
                         ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
                         ->where('transactions.type', 'sell')
                         ->whereIn('customer_types.id', $employee->commission_customer_types)
-                        ->where('status', 'final');
+                        ->where('status', 'final')
+                        ->where('transactions.created_by', $user_id);
 
                     if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
-                        $sold_query->whereDate('transactions.transaction_date', '>=', request()->acount_period_start_date);
-                        $sold_query->whereDate('transactions.transaction_date', '<=', request()->acount_period_end_date);
+                        $sold_query->whereDate('transactions.transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date));
+                        $sold_query->whereDate('transactions.transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date));
                     }
 
                     $sold_value = $sold_query->sum('final_total');
@@ -455,17 +465,18 @@ class WagesAndCompensationController extends Controller
                         ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
                         ->where('transactions.type', 'sell')
                         ->whereIn('customer_types.id', $employee->commission_customer_types)
-                        ->where('status', 'final');
+                        ->where('status', 'final')
+                        ->where('transactions.created_by', $user_id);
 
                     if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
-                        $sold_query->whereDate('transactions.transaction_date', '>=', request()->acount_period_start_date);
-                        $sold_query->whereDate('transactions.transaction_date', '<=', request()->acount_period_end_date);
+                        $sold_query->whereDate('transactions.transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date));
+                        $sold_query->whereDate('transactions.transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date));
                     }
 
                     $profit = $sold_query->select(DB::raw('SUM(transaction_sell_lines.sell_price * transaction_sell_lines.quantity - transaction_sell_lines.purchase_price * transaction_sell_lines.quantity) as sold_value'))->first();
                     $sold_value = $profit->sold_value ?? 0;
                 }
-                print_r($sold_value); die();
+                // print_r(request()->acount_period_end_date); die();
                 //TODO:: calculate the commission for profit
                 $commission_value = $employee->commission_value;
                 $amount = $this->commonUtil->calc_percentage($sold_value, $commission_value);

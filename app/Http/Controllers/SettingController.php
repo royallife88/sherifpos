@@ -192,6 +192,10 @@ class SettingController extends Controller
                 ['value' => $request->default_purchase_price_percentage ?? 0, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );
             System::updateOrCreate(
+                ['key' => 'default_profit_percentage'],
+                ['value' => $request->default_profit_percentage ?? 0, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
+            );
+            System::updateOrCreate(
                 ['key' => 'help_page_content'],
                 ['value' => $request->help_page_content, 'date_and_time' => Carbon::now(), 'created_by' => Auth::user()->id]
             );

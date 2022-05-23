@@ -43,15 +43,14 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label
-                                                for="acount_period_start_date">@lang('lang.acount_period_start_date')</label>
-                                            {!! Form::text('acount_period_start_date', null, ['class' => 'form-control  datepicker', 'placeholder' => __('lang.acount_period_start_date')]) !!}
+                                            <label for="acount_period_start_date">@lang('lang.acount_period_start_date')</label>
+                                            {!! Form::text('acount_period_start_date', null, ['class' => 'form-control  datepicker calculate_salary', 'placeholder' => __('lang.acount_period_start_date'), 'id' => 'acount_period_start_date']) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="acount_period_end_date">@lang('lang.acount_period_end_date')</label>
-                                            {!! Form::text('acount_period_end_date', null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.acount_period_end_date')]) !!}
+                                            {!! Form::text('acount_period_end_date', null, ['class' => 'form-control datepicker calculate_salary', 'placeholder' => __('lang.acount_period_end_date'), 'id' => 'acount_period_end_date']) !!}
                                         </div>
                                     </div>
                                 </div>
@@ -152,17 +151,21 @@
                         url: `/hrm/wages-and-compensations/calculate-salary-and-commission/${employee_id}/${payment_type}`,
                         data: {
                             acount_period_end_date: $('#acount_period_end_date').val(),
-                            acount_period_start_date: $('#acount_period_start_date').val()
+                            acount_period_start_date: $('#acount_period_start_date').val(),
                         },
                         success: function(result) {
-                            $('#amount').val(result.amount);
-                            let amount = result.amount
-                            if ($('#deductibles').val() != '' && $('#deductibles').val() != undefined) {
-                                let deductibles = parseFloat($('#deductibles').val());
-                                amount = amount - deductibles;
+                            if (result.amount) {
+                                $('#amount').val(result.amount);
+                                let amount = result.amount
+                                if ($('#deductibles').val() != '' && $('#deductibles').val() !=
+                                    undefined) {
+                                    let deductibles = parseFloat($('#deductibles').val());
+                                    amount = amount - deductibles;
+                                }
+                                $('#net_amount').val(amount);
+                            } else {
+                                $('#amount').val(0);
                             }
-                            console.log(amount);
-                            $('#net_amount').val(amount);
                         },
                     });
                 }

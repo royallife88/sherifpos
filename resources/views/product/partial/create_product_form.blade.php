@@ -211,8 +211,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             <div class="i-checks">
                 <input id="price_based_on_raw_material" name="price_based_on_raw_material" type="checkbox"
                     @if (!empty($recent_product) && $recent_product->price_based_on_raw_material == 1) checked @endif value="1" class="form-control-custom">
-                <label
-                    for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
+                <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
             </div>
         </div>
         <div class="col-md-12">
@@ -316,6 +315,8 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
     </div>
     <input type="hidden" name="default_purchase_price_percentage" id="default_purchase_price_percentage"
         value="{{ App\Models\System::getProperty('default_purchase_price_percentage') ?? 75 }}">
+    <input type="hidden" name="default_profit_percentage" id="default_profit_percentage"
+        value="{{ App\Models\System::getProperty('default_profit_percentage') ?? 0 }}">
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('discount_customer_types', __('lang.customer_type'), []) !!} <i class="dripicons-question" data-toggle="tooltip"
@@ -335,8 +336,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
         <div class="col-md-4">
             <div class="form-group">
                 {!! Form::label('show_to_customer_types', __('lang.show_to_customer_types'), []) !!}
-                <i class="dripicons-question" data-toggle="tooltip"
-                    title="@lang('lang.show_to_customer_types_info')"></i>
+                <i class="dripicons-question" data-toggle="tooltip" title="@lang('lang.show_to_customer_types_info')"></i>
                 {!! Form::select('show_to_customer_types[]', $customer_types, !empty($recent_product) ? $recent_product->show_to_customer_types : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'multiple']) !!}
             </div>
         </div>

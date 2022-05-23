@@ -114,7 +114,7 @@ class SupplierController extends Controller
 
             return redirect()->back()->with('status', $output);
         }
-        try {
+        // try {
             $data = $request->except('_token', 'quick_add');
             $data['created_by'] = Auth::user()->id;
 
@@ -137,13 +137,13 @@ class SupplierController extends Controller
                 'supplier_id' => $supplier_id,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
 
         if ($request->ajax()) {

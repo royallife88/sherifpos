@@ -637,6 +637,19 @@ $(document).on("change", "#sell_price", function () {
     $(".store_prices").val($(this).val());
     $(".default_sell_price").val($(this).val());
 });
+$(document).on("change", "#purchase_price", function () {
+    let purchase_price = __read_number($("#purchase_price"));
+    let default_profit_percentage = __read_number(
+        $("#default_profit_percentage")
+    );
+    if (default_profit_percentage > 0) {
+        let sell_price_percentage =
+            (purchase_price * default_profit_percentage) / 100;
+        let sell_price = purchase_price + sell_price_percentage;
+        __write_number($("#sell_price"), sell_price);
+        $(".store_prices").val(sell_price);
+    }
+});
 $(document).on("change", "#sku", function () {
     let sku = $(this).val();
 

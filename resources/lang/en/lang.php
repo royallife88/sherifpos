@@ -1256,4 +1256,6 @@ return [
     'enable_the_table_reservation' => 'Enable the table reservation',
 
     'text' => 'Text',
+    'default_profit_percentage' => 'Default Profit Percentage',
+    'without_%_symbol' => 'without % Symbol',
 ];
