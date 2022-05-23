@@ -136,32 +136,39 @@
                         src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}">
 
                 </div>
-                @if (!empty($print['site_title']))
-                    <p style="margin-top: -18px;margin-bottom: 0px; text-align: left">
-                        {{ $print['site_title'] }}
-                    </p>
-                @endif
-                @if (!empty($print['store']))
-                    <p style="margin-bottom: 0px; text-align: left">
-                        <br>{{ $print['store'] }}
-                    </p>
-                @endif
-                @php
-                    $product = App\Models\Product::where('id', $details['details']->product_id)
-                        ->with(['colors', 'sizes'])
-                        ->first();
-                @endphp
-                @if (!empty($print['color_variations']))
-                    <p style="margin-top: -18px;margin-bottom: 0px; text-align: right;">
-                        {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
-                    </p>
-                @endif
-                @if (!empty($print['size_variations']))
-                    <p style="margin-bottom: 0px; text-align: right;">
+                <div class="row">
+                    <div class="col-md-4" style="margin-top: -32px;">
+                        @if (!empty($print['site_title']))
+                            <p style="text-align: left">
+                                {{ $print['site_title'] }}
+                            </p>
+                        @endif
+                        @if (!empty($print['store']))
+                            <p style="text-align: left">
+                                <br>{{ $print['store'] }}
+                            </p>
+                        @endif
+                    </div>
+                    @php
+                        $product = App\Models\Product::where('id', $details['details']->product_id)
+                            ->with(['colors', 'sizes'])
+                            ->first();
+                    @endphp
+                    <div class="col-md-4" style="margin-top: -32px;"></div>
+                    <div class="col-md-4" style="margin-top: -32px;">
+                        @if (!empty($print['color_variations']))
+                            <p style="text-align: right;">
+                                {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
+                            </p>
+                        @endif
+                        @if (!empty($print['size_variations']))
+                            <p style="text-align: right;">
 
-                        {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
-                    </p>
-                @endif
+                                {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
+                            </p>
+                        @endif
+                    </div>
+                </div>
             </div>
 
 
