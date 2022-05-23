@@ -164,7 +164,7 @@
                         @if (!empty($print['color_variations']))
                             <p style="text-align: right; word-wrap: break-word; padding-top: 3px;">
 
-                                {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
+                                {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
                             </p>
                         @endif
                     </div>
