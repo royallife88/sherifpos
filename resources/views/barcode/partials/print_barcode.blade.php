@@ -156,12 +156,12 @@
                     @endphp
                     <div class="col-md-4" style="font-size: 14px; margin-top: -30px;"></div>
                     <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
-                        @if (!empty($print['color_variations']))
+                        @if (!empty($print['size_variations']))
                             <p style="text-align: right; word-wrap: break-word;">
-                                {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
+                                {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
                             </p>
                         @endif
-                        @if (!empty($print['size_variations']))
+                        @if (!empty($print['color_variations']))
                             <p style="text-align: right; word-wrap: break-word; padding-top: 3px;">
 
                                 {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
