@@ -198,13 +198,13 @@ class BarcodeController extends Controller
         $print['size_variations'] = !empty($request->size_variations) ? 1 : 0;
         $print['color_variations'] = !empty($request->color_variations) ? 1 : 0;
         $print['site_title'] = !empty($request->site_title) ? System::getProperty('site_title') : null;
-        $store = '';
+        $store = [];
         if (!empty($request->store)) {
             foreach ($request->store as $store_id) {
-                $store .= !empty($store_id) ? Store::where('id', $store_id)->first()->name . ' ' : null;
+                $store[] = !empty($store_id) ? Store::where('id', $store_id)->first()->name . ' ' : null;
             }
         }
-        $print['store'] = !empty($store) ? $store : null;
+        $print['store'] = !empty($store) ? implode(',', $store) : null;
         $print['free_text'] = !empty($request->free_text) ? $request->free_text : null;
 
 

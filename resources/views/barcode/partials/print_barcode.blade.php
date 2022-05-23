@@ -144,7 +144,7 @@
                             </p>
                         @endif
                         @if (!empty($print['store']))
-                            <p style="text-align: left; word-wrap: break-word;">
+                            <p style="text-align: left; word-wrap: break-word; padding-top: 3px;">
                                 <br>{{ $print['store'] }}
                             </p>
                         @endif
@@ -158,13 +158,13 @@
                     <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
                         @if (!empty($print['color_variations']))
                             <p style="text-align: right; word-wrap: break-word;">
-                                {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
+                                {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
                             </p>
                         @endif
                         @if (!empty($print['size_variations']))
-                            <p style="text-align: right; word-wrap: break-word;">
+                            <p style="text-align: right; word-wrap: break-word; padding-top: 3px;">
 
-                                {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
+                                {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
                             </p>
                         @endif
                     </div>
