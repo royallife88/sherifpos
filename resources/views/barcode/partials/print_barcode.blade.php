@@ -137,14 +137,14 @@
 
                 </div>
                 <div class="row">
-                    <div class="col-md-4" style="margin-top: -32px;">
+                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
                         @if (!empty($print['site_title']))
-                            <p style="text-align: left">
+                            <p style="text-align: left; word-wrap: break-word;">
                                 {{ $print['site_title'] }}
                             </p>
                         @endif
                         @if (!empty($print['store']))
-                            <p style="text-align: left">
+                            <p style="text-align: left; word-wrap: break-word;">
                                 <br>{{ $print['store'] }}
                             </p>
                         @endif
@@ -154,15 +154,15 @@
                             ->with(['colors', 'sizes'])
                             ->first();
                     @endphp
-                    <div class="col-md-4" style="margin-top: -32px;"></div>
-                    <div class="col-md-4" style="margin-top: -32px;">
+                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;"></div>
+                    <div class="col-md-4" style="font-size: 14px; margin-top: -30px;">
                         @if (!empty($print['color_variations']))
-                            <p style="text-align: right;">
+                            <p style="text-align: right; word-wrap: break-word;">
                                 {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
                             </p>
                         @endif
                         @if (!empty($print['size_variations']))
-                            <p style="text-align: right;">
+                            <p style="text-align: right; word-wrap: break-word;">
 
                                 {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
                             </p>
