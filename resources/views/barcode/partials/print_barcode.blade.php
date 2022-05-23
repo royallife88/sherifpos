@@ -112,6 +112,14 @@
                     @elseif(!empty($print['name']))
                         <span style="display: block !important">
                             {{ $details['details']->product_actual_name }}
+                            @if (!empty($print['size']) && !empty($details['details']->size_name))
+                                @lang('lang.size'):
+                                {{ $details['details']->size_name }}
+                            @endif
+                            @if (!empty($print['color']) && !empty($details['details']->color_name))
+                                @lang('lang.color'):
+                                {{ $details['details']->color_name }}
+                            @endif
                         </span>
                     @endif
 

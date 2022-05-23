@@ -769,6 +769,8 @@ class ProductUtil extends Util
             ->leftjoin('product_stores AS ps', 'variations.id', '=', 'ps.variation_id')
             ->leftjoin('units', 'variations.unit_id', '=', 'units.id')
             ->leftjoin('grades', 'variations.grade_id', '=', 'grades.id')
+            ->leftjoin('sizes', 'variations.size_id', '=', 'sizes.id')
+            ->leftjoin('colors', 'variations.color_id', '=', 'colors.id')
 
             ->where('variations.id', $variation_id);
 
@@ -795,6 +797,8 @@ class ProductUtil extends Util
             'ps.qty_available',
             'units.name as unit_name',
             'grades.name as grade_name',
+            'sizes.name as size_name',
+            'colors.name as color_name',
             'variations.default_sell_price',
             'variations.id as variation_id',
         )

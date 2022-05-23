@@ -72,6 +72,20 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="i-checks">
+                                            <input id="size" name="size" type="checkbox" checked value="1"
+                                                class="form-control-custom">
+                                            <label for="size"><strong>@lang('lang.size')</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="i-checks">
+                                            <input id="color" name="color" type="checkbox" checked value="1"
+                                                class="form-control-custom">
+                                            <label for="color"><strong>@lang('lang.color')</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="i-checks">
                                             <input id="grade" name="grade" type="checkbox" checked value="1"
                                                 class="form-control-custom">
                                             <label for="grade"><strong>@lang('lang.grade')</strong></label>
