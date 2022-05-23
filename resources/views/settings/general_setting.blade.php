@@ -20,16 +20,7 @@
                     </div>
                     <div class="col-md-3">
                         {!! Form::label('time_format', __('lang.time_format'), []) !!}
-                        {!! Form::select(
-    'time_format',
-    [
-        '12' => '12 hours',
-        '24' => '24
-                    hours',
-    ],
-    !empty($settings['time_format']) ? $settings['time_format'] : null,
-    ['class' => 'form-control selectpicker', 'data-live-search' => 'true'],
-) !!}
+                        {!! Form::select('time_format', ['12' => '12 hours', '24' => '24 hours'], !empty($settings['time_format']) ? $settings['time_format'] : null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true']) !!}
                     </div>
                     <div class="col-md-3">
                         {!! Form::label('timezone', __('lang.timezone'), []) !!}
@@ -66,6 +57,18 @@
                                 </strong></label>
                         </div>
                     </div>
+                    @if(session('system_mode') == 'restaurant')
+                    <div class="col-md-3">
+                        <div class="i-checks">
+                            <input id="enable_the_table_reservation"
+                                name="enable_the_table_reservation" type="checkbox"
+                                @if (!empty($settings['enable_the_table_reservation']) && $settings['enable_the_table_reservation'] == '1') checked @endif value="1" class="form-control-custom">
+                            <label for="enable_the_table_reservation"><strong>
+                                    @lang('lang.enable_the_table_reservation')
+                                </strong></label>
+                        </div>
+                    </div>
+                    @endif
                 </div>
                 <br>
                 <hr>
@@ -85,7 +88,8 @@
                                 @php
                                     $letter_header = !empty($settings['letter_header']) ? $settings['letter_header'] : null;
                                 @endphp
-                                <img style="width: 220px; height: auto" src="{{ asset('uploads/' . $letter_header) }}" alt="">
+                                <img style="width: 220px; height: auto" src="{{ asset('uploads/' . $letter_header) }}"
+                                    alt="">
                             </div>
                         </div>
                     </div>
@@ -106,7 +110,8 @@
                                 @php
                                     $letter_footer = !empty($settings['letter_footer']) ? $settings['letter_footer'] : null;
                                 @endphp
-                                <img style="width: 220px; height: auto" src="{{ asset('uploads/' . $letter_footer) }}" alt="">
+                                <img style="width: 220px; height: auto" src="{{ asset('uploads/' . $letter_footer) }}"
+                                    alt="">
                             </div>
                         </div>
                     </div>

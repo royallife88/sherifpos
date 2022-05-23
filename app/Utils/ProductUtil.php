@@ -767,6 +767,8 @@ class ProductUtil extends Util
     {
         $query = Variation::join('products AS p', 'variations.product_id', '=', 'p.id')
             ->leftjoin('product_stores AS ps', 'variations.id', '=', 'ps.variation_id')
+            ->leftjoin('units', 'variations.unit_id', '=', 'units.id')
+            ->leftjoin('grades', 'variations.grade_id', '=', 'grades.id')
 
             ->where('variations.id', $variation_id);
 
@@ -791,6 +793,8 @@ class ProductUtil extends Util
             'variations.sub_sku',
             'p.barcode_type',
             'ps.qty_available',
+            'units.name as unit_name',
+            'grades.name as grade_name',
             'variations.default_sell_price',
             'variations.id as variation_id',
         )

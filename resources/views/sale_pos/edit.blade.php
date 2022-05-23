@@ -123,7 +123,7 @@
                                                         title="@lang('lang.customer_size')"></button>
                                             </div>
                                         @endif
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <label for="" style="margin-top: 40px;">@lang('lang.customer_type'): <span
                                                     class="customer_type_name"></span></label>
                                         </div>
@@ -142,6 +142,13 @@
                                                     data-target="#non_identifiable_item_modal">@lang('lang.non_identifiable_item')</button>
                                             </div>
                                         @endif
+                                        <div class="col-md-1">
+                                            <button type="button" class="btn btn-danger btn-xs  pull-right"
+                                                style="margin-top: 38px;" id="print_and_draft"><i
+                                                    class="dripicons-print"></i></button>
+                                            <input type="hidden" id="print_and_draft_hidden" name="print_and_draft_hidden"
+                                                value="">
+                                        </div>
                                     </div>
                                     <div class="row table_room_show hide">
                                         <div class="col-md-4">

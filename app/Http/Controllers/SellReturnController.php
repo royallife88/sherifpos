@@ -467,6 +467,9 @@ class SellReturnController extends Controller
                         }
                     }
                 }
+                //deduct employee commission on returned products
+                $this->transactionUtil->deductCommissionForEmployee($sell_transaction);
+
                 if ($request->files) {
                     foreach ($request->file('files', []) as $key => $doc) {
                         $sell_return->addMedia($doc)->toMediaCollection('sell_return');

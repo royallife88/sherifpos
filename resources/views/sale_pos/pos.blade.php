@@ -26,6 +26,8 @@
                                 value="@if (!empty($walk_in_customer)) {{ $walk_in_customer->id }} @endif">
                             <input type="hidden" name="row_count" id="row_count" value="0">
                             <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden" value="">
+                            <input type="hidden" name="enable_the_table_reservation" id="enable_the_table_reservation"
+                                value="{{ App\Models\System::getProperty('enable_the_table_reservation') }}">
                             <div class="row">
                                 <div class="col-md-12 main_settings">
                                     <div class="row">
@@ -126,9 +128,8 @@
                                             </div>
                                         @endif
                                         <div class="col-md-2">
-                                            <label for="customer_type_name"
-                                                style="margin-top: 40px;">@lang('lang.customer_type'): <span
-                                                    class="customer_type_name"></span></label>
+                                            <label for="customer_type_name" style="margin-top: 40px;">@lang('lang.customer_type'):
+                                                <span class="customer_type_name"></span></label>
                                         </div>
                                         <div class="col-md-2">
                                             <label for="customer_balance"
@@ -180,13 +181,12 @@
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                                     class="fa fa-search"></i></button>
                                             <input type="text" name="search_product" id="search_product"
-                                                placeholder="@lang('lang.enter_product_name_to_print_labels')"
-                                                class="form-control ui-autocomplete-input" autocomplete="off">
+                                                placeholder="@lang('lang.enter_product_name_to_print_labels')" class="form-control ui-autocomplete-input"
+                                                autocomplete="off">
                                             @if (isset($weighing_scale_setting['enable']) && $weighing_scale_setting['enable'])
                                                 <button type="button" class="btn btn-default bg-white btn-flat"
                                                     id="weighing_scale_btn" data-toggle="modal"
-                                                    data-target="#weighing_scale_modal"
-                                                    title="@lang('lang.weighing_scale')"><i
+                                                    data-target="#weighing_scale_modal" title="@lang('lang.weighing_scale')"><i
                                                         class="fa fa-balance-scale text-primary fa-lg"></i></button>
                                             @endif
                                             <button type="button" class="btn btn-success btn-lg btn-modal"
@@ -291,12 +291,10 @@
                                                     <b>@lang('lang.discount'): <span class="discount_span">0.00</span></b>
                                                 </div>
                                                 <div class="row">
-                                                    <b>@lang('lang.service'): <span
-                                                            class="service_value_span">0.00</span></b>
+                                                    <b>@lang('lang.service'): <span class="service_value_span">0.00</span></b>
                                                 </div>
                                                 <div class="row">
-                                                    <b>@lang('lang.grand_total'): <span
-                                                            class="final_total_span">0.00</span></b>
+                                                    <b>@lang('lang.grand_total'): <span class="final_total_span">0.00</span></b>
                                                 </div>
                                             </div>
                                         </div>
@@ -310,8 +308,7 @@
                                                         class="btn mr-2 text-white btn-success">@lang('lang.save')</button>
                                                     <button data-method="cash" style="background: #0082ce" type="button"
                                                         class="btn mr-2 payment-btn text-white" data-toggle="modal"
-                                                        data-target="#add-payment"
-                                                        id="cash-btn">@lang('lang.pay_and_close')</button>
+                                                        data-target="#add-payment" id="cash-btn">@lang('lang.pay_and_close')</button>
                                                     <button style="background-color: #d63031" type="button"
                                                         class="btn mr-2 btn-md payment-btn text-white" data-toggle="modal"
                                                         data-target="#discount_modal">@lang('lang.random_discount')</button>
@@ -473,9 +470,7 @@
                     @include('sale_pos.partials.coupon_modal')
                     @include('sale_pos.partials.contact_details_modal')
                     @include('sale_pos.partials.weighing_scale_modal')
-                    @include(
-                        'sale_pos.partials.non_identifiable_item_modal'
-                    )
+                    @include('sale_pos.partials.non_identifiable_item_modal')
                     @include('sale_pos.partials.customer_sizes_modal')
                     @include('sale_pos.partials.sale_note')
 
@@ -515,9 +510,7 @@
                                                     id="power_off_btn"><i class="fa fa-power-off"></i></button></li>
                                             <li class="nav-item"><a id="btnFullscreen" title="Full Screen"><i
                                                         class="dripicons-expand"></i></a></li>
-                                            @include(
-                                                'layouts.partials.notification_list'
-                                            )
+                                            @include('layouts.partials.notification_list')
                                             @php
                                                 $config_languages = config('constants.langs');
                                                 $languages = [];
@@ -610,7 +603,7 @@
                     <div class="modal-dialog modal-xl" role="document" style="max-width: 65%;">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">@lang( 'lang.recent_transactions' )</h4>
+                                <h4 class="modal-title">@lang('lang.recent_transactions')</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
                             </div>
@@ -656,15 +649,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    @include(
-                                        'sale_pos.partials.recent_transactions'
-                                    )
+                                    @include('sale_pos.partials.recent_transactions')
                                 </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
-                                    'lang.close')</button>
+                                <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">@lang('lang.close')</button>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
@@ -676,7 +667,7 @@
                     <div class="modal-dialog" role="document" style="width: 65%">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">@lang( 'lang.draft_transactions' )</h4>
+                                <h4 class="modal-title">@lang('lang.draft_transactions')</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
                             </div>
@@ -709,8 +700,8 @@
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
-                                    'lang.close')</button>
+                                <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">@lang('lang.close')</button>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->
@@ -722,7 +713,7 @@
                     <div class="modal-dialog" role="document" style="width: 65%">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h4 class="modal-title">@lang( 'lang.online_order_transactions' )</h4>
+                                <h4 class="modal-title">@lang('lang.online_order_transactions')</h4>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                                         aria-hidden="true">&times;</span></button>
                             </div>
@@ -744,15 +735,13 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    @include(
-                                        'sale_pos.partials.view_online_order'
-                                    )
+                                    @include('sale_pos.partials.view_online_order')
                                 </div>
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">@lang(
-                                    'lang.close')</button>
+                                <button type="button" class="btn btn-default"
+                                    data-dismiss="modal">@lang('lang.close')</button>
                             </div>
                         </div><!-- /.modal-content -->
                     </div><!-- /.modal-dialog -->

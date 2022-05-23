@@ -92,7 +92,12 @@ $(document).on("click", ".table_action", function () {
         data: {},
         success: function (result) {
             $("#dining_table_action_modal").empty().append(result);
-            $("#dining_table_action_modal").modal("show");
+            let enable_the_table_reservation = $('#enable_the_table_reservation').val();
+            if(enable_the_table_reservation == '1'){
+                $("#dining_table_action_modal").modal("show");
+            }else{
+                $('#table_action_btn').click();
+            }
         },
     });
 });

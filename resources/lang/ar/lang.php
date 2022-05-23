@@ -1235,7 +1235,7 @@ return [
     'rewards' => 'المكافآت',
     'supplier_category' => 'فئة المورد',
     'add_supplier_category' => 'إضافة فئة المورد',
-    'commissioned_employees' => 'الموظفون المكلفون',
+    'commissioned_employees' => ' العملة لـ',
     'shared_commission' => 'العمولة المشتركة',
     'supplier_services' => 'خدمات الموردين',
     'edit_supplier_service' => 'تحرير خدمة المورد',

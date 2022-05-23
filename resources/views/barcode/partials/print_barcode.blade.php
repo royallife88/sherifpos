@@ -1,61 +1,3 @@
-<title>{{__('barcode.print_labels')}}</title>
-<button class="btn btn-success" onclick="window.print()">Print</button>
-<div id="preview_body">
-    @php
-    $loop_count = 0;
-    @endphp
-    @foreach($product_details as $details)
-    @while($details['qty'] > 0)
-
-    <div style="height:@if(!empty($print['name']) && !empty($print['variations']) && $details['details']->is_dummy != 1) 0.85in @else 0.7in @endif !important; line-height: {{$page_height}}in;  display: inline-block;"
-        class="sticker-border text-center">
-        <div style="display:inline-block;vertical-align:middle;line-height:16px !important; font-size: 16px;">
-
-
-            {{-- Product Name --}}
-            @if(!empty($print['name']))
-            <span style="display: block !important">
-                {{$details['details']->product_actual_name}}
-            </span>
-            @endif
-
-            {{-- Variation --}}
-            @if(!empty($print['variations']) && $details['details']->is_dummy != 1)
-            <span style="display: block !important">
-                {{$details['details']->variation_name}}
-            </span>
-
-            @endif
-
-            {{-- Price --}}
-            @if(!empty($print['price']))
-            <b>@lang('lang.price'):</b>
-            {{@num_format($details['details']->default_sell_price)}}
-
-            @endif
-
-            <br>
-            <img class="center-block" style="max-width:90% !important; margin: 0; padding: 0"
-                src="data:image/png;base64,{{DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3,30,array(39, 48, 54), true)}}">
-
-        </div>
-    </div>
-
-
-
-@php
-$details['qty'] = $details['qty'] - 1;
-@endphp
-@endwhile
-@endforeach
-
-</div>
-
-
-<script type="text/javascript">
-
-</script>
-
 <style type="text/css">
     .text-center {
         text-align: center;
@@ -132,4 +74,80 @@ $details['qty'] = $details['qty'] - 1;
         margin-right: 0in;
 
     }
+
 </style>
+
+<title>{{ __('lang.print_labels') }}</title>
+<button class="btn btn-success" onclick="window.print()">@lang('lang.print')</button>
+<div id="preview_body">
+    @php
+        $loop_count = 0;
+    @endphp
+    @foreach ($product_details as $details)
+        @while ($details['qty'] > 0)
+            <div style="height:1in !important; line-height: {{ $page_height }}in;  display: inline-block;"
+                class="sticker-border text-center">
+                <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
+
+                    @if (!empty($print['variations']) && !empty($print['name']))
+                        @if ($details['details']->is_dummy != 1)
+                            <span style="display: block !important">
+                                {{ $details['details']->variation_name }}
+                            </span>
+                        @else
+                            <span style="display: block !important">
+                                {{ $details['details']->product_actual_name }}
+                            </span>
+                        @endif
+                    @elseif(!empty($print['variations']))
+                        @if ($details['details']->is_dummy != 1)
+                            <span style="display: block !important">
+                                {{ $details['details']->variation_name }}
+                            </span>
+                        @else
+                            <span style="display: block !important">
+                                {{ $details['details']->product_actual_name }}
+                            </span>
+                        @endif
+                    @elseif(!empty($print['name']))
+                        <span style="display: block !important">
+                            {{ $details['details']->product_actual_name }}
+                        </span>
+                    @endif
+
+                    {{-- Grade --}}
+                    <span style="display: block !important">
+                        @if (!empty($print['grade']) && !empty($details['details']->grade_name))
+                            @lang('lang.grade'):
+                            {{ $details['details']->grade_name }}
+                        @endif
+                        {{-- Unit --}}
+                        @if (!empty($print['unit']) && !empty($details['details']->unit_name))
+                            @lang('lang.unit'):
+                            {{ $details['details']->unit_name }}
+                        @endif
+                        {{-- Price --}}
+                        @if (!empty($print['price']))
+                            @lang('lang.price'):
+                            {{ @num_format($details['details']->default_sell_price) }}
+                        @endif
+                    </span>
+
+                    <img class="center-block" style="width:250px !important; height: 70px; margin: 0; padding: 0 10px;"
+                        src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}">
+
+                </div>
+            </div>
+
+
+
+            @php
+                $details['qty'] = $details['qty'] - 1;
+            @endphp
+        @endwhile
+    @endforeach
+
+</div>
+
+
+<script type="text/javascript"></script>

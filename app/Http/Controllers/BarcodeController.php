@@ -2,10 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Category;
+use App\Models\Color;
+use App\Models\Customer;
+use App\Models\CustomerType;
+use App\Models\Grade;
 use App\Models\Product;
+use App\Models\ProductClass;
+use App\Models\Size;
+use App\Models\Store;
+use App\Models\Tax;
+use App\Models\Unit;
+use App\Models\User;
 use App\Utils\ProductUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BarcodeController extends Controller
 {
@@ -47,8 +60,35 @@ class BarcodeController extends Controller
     public function create()
     {
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
+        $product_classes = ProductClass::orderBy('name', 'asc')->pluck('name', 'id');
+        $categories = Category::whereNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $sub_categories = Category::whereNotNull('parent_id')->orderBy('name', 'asc')->pluck('name', 'id');
+        $brands = Brand::orderBy('name', 'asc')->pluck('name', 'id');
+        $units = Unit::orderBy('name', 'asc')->pluck('name', 'id');
+        $colors = Color::orderBy('name', 'asc')->pluck('name', 'id');
+        $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
+        $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
+        $taxes_array = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $customer_types = CustomerType::orderBy('name', 'asc')->pluck('name', 'id');
+        $discount_customer_types = Customer::getCustomerTreeArray();
+        $stores  = Store::getDropdown();
+        $users = User::pluck('name', 'id');
 
-        return view('barcode.create')->with(compact('products'));
+        return view('barcode.create')->with(compact(
+            'products',
+            'product_classes',
+            'categories',
+            'sub_categories',
+            'brands',
+            'units',
+            'colors',
+            'sizes',
+            'grades',
+            'taxes_array',
+            'customer_types',
+            'stores',
+            'users',
+        ));
     }
 
     /**
@@ -139,8 +179,8 @@ class BarcodeController extends Controller
             $total_qty = 0;
             foreach ($products as $value) {
                 $details = $this->productUtil->getDetailsFromVariation($value['variation_id'],  null, false);
-                $product_details[] = ['details' => $details, 'qty' => $value['quantity']];
-                $total_qty += $value['quantity'];
+                $product_details[] = ['details' => $details, 'qty' => $this->commonUtil->num_uf($value['quantity'])];
+                $total_qty += $this->commonUtil->num_uf($value['quantity']);
             }
 
             $page_height = null;
@@ -150,12 +190,14 @@ class BarcodeController extends Controller
             $print['name'] = !empty($request->product_name) ? 1 : 0;
             $print['price'] = !empty($request->price) ? 1 : 0;
             $print['variations'] = !empty($request->variations) ? 1 : 0;
+            $print['grade'] = !empty($request->grade) ? 1 : 0;
+            $print['unit'] = !empty($request->unit) ? 1 : 0;
 
 
             $output = view('barcode.partials.print_barcode')
                 ->with(compact('print', 'product_details',  'page_height'))->render();
         // } catch (\Exception $e) {
-        //     \Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+        //     Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
         //     $output = __('lang.something_went_wrong');
         // }

@@ -382,6 +382,53 @@ class TransactionUtil extends Util
         return true;
     }
 
+
+
+    /**
+     * deduct commission for employee
+     *
+     * @return void
+     */
+    public function deductCommissionForEmployee($transaction)
+    {
+        $commissioned_employees = $transaction->commissioned_employees;
+        $sell_product_ids = $transaction->transaction_sell_lines->pluck('product_id')->toArray();
+        $employee_count = count($commissioned_employees);
+        foreach ($commissioned_employees as $commissioned_employee) {
+            $employee = Employee::find($commissioned_employee);
+            $commissioned_products = $employee->commissioned_products;
+            $commission_total = 0;
+            if (!empty($employee->commission)) {
+                foreach ($commissioned_products as $commissioned_product) {
+                    if (in_array($commissioned_product, $sell_product_ids)) {
+                        $sell_line = TransactionSellLine::where('transaction_id', $transaction->id)->where('quantity_returned', '>', 0)->where('product_id', $commissioned_product)->first();
+                        if(!empty($sell_line)){
+                            if ($employee->commission_type == 'sales') {
+                                $total_amount = $sell_line->sub_total * ($employee->commission_value / 100);
+                                $commission_total += ($total_amount / $sell_line->quantity) * $sell_line->quantity_returned;
+                            }
+                            if ($employee->commission_type == 'profit') {
+                                $profit = $sell_line->sub_total - ($sell_line->product->purchase_price * $sell_line->quantity);
+                                $total_amount = $profit * ($employee->commission_value / 100);
+                                $commission_total += ($total_amount / $sell_line->quantity) * $sell_line->quantity_returned;
+                            }
+                        }
+                    }
+                }
+            }
+            if ($transaction->shared_commission) {
+                $commission_total = $commission_total / $employee_count;
+            }
+
+            if ($commission_total > 0) {
+                $employee_commission = Transaction::where('parent_sale_id', $transaction->id)->where('employee_id', $employee->id)->where('type', 'employee_commission')->first();
+                $commission_value = $employee_commission->grand_total - $commission_total;  //deduct commission for returned products value
+                $employee_commission->update(['final_total' => $commission_value, 'grand_total' => $commission_value]);
+            }
+        }
+    }
+
+
     /**
      * Updates reward point of a customer
      *
