@@ -44,12 +44,21 @@ $(document).ready(function () {
             $("form#preview_setting_form table#product_table tbody tr").length >
             0
         ) {
-            var url =
-                base_path +
-                "/barcode/print-barcode?" +
-                $("form#preview_setting_form").serialize();
+            $("#preview_setting_form").validate({
+                rules: {
+                    free_text: {
+                        maxlength: 60,
+                    },
+                },
+            });
+            if ($("#preview_setting_form").valid()) {
+                var url =
+                    base_path +
+                    "/barcode/print-barcode?" +
+                    $("form#preview_setting_form").serialize();
 
-            window.open(url, "newwindow");
+                window.open(url, "newwindow");
+            }
         } else {
             swal("No product selected.").then((value) => {
                 $("#search_product_for_label").focus();

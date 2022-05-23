@@ -63,13 +63,7 @@
                                             <label for="price"><strong>@lang('lang.price')</strong></label>
                                         </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <div class="i-checks">
-                                            <input id="variations" name="variations" type="checkbox" checked value="1"
-                                                class="form-control-custom">
-                                            <label for="variations"><strong>@lang('lang.variations')</strong></label>
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-4">
                                         <div class="i-checks">
                                             <input id="size" name="size" type="checkbox" checked value="1"
@@ -99,9 +93,41 @@
                                         </div>
                                     </div>
                                     <div class="col-md-4">
+                                        <div class="i-checks">
+                                            <input id="size_variations" name="size_variations" type="checkbox" checked value="1"
+                                                class="form-control-custom">
+                                            <label for="size_variations"><strong>@lang('lang.size') @lang('lang.variations')</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="i-checks">
+                                            <input id="color_variations" name="color_variations" type="checkbox" checked value="1"
+                                                class="form-control-custom">
+                                            <label for="color_variations"><strong>@lang('lang.color') @lang('lang.variations')</strong></label>
+                                        </div>
+                                    </div>
+                                    @foreach ($stores as $key => $store)
+                                        <div class="col-md-4">
+                                            <div class="i-checks">
+                                                <input id="store{{ $key }}" name="store[{{ $key }}]" type="checkbox" value="{{ $key }}" @if($loop->index == 0 ) checked @endif
+                                                    class="form-control-custom">
+                                                <label for="store{{ $key }}"><strong>{{ $store }}</strong></label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                    <div class="col-md-4">
+                                        <div class="i-checks">
+                                            <input id="site_title" name="site_title" type="checkbox" checked value="1"
+                                                class="form-control-custom">
+                                            <label
+                                                for="site_title"><strong>{{ App\Models\System::getProperty('site_title') }}</strong></label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="">@lang('lang.text')</label>
-                                            <input class="form-control" type="text" name="free_text" id="free_text" value="">
+                                            <input class="form-control" type="text" name="free_text" id="free_text"
+                                                value="">
                                         </div>
                                     </div>
                                 </div>
@@ -154,12 +180,6 @@
 
         $(document).on('click', '.remove_row', function() {
             $(this).closest('tr').remove();
-        });
-        $(document).on('keyup', '#free_text', function() {
-            let free_text = $(this).val();
-            if (free_text.length > 60) {
-                swal('@lang('lang.warning')', 'Free text should be less than 60 characters', 'warning');
-            }
         });
     </script>
 @endsection

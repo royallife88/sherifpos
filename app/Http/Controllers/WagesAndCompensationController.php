@@ -442,12 +442,30 @@ class WagesAndCompensationController extends Controller
                         ->where('status', 'final');
 
                     if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
-                        $sold_query->where('transactions.transaction_date', '>=', request()->acount_period_start_date);
-                        $sold_query->where('transactions.transaction_date', '<=', request()->acount_period_end_date);
+                        $sold_query->whereDate('transactions.transaction_date', '>=', request()->acount_period_start_date);
+                        $sold_query->whereDate('transactions.transaction_date', '<=', request()->acount_period_end_date);
                     }
 
                     $sold_value = $sold_query->sum('final_total');
                 }
+
+                if ($employee->commission_type == 'profit') {
+                    $sold_query = Transaction::leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                        ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                        ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                        ->where('transactions.type', 'sell')
+                        ->whereIn('customer_types.id', $employee->commission_customer_types)
+                        ->where('status', 'final');
+
+                    if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
+                        $sold_query->whereDate('transactions.transaction_date', '>=', request()->acount_period_start_date);
+                        $sold_query->whereDate('transactions.transaction_date', '<=', request()->acount_period_end_date);
+                    }
+
+                    $profit = $sold_query->select(DB::raw('SUM(transaction_sell_lines.sell_price * transaction_sell_lines.quantity - transaction_sell_lines.purchase_price * transaction_sell_lines.quantity) as sold_value'))->first();
+                    $sold_value = $profit->sold_value ?? 0;
+                }
+                print_r($sold_value); die();
                 //TODO:: calculate the commission for profit
                 $commission_value = $employee->commission_value;
                 $amount = $this->commonUtil->calc_percentage($sold_value, $commission_value);

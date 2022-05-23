@@ -89,38 +89,23 @@
                 class="sticker-border text-center">
                 <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
 
-                    @if (!empty($print['variations']) && !empty($print['name']))
-                        @if ($details['details']->is_dummy != 1)
-                            <span style="display: block !important">
-                                {{ $details['details']->variation_name }}
-                            </span>
-                        @else
-                            <span style="display: block !important">
-                                {{ $details['details']->product_actual_name }}
-                            </span>
-                        @endif
-                    @elseif(!empty($print['variations']))
-                        @if ($details['details']->is_dummy != 1)
-                            <span style="display: block !important">
-                                {{ $details['details']->variation_name }}
-                            </span>
-                        @else
-                            <span style="display: block !important">
-                                {{ $details['details']->product_actual_name }}
-                            </span>
-                        @endif
-                    @elseif(!empty($print['name']))
-                        <span style="display: block !important">
-                            {{ $details['details']->product_actual_name }}
+                    <p class="text-center" style="padding: 0px !important; margin: 0px;">
+                        @if (!empty($print['name']))
                             @if (!empty($print['size']) && !empty($details['details']->size_name))
-                                @lang('lang.size'):
-                                {{ $details['details']->size_name }}
+                                {{ str_replace($details['details']->size_name, '', $details['details']->product_actual_name) }}
+                            @elseif (!empty($print['color']) && !empty($details['details']->color_name))
+                                {{ str_replace($details['details']->color_name, '', $details['details']->product_actual_name) }}
+                            @else
+                                {{ $details['details']->product_actual_name }}
                             @endif
                             @if (!empty($print['color']) && !empty($details['details']->color_name))
-                                @lang('lang.color'):
                                 {{ $details['details']->color_name }}
                             @endif
-                        </span>
+                        @endif
+                    </p>
+                    @if (!empty($print['size']) && !empty($details['details']->size_name))
+                        <p style="margin-top: -12px; text-align: right; font-weight: bold; margin-bottom: 0px;">
+                            {{ $details['details']->size_name }}</p>
                     @endif
 
                     {{-- Grade --}}
@@ -151,6 +136,32 @@
                         src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}">
 
                 </div>
+                @if (!empty($print['site_title']))
+                    <p style="margin-top: -18px;margin-bottom: 0px; text-align: left">
+                        {{ $print['site_title'] }}
+                    </p>
+                @endif
+                @if (!empty($print['store']))
+                    <p style="margin-bottom: 0px; text-align: left">
+                        <br>{{ $print['store'] }}
+                    </p>
+                @endif
+                @php
+                    $product = App\Models\Product::where('id', $details['details']->product_id)
+                        ->with(['colors', 'sizes'])
+                        ->first();
+                @endphp
+                @if (!empty($print['color_variations']))
+                    <p style="margin-top: -18px;margin-bottom: 0px; text-align: right;">
+                        {{ implode(', ', $product->sizes->pluck('name')->toArray()) }}
+                    </p>
+                @endif
+                @if (!empty($print['size_variations']))
+                    <p style="margin-bottom: 0px; text-align: right;">
+
+                        {{ implode(', ', $product->colors->pluck('name')->toArray()) }}
+                    </p>
+                @endif
             </div>
 
 

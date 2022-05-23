@@ -83,11 +83,11 @@ class Product extends Model implements HasMedia
     }
     public function colors()
     {
-        return $this->belongsToJson(Color::class, 'multiple_colors');
+        return $this->hasManyThrough(Color::class, Variation::class, 'product_id', 'id', 'id', 'color_id');
     }
     public function sizes()
     {
-        return $this->belongsToJson(Size::class, 'multiple_sizes');
+        return $this->hasManyThrough(Size::class, Variation::class, 'product_id', 'id', 'id', 'size_id');
     }
     public function grades()
     {

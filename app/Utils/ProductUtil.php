@@ -800,7 +800,7 @@ class ProductUtil extends Util
             'sizes.name as size_name',
             'colors.name as color_name',
             'variations.default_sell_price',
-            'variations.id as variation_id',
+            'variations.id as variation_id'
         )
             ->first();
 

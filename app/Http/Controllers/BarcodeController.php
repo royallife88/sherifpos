@@ -12,6 +12,7 @@ use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\Size;
 use App\Models\Store;
+use App\Models\System;
 use App\Models\Tax;
 use App\Models\Unit;
 use App\Models\User;
@@ -172,33 +173,43 @@ class BarcodeController extends Controller
     public function printBarcode(Request $request)
     {
         // try {
-            $products = $request->get('products');
+        $products = $request->get('products');
 
 
-            $product_details = [];
-            $total_qty = 0;
-            foreach ($products as $value) {
-                $details = $this->productUtil->getDetailsFromVariation($value['variation_id'],  null, false);
-                $product_details[] = ['details' => $details, 'qty' => $this->commonUtil->num_uf($value['quantity'])];
-                $total_qty += $this->commonUtil->num_uf($value['quantity']);
+        $product_details = [];
+        $total_qty = 0;
+        foreach ($products as $value) {
+            $details = $this->productUtil->getDetailsFromVariation($value['variation_id'],  null, false);
+            $product_details[] = ['details' => $details, 'qty' => $this->commonUtil->num_uf($value['quantity'])];
+            $total_qty += $this->commonUtil->num_uf($value['quantity']);
+        }
+
+        $page_height = null;
+        $rows = ceil($total_qty / 3) + 0.4;
+        $page_height = $request->paper_size;
+
+        $print['name'] = !empty($request->product_name) ? 1 : 0;
+        $print['price'] = !empty($request->price) ? 1 : 0;
+        $print['variations'] = !empty($request->variations) ? 1 : 0;
+        $print['size'] = !empty($request->size) ? 1 : 0;
+        $print['color'] = !empty($request->color) ? 1 : 0;
+        $print['grade'] = !empty($request->grade) ? 1 : 0;
+        $print['unit'] = !empty($request->unit) ? 1 : 0;
+        $print['size_variations'] = !empty($request->size_variations) ? 1 : 0;
+        $print['color_variations'] = !empty($request->color_variations) ? 1 : 0;
+        $print['site_title'] = !empty($request->site_title) ? System::getProperty('site_title') : null;
+        $store = '';
+        if (!empty($request->store)) {
+            foreach ($request->store as $store_id) {
+                $store .= !empty($store_id) ? Store::where('id', $store_id)->first()->name . ' ' : null;
             }
-
-            $page_height = null;
-            $rows = ceil($total_qty / 3) + 0.4;
-            $page_height = $request->paper_size;
-
-            $print['name'] = !empty($request->product_name) ? 1 : 0;
-            $print['price'] = !empty($request->price) ? 1 : 0;
-            $print['variations'] = !empty($request->variations) ? 1 : 0;
-            $print['size'] = !empty($request->size) ? 1 : 0;
-            $print['color'] = !empty($request->color) ? 1 : 0;
-            $print['grade'] = !empty($request->grade) ? 1 : 0;
-            $print['unit'] = !empty($request->unit) ? 1 : 0;
-            $print['free_text'] = !empty($request->free_text) ? $request->free_text : null;
+        }
+        $print['store'] = !empty($store) ? $store : null;
+        $print['free_text'] = !empty($request->free_text) ? $request->free_text : null;
 
 
-            $output = view('barcode.partials.print_barcode')
-                ->with(compact('print', 'product_details',  'page_height'))->render();
+        $output = view('barcode.partials.print_barcode')
+            ->with(compact('print', 'product_details',  'page_height'))->render();
         // } catch (\Exception $e) {
         //     Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
