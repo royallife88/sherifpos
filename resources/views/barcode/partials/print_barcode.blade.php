@@ -85,7 +85,7 @@
     @endphp
     @foreach ($product_details as $details)
         @while ($details['qty'] > 0)
-            <div style="height:1in !important; line-height: {{ $page_height }}in;  display: inline-block;"
+            <div style="height:1.2in !important; line-height: {{ $page_height }}in;  display: inline-block;"
                 class="sticker-border text-center">
                 <div style="display:inline-block;vertical-align:middle;line-height:14px !important; font-size: 14px;">
 
@@ -140,6 +140,12 @@
                             {{ @num_format($details['details']->default_sell_price) }}
                         @endif
                     </span>
+
+                    @if (!empty($print['free_text']))
+                        <span style="display: block !important">
+                            {{ $print['free_text'] }}
+                        </span>
+                    @endif
 
                     <img class="center-block" style="width:250px !important; height: 70px; margin: 0; padding: 0 10px;"
                         src="data:image/png;base64,{{ DNS1D::getBarcodePNG($details['details']->sub_sku, $details['details']->barcode_type, 3, 30, [39, 48, 54], true) }}">

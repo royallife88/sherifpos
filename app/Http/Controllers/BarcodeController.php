@@ -171,7 +171,7 @@ class BarcodeController extends Controller
 
     public function printBarcode(Request $request)
     {
-        try {
+        // try {
             $products = $request->get('products');
 
 
@@ -194,15 +194,16 @@ class BarcodeController extends Controller
             $print['color'] = !empty($request->color) ? 1 : 0;
             $print['grade'] = !empty($request->grade) ? 1 : 0;
             $print['unit'] = !empty($request->unit) ? 1 : 0;
+            $print['free_text'] = !empty($request->free_text) ? $request->free_text : null;
 
 
             $output = view('barcode.partials.print_barcode')
                 ->with(compact('print', 'product_details',  'page_height'))->render();
-        } catch (\Exception $e) {
-            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+        // } catch (\Exception $e) {
+        //     Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
 
-            $output = __('lang.something_went_wrong');
-        }
+        //     $output = __('lang.something_went_wrong');
+        // }
 
         return $output;
     }

@@ -98,6 +98,12 @@
                                             <label for="unit"><strong>@lang('lang.unit')</strong></label>
                                         </div>
                                     </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="">@lang('lang.text')</label>
+                                            <input class="form-control" type="text" name="free_text" id="free_text" value="">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -148,6 +154,12 @@
 
         $(document).on('click', '.remove_row', function() {
             $(this).closest('tr').remove();
+        });
+        $(document).on('keyup', '#free_text', function() {
+            let free_text = $(this).val();
+            if (free_text.length > 60) {
+                swal('@lang('lang.warning')', 'Free text should be less than 60 characters', 'warning');
+            }
         });
     </script>
 @endsection

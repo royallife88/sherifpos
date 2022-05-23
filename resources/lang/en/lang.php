@@ -1255,4 +1255,5 @@ return [
     'closing_date_and_time' => 'Closing Date and Time',
     'enable_the_table_reservation' => 'Enable the table reservation',
 
+    'text' => 'Text',
 ];
