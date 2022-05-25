@@ -71,7 +71,7 @@ class SellReturnController extends Controller
             $default_currency_id = System::getProperty('currency');
 
             $query = Transaction::leftjoin('transactions as sell_parent', 'transactions.return_parent_id', 'sell_parent.id')
-                ->leftjoin('customers', 'transactions.return_parent_id', 'sell_parent.id')
+                ->leftjoin('customers', 'sell_parent.customer_id', 'customers.id')
                 ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('transactions.type', 'sell_return');
 
