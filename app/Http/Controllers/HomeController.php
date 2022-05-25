@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashRegisterTransaction;
 use App\Models\Employee;
 use App\Models\GiftCard;
 use App\Models\Leave;

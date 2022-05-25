@@ -100,6 +100,7 @@ class SupplierController extends Controller
                 'address' => ['nullable', 'max:60'],
                 'city' => ['nullable', 'max:30'],
                 'state' => ['nullable', 'max:30'],
+                'country' => ['nullable', 'max:30'],
                 'postal_code' => ['nullable', 'max:30']
             ]
         );
@@ -265,6 +266,7 @@ class SupplierController extends Controller
                 'address' => ['nullable', 'max:60'],
                 'city' => ['nullable', 'max:30'],
                 'state' => ['nullable', 'max:30'],
+                'country' => ['nullable', 'max:30'],
                 'postal_code' => ['nullable', 'max:30']
             ]
         );

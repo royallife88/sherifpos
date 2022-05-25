@@ -3,7 +3,7 @@
         <div class="form-group">
             {!! Form::label('supplier_category_id', __('lang.category') . ':*') !!}
             <div class="input-group my-group">
-                {!! Form::select('supplier_category_id', $supplier_categories, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'supplier_category_id']) !!}
+                {!! Form::select('supplier_category_id', $supplier_categories, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
                 <span class="input-group-btn">
                     @can('product_module.product_class.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -83,7 +83,7 @@
     <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('country    ', __('lang.country') . ':') !!}
-            {!! Form::text('country ', null, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
+            {!! Form::text('country ', null, ['class' => 'form-control', 'placeholder' => __('lang.country')]) !!}
         </div>
     </div>
 </div>

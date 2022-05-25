@@ -17,7 +17,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('supplier_category_id', __('lang.category') . ':*') !!}
-                                        {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required', 'id' => 'supplier_category_id']) !!}
+                                        {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
 
                                     </div>
                                 </div>
@@ -90,7 +90,7 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('country ', __('lang.country') . ':') !!}
-                                        {!! Form::text('country ', $supplier->country, ['class' => 'form-control', 'placeholder' => __('lang.balance')]) !!}
+                                        {!! Form::text('country ', $supplier->country, ['class' => 'form-control', 'placeholder' => __('lang.country')]) !!}
                                     </div>
                                 </div>
                             </div>
