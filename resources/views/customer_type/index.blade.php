@@ -35,7 +35,9 @@
                     @endphp
                     @foreach ($customer_type->customer_type_store as $item)
                     @php
-                    $this_stores[] = $stores[$item->store_id];
+                    if(!empty($item->store->name)){
+                        $this_stores[] = $item->store->name;
+                    }
                     @endphp
                     @endforeach
                     {{implode(',' , $this_stores)}}

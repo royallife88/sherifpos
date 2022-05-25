@@ -15,4 +15,9 @@ class CustomerTypeStore extends Model
      * @var array
      */
     protected $guarded = ['id'];
+
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
 }
