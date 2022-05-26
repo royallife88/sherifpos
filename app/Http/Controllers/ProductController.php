@@ -187,6 +187,9 @@ class ProductController extends Controller
             if (!empty(request()->created_by)) {
                 $products->where('products.created_by', request()->created_by);
             }
+            if (request()->active == 1 || request()->active == 0) {
+                $products->where('products.active', request()->active);
+            }
 
             if (!empty(request()->is_raw_material)) {
                 $products->where('is_raw_material', 1);
@@ -260,6 +263,13 @@ class ProductController extends Controller
                 ->addColumn('manufacturing_date', '@if(!empty($manufacturing_date)){{@format_date($manufacturing_date)}}@endif')
                 ->editColumn('discount', '{{@num_format($discount)}}')
                 ->editColumn('default_purchase_price', '{{@num_format($default_purchase_price)}}')
+                ->editColumn('active', function ($row) {
+                    if ($row->active) {
+                        return __('lang.yes');
+                    } else {
+                        return __('lang.no');
+                    }
+                })
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->addColumn('supplier', function ($row) {
                     $query = Transaction::leftjoin('add_stock_lines', 'transactions.id', '=', 'add_stock_lines.transaction_id')

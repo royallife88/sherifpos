@@ -117,6 +117,7 @@ class SupplierController extends Controller
         }
         try {
             $data = $request->except('_token', 'quick_add');
+            $data['products'] = !empty($data['products']) ? $data['products'] : [];
             $data['created_by'] = Auth::user()->id;
 
             DB::beginTransaction();
@@ -126,8 +127,10 @@ class SupplierController extends Controller
                 $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
             }
 
-            foreach ($request->products as $product) {
-                SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
+            if (!empty($request->products)) {
+                foreach ($request->products as $product) {
+                    SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
+                }
             }
 
             $supplier_id = $supplier->id;
@@ -284,6 +287,7 @@ class SupplierController extends Controller
 
         try {
             $data = $request->except('_token', '_method');
+            $data['products'] = !empty($data['products']) ? $data['products'] : [];
 
             DB::beginTransaction();
             $supplier = Supplier::find($id);
@@ -296,10 +300,12 @@ class SupplierController extends Controller
                 $supplier->addMedia($request->image)->toMediaCollection('supplier_photo');
             }
 
-            foreach ($request->products as $product) {
-                SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
+            if (!empty($data['products'])) {
+                foreach ($data['products'] as $product) {
+                    SupplierProduct::updateOrCreate(['supplier_id' => $supplier->id, 'product_id' => $product]);
+                }
             }
-            SupplierProduct::whereNotIn('product_id', $request->products)->where('supplier_id', $supplier->id)->delete();
+            SupplierProduct::whereNotIn('product_id', $data['products'])->where('supplier_id', $supplier->id)->delete();
 
 
             DB::commit();

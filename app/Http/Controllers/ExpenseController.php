@@ -56,6 +56,7 @@ class ExpenseController extends Controller
     public function index()
     {
         $expense_query = Transaction::leftjoin('users', 'transactions.created_by', 'users.id')
+            ->leftjoin('employees', 'transactions.source_id', 'employees.user_id')
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->where('transactions.type', 'expense');
         if (!empty(request()->expense_id)) {
@@ -80,7 +81,10 @@ class ExpenseController extends Controller
             $expense_query->where('expense_beneficiary_id', request()->expense_beneficiary_id);
         }
         if (!empty(request()->store_id)) {
-            $expense_query->where('store_id', request()->store_id);
+            $expense_query->where('transactions.store_id', request()->store_id);
+        }
+        if (!empty(request()->store_paid_id)) {
+            $expense_query->whereJsonContains('employees.store_id', (string) request()->store_paid_id);
         }
         $expenses = $expense_query->select(
             'transactions.*',
@@ -91,10 +95,12 @@ class ExpenseController extends Controller
 
         $expense_categories = ExpenseCategory::pluck('name', 'id');
         $expense_beneficiaries = ExpenseBeneficiary::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id');
 
         return view('expense.index')->with(compact(
             'expenses',
             'expense_categories',
+            'stores',
             'expense_beneficiaries'
         ));
     }

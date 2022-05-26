@@ -749,6 +749,7 @@ class SellPosController extends Controller
     {
         $query = Product::leftjoin('variations', 'products.id', 'variations.product_id')
             ->leftjoin('product_stores', 'variations.id', 'product_stores.variation_id')
+            ->where('products.active', 1)
             ->where('is_raw_material', 0);
 
         if (!empty($request->product_class_id)) {

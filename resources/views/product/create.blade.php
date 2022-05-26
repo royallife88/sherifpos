@@ -66,6 +66,12 @@
         $(document).ready(function() {
             $('#discount_customer_types').selectpicker('selectAll');
             $('#category_id').change();
+
+            if($('#is_service').prop('checked')){
+                $('.supplier_div').removeClass('hide');
+            }else{
+                $('.supplier_div').addClass('hide');
+            }
         });
     </script>
 @endsection
