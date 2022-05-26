@@ -187,7 +187,7 @@ class ProductController extends Controller
             if (!empty(request()->created_by)) {
                 $products->where('products.created_by', request()->created_by);
             }
-            if (request()->active == 1 || request()->active == 0) {
+            if (request()->active == '1' || request()->active == '0') {
                 $products->where('products.active', request()->active);
             }
 
