@@ -104,7 +104,7 @@
                                                     @if (!empty($brands) && $brands->count() > 0)
                                                     @include('product_classification_tree.partials.brand_inner_part',
                                                     ['brands' => $brands, 'product_class_id' => $class->id,
-                                                    'category_id' => $category->id])
+                                                    'category_id' => $category->id, 'category_id' => $category->id])
                                                     @endif
                                                     @foreach ($sub_categories as $sub_category)
                                                     <div class="accordion"
@@ -147,7 +147,7 @@
                                                                     @if (!empty($brands) && $brands->count() > 0)
                                                                     @include('product_classification_tree.partials.brand_inner_part',
                                                                     ['brands' => $brands, 'product_class_id' =>
-                                                                    $class->id, 'sub_category_id' => $sub_category->id])
+                                                                    $class->id, 'category_id' => $category->id, 'sub_category_id' => $sub_category->id])
                                                                     @endif
                                                                 </div>
                                                             </div>

@@ -55,7 +55,7 @@
                                         {!! Form::select('product_class_id', $product_classes, $product->product_class_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                         <span class="input-group-btn">
                                             @can('product_module.product_class.create_and_edit')
-                                                <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                     data-href="{{ action('ProductClassController@create') }}?quick_add=1"
                                                     data-container=".view_modal"><i
                                                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -71,7 +71,7 @@
                                             {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button  type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('CategoryController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -86,7 +86,7 @@
                                             {!! Form::select('sub_category_id', $sub_categories, $product->sub_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.sub_category.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button  type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('CategoryController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -101,7 +101,7 @@
                                             {!! Form::select('brand_id', $brands, $product->brand_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.brand.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('BrandController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -117,7 +117,7 @@
                                         <div class="input-group my-group">
                                             {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                                             <span class="input-group-btn">
-                                                <button class="btn btn-default bg-white btn-flat translation_btn"
+                                                <button type="button" class="btn btn-default bg-white btn-flat translation_btn"
                                                     type="button" data-type="product"><i
                                                         class="dripicons-web text-primary fa-lg"></i></button>
                                             </span>
@@ -145,7 +145,7 @@
                                             {!! Form::select('multiple_units[]', $units, $product->multiple_units, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_units']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.unit.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('UnitController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -159,7 +159,7 @@
                                             {!! Form::select('multiple_colors[]', $colors, $product->multiple_colors, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_colors']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.color.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('ColorController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -174,7 +174,7 @@
                                         {!! Form::select('multiple_sizes[]', $sizes, $product->multiple_sizes, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_sizes']) !!}
                                         <span class="input-group-btn">
                                             @can('product_module.size.create_and_edit')
-                                                <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                     data-href="{{ action('SizeController@create') }}?quick_add=1"
                                                     data-container=".view_modal"><i
                                                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -189,7 +189,7 @@
                                             {!! Form::select('multiple_grades[]', $grades, $product->multiple_grades, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'disabled' => $product->type == 'variable' ? true : false, 'style' => 'width: 80%', 'multiple', 'id' => 'multiple_grades']) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.grade.create_and_edit')
-                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('GradeController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -334,7 +334,7 @@
                                         {!! Form::select('tax_id', $taxes, $product->tax_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                         <span class="input-group-btn">
                                             @can('product_module.tax.create')
-                                                <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                     data-href="{{ action('TaxController@create') }}?quick_add=1"
                                                     data-container=".view_modal"><i
                                                         class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -485,7 +485,7 @@
                             <div class="row">
                                 <div class="col-md-4 mt-5">
                                     <div class="form-group">
-                                        <input type="submit" id="submit-btn" value="{{ trans('lang.submit') }}"
+                                        <input type="button" id="submit-btn" value="@lang('lang.submit')"
                                             class="btn btn-primary">
                                     </div>
                                 </div>

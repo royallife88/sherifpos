@@ -133,8 +133,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                             @if (!empty($brands) && $brands->count() > 0)
                                                             @include('product_classification_tree.partials.brand_inner_part_pst',
                                                             ['brands' => $brands, 'brand_selected' => $brand_selected,
-                                                            'product_class_id' => $class->id, 'category_id' =>
-                                                            $category->id])
+                                                            'product_class_id' => $class->id, 'category_id' => $category->id])
                                                             @endif
                                                             @foreach ($sub_categories as $sub_category)
                                                             <div class="accordion"
@@ -181,7 +180,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                             @include('product_classification_tree.partials.brand_inner_part_pst',
                                                                             ['brands' => $brands, 'brand_selected' =>
                                                                             $brand_selected, 'product_class_id' =>
-                                                                            $class->id, 'sub_category_id' =>
+                                                                            $class->id, 'category_id' => $category->id, 'sub_category_id' =>
                                                                             $sub_category->id])
                                                                             @endif
                                                                         </div>

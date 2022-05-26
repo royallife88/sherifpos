@@ -149,10 +149,8 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                                 [
                                                                                     'brands' => $brands,
                                                                                     'brand_selected' => $brand_selected,
-                                                                                    'product_class_id' =>
-                                                                                        $class->id,
-                                                                                    'category_id' =>
-                                                                                        $category->id,
+                                                                                    'product_class_id' => $class->id,
+                                                                                    'category_id' => $category->id,
                                                                                 ]
                                                                             )
                                                                         @endif
@@ -203,10 +201,9 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                                                                     [
                                                                                                         'brands' => $brands,
                                                                                                         'brand_selected' => $brand_selected,
-                                                                                                        'product_class_id' =>
-                                                                                                            $class->id,
-                                                                                                        'sub_category_id' =>
-                                                                                                            $sub_category->id,
+                                                                                                        'product_class_id' => $class->id,
+                                                                                                        'sub_category_id' => $sub_category->id,
+                                                                                                        'category_id' => $category->id,
                                                                                                     ]
                                                                                                 )
                                                                                             @endif

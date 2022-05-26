@@ -1,5 +1,5 @@
 @foreach ($brands as $brand)
-<div class="accordion" id="{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
+<div class="accordion" id="{{@replace_space($product_class_id . '_' . $category_id . '_brand_'.$brand->name.'_'.$i)}}"
     style="margin-left: 20px;">
     <div class="accordion-group  brand_level level">
         <div class="row">
@@ -8,9 +8,9 @@
             class="my-new-checkbox">
             <div class="accordion-heading" style="width: 80%">
                 <a class="accordion-toggle" data-toggle="collapse"
-                    data-id="{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
-                    data-parent="#{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
-                    href="#collapse{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}">
+                    data-id="{{@replace_space($product_class_id . '_' . $category_id . '_brand_'.$brand->name.'_'.$i)}}"
+                    data-parent="#{{@replace_space($product_class_id . '_' . $category_id . '_brand_'.$brand->name.'_'.$i)}}"
+                    href="#collapse{{@replace_space($product_class_id . '_' . $category_id . '_brand_'.$brand->name.'_'.$i)}}">
                     <i
                         class="fa fa-angle-right angle-class-{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"></i>
                     {{$brand->name}}
@@ -18,7 +18,7 @@
                 </a>
             </div>
         </div>
-        <div id="collapse{{@replace_space($product_class_id . '_brand_'.$brand->name.'_'.$i)}}"
+        <div id="collapse{{@replace_space($product_class_id . '_' . $category_id . '_brand_'.$brand->name.'_'.$i)}}"
             class="accordion-body collapse in">
             <div class="accordion-inner">
                 @php

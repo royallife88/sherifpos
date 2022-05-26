@@ -43,7 +43,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
             {!! Form::select('product_class_id', $product_classes, !empty($recent_product) ? $recent_product->product_class_id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'required']) !!}
             <span class="input-group-btn">
                 @can('product_module.product_class.create_and_edit')
-                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                         data-href="{{ action('ProductClassController@create') }}?quick_add=1"
                         data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
                 @endcan
