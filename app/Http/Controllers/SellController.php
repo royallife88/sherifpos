@@ -261,7 +261,7 @@ class SellController extends Controller
                     }
                 })
                 ->addColumn('commissions', function ($row) {
-                    $commissions = Transaction::where('parent_sale_id', $row->id)->get();
+                    $commissions = Transaction::where('parent_sale_id', $row->id)->where('type', 'employee_commission')->get();
                     $total = 0;
                     foreach ($commissions as $commission) {
                         $total +=  $commission->final_total;

@@ -117,7 +117,7 @@ class CashRegisterUtil extends Util
      *
      * @return boolean
      */
-    public function addPayments($transaction, $payment, $type = 'credit', $user_id = null)
+    public function addPayments($transaction, $payment, $type = 'credit', $user_id = null, $transaction_payment_id = null)
     {
         if (empty($user_id)) {
             $user_id = auth()->user()->id;
@@ -132,7 +132,8 @@ class CashRegisterUtil extends Util
                     'pay_method' => $payment['method'],
                     'type' => $type,
                     'transaction_type' => $transaction->type,
-                    'transaction_id' => $transaction->id
+                    'transaction_id' => $transaction->id,
+                    'transaction_payment_id' => $transaction_payment_id
                 ]);
 
                 return true;
@@ -143,7 +144,8 @@ class CashRegisterUtil extends Util
                     'pay_method' =>  $payment['method'],
                     'type' => $type,
                     'transaction_type' => $transaction->type,
-                    'transaction_id' => $transaction->id
+                    'transaction_id' => $transaction->id,
+                    'transaction_payment_id' => $transaction_payment_id
                 ]);
                 return true;
             }
@@ -153,7 +155,8 @@ class CashRegisterUtil extends Util
                 'pay_method' => $payment['method'],
                 'type' => $type,
                 'transaction_type' => $transaction->type,
-                'transaction_id' => $transaction->id
+                'transaction_id' => $transaction->id,
+                'transaction_payment_id' => $transaction_payment_id
             ]);
         }
 
@@ -214,6 +217,126 @@ class CashRegisterUtil extends Util
         $cash_register_transaction->save();
         $cash_register_transaction_out->transaction_id = $transaction->id;
         $cash_register_transaction_out->save();
+
+        return true;
+    }
+    /**
+     * Adds sell payments to currently opened cash register
+     *
+     * @param object/int $transaction
+     * @param array $payments
+     *
+     * @return boolean
+     */
+    public function updateSellPaymentsBasedOnPaymentDate($transaction, $payments)
+    {
+        $transaction = Transaction::find($transaction->id);
+        $opened_register =  CashRegister::where('user_id', $transaction->created_by)
+            ->where('status', 'open')
+            ->first();
+        if ($transaction->status == 'final') {
+            $payment_methods = [
+                'cash',
+                'card',
+                'cheque',
+                'bank_transfer',
+
+            ];
+
+            $prev_payments = CashRegisterTransaction::where('transaction_id', $transaction->id)
+                ->select(
+                    DB::raw("SUM(IF(pay_method='cash', IF(type='credit', amount, -1 * amount), 0)) as total_cash"),
+                    DB::raw("SUM(IF(pay_method='card', IF(type='credit', amount, -1 * amount), 0)) as total_card"),
+                    DB::raw("SUM(IF(pay_method='cheque', IF(type='credit', amount, -1 * amount), 0)) as total_cheque"),
+                    DB::raw("SUM(IF(pay_method='bank_transfer', IF(type='credit', amount, -1 * amount), 0)) as total_bank_transfer")
+                )->first();
+            if (!empty($prev_payments)) {
+                foreach ($payment_methods as $payment_method) {
+                    $total_query = CashRegisterTransaction::where('transaction_id', $transaction->id)
+                        ->where('pay_method', $payment_method)
+                        ->select(
+                            DB::raw("SUM(IF(type='credit', amount, -1 * amount)) as total"),
+                            'cash_register_id',
+                            'transaction_payment_id',
+                        )->first();
+                    $payment_diffs[$payment_method] = [
+                        'value' => $total_query->total ?? 0,
+                        'transaction_payment_id' => $total_query->transaction_payment_id ?? null,
+                        'cash_register_id' => $total_query->cash_register_id ?? null
+                    ];
+                }
+
+                foreach ($payments as $payment) {
+                    $amount = $this->num_uf($payment['amount']);
+                    $change_amount = !empty($payment['change_amount']) ? $this->num_uf($payment['change_amount']) : 0;
+                    $amount = $amount - $change_amount;
+                    $payment_diffs[$payment['method']]['transaction_payment_id'] = $payment['transaction_payment_id'];
+                    $payment_diffs[$payment['method']]['new_cash_register_id'] = !empty($payment['cash_register_id']) ? $payment['cash_register_id'] : null;
+                    if (isset($payment['is_return']) && $payment['is_return'] == 1) {
+                        $payment_diffs[$payment['method']]['value'] = $payment_diffs[$payment['method']]['value'] + $this->num_uf($amount);
+                    } else {
+                        if (!empty($payment['cash_register_id']) && $payment['cash_register_id'] != $payment_diffs[$payment['method']]['cash_register_id']) {
+                            $payment_diffs[$payment['method']]['value'] = $this->num_uf($amount);
+                        } else {
+                            $payment_diffs[$payment['method']]['value'] = $payment_diffs[$payment['method']]['value'] - $this->num_uf($amount);
+                        }
+                    }
+                }
+
+                $payments_formatted = [];
+                foreach ($payment_diffs as $key => $value) {
+                    if ($value['value'] > 0) {
+
+                        if (!empty($value['new_cash_register_id']) && $value['new_cash_register_id'] != $value['cash_register_id']) {
+                            $register = CashRegister::find($value['new_cash_register_id']);
+
+                            $payments_formatted[] = CashRegisterTransaction::create([
+                                'amount' => $value['value'],
+                                'pay_method' => $key,
+                                'type' => 'credit',
+                                'transaction_type' => 'sell',
+                                'transaction_id' => $transaction->id,
+                                'transaction_payment_id' => $value['transaction_payment_id'],
+                                'cash_register_id' => $register->id,
+                            ]);
+                        }
+                        $payments_formatted[] = CashRegisterTransaction::create([
+                            'amount' => $value['value'],
+                            'pay_method' => $key,
+                            'type' => 'debit',
+                            'transaction_type' => 'refund',
+                            'transaction_id' => $transaction->id,
+                            'transaction_payment_id' => $value['transaction_payment_id'],
+                            'cash_register_id' => $value['cash_register_id'] ?? $opened_register->id,
+                        ]);
+                    } elseif ($value['value'] < 0) {
+                        if (!empty($value['new_cash_register_id']) && $value['new_cash_register_id'] != $value['cash_register_id']) {
+                            $register = CashRegister::find($value['new_cash_register_id']);
+
+                            $payments_formatted[] = CashRegisterTransaction::create([
+                                'amount' => -1 * $value['value'],
+                                'pay_method' => $key,
+                                'type' => 'debit',
+                                'transaction_type' => 'refund',
+                                'transaction_id' => $transaction->id,
+                                'transaction_payment_id' => $value['transaction_payment_id'],
+                                'cash_register_id' => $register->id,
+                            ]);
+                        }
+
+                        $payments_formatted[] = CashRegisterTransaction::create([
+                            'amount' => -1 * $value['value'],
+                            'pay_method' => $key,
+                            'type' => 'credit',
+                            'transaction_type' => 'sell',
+                            'transaction_id' => $transaction->id,
+                            'transaction_payment_id' => $value['transaction_payment_id'],
+                            'cash_register_id' => $value['cash_register_id'] ?? $opened_register->id,
+                        ]);
+                    }
+                }
+            }
+        }
 
         return true;
     }

@@ -20,7 +20,11 @@
     <div class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
         <div class="form-group">
             {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!} <br>
-            {!! Form::text('paid_on', !empty($payment) ? @format_date($payment->paid_on) : @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'placeholder' => __('lang.payment_date')]) !!}
+            <input type="datetime-local" name="paid_on"
+                value="@if (!empty(!empty($payment))){{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}@else{{ date('Y-m-d\TH:i') }}@endif"
+                class="form-control payment_date">
+            <input type="hidden" name="cash_register_id" class="cash_register_id" value="">
+            {{-- {!! Form::text('paid_on', !empty($payment) ? @format_datetime($payment->paid_on) : @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'placeholder' => __('lang.payment_date')]) !!} --}}
         </div>
     </div>
 
@@ -33,11 +37,7 @@
     <div class="col-md-4 not_cash_fields hide">
         <div class="form-group">
             {!! Form::label('ref_number', __('lang.ref_number') . ':', []) !!} <br>
-            {!! Form::text('ref_number', !empty($payment) ? $payment->ref_number : null, [
-    'class' => 'form-control
-            not_cash',
-    'placeholder' => __('lang.ref_number'),
-]) !!}
+            {!! Form::text('ref_number', !empty($payment) ? $payment->ref_number : null, ['class' => 'form-control not_cash', 'placeholder' => __('lang.ref_number')]) !!}
         </div>
     </div>
     <div class="col-md-4 not_cash_fields hide">
@@ -49,11 +49,7 @@
     <div class="col-md-4 not_cash_fields hide">
         <div class="form-group">
             {!! Form::label('bank_name', __('lang.bank_name') . ':', []) !!} <br>
-            {!! Form::text('bank_name', !empty($payment) ? $payment->bank_name : null, [
-    'class' => 'form-control
-            not_cash',
-    'placeholder' => __('lang.bank_name'),
-]) !!}
+            {!! Form::text('bank_name', !empty($payment) ? $payment->bank_name : null, ['class' => 'form-control not_cash', 'placeholder' => __('lang.bank_name')]) !!}
         </div>
     </div>
     <div class="col-md-4 card_field hide">

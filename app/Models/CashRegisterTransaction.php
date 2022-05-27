@@ -27,4 +27,8 @@ class CashRegisterTransaction extends Model implements HasMedia
     {
         return $this->belongsTo(Transaction::class, 'transaction_id');
     }
+    public function transaction_payment()
+    {
+        return $this->belongsTo(TransactionPayment::class, 'transaction_payment_id');
+    }
 }

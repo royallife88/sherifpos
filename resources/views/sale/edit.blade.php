@@ -320,8 +320,7 @@
 
         $(document).on('change', '.payment_date', function() {
             let payment_date = $(this).val();
-            let payment_row = $(this).closest('.payment_row')
-            console.log(payment_date, 'payment_date');
+            let payment_row = $(this).closest('.payment_row');
 
             $.ajax({
                 method: 'GET',

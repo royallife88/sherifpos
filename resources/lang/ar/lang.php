@@ -450,7 +450,6 @@ return [
     'type_name' => 'أكتب اسم',
     'number_of_days_per_year' => 'عدد الأيام في السنة',
     'amount_to_paid' => 'المبلغ المدفوع',
-    'payment_date' => 'يوم الدفع او الاستحقاق',
     'details' => 'تفاصيل',
     'submit_a_leave' => 'أرسل إجازة',
     'leave_submited' => 'تم ارسال الإحازة ',

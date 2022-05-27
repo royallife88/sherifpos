@@ -122,7 +122,7 @@
                             @foreach ($cr_data as $data)
                                 <td>
                                     @php
-                                        $current_cash = $data['cash_register']->total_cash_sales - $data['cash_register']->total_refund_cash + $data['cash_register']->total_cash_in - $data['cash_register']->total_cash_out - $data['cash_register']->total_purchases - $data['cash_register']->total_expenses - $data['cash_register']->total_wages_and_compensation - $data['cash_register']->total_sell_return;
+                                        $current_cash = $data['cash_register']->total_cash_sales + $data['cash_register']->total_cash_in - $data['cash_register']->total_cash_out - $data['cash_register']->total_purchases - $data['cash_register']->total_expenses - $data['cash_register']->total_wages_and_compensation - $data['cash_register']->total_sell_return;
                                     @endphp
                                     <h6 class="currency_total_row_td currency_total currency_total_{{ $data['currency']['currency_id'] }}"
                                         data-currency_id="{{ $data['currency']['currency_id'] }}"
@@ -136,8 +136,6 @@
                                     </h6>
                                 </td>
                             @endforeach
-                            {{-- <td>{{ @num_format($cash_register->total_cash_sales + $cash_register->total_cash_in - $cash_register->total_cash_out - $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return) }}
-                            </td> --}}
                         </tr>
                     </table>
                 </div>

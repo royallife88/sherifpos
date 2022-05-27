@@ -330,7 +330,7 @@ class SellPosController extends Controller
 
                     $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
                     $transaction = $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
-                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit', null, $transaction_payment->id);
                     if ($payment_data['method'] == 'bank_transfer' || $payment_data['method'] == 'card') {
                         $this->moneysafeUtil->addPayment($transaction, $payment_data, 'credit', $transaction_payment->id);
                     }
@@ -590,6 +590,7 @@ class SellPosController extends Controller
 
         if ($transaction->status != 'draft') {
             if (!empty($request->payments)) {
+                $payment_formated = [];
                 foreach ($request->payments as $payment) {
                     $amount = $this->commonUtil->num_uf($payment['amount']) - $this->commonUtil->num_uf($payment['change_amount']);
                     $old_tp = null;
@@ -614,6 +615,7 @@ class SellPosController extends Controller
                         'amount_to_be_used' => $request->amount_to_be_used,
                         'payment_note' => $request->payment_note,
                         'change_amount' => $payment['change_amount'] ?? 0,
+                        'cash_register_id' => $payment['cash_register_id'] ?? null,
                     ];
                     if ($amount > 0) {
                         $transaction_payment =  $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
@@ -623,8 +625,10 @@ class SellPosController extends Controller
                     if (!empty($transaction_payment)) {
                         $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
                     }
+                    $payment_data['transaction_payment_id'] =  $transaction_payment->id;
+                    $payment_formated[] = $payment_data;
                 }
-                $this->cashRegisterUtil->updateSellPayments($transaction, $request->payments);
+                $this->cashRegisterUtil->updateSellPaymentsBasedOnPaymentDate($transaction, $payment_formated);
             }
 
             if ($request->payment_status == 'pending') {

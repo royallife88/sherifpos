@@ -134,7 +134,7 @@ class TransactionPaymentController extends Controller
 
             $this->transactionUtil->updateTransactionPaymentStatus($transaction->id);
             if ($transaction->type == 'sell') {
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit');
+                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'credit', null, $transaction_payment->id);
 
                 if ($payment_data['method'] == 'bank_transfer' || $payment_data['method'] == 'card') {
                     $this->moneysafeUtil->addPayment($transaction, $payment_data, 'credit', $transaction_payment->id);

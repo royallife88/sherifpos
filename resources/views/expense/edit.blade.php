@@ -45,8 +45,7 @@
                                             {!! Form::select('source_id', $users, $expense->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
                                         </div>
                                     </div>
-                                    <div
-                                        class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
+                                    <div class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
                                         <div class="form-group">
                                             {!! Form::label('transaction_date', __('lang.creation_date') . ':', []) !!} <br>
                                             {!! Form::text('transaction_date', !empty($expense->transaction_date) ? @format_date($expense->transaction_date) : @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'placeholder' => __('lang.payment_date')]) !!}
@@ -163,5 +162,25 @@
                 });
             }
         });
+
+        $(document).on('change', '.payment_date', function() {
+            let payment_date = $(this).val();
+
+            $.ajax({
+                method: 'GET',
+                url: '/cash-register/get-available-cash-register/{{ $expense->created_by }}',
+                data: {
+                    payment_date
+                },
+                success: function(result) {
+                    if (!result.success) {
+                        swal("Error", result.msg, 'error');
+                        $('.cash_register_id').val('')
+                    } else {
+                        $('.cash_register_id').val(result.cash_register.id)
+                    }
+                },
+            });
+        })
     </script>
 @endsection
