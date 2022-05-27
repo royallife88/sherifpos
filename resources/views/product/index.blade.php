@@ -635,5 +635,95 @@
                 });
             });
         @endif
+
+        $(document).on('click', '.delete_product', function(e) {
+            e.preventDefault();
+            swal({
+                title: 'Are you sure?',
+                text: "@lang('lang.all_transactions_related_to_this_product_will_be_deleted')",
+                icon: 'warning',
+            }).then(willDelete => {
+                if (willDelete) {
+                    var check_password = $(this).data('check_password');
+                    var href = $(this).data('href');
+                    var data = $(this).serialize();
+
+                    swal({
+                        title: 'Please Enter Your Password',
+                        content: {
+                            element: "input",
+                            attributes: {
+                                placeholder: "Type your password",
+                                type: "password",
+                                autocomplete: "off",
+                                autofocus: true,
+                            },
+                        },
+                        inputAttributes: {
+                            autocapitalize: 'off',
+                            autoComplete: 'off',
+                        },
+                        focusConfirm: true
+                    }).then((result) => {
+                        if (result) {
+                            $.ajax({
+                                url: check_password,
+                                method: 'POST',
+                                data: {
+                                    value: result
+                                },
+                                dataType: 'json',
+                                success: (data) => {
+
+                                    if (data.success == true) {
+                                        swal(
+                                            'Success',
+                                            'Correct Password!',
+                                            'success'
+                                        );
+
+                                        $.ajax({
+                                            method: 'DELETE',
+                                            url: href,
+                                            dataType: 'json',
+                                            data: data,
+                                            success: function(result) {
+                                                if (result.success ==
+                                                    true) {
+                                                    swal(
+                                                        'Success',
+                                                        result.msg,
+                                                        'success'
+                                                    );
+                                                    setTimeout(() => {
+                                                        location
+                                                            .reload();
+                                                    }, 1500);
+                                                    location.reload();
+                                                } else {
+                                                    swal(
+                                                        'Error',
+                                                        result.msg,
+                                                        'error'
+                                                    );
+                                                }
+                                            },
+                                        });
+
+                                    } else {
+                                        swal(
+                                            'Failed!',
+                                            'Wrong Password!',
+                                            'error'
+                                        )
+
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            });
+        });
     </script>
 @endsection

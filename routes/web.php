@@ -214,7 +214,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('sale-return/add/{id}', 'SellReturnController@add');
     Route::get('sale-return/print/{id}', 'SellReturnController@print');
     Route::resource('sale-return', SellReturnController::class);
-    Route::resource('cash-rgister', CashRegisterController::class);
+    Route::get('cash-register/get-available-cash-register/{user_id}', 'CashRegisterController@getAvailableCashRegister');
+    Route::resource('cash-register', CashRegisterController::class);
     Route::get('purchase-return/add-product-row', 'PurchaseReturnController@addProductRow');
     Route::resource('purchase-return', PurchaseReturnController::class);
 

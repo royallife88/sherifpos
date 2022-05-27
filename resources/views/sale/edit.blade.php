@@ -71,8 +71,8 @@
                                             <button type="button" class="btn btn-secondary btn-lg" id="search_button"><i
                                                     class="fa fa-search"></i></button>
                                             <input type="text" name="search_product" id="search_product"
-                                                placeholder="@lang('lang.enter_product_name_to_print_labels')"
-                                                class="form-control ui-autocomplete-input" autocomplete="off">
+                                                placeholder="@lang('lang.enter_product_name_to_print_labels')" class="form-control ui-autocomplete-input"
+                                                autocomplete="off">
                                         </div>
                                     </div>
                                 </div>
@@ -90,10 +90,9 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @include(
-                                                    'sale.partials.edit_product_row',
-                                                    ['products' => $sale->transaction_sell_lines]
-                                                )
+                                                @include('sale.partials.edit_product_row', [
+                                                    'products' => $sale->transaction_sell_lines,
+                                                ])
                                             </tbody>
                                             <input type="hidden" name="row_count" id="row_count"
                                                 value="{{ $sale->transaction_sell_lines->count() }}">
@@ -261,13 +260,14 @@
                                     </div>
                                     <div class="tac_description_div"><span></span></div>
                                 </div>
-                                <div class="col-md-4 @if(!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif">
+                                <div class="col-md-4 @if (!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif">
                                     <div class="form-group">
                                         {!! Form::label('commissioned_employees', __('lang.commissioned_employees'), []) !!}
                                         {!! Form::select('commissioned_employees[]', $employees, $sale->commissioned_employees, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'multiple', 'id' => 'commissioned_employees']) !!}
                                     </div>
                                 </div>
-                                <div class="col-md-4  @if(!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif @if ($sale->shared_commission != 1) hide @endif shared_commission_div">
+                                <div
+                                    class="col-md-4  @if (!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif @if ($sale->shared_commission != 1) hide @endif shared_commission_div">
                                     <div class="i-checks" style="margin-top: 37px;">
                                         <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
                                             @if ($sale->shared_commission) checked @endif class="form-control-custom">
@@ -316,6 +316,28 @@
                     $('.received_amount').attr('required', true);
                 }
             })
+        });
+
+        $(document).on('change', '.payment_date', function() {
+            let payment_date = $(this).val();
+            let payment_row = $(this).closest('.payment_row')
+            console.log(payment_date, 'payment_date');
+
+            $.ajax({
+                method: 'GET',
+                url: '/cash-register/get-available-cash-register/{{ $sale->created_by }}',
+                data: {
+                    payment_date
+                },
+                success: function(result) {
+                    if (!result.success) {
+                        swal("Error", result.msg, 'error');
+                        $(payment_row).find('.cash_register_id').val('')
+                    } else {
+                        $(payment_row).find('.cash_register_id').val(result.cash_register.id)
+                    }
+                },
+            });
         })
     </script>
 @endsection

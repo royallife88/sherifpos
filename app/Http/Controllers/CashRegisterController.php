@@ -11,6 +11,7 @@ use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -168,5 +169,41 @@ class CashRegisterController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    /**
+     * get cash register for user in date time
+     *
+     * @param int $user_id
+     * @return void
+     */
+    public function getAvailableCashRegister($user_id)
+    {
+
+        if (!empty(request()->payment_date)) {
+
+            $payment_date = Carbon::createFromTimestamp(strtotime(request()->payment_date));
+
+            $cash_register = CashRegister::where('user_id', $user_id)
+                ->where('created_at', '<=', $payment_date)
+                ->where('closed_at', '>=', $payment_date)
+                ->first();
+
+            if (!empty($cash_register)) {
+                $output = [
+                    'success' => true,
+                    'msg' => __('lang.success'),
+                    'cash_register' => $cash_register
+                ];
+
+                return $output;
+            }
+        }
+
+        $output = [
+            'success' => false,
+            'msg' => __('lang.no_session_found_for_this_date_and_time')
+        ];
+        return $output;
     }
 }

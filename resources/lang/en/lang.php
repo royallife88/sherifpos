@@ -1258,4 +1258,7 @@ return [
     'text' => 'Text',
     'default_profit_percentage' => 'Default Profit Percentage',
     'without_%_symbol' => 'without % Symbol',
+    'all_customer_transactions_will_be_deleted' => 'All Customer transactions will be deleted, his due and any other related data.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'All Transactions related to this product will be deleted; stocks, sales, purchases, etc.',
+    'no_session_found_for_this_date_and_time' => 'No session found for this date and time',
 ];

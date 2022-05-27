@@ -87,9 +87,8 @@ class TransactionUtil extends Util
             $transaction_payment->payment_note = !empty($payment_data['payment_note']) ?  $payment_data['payment_note'] : null;
             $transaction_payment->created_by = !empty($payment_data['created_by']) ? $payment_data['created_by'] : Auth::user()->id;
             $transaction_payment->is_return = !empty($payment_data['is_return']) ? 1 : 0;
-            if ($transaction->type == 'expense' || $transaction->type == 'sell_return') {
-                $transaction_payment->paid_on = $payment_data['paid_on'];
-            }
+            $transaction_payment->paid_on = $payment_data['paid_on'];
+
             $transaction_payment->save();
         } else {
             $transaction_payment = null;
@@ -402,7 +401,7 @@ class TransactionUtil extends Util
                 foreach ($commissioned_products as $commissioned_product) {
                     if (in_array($commissioned_product, $sell_product_ids)) {
                         $sell_line = TransactionSellLine::where('transaction_id', $transaction->id)->where('quantity_returned', '>', 0)->where('product_id', $commissioned_product)->first();
-                        if(!empty($sell_line)){
+                        if (!empty($sell_line)) {
                             if ($employee->commission_type == 'sales') {
                                 $total_amount = $sell_line->sub_total * ($employee->commission_value / 100);
                                 $commission_total += ($total_amount / $sell_line->quantity) * $sell_line->quantity_returned;

@@ -16,6 +16,7 @@ use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Transaction;
 use App\Models\User;
+use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -33,17 +34,21 @@ class CustomerController extends Controller
      */
     protected $commonUtil;
     protected $transactionUtil;
+    protected $productUtil;
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param Util $commonUtil
+     * @param TransactionUtil $transactionUtil
+     * @param ProductUtils $productUtil
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
+        $this->productUtil = $productUtil;
     }
 
     /**
@@ -346,7 +351,7 @@ class CustomerController extends Controller
                 ->addColumn('products', function ($row) {
                     $string = '';
                     foreach ($row->transaction_sell_lines as $line) {
-                        $string .= '( ' . $this->commonUtil->num_f($line->quantity) . ')';
+                        $string .= '(' . $this->commonUtil->num_f($line->quantity) . ')';
                         if (!empty($line->product)) {
                         }
                         $string .= $line->product->name;
@@ -641,7 +646,28 @@ class CustomerController extends Controller
     public function destroy($id)
     {
         try {
-            Customer::find($id)->delete();
+            $customer = Customer::find($id);
+            $customer_transactions = Transaction::where('customer_id', $id)->where('type', 'sell')->where('status', 'final')->get();
+
+            foreach ($customer_transactions as $transaction) {
+                $transaction_sell_lines = $transaction->transaction_sell_lines;
+                foreach ($transaction_sell_lines as $transaction_sell_line) {
+                    if ($transaction->status == 'final') {
+                        $product = Product::find($transaction_sell_line->product_id);
+                        if (!$product->is_service) {
+                            $this->productUtil->updateProductQuantityStore($transaction_sell_line->product_id, $transaction_sell_line->variation_id, $transaction->store_id, $transaction_sell_line->quantity - $transaction_sell_line->quantity_returned);
+                        }
+                    }
+                    $transaction_sell_line->delete();
+                }
+                Transaction::where('return_parent_id', $transaction->id)->delete();
+                Transaction::where('parent_sale_id', $transaction->id)->delete();
+
+                $transaction->delete();
+            }
+            $customer->delete();
+
+
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')

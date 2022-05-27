@@ -1,21 +1,28 @@
 <div class="payment_row  row pl-3  pr-3">
     <input type="hidden" name="payments[{{ $index }}][transaction_payment_id]"
         value="{{ !empty($payment) ? $payment->id : '' }}">
-    <div class="col-md-4 mt-1">
+    <div class="col-md-3 mt-1">
         <label>@lang('lang.received_amount'): *</label>
         <input type="text" name="payments[{{ $index }}][amount]" class="form-control numkey received_amount"
             required step="any" value="@if (!empty($payment)) {{ @num_format($payment->amount) }} @endif">
     </div>
-    @if($index == 0)
-    <div class="col-md-4 mt-1">
-        <label>@lang('lang.paying_amount'):</label>
-        <input type="text" name="paying_amount" class="form-control numkey paying_amount" id="paying_amount" required
-            step="any" value="{{ $sale->final_total }}">
-    </div>
+    @if ($index == 0)
+        <div class="col-md-3 mt-1">
+            <label>@lang('lang.paying_amount'):</label>
+            <input type="text" name="paying_amount" class="form-control numkey paying_amount" id="paying_amount" required
+                step="any" value="{{ $sale->final_total }}">
+        </div>
     @endif
-    <div class="col-md-4 mt-1">
+    <div class="col-md-3 mt-1">
         <label>@lang('lang.payment_method'):</label>
         {!! Form::select('payments[' . $index . '][method]', $payment_types, !empty($payment) ? $payment->method : null, ['class' => 'form-control method', 'required']) !!}
+    </div>
+    <div class="col-md-3">
+        {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!}
+        <input type="datetime-local" name="payments[{{ $index }}][paid_on]"
+            value="{{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}"
+            class="form-control payment_date">
+        <input type="hidden" name="payments[{{ $index }}][cash_register_id]" class="cash_register_id" value="">
     </div>
     <div class="col-md-4 mt-1">
         {{-- <label class="change_text">@lang('lang.change') : </label> --}}

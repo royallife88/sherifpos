@@ -330,7 +330,7 @@ class ProductController extends Controller
                                 '<li>
                             <a data-href="' . action('ProductController@destroy', $row->variation_id) . '"
                                 data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                                class="btn text-red delete_item"><i class="fa fa-trash"></i>
+                                class="btn text-red delete_product"><i class="fa fa-trash"></i>
                                 ' . __('lang.delete') . '</a>
                         </li>';
                         }

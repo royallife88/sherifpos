@@ -277,14 +277,14 @@
                     <thead class="">
                         <tr>
                             <th style="width: 5% !important;">#</th>
-                            <th style="width: 10% !important;">@lang( 'lang.image' )</th>
-                            <th style="width: 20% !important;">@lang( 'lang.products' )</th>
-                            <th style="width: 10% !important;">@lang( 'lang.sku' )</th>
-                            <th style="width: 10% !important;">@lang( 'lang.batch_number' )</th>
-                            <th style="width: 10% !important;">@lang( 'lang.quantity' )</th>
-                            <th style="width: 10% !important;">@lang( 'lang.sell_price' )</th>
-                            <th style="width: 8% !important;">@lang( 'lang.discount' )</th>
-                            <th style="width: 15% !important;">@lang( 'lang.sub_total' )</th>
+                            <th style="width: 10% !important;">@lang('lang.image')</th>
+                            <th style="width: 20% !important;">@lang('lang.products')</th>
+                            <th style="width: 10% !important;">@lang('lang.sku')</th>
+                            <th style="width: 10% !important;">@lang('lang.batch_number')</th>
+                            <th style="width: 10% !important;">@lang('lang.quantity')</th>
+                            <th style="width: 10% !important;">@lang('lang.sell_price')</th>
+                            <th style="width: 8% !important;">@lang('lang.discount')</th>
+                            <th style="width: 15% !important;">@lang('lang.sub_total')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -310,7 +310,15 @@
 
                                 </td>
                                 <td style="width: 10% !important;">
-                                    {{ $line->product->sku ?? '' }}
+                                    @if (!empty($line->variation))
+                                        @if ($line->variation->name != 'Default')
+                                            {{ $line->variation->sub_sku }}
+                                        @else
+                                            {{ $line->product->sku ?? '' }}
+                                        @endif
+                                    @else
+                                        {{ $line->product->sku ?? '' }}
+                                    @endif
                                 </td>
                                 <td style="width: 10% !important;">
                                     {{ $line->product->batch_number ?? '' }}
