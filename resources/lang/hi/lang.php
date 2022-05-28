@@ -1250,4 +1250,13 @@ return [
     'cancel_service' => 'सेवा रद्द करें',
     'service_provided' => 'सेवा प्रदान की',
     'closing_date_and_time' => 'समापन तिथि और समय',
+
+    'enable_the_table_reservation' => 'टेबल आरक्षण सक्षम करें',
+    'text' => 'मूलपाठ',
+    'default_profit_percentage' => 'डिफ़ॉल्ट लाभ प्रतिशत',
+    'without_%_symbol' => 'बिना % प्रतीक',
+    'all_customer_transactions_will_be_deleted' => 'सभी ग्राहक लेनदेन हटा दिए जाएंगे, उसका बकाया और कोई अन्य संबंधित डेटा।',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'इस उत्पाद से संबंधित सभी लेन-देन हटा दिए जाएंगे; स्टॉक, बिक्री, खरीद, आदि।',
+    'no_session_found_for_this_date_and_time' => 'इस तिथि और समय के लिए कोई सत्र नहीं मिला',
+    'payment_date_and_time' => 'भुगतान दिनांक और समय',
 ];

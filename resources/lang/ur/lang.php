@@ -1249,4 +1249,15 @@ return [
     'cancel_service' => 'سروس منسوخ کریں۔',
     'service_provided' => 'سروس فراہم کی گئی۔',
     'closing_date_and_time' => 'اختتامی تاریخ اور وقت',
+
+    'enable_the_table_reservation' => 'ٹیبل ریزرویشن کو فعال کریں۔',
+    'text' => 'متن',
+    'default_profit_percentage' => 'پہلے سے طے شدہ منافع کا فیصد',
+    'without_%_symbol' => '% علامت کے بغیر',
+    'all_customer_transactions_will_be_deleted' => 'تمام گاہک کے لین دین، اس کے واجبات اور دیگر متعلقہ ڈیٹا کو حذف کر دیا جائے گا۔',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'اس پروڈکٹ سے متعلق تمام لین دین کو حذف کر دیا جائے گا۔ اسٹاک، فروخت، خریداری، وغیرہ',
+    'no_session_found_for_this_date_and_time' => 'اس تاریخ اور وقت کے لیے کوئی سیشن نہیں ملا',
+    'payment_date_and_time' => 'ادائیگی کی تاریخ اور وقت',
+
+
 ];

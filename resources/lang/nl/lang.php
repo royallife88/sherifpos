@@ -1252,4 +1252,14 @@ return [
     'service_provided' => 'Dienst geleverd',
     'closing_date_and_time' => 'Sluitingsdatum en -tijd',
 
+    'enable_the_table_reservation' => 'Schakel de tafelreservering in',
+    'text' => 'Tekst',
+    'default_profit_percentage' => 'Standaard winstpercentage',
+    'without_%_symbol' => 'zonder %-symbool',
+    'all_customer_transactions_will_be_deleted' => 'Alle transacties van de Klant worden verwijderd, zijn verschuldigde en alle andere gerelateerde gegevens.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'Alle transacties met betrekking tot dit product worden verwijderd; voorraden, verkopen, aankopen, enz.',
+    'no_session_found_for_this_date_and_time' => 'Geen sessie gevonden voor deze datum en tijd',
+    'payment_date_and_time' => 'Datum en tijd van betaling',
+
+
 ];

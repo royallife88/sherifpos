@@ -1248,4 +1248,13 @@ return [
     'cancel_service' => 'إلغاء الخدمة',
     'service_provided' => 'تم توفير الخدمة',
     'closing_date_and_time' => 'تاريخ ووقت الإغلاق',
+
+    'enable_the_table_reservation' => 'تفعيل حجز الجدول',
+    'text' => 'نص',
+    'default_profit_percentage' => 'نسبة الربح الافتراضية',
+    'without_%_symbol' => 'بدون الرمز٪',
+    'all_customer_transactions_will_be_deleted' => 'سيتم حذف جميع معاملات العميل وحذف مستحقاته وأية بيانات أخرى ذات صلة.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'سيتم حذف جميع المعاملات المتعلقة بهذا المنتج ؛ الأسهم والمبيعات والمشتريات وما إلى ذلك.',
+    'no_session_found_for_this_date_and_time' => 'يا نجم النجوم اختار توقيت كان فيه كاشير شغال بالفعل...لا تجنني',
+    'payment_date_and_time' => 'تاريخ ووقت الدفع',
 ];

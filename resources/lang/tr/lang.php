@@ -1251,4 +1251,13 @@ return [
     'service_provided' => 'Servis sağlandı',
     'closing_date_and_time' => 'Kapanış Tarihi ve Saati',
 
+    'enable_the_table_reservation' => 'Masa rezervasyonunu etkinleştir',
+    'text' => 'Metin',
+    'default_profit_percentage' => 'Varsayılan Kar Yüzdesi',
+    'without_%_symbol' => '% Sembolü olmadan',
+    'all_customer_transactions_will_be_deleted' => 'Tüm Müşteri işlemleri, vadesi ve diğer ilgili verileri silinecektir.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'Bu ürünle ilgili tüm İşlemler silinecek; hisse senetleri, satışlar, satın almalar vb.',
+    'no_session_found_for_this_date_and_time' => 'Bu tarih ve saat için oturum bulunamadı',
+    'payment_date_and_time' => 'Ödeme Tarihi ve Saati',
+
 ];

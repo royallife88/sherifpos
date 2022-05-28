@@ -74,6 +74,14 @@ class SupplierController extends Controller
         $supplier_categories = SupplierCategory::pluck('name', 'id');
         $products = Product::pluck('name', 'id');
 
+        if ($quick_add) {
+            return view('supplier.quick_add')->with(compact(
+                'supplier_categories',
+                'quick_add',
+                'products',
+            ));
+        }
+
         return view('supplier.create')->with(compact(
             'supplier_categories',
             'quick_add',

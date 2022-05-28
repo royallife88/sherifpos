@@ -41,7 +41,17 @@
                                 <div class="col-md-4">
                                     <div class="form-group supplier_div">
                                         {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
-                                        {!! Form::select('supplier_id', $suppliers, !empty($product->supplier) ? $product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        <div class="input-group my-group">
+                                            {!! Form::select('supplier_id', $suppliers, !empty($product->supplier) ? $product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                            <span class="input-group-btn">
+                                                @can('supplier_module.supplier.create_and_edit')
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                                                        data-href="{{ action('SupplierController@create') }}?quick_add=1"
+                                                        data-container=".view_modal"><i
+                                                            class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                                @endcan
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -71,7 +81,7 @@
                                             {!! Form::select('category_id', $categories, $product->category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.category.create_and_edit')
-                                                    <button  type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('CategoryController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -86,7 +96,7 @@
                                             {!! Form::select('sub_category_id', $sub_categories, $product->sub_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                             <span class="input-group-btn">
                                                 @can('product_module.sub_category.create_and_edit')
-                                                    <button  type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                                                    <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
                                                         data-href="{{ action('CategoryController@create') }}?quick_add=1"
                                                         data-container=".view_modal"><i
                                                             class="fa fa-plus-circle text-primary fa-lg"></i></button>
@@ -117,20 +127,18 @@
                                         <div class="input-group my-group">
                                             {!! Form::text('name', $product->name, ['class' => 'form-control', 'required', 'placeholder' => __('lang.name')]) !!}
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-default bg-white btn-flat translation_btn"
-                                                    type="button" data-type="product"><i
+                                                <button type="button"
+                                                    class="btn btn-default bg-white btn-flat translation_btn" type="button"
+                                                    data-type="product"><i
                                                         class="dripicons-web text-primary fa-lg"></i></button>
                                             </span>
                                         </div>
                                     </div>
-                                    @include(
-                                        'layouts.partials.translation_inputs',
-                                        [
-                                            'attribute' => 'name',
-                                            'translations' => $product->translations,
-                                            'type' => 'product',
-                                        ]
-                                    )
+                                    @include('layouts.partials.translation_inputs', [
+                                        'attribute' => 'name',
+                                        'translations' => $product->translations,
+                                        'type' => 'product',
+                                    ])
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -233,13 +241,10 @@
                                             rows="3">{{ $product->product_details }}</textarea>
                                     </div>
                                     <div class="col-md-4">
-                                        @include(
-                                            'layouts.partials.translation_textarea',
-                                            [
-                                                'attribute' => 'product_details',
-                                                'translations' => $product->translations,
-                                            ]
-                                        )
+                                        @include('layouts.partials.translation_textarea', [
+                                            'attribute' => 'product_details',
+                                            'translations' => $product->translations,
+                                        ])
                                     </div>
                                 </div>
                                 @if (session('system_mode') == 'restaurant' || session('system_mode') == 'garments' || session('system_mode') == 'pos')
@@ -248,8 +253,7 @@
                                             <input id="automatic_consumption" name="automatic_consumption" type="checkbox"
                                                 @if (!empty($product) && $product->automatic_consumption == 1) checked @endif value="1"
                                                 class="form-control-custom">
-                                            <label
-                                                for="automatic_consumption"><strong>@lang('lang.automatic_consumption')</strong></label>
+                                            <label for="automatic_consumption"><strong>@lang('lang.automatic_consumption')</strong></label>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -280,13 +284,10 @@
                                                     $consumption_products = App\Models\ConsumptionProduct::where('variation_id', $first_variation->id)->get();
                                                 @endphp
                                                 @foreach ($consumption_products as $consumption_product)
-                                                    @include(
-                                                        'product.partial.raw_material_row',
-                                                        [
-                                                            'row_id' => $loop->index,
-                                                            'consumption_product' => $consumption_product,
-                                                        ]
-                                                    )
+                                                    @include('product.partial.raw_material_row', [
+                                                        'row_id' => $loop->index,
+                                                        'consumption_product' => $consumption_product,
+                                                    ])
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -387,8 +388,7 @@
                                         <input id="show_to_customer" name="show_to_customer" type="checkbox"
                                             @if ($product->show_to_customer) checked @endif value="1"
                                             class="form-control-custom">
-                                        <label
-                                            for="show_to_customer"><strong>@lang('lang.show_to_customer')</strong></label>
+                                        <label for="show_to_customer"><strong>@lang('lang.show_to_customer')</strong></label>
                                     </div>
                                 </div>
 
@@ -408,8 +408,7 @@
                                         <input id="different_prices_for_stores" name="different_prices_for_stores"
                                             @if ($product->different_prices_for_stores) checked @endif type="checkbox" value="1"
                                             class="form-control-custom">
-                                        <label
-                                            for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
+                                        <label for="different_prices_for_stores"><strong>@lang('lang.different_prices_for_stores')</strong></label>
                                     </div>
                                 </div>
 
@@ -447,8 +446,7 @@
                                         <input id="this_product_have_variant" name="this_product_have_variant"
                                             type="checkbox" @if ($product->type == 'variable') checked @endif value="1"
                                             class="form-control-custom">
-                                        <label
-                                            for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
+                                        <label for="this_product_have_variant"><strong>@lang('lang.this_product_have_variant')</strong></label>
                                     </div>
                                 </div>
 
@@ -470,10 +468,10 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($product->variations as $item)
-                                                @include(
-                                                    'product.partial.edit_variation_row',
-                                                    ['row_id' => $loop->index, 'item' => $item]
-                                                )
+                                                @include('product.partial.edit_variation_row', [
+                                                    'row_id' => $loop->index,
+                                                    'item' => $item,
+                                                ])
                                             @endforeach
                                         </tbody>
                                     </table>

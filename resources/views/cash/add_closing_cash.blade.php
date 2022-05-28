@@ -117,7 +117,7 @@
                                     {{ @num_format($data['cash_register']->total_wages_and_compensation) }}</td>
                             @endforeach
                         </tr>
-                        <tr>
+                        {{-- <tr>
                             <td><b>@lang('lang.current_cash')</b></td>
                             @foreach ($cr_data as $data)
                                 <td>
@@ -136,7 +136,7 @@
                                     </h6>
                                 </td>
                             @endforeach
-                        </tr>
+                        </tr> --}}
                     </table>
                 </div>
             </div>

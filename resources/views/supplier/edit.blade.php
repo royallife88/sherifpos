@@ -16,7 +16,7 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        {!! Form::label('supplier_category_id', __('lang.category') . ':*') !!}
+                                        {!! Form::label('supplier_category_id', __('lang.category') . ':') !!}
                                         {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
 
                                     </div>

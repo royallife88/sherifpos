@@ -553,12 +553,13 @@ function calculate_sub_totals() {
         } else {
             sub_total = price_hidden * quantity;
         }
+
         __write_number($(tr).find(".sub_total"), sub_total);
         let product_discount = calculate_product_discount(tr);
 
         product_discount_total += product_discount;
         sub_total -= product_discount;
-
+        console.log(product_discount, 'sub_total');
         grand_total += sub_total;
         $(".grand_total_span").text(
             __currency_trans_from_en(grand_total, false)

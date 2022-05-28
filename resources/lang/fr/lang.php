@@ -1248,4 +1248,13 @@ return [
     'cancel_service' => 'Annuler le service',
     'service_provided' => 'Service fourni',
     'closing_date_and_time' => 'Date et heure de clôture',
+
+    'enable_the_table_reservation' => 'Activer la réservation de table',
+    'text' => 'Texte',
+    'default_profit_percentage' => 'Pourcentage de profit par défaut',
+    'without_%_symbol' => 'sans symbole %',
+    'all_customer_transactions_will_be_deleted' => 'Toutes les transactions du Client seront supprimées, ainsi que son dû et toute autre donnée connexe.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'Toutes les transactions liées à ce produit seront supprimées ; stocks, ventes, achats, etc.',
+    'no_session_found_for_this_date_and_time' => 'Aucune session trouvée pour cette date et cette heure',
+    'payment_date_and_time' => 'Date et heure de paiement',
 ];

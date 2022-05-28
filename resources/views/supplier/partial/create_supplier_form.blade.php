@@ -1,9 +1,10 @@
 <div class="row">
     <div class="col-md-4">
         <div class="form-group">
-            {!! Form::label('supplier_category_id', __('lang.category') . ':*') !!}
+            {!! Form::label('supplier_category_id', __('lang.category') . ':') !!}
             <div class="input-group my-group">
                 {!! Form::select('supplier_category_id', $supplier_categories, false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
+                @if(!$quick_add)
                 <span class="input-group-btn">
                     @can('product_module.product_class.create_and_edit')
                         <button class="btn-modal btn btn-default bg-white btn-flat"
@@ -11,6 +12,7 @@
                             data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
                     @endcan
                 </span>
+                @endif
             </div>
         </div>
     </div>

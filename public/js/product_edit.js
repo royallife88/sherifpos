@@ -423,6 +423,38 @@ $(document).on("submit", "form#quick_add_tax_form", function (e) {
         },
     });
 });
+$(document).on("submit", "form#quick_add_supplier_form", function (e) {
+    e.preventDefault();
+    var data = new FormData(this);
+    $.ajax({
+        method: "post",
+        url: $(this).attr("action"),
+        dataType: "json",
+        data: data,
+        processData: false,
+        contentType: false,
+        success: function (result) {
+            if (result.success) {
+                swal("Success", result.msg, "success");
+                $(".view_modal").modal("hide");
+                var supplier_id = result.supplier_id;
+                $.ajax({
+                    method: "get",
+                    url: "/supplier/get-dropdown",
+                    data: { type: "product_tax" },
+                    contactType: "html",
+                    success: function (data_html) {
+                        $("#supplier_id").empty().append(data_html);
+                        $("#supplier_id").selectpicker("refresh");
+                        $("#supplier_id").selectpicker("val", supplier_id);
+                    },
+                });
+            } else {
+                swal("Error", result.msg, "error");
+            }
+        },
+    });
+});
 var multiple_units_array = [];
 $("#multiple_units").change(function () {
     multiple_units_array.push($(this).val());

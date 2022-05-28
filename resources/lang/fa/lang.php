@@ -1248,4 +1248,13 @@ return [
     'cancel_service' => 'لغو سرویس',
     'service_provided' => 'خدمات ارائه شده',
     'closing_date_and_time' => 'تاریخ و زمان بسته شدن',
+
+    'enable_the_table_reservation' => 'رزرو میز را فعال کنید',
+    'text' => 'متن',
+    'default_profit_percentage' => 'درصد سود پیش فرض',
+    'without_%_symbol' => 'بدون نماد %',
+    'all_customer_transactions_will_be_deleted' => 'کلیه تراکنش های مشتری، حق الزحمه وی و سایر داده های مرتبط حذف خواهد شد.',
+    'all_transactions_related_to_this_product_will_be_deleted' => 'تمام معاملات مربوط به این محصول حذف خواهد شد. سهام، فروش، خرید و غیره',
+    'no_session_found_for_this_date_and_time' => 'هیچ جلسه ای برای این تاریخ و زمان یافت نشد',
+    'payment_date_and_time' => 'تاریخ و زمان پرداخت',
 ];
