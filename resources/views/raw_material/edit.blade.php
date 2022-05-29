@@ -153,7 +153,7 @@
                             </div>
                             @endcan
 
-                            <div class="col-md-12">
+                            <div class="col-md-12 hide">
                                 <table class="table table-bordered" id="consumption_table">
                                     <thead>
                                         <tr>

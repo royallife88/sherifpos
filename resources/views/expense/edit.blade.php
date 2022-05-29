@@ -45,7 +45,7 @@
                                             {!! Form::select('source_id', $users, $expense->source_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'source_id', 'required']) !!}
                                         </div>
                                     </div>
-                                    <div class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
+                                    <div class="col-md-4 hide">
                                         <div class="form-group">
                                             {!! Form::label('transaction_date', __('lang.creation_date') . ':', []) !!} <br>
                                             {!! Form::text('transaction_date', !empty($expense->transaction_date) ? @format_date($expense->transaction_date) : @format_date(date('Y-m-d')), ['class' => 'form-control datepicker', 'placeholder' => __('lang.payment_date')]) !!}

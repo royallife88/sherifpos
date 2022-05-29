@@ -260,7 +260,7 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
+        try {
             $data = $request->except('_token', '_method', 'submit');
 
             $expense = Transaction::where('id', $id)->first();
@@ -317,13 +317,22 @@ class ExpenseController extends Controller
                     }
                 }
                 $cr_transaction = CashRegisterTransaction::where('transaction_id', $expense->id)->first();
-                if(!empty($request->cash_register_id)){
+                if (!empty($request->cash_register_id)) {
                     $register = CashRegister::where('id', $request->cash_register_id)->first();
-                }else{
+                    if (!empty($register->closed_at)) {
+                        $register->closing_amount = $register->closing_amount - $this->commonUtil->num_uf($request->amount);
+                        $register->save();
+                    }
+                    $pre_register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                    if (!empty($pre_register->closed_at)) {
+                        $pre_register->closing_amount = $pre_register->closing_amount + $this->commonUtil->num_uf($request->amount);
+                        $pre_register->save();
+                    }
+                } else {
                     $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
                 }
 
-                $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $expense->type, 'debit', $user_id, '');
+                $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $expense->type, 'debit', $user_id, '', null);
             }
 
             DB::commit();
@@ -332,13 +341,13 @@ class ExpenseController extends Controller
                 'success' => true,
                 'msg' => __('lang.expense_updated')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }

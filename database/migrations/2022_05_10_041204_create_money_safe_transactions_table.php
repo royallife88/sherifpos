@@ -26,6 +26,7 @@ class CreateMoneySafeTransactionsTable extends Migration
             $table->unsignedBigInteger('currency_id');
             $table->unsignedBigInteger('transaction_id')->nullable();
             $table->unsignedBigInteger('transaction_payment_id')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
             $table->text('comments')->nullable();
             $table->timestamps();
         });

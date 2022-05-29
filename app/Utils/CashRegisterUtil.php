@@ -258,14 +258,13 @@ class CashRegisterUtil extends Util
                             DB::raw("SUM(IF(type='credit', amount, -1 * amount)) as total"),
                             'cash_register_id',
                             'transaction_payment_id',
-                        )->first();
+                        )->groupBy('cash_register_id')->having('total', '>', 0)->first();
                     $payment_diffs[$payment_method] = [
                         'value' => $total_query->total ?? 0,
                         'transaction_payment_id' => $total_query->transaction_payment_id ?? null,
                         'cash_register_id' => $total_query->cash_register_id ?? null
                     ];
                 }
-
                 foreach ($payments as $payment) {
                     $amount = $this->num_uf($payment['amount']);
                     $change_amount = !empty($payment['change_amount']) ? $this->num_uf($payment['change_amount']) : 0;
@@ -276,9 +275,11 @@ class CashRegisterUtil extends Util
                         $payment_diffs[$payment['method']]['value'] = $payment_diffs[$payment['method']]['value'] + $this->num_uf($amount);
                     } else {
                         if (!empty($payment['cash_register_id']) && $payment['cash_register_id'] != $payment_diffs[$payment['method']]['cash_register_id']) {
-                            $payment_diffs[$payment['method']]['value'] = $this->num_uf($amount);
+                            $payment_diffs[$payment['method']]['value'] = $payment_diffs[$payment['method']]['value'];
+                            $payment_diffs[$payment['method']]['diff'] = $amount - $payment_diffs[$payment['method']]['value'];
                         } else {
                             $payment_diffs[$payment['method']]['value'] = $payment_diffs[$payment['method']]['value'] - $this->num_uf($amount);
+                            $payment_diffs[$payment['method']]['diff'] = 0;
                         }
                     }
                 }
@@ -286,20 +287,6 @@ class CashRegisterUtil extends Util
                 $payments_formatted = [];
                 foreach ($payment_diffs as $key => $value) {
                     if ($value['value'] > 0) {
-
-                        if (!empty($value['new_cash_register_id']) && $value['new_cash_register_id'] != $value['cash_register_id']) {
-                            $register = CashRegister::find($value['new_cash_register_id']);
-
-                            $payments_formatted[] = CashRegisterTransaction::create([
-                                'amount' => $value['value'],
-                                'pay_method' => $key,
-                                'type' => 'credit',
-                                'transaction_type' => 'sell',
-                                'transaction_id' => $transaction->id,
-                                'transaction_payment_id' => $value['transaction_payment_id'],
-                                'cash_register_id' => $register->id,
-                            ]);
-                        }
                         $payments_formatted[] = CashRegisterTransaction::create([
                             'amount' => $value['value'],
                             'pay_method' => $key,
@@ -309,7 +296,59 @@ class CashRegisterUtil extends Util
                             'transaction_payment_id' => $value['transaction_payment_id'],
                             'cash_register_id' => $value['cash_register_id'] ?? $opened_register->id,
                         ]);
+
+                        if (!empty($value['cash_register_id'])) {
+                            $pre_register = CashRegister::find($value['cash_register_id']);
+                            if (!empty($pre_register->closed_at)) {
+                                $pre_register->closing_amount = $pre_register->closing_amount - $this->num_uf($value['value']);
+                                $pre_register->save();
+                            }
+                        }
+
+                        if (!empty($value['new_cash_register_id']) && $value['new_cash_register_id'] != $value['cash_register_id']) {
+                            $register = CashRegister::find($value['new_cash_register_id']);
+
+                            $payments_formatted[] = CashRegisterTransaction::create([
+                                'amount' => $value['value'] + $payment_diffs[$payment['method']]['diff'],
+                                'pay_method' => $key,
+                                'type' => 'credit',
+                                'transaction_type' => 'sell',
+                                'transaction_id' => $transaction->id,
+                                'transaction_payment_id' => $value['transaction_payment_id'],
+                                'cash_register_id' => $register->id,
+                            ]);
+
+
+                            if (!empty($register->closed_at)) {
+                                $register->closing_amount = $register->closing_amount + $this->num_uf($value['value'] + $payment_diffs[$payment['method']]['diff']);
+                                $register->save();
+                            }
+
+                            $pre_register = CashRegister::find($value['cash_register_id']);
+                            if (!empty($pre_register->closed_at)) {
+                                $pre_register->closing_amount = $pre_register->closing_amount - $this->num_uf($value['value'] + $payment_diffs[$payment['method']]['diff']);
+                                $pre_register->save();
+                            }
+                        }
                     } elseif ($value['value'] < 0) {
+                        $payments_formatted[] = CashRegisterTransaction::create([
+                            'amount' => -1 * $value['value'],
+                            'pay_method' => $key,
+                            'type' => 'credit',
+                            'transaction_type' => 'sell',
+                            'transaction_id' => $transaction->id,
+                            'transaction_payment_id' => $value['transaction_payment_id'],
+                            'cash_register_id' => $value['cash_register_id'] ?? $opened_register->id,
+                        ]);
+
+                        if (!empty($value['cash_register_id'])) {
+                            $pre_register = CashRegister::find($value['cash_register_id']);
+                            if (!empty($pre_register->closed_at)) {
+                                $pre_register->closing_amount = $pre_register->closing_amount + $this->num_uf(-1 * $value['value']);
+                                $pre_register->save();
+                            }
+                        }
+
                         if (!empty($value['new_cash_register_id']) && $value['new_cash_register_id'] != $value['cash_register_id']) {
                             $register = CashRegister::find($value['new_cash_register_id']);
 
@@ -322,17 +361,18 @@ class CashRegisterUtil extends Util
                                 'transaction_payment_id' => $value['transaction_payment_id'],
                                 'cash_register_id' => $register->id,
                             ]);
-                        }
 
-                        $payments_formatted[] = CashRegisterTransaction::create([
-                            'amount' => -1 * $value['value'],
-                            'pay_method' => $key,
-                            'type' => 'credit',
-                            'transaction_type' => 'sell',
-                            'transaction_id' => $transaction->id,
-                            'transaction_payment_id' => $value['transaction_payment_id'],
-                            'cash_register_id' => $value['cash_register_id'] ?? $opened_register->id,
-                        ]);
+                            if (!empty($register->closed_at)) {
+                                $register->closing_amount = $register->closing_amount - $this->num_uf(-1 * $value['value']);
+                                $register->save();
+                            }
+
+                            $pre_register = CashRegister::find($value['cash_register_id']);
+                            if (!empty($pre_register->closed_at)) {
+                                $pre_register->closing_amount = $pre_register->closing_amount + $this->num_uf(-1 * $value['value']);
+                                $pre_register->save();
+                            }
+                        }
                     }
                 }
             }

@@ -7,6 +7,7 @@ use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
 use App\Utils\Util;
@@ -45,6 +46,7 @@ class CashController extends Controller
      */
     public function index()
     {
+        $default_currency_id = System::getProperty('currency');
         $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id')
             ->leftjoin('transactions', 'cash_register_transactions.transaction_id', 'transactions.id');
 
@@ -73,6 +75,10 @@ class CashController extends Controller
         if (!empty(request()->user_id)) {
             $query->where('cash_registers.user_id', request()->user_id);
         }
+        // $query->where(function ($q) use ($default_currency_id) {
+        //     $q->where('transactions.received_currency_id', $default_currency_id)
+        //         ->orWhereNull('transactions.received_currency_id');
+        // });
 
         $cash_registers = $query->select(
             'cash_registers.*',
@@ -80,8 +86,16 @@ class CashController extends Controller
             DB::raw("SUM(IF(transaction_type = 'refund', amount, 0)) as total_refund"),
             DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cash_sales"),
             DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cash"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_card_sales"),
+            DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'card' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_card"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'credit', amount, 0)) as total_bank_transfer_sales"),
+            DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'bank_transfer' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_bank_transfer"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'gift_card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_gift_card_sales"),
+            DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cheque' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cheque_sales"),
+            DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cheque' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cheque"),
             DB::raw("SUM(IF(transaction_type = 'add_stock' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_purchases"),
             DB::raw("SUM(IF(transaction_type = 'expense' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_expenses"),
+            DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
             DB::raw("SUM(IF(transaction_type = 'cash_in' AND pay_method = 'cash', amount, 0)) as total_cash_in"),
             DB::raw("SUM(IF(transaction_type = 'cash_out' AND pay_method = 'cash', amount, 0)) as total_cash_out"),
             DB::raw("SUM(IF(transaction_type = 'sell_return' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_sell_return"),
@@ -289,7 +303,7 @@ class CashController extends Controller
     public function addClosingCash($cash_register_id)
     {
         //Check if there is a open register, if yes then redirect to POS screen.
-        if ($this->cashRegisterUtil->countOpenedRegister() == 0) {
+        if ($this->cashRegisterUtil->countOpenedRegister() == 0 && !auth()->user()->can('superadmin')) {
             return redirect()->action('CashRegisterController@create');
         }
         $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);

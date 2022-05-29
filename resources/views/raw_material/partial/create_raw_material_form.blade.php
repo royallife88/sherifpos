@@ -113,7 +113,7 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
         </div>
     </div>
     @endcan
-    <div class="col-md-12">
+    <div class="col-md-12 hide">
         <table class="table table-bordered" id="consumption_table">
             <thead>
                 <tr>
@@ -128,6 +128,6 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
             </tbody>
         </table>
     </div>
-    <input type="hidden" name="is_raw_material" id="is_raw_material" value="0">
+    <input type="hidden" name="is_raw_material" id="is_raw_material" value="1">
     <input type="hidden" name="row_id" id="row_id" value="1">
 </div>
