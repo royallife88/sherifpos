@@ -28,7 +28,7 @@
                     <div class="form-group">
                         {!! Form::label('table_date_and_time', __('lang.date_and_time') . ':*') !!}
                         <input type="datetime-local" id="table_date_and_time" name="table_date_and_time"
-                            value="@if (!empty($dining_table->date_and_time)) {{ Carbon\Carbon::parse($dining_table->date_and_time)->format('Y-m-d\TH:i') }}@else{{ date('Y-m-d\TH:i') }} @endif"
+                            value="@if (!empty($dining_table->date_and_time)){{ Carbon\Carbon::parse($dining_table->date_and_time)->format('Y-m-d\TH:i') }}@else{{ date('Y-m-d\TH:i') }}@endif"
                             class="form-control">
                     </div>
                 </div>

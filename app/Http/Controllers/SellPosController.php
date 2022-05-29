@@ -624,9 +624,9 @@ class SellPosController extends Controller
 
                     if (!empty($transaction_payment)) {
                         $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'credit', $transaction_payment->id, $old_tp);
+                        $payment_data['transaction_payment_id'] =  $transaction_payment->id;
+                        $payment_formated[] = $payment_data;
                     }
-                    $payment_data['transaction_payment_id'] =  $transaction_payment->id;
-                    $payment_formated[] = $payment_data;
                 }
                 $this->cashRegisterUtil->updateSellPaymentsBasedOnPaymentDate($transaction, $payment_formated);
             }

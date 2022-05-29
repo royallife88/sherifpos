@@ -485,11 +485,9 @@ class Util
                 $q->whereNull('expiry_date')->orWhereDate('expiry_date', '>=', date('Y-m-d'));
             })
             ->select('received_currency_id as currency_id', 'currencies.symbol', 'conversion_rate')
+            ->orderBy('exchange_rates.created_at', 'asc')
             ->get();
         $currencies = [];
-        foreach ($currencies_obj as $cur_obj) {
-            $currencies[] = ['currency_id' => $cur_obj->currency_id, 'symbol' => $cur_obj->symbol, 'conversion_rate' => $cur_obj->conversion_rate, 'is_default' => false];
-        }
 
         $default_currency_id = System::getProperty('currency');
         if (!empty($default_currency_id)) {
@@ -503,6 +501,10 @@ class Util
             $d['is_default'] = true;
             $currencies[] = $d;
         }
+        foreach ($currencies_obj as $cur_obj) {
+            $currencies[] = ['currency_id' => $cur_obj->currency_id, 'symbol' => $cur_obj->symbol, 'conversion_rate' => $cur_obj->conversion_rate, 'is_default' => false];
+        }
+
         return $currencies;
     }
 
