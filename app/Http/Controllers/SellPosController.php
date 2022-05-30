@@ -1299,7 +1299,7 @@ class SellPosController extends Controller
                 })
                 ->editColumn('status', function ($row) {
                     if ($row->final_total == 0) {
-                        return '<span class="badge badge-success">' . __('lang.final') . '</span>';
+                        return '<span class="badge badge-success">Final</span>';
                     } else {
                         if ($row->status == 'canceled') {
                             return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
