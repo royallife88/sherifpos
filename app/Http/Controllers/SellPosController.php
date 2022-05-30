@@ -1339,13 +1339,13 @@ class SellPosController extends Controller
                             class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
                                 title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
                         }
-                        if (auth()->user()->can('superadmin')) {
+                        if (auth()->user()->can('superadmin') || auth()->user()->name == 'Admin') {
                             $html .=
                                 '<a target="_blank" href="' . action('SellController@edit', $row->id) . '" class="btn btn-success"><i
                             title="' . __('lang.edit') . '" data-toggle="tooltip"
                             class="dripicons-document-edit"></i></a>';
                         }
-                        if (auth()->user()->can('superadmin')) {
+                        if (auth()->user()->can('superadmin') || auth()->user()->name == 'Admin') {
                             $html .=
                                 '<a data-href="' . action('SellController@destroy', $row->id) . '"
                             title="' . __('lang.delete') . '" data-toggle="tooltip"
