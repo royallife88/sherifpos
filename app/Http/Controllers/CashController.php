@@ -313,6 +313,7 @@ class CashController extends Controller
         $query->where('cash_registers.id', $cash_register_id);
 
         $cr_data = [];
+        $total_cash = 0;
         foreach ($exchange_rate_currencies as $currency) {
             $cr_data[$currency['currency_id']]['currency'] = $currency;
             $cr_query = clone $query;
@@ -353,11 +354,14 @@ class CashController extends Controller
             $cash_register->total_bank_transfer_sales =  $cash_register->total_bank_transfer_sales - $cash_register->total_refund_bank_transfer;
             $cash_register->total_cheque_sales =  $cash_register->total_cheque_sales - $cash_register->total_refund_cheque;
             $cr_data[$currency['currency_id']]['cash_register'] = $cash_register;
+
+            if ($currency['is_default']) {
+                $total_cash = $cash_register->total_cash_sales +
+                    $cash_register->total_cash_in - $cash_register->total_cash_out -
+                    $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return;
+            }
         }
 
-        $total_cash = $cash_register->total_cash_sales +
-            $cash_register->total_cash_in - $cash_register->total_cash_out -
-            $cash_register->total_purchases - $cash_register->total_expenses - $cash_register->total_wages_and_compensation - $cash_register->total_sell_return;
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         return view('cash.add_closing_cash')->with(compact(
