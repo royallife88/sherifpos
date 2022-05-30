@@ -20,7 +20,7 @@
     <div class="col-md-3">
         {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!}
         <input type="datetime-local" name="payments[{{ $index }}][paid_on]"
-            value="{{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}"
+            @if (!empty($payment->paid_on)) value="{{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}" @endif
             class="form-control payment_date">
         <input type="hidden" name="payments[{{ $index }}][cash_register_id]" class="cash_register_id" value="">
     </div>
