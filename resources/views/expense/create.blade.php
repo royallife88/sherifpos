@@ -30,7 +30,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="store_id">@lang('lang.store')</label>
-                                            {!! Form::select('store_id', $stores, null, ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+                                            {!! Form::select('store_id', $stores, array_key_first($stores), ['class' => 'form-control selectpicker', 'data-live-search' => 'true', 'required', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-4">
