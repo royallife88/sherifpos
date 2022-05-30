@@ -140,20 +140,44 @@
                                                 <td>
                                                     <a data-href="{{ action('GeneralController@viewUploadedFiles', ['model_name' => 'Transaction', 'model_id' => $expense->id, 'collection_name' => 'expense']) }}"
                                                         data-container=".view_modal"
-                                                        class="btn btn-danger btn-modal text-white">@lang('lang.view')</a>
+                                                        class="btn btn-default btn-modal">@lang('lang.view')</a>
                                                 </td>
                                                 <td>
-                                                    @can('expense.expenses.create_and_edit')
-                                                        <a href="{{ action('ExpenseController@edit', $expense->id) }}"
-                                                            class="btn btn-danger text-white edit_job"><i
-                                                                class="fa fa-pencil-square-o"></i></a>
-                                                    @endcan
-                                                    @can('expense.expenses.delete')
-                                                        <a data-href="{{ action('ExpenseController@destroy', $expense->id) }}"
-                                                            data-check_password="{{ action('UserController@checkPassword', Auth::user()->id) }}"
-                                                            class="btn btn-danger text-white delete_item"><i
-                                                                class="fa fa-trash"></i></a>
-                                                    @endcan
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn btn-default btn-sm dropdown-toggle"
+                                                            data-toggle="dropdown" aria-haspopup="true"
+                                                            aria-expanded="false">@lang('lang.action')
+                                                            <span class="caret"></span>
+                                                            <span class="sr-only">Toggle Dropdown</span>
+                                                        </button>
+                                                        <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default"
+                                                            user="menu">
+                                                            @can('expense.expenses.view')
+                                                                <li>
+                                                                    <a href="{{ action('ExpenseController@show', $expense->id) }}"
+                                                                        class="btn edit_job"><i
+                                                                            class="fa fa-eye"></i>
+                                                                        @lang('lang.view')</a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('expense.expenses.create_and_edit')
+                                                                <li>
+                                                                    <a href="{{ action('ExpenseController@edit', $expense->id) }}"
+                                                                        class="btn edit_job"><i
+                                                                            class="fa fa-pencil-square-o"></i>
+                                                                        @lang('lang.edit')</a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('expense.expenses.delete')
+                                                                <li>
+                                                                    <a data-href="{{ action('ExpenseController@destroy', $expense->id) }}"
+                                                                        data-check_password="{{ action('UserController@checkPassword', Auth::user()->id) }}"
+                                                                        class="btn delete_item text-red"><i
+                                                                            class="fa fa-trash"></i> @lang('lang.delete')</a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @endforeach

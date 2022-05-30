@@ -178,6 +178,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('store-pos/get-pos-details-by-store/{store_id}', 'StorePosController@getPosDetailsByStore');
     Route::resource('store-pos', StorePosController::class);
 
+    Route::get('pos/update-status-to-cancel/{id}', 'SellPosController@updateStatusToCancel');
     Route::get('pos/get-non-identifiable-item-row', 'SellPosController@getNonIdentifiableItemRow');
     Route::get('pos/get-products', 'SellPosController@getProducts');
     Route::get('pos/add-product-row', 'SellPosController@addProductRow');

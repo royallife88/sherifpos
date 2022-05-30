@@ -133,84 +133,84 @@ class ExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        // try {
-        $data = $request->except('_token');
+        try {
+            $data = $request->except('_token');
 
 
-        $expense_data = [
-            'grand_total' => $this->commonUtil->num_uf($data['amount']),
-            'final_total' => $this->commonUtil->num_uf($data['amount']),
-            'store_id' => $data['store_id'],
-            'type' => 'expense',
-            'status' => 'final',
-            'invoice_no' => $this->productUtil->getNumberByType('expense'),
-            'transaction_date' => !empty($data['transaction_date']) ? $this->commonUtil->uf_date($data['transaction_date']) : Carbon::now(),
-            'expense_category_id' => $data['expense_category_id'],
-            'expense_beneficiary_id' => $data['expense_beneficiary_id'],
-            'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
-            'details' => !empty($data['details']) ? $data['details'] : null,
-            'notify_me' => !empty($data['notify_me']) ? 1 : 0,
-            'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
-            'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
-            'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
-        ];
-        $expense_data['created_by'] = Auth::user()->id;
+            $expense_data = [
+                'grand_total' => $this->commonUtil->num_uf($data['amount']),
+                'final_total' => $this->commonUtil->num_uf($data['amount']),
+                'store_id' => $data['store_id'],
+                'type' => 'expense',
+                'status' => 'final',
+                'invoice_no' => $this->productUtil->getNumberByType('expense'),
+                'transaction_date' => !empty($data['transaction_date']) ? $this->commonUtil->uf_date($data['transaction_date']) : Carbon::now(),
+                'expense_category_id' => $data['expense_category_id'],
+                'expense_beneficiary_id' => $data['expense_beneficiary_id'],
+                'next_payment_date' => !empty($data['next_payment_date']) ? $data['next_payment_date'] : null,
+                'details' => !empty($data['details']) ? $data['details'] : null,
+                'notify_me' => !empty($data['notify_me']) ? 1 : 0,
+                'notify_before_days' => !empty($data['notify_before_days']) ? $data['notify_before_days'] : 0,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
+            ];
+            $expense_data['created_by'] = Auth::user()->id;
 
-        DB::beginTransaction();
-        $expense = Transaction::create($expense_data);
+            DB::beginTransaction();
+            $expense = Transaction::create($expense_data);
 
-        if ($request->has('upload_documents')) {
-            foreach ($request->file('upload_documents', []) as $key => $file) {
-                $expense->addMedia($file)->toMediaCollection('expense');
-            }
-        }
-
-        $payment_data = [
-            'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
-            'transaction_id' =>  $expense->id,
-            'amount' => $this->commonUtil->num_uf($request->amount),
-            'method' => $request->method,
-            'paid_on' => !empty($data['paid_on']) ? Carbon::createFromTimestamp(strtotime($data['paid_on']))->format('Y-m-d H:i:s') : Carbon::now(),
-            'ref_number' => $request->ref_number,
-            'card_number' => $request->card_number,
-            'card_month' => $request->card_month,
-            'card_year' => $request->card_year,
-            'source_type' => $request->source_type,
-            'source_id' => $request->source_id,
-            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
-            'bank_name' => $request->bank_name,
-        ];
-
-        $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
-        $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
-
-        if ($payment_data['method'] == 'cash') {
-            $user_id = null;
-            if (!empty($request->source_id)) {
-                if ($request->source_type == 'pos') {
-                    $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
-                }
-                if ($request->source_type == 'user') {
-                    $user_id = $request->source_id;
+            if ($request->has('upload_documents')) {
+                foreach ($request->file('upload_documents', []) as $key => $file) {
+                    $expense->addMedia($file)->toMediaCollection('expense');
                 }
             }
 
-            $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
+            $payment_data = [
+                'transaction_payment_id' =>  !empty($request->transaction_payment_id) ? $request->transaction_payment_id : null,
+                'transaction_id' =>  $expense->id,
+                'amount' => $this->commonUtil->num_uf($request->amount),
+                'method' => $request->method,
+                'paid_on' => !empty($data['paid_on']) ? Carbon::createFromTimestamp(strtotime($data['paid_on']))->format('Y-m-d H:i:s') : Carbon::now(),
+                'ref_number' => $request->ref_number,
+                'card_number' => $request->card_number,
+                'card_month' => $request->card_month,
+                'card_year' => $request->card_year,
+                'source_type' => $request->source_type,
+                'source_id' => $request->source_id,
+                'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
+                'bank_name' => $request->bank_name,
+            ];
+
+            $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
+            $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
+
+            if ($payment_data['method'] == 'cash') {
+                $user_id = null;
+                if (!empty($request->source_id)) {
+                    if ($request->source_type == 'pos') {
+                        $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                    }
+                    if ($request->source_type == 'user') {
+                        $user_id = $request->source_id;
+                    }
+                }
+
+                $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
+            }
+
+            DB::commit();
+
+            $output = [
+                'success' => true,
+                'msg' => __('lang.expense_added')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
         }
-
-        DB::commit();
-
-        $output = [
-            'success' => true,
-            'msg' => __('lang.expense_added')
-        ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -223,7 +223,9 @@ class ExpenseController extends Controller
      */
     public function show($id)
     {
-        //
+        $expense = Transaction::find($id);
+
+        return view('expense.show')->with(compact('expense'));
     }
 
     /**

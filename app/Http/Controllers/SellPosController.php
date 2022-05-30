@@ -1398,7 +1398,7 @@ class SellPosController extends Controller
             $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
                 ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
                 ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
-                ->where('type', 'sell')->where('status', 'draft')->whereNull('transactions.dining_table_id');
+                ->where('type', 'sell')->whereIn('status', ['draft', 'canceled'])->whereNull('transactions.dining_table_id')->whereNull('transactions.restaurant_order_id');
 
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
@@ -1447,7 +1447,11 @@ class SellPosController extends Controller
                     }
                 })
                 ->editColumn('status', function ($row) {
-                    return '<span class="label label-danger">' . ucfirst($row->status) . '</span>';
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } else {
+                        return '<span class="badge badge-primary">' . ucfirst($row->status) . '</span>';
+                    }
                 })
                 ->addColumn(
                     'action',
@@ -1463,20 +1467,29 @@ class SellPosController extends Controller
                         if (auth()->user()->can('sale.pos.view')) {
                             $html .=
                                 '<a data-href="' . action('SellController@show', $row->id) . '"
-                        class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
-                        title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
+                                class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
+                                title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
                         }
                         $html .=
                             '<a  target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final" class="btn btn-success draft_pay"><i
                         title="' . __('lang.edit') . '" data-toggle="tooltip"
                         class="dripicons-document-edit"></i></a>';
-                        $html .=
-                            '<button class="btn btn-danger remove_draft" data-href=' . action(
-                                'SellController@destroy',
-                                $row->id
-                            ) . '
-                            data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
-                            ><i class="dripicons-trash"></i></button>';
+                        if ($row->status != 'canceled') {
+                            $html .=
+                                '<a data-href="' . action('SellPosController@updateStatusToCancel', $row->id) . '?status=final" class="btn btn-danger draft_cancel text-white"><i
+                            title="' . __('lang.cancel') . '" data-toggle="tooltip"
+                            class="fa fa-ban"></i></a>';
+                        }
+                        if (auth()->user()->can('superadmin') || auth()->user()->name == 'Admin') {
+                            $html .=
+                                '<button class="btn btn-danger remove_draft" data-href=' . action(
+                                    'SellController@destroy',
+                                    $row->id
+                                ) . '
+                                data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                title="' . __('lang.delete') . '" data-toggle="tooltip"
+                                ><i class="dripicons-trash"></i></button>';
+                        }
 
 
                         $html .=
@@ -1576,13 +1589,14 @@ class SellPosController extends Controller
                         if (auth()->user()->can('sale.pos.view')) {
                             $html .=
                                 '<a data-href="' . action('SellController@show', $row->id) . '"
-                        class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
-                        title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
+                                class="btn btn-primary text-white  btn-modal" data-container=".view_modal"><i
+                                title="' . __('lang.view') . '" data-toggle="tooltip" class="fa fa-eye"></i></a>';
                         }
                         $html .=
                             '<a  target="_blank" href="' . action('SellPosController@edit', $row->id) . '?status=final" class="btn btn-success draft_pay"><i
-                        title="' . __('lang.edit') . '" data-toggle="tooltip"
-                        class="dripicons-document-edit"></i></a>';
+                            title="' . __('lang.edit') . '" data-toggle="tooltip"
+                            class="dripicons-document-edit"></i></a>';
+
                         $html .=
                             '<button class="btn btn-danger remove_draft" data-href=' . action(
                                 'SellController@destroy',
@@ -1683,6 +1697,27 @@ class SellPosController extends Controller
             ];
         }
 
+        return $output;
+    }
+
+    public function updateStatusToCancel($id)
+    {
+        try {
+            $transaction = Transaction::find($id);
+            $transaction->status = 'canceled';
+            $transaction->canceled_by = Auth::user()->id;
+            $transaction->save();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
         return $output;
     }
 }

@@ -17,7 +17,7 @@
 
                             <div class="col-sm-6">
                                 <label for="fname">@lang('lang.name'):*</label>
-                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}"
+                                <input type="text" class="form-control" name="name" value="{{ $employee->name }}" @if($employee->name == 'Admin') readonly @endif
                                     id="name" required placeholder="Name">
                             </div>
                             <div class="col-sm-6">

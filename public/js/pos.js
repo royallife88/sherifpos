@@ -559,7 +559,7 @@ function calculate_sub_totals() {
 
         product_discount_total += product_discount;
         sub_total -= product_discount;
-        console.log(product_discount, 'sub_total');
+        console.log(product_discount, "sub_total");
         grand_total += sub_total;
         $(".grand_total_span").text(
             __currency_trans_from_en(grand_total, false)
@@ -2696,4 +2696,22 @@ $(document).on("change", "#upload_documents", function (event) {
     } else {
         console.log("nada");
     }
+});
+
+$(document).on("click", "a.draft_cancel", function () {
+    let url = $(this).data("href");
+
+    $.ajax({
+        method: "get",
+        url: url,
+        data: {},
+        success: function (result) {
+            if (result.success) {
+                swal("Success", result.msg, "success");
+            } else {
+                swal("Error", result.msg, "error");
+            }
+            draft_table.ajax.reload();
+        },
+    });
 });

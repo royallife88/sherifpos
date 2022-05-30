@@ -72,6 +72,9 @@ class EmployeeController extends Controller
         if (!empty($request->payment_status)) {
             $query->where('payment_status', $request->payment_status);
         }
+        if (!auth()->user()->can('superadmin')) {
+            $query->where('users.is_superadmin', 0);
+        }
 
         $employees =  $query->select(
             'users.name',
