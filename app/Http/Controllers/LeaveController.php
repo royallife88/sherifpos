@@ -70,7 +70,7 @@ class LeaveController extends Controller
     public function create()
     {
         $query = Employee::leftjoin('users', 'employees.user_id', 'users.id');
-        if (!auth()->user()->can('superadmin')) {
+        if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) {
             $query->where('users.id', Auth::user()->id);
         }
         $employees =  $query->pluck('users.name', 'employees.id');
@@ -173,7 +173,7 @@ class LeaveController extends Controller
     {
         $leave = Leave::find($id);
         $query = Employee::leftjoin('users', 'employees.user_id', 'users.id');
-        if (!auth()->user()->can('superadmin')) {
+        if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) {
             $query->where('users.id', Auth::user()->id);
         }
         $employees =  $query->pluck('users.name', 'employees.id');

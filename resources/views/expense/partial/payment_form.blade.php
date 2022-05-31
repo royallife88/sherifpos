@@ -17,7 +17,7 @@
         </div>
     </div>
 
-    <div class="col-md-4 @if (!auth()->user()->can('superadmin')) hide @endif">
+    <div class="col-md-4 @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
         <div class="form-group">
             {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!} <br>
             <input type="datetime-local" name="paid_on"

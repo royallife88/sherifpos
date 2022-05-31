@@ -14,7 +14,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="employee_id">@lang('lang.employee')</label>
-                        @if (auth()->user()->can('superadmin'))
+                        @if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1)
                         {!! Form::select('employee_id', $employees, $leave->employee_id, ['class' => 'form-control select2', 'id' =>
                         'employee_id', 'required', 'placeholder' => 'Please Select']) !!}
                         @endif

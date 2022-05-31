@@ -50,7 +50,7 @@ class CashController extends Controller
         $query = CashRegister::leftjoin('cash_register_transactions', 'cash_registers.id', 'cash_register_transactions.cash_register_id')
             ->leftjoin('transactions', 'cash_register_transactions.transaction_id', 'transactions.id');
 
-        if (!auth()->user()->can('superadmin') || !auth()->user()->can('cash.view_details.view')) {
+        if (!auth()->user()->can('superadmin') || auth()->user()->is_admin == 1 || !auth()->user()->can('cash.view_details.view')) {
             $query->where('user_id', Auth::user()->id);
         }
 

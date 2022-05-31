@@ -118,7 +118,7 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
             </div>
 
             <div class="container-fluid" id="chart_and_table_section">
-                @include('home.partials.chart_and_table')
+                {{-- @include('home.partials.chart_and_table') --}}
             </div>
         @endif
     @endif

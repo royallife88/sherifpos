@@ -388,7 +388,7 @@ class SellController extends Controller
                             </li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('superadmin') || auth()->user()->name == 'Admin') {
+                        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
                             $html .=
                                 '<li>
                                 <a href="' . action('SellController@edit', $row->id) . '" class="btn"><i
@@ -426,7 +426,7 @@ class SellController extends Controller
                                 </li>';
                         }
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('superadmin') || auth()->user()->name == 'Admin') {
+                        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
                             $html .=
                                 '<li>
                                 <a data-href="' . action('SellController@destroy', $row->id) . '"

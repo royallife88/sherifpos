@@ -88,21 +88,21 @@ class MoneySafeController extends Controller
                         </button>
                         <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
                         $html .= '<li class="divider"></li>';
-                        if (auth()->user()->can('safe_module.add_money_to_safe.create_and_edit')) {
-                            if (in_array(auth()->user()->id, $row->add_money_users) || auth()->user()->can('superadmin')) {
+                        if (auth()->user()->can('safe_module.add_money_to_safe.create_and_edit') || auth()->user()->can('superadmin')  || auth()->user()->is_admin == 1) {
+                            if (in_array(auth()->user()->id, $row->add_money_users) || auth()->user()->can('superadmin')  || auth()->user()->is_admin == 1) {
                                 $html .=
                                     '<li>
                                 <a data-href="' . action('MoneySafeTransferController@getAddMoneyToSafe', $row->id) . '" data-container=".view_modal"
-                                    class="btn btn-modal"><i class="fa fa-plus"></i> ' . __('lang.add_money_to_safe') . '</a>
+                                    class="btn btn-modal"><i class="fa fa-plus"></i> ' . __('lang.add_money') . '</a>
                                 </li>';
                             }
                         }
-                        if (auth()->user()->can('safe_module.take_money_to_safe.create_and_edit')) {
-                            if (in_array(auth()->user()->id, $row->take_money_users) || auth()->user()->can('superadmin')) {
+                        if (auth()->user()->can('safe_module.take_money_to_safe.create_and_edit') || auth()->user()->can('superadmin')  || auth()->user()->is_admin == 1) {
+                            if (in_array(auth()->user()->id, $row->take_money_users) || auth()->user()->can('superadmin')  || auth()->user()->is_admin == 1) {
                                 $html .=
                                     '<li>
                                 <a data-href="' . action('MoneySafeTransferController@getTakeMoneyFromSafe', $row->id) . '" data-container=".view_modal"
-                                    class="btn btn-modal"><i class="fa fa-minus"></i> ' . __('lang.take_money_from_safe') . '</a>
+                                    class="btn btn-modal"><i class="fa fa-minus"></i> ' . __('lang.withdraw_money') . '</a>
                                 </li>';
                             }
                         }

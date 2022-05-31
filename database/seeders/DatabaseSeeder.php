@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'superadmin@sherifshalany.tech',
             'password' => Hash::make('123456'),
             'is_superadmin' => 1,
+            'is_admin' => 0,
             'is_detault' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()
@@ -55,6 +56,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@sherifshalaby.tech',
             'password' => Hash::make('123456'),
             'is_superadmin' => 0,
+            'is_admin' => 1,
             'is_detault' => 1,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now()

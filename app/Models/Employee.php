@@ -242,7 +242,7 @@ class Employee extends Model implements HasMedia
             ->leftjoin('users', 'employees.user_id', 'users.id')
             ->where('job_types.job_title', 'chef');
 
-        if (!auth()->user()->can('raw_material_module.add_consumption_for_others.create_and_edit') && !auth()->user()->can('superadmin')) {
+        if (!auth()->user()->can('raw_material_module.add_consumption_for_others.create_and_edit') && !auth()->user()->can('superadmin')  && auth()->user()->is_admin != 1) {
             $employees = $query->where('users.id', Auth::user()->id)->pluck('users.name', 'users.id');
         } else {
             $employees = $query->pluck('users.name', 'users.id');

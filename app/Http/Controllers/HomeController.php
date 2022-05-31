@@ -60,99 +60,14 @@ class HomeController extends Controller
             }
         }
 
-        $dashboard_data = $this->getDashboardDetails($start_date, $end_date, $store_ids, $store_pos_id);
-
-        $best_sellings = $this->getBestSellings($start_date, $end_date, 'qty', $store_ids, $store_pos_id);
-        $yearly_best_sellings_qty = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'qty', $store_ids, $store_pos_id);
-        $yearly_best_sellings_price = $this->getBestSellings(date("Y") . '-01-01', date("Y") . '-12-31', 'total_price', $store_ids, $store_pos_id);
-
-        //cash flow of last 6 months
-        $start = strtotime(date('Y-m-01', strtotime('-6 month', strtotime(date('Y-m-d')))));
-        $end = strtotime(date('Y-m-' . date('t', mktime(0, 0, 0, date("m"), 1, date("Y")))));
-
-
-        while ($start < $end) {
-            $start_date = date("Y-m", $start) . '-' . '01';
-            $end_date = date("Y-m", $start) . '-' . '31';
-
-            $cash_flow_data  = $this->getDashboardDetails($start_date, $end_date, $store_ids, $store_pos_id);
-
-            $payment_received[] = $cash_flow_data['payment_received'];
-            $payment_sent[] = $cash_flow_data['payment_sent'];
-            $month[] = date("F", strtotime($start_date));
-            $start = strtotime("+1 month", $start);
-        }
-
-        // yearly report
-        $start = strtotime(date("Y") . '-01-01');
-        $end = strtotime(date("Y") . '-12-31');
-        while ($start < $end) {
-            $start_date = date("Y") . '-' . date('m', $start) . '-' . '01';
-            $end_date = date("Y") . '-' . date('m', $start) . '-' . '31';
-
-            $sale_amount =  $this->getSaleAmount($start_date, $end_date, null, $store_pos_id);
-            $purchase_amount = $this->getPurchaseAmount($start_date, $end_date, null, $store_pos_id);
-            $yearly_sale_amount[] = $sale_amount;
-            $yearly_purchase_amount[] = $purchase_amount;
-            $start = strtotime("+1 month", $start);
-        }
-
-        $sale_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->whereIn('transactions.status', ['final']);
-        $sales = $sale_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
-
-        $payment_query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
-            ->leftjoin('users', 'transactions.created_by', 'users.id')
-            ->whereIn('transactions.type', ['sell'])
-            ->where('transactions.payment_status', 'paid')
-            ->whereIn('transactions.status', ['final']);
-
-        $payments = $payment_query->select(
-            'transactions.*',
-            'transaction_payments.method',
-            'transaction_payments.amount',
-            'transaction_payments.ref_number',
-            'transaction_payments.paid_on',
-            'users.name as created_by_name',
-        )->groupBy('transaction_payments.id')->orderBy('transactions.id', 'desc')->take(5)->get();
-
-        $quotation_query = Transaction::whereIn('transactions.type', ['sell'])
-            ->where('is_quotation', 1);
-
-        $quotations = $quotation_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
-
-        $add_stock_query = Transaction::whereIn('transactions.type', ['add_stock'])
-            ->whereIn('transactions.status', ['received']);
-        $add_stocks = $add_stock_query->select(
-            'transactions.*'
-        )->groupBy('transactions.id')->orderBy('transactions.id', 'desc')->take(5)->get();
-
-
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $stores = Store::getDropdown();
 
         return view('home.index')->with(compact(
-            'dashboard_data',
-            'payment_received',
-            'payment_sent',
-            'yearly_sale_amount',
-            'yearly_purchase_amount',
-            'sales',
-            'payments',
-            'quotations',
-            'add_stocks',
             'payment_types',
-            'best_sellings',
-            'yearly_best_sellings_qty',
-            'yearly_best_sellings_price',
             'stores',
             'start_date',
-            'end_date',
-            'month'
+            'end_date'
         ));
     }
 

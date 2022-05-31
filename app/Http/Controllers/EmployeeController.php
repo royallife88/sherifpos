@@ -72,7 +72,7 @@ class EmployeeController extends Controller
         if (!empty($request->payment_status)) {
             $query->where('payment_status', $request->payment_status);
         }
-        if (!auth()->user()->can('superadmin')) {
+        if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) {
             $query->where('users.is_superadmin', 0);
         }
 
@@ -515,7 +515,7 @@ class EmployeeController extends Controller
     {
         $employee = Employee::where('user_id', $id)->first();
 
-        if (auth()->user()->can('superadmin')) {
+        if (auth()->user()->can('superadmin') || auth()->user()->is_admin == 1) {
             return ['success' => true];
         }
         if ((request()->value == $employee->pass_string)) {

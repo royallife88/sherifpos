@@ -104,7 +104,7 @@
     @endif
     <td style="width: @if(session('system_mode')  != 'restaurant') 10%; @else 15%; @endif padding: 0px;">
         @if(!empty($dining_table_id))
-            @if(auth()->user()->can('superadmin'))
+            @if(auth()->user()->can('superadmin') || auth()->user()->is_admin == 1)
             <button type="button" class="btn btn-danger btn-xs remove_row" style="margin-top: 15px;"><i class="fa fa-times"></i></button>
             @endif
         @else
