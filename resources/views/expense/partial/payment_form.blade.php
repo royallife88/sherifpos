@@ -19,7 +19,7 @@
 
     <div class="col-md-4 @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
         <div class="form-group">
-            {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!} <br>
+            {!! Form::label('paid_on', __('lang.accounting_period') . ':', []) !!} <br>
             <input type="datetime-local" name="paid_on"
                 value="@if (!empty(!empty($payment))){{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}@else{{ date('Y-m-d\TH:i') }}@endif"
                 class="form-control payment_date">

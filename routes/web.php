@@ -187,6 +187,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('pos/get-draft-transactions', 'SellPosController@getDraftTransactions');
     Route::get('pos/get-recent-transactions', 'SellPosController@getRecentTransactions');
     Route::get('pos/get-customer-details/{customer_id}', 'SellPosController@getCustomerDetails');
+    Route::get('pos/get-customer-balance/{customer_id}', 'SellPosController@getCustomerBalance');
     Route::get('pos/get-payment-row', 'SellPosController@getPaymentRow');
     Route::get('pos/get-sale-promotion-details-if-valid', 'SellPosController@getSalePromotionDetailsIfValid');
     Route::get('pos/get-transaction-details/{transaction_id}', 'SellPosController@getTransactionDetails');

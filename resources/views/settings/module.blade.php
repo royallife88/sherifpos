@@ -12,7 +12,7 @@
             'multipart/form-data']) !!}
             <div class="row">
                 @foreach ($modules as $key => $name)
-                @if(session('system_mode') != 'restaurant' && session('system_mode') != 'garments')
+                @if(session('system_mode') != 'restaurant' && session('system_mode') != 'garments' && session('system_mode') != 'pos')
                 @if($key == 'raw_material_module')
                 @continue
                 @endif

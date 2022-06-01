@@ -1257,4 +1257,11 @@ return [
     'all_transactions_related_to_this_product_will_be_deleted' => 'سيتم حذف جميع المعاملات المتعلقة بهذا المنتج ؛ الأسهم والمبيعات والمشتريات وما إلى ذلك.',
     'no_session_found_for_this_date_and_time' => 'يا نجم النجوم اختار توقيت كان فيه كاشير شغال بالفعل...لا تجنني',
     'payment_date_and_time' => 'تاريخ ووقت الدفع',
+
+    'add_money' => 'Add Money',
+    'withdraw_money' => 'Withdraw Money',
+    'buy_from_supplier' => 'Buy From Supplier',
+    'accounting_period' => 'فترة الحساب',
+
+
 ];

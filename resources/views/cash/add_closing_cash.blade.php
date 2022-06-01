@@ -154,6 +154,12 @@
                             {!! Form::text('amount', null, ['class' => 'form-control', 'placeholder' => __('lang.amount'), 'required', 'id' => 'closing_amount']) !!}
                         </div>
                     </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
+                            {!! Form::select('source_type', ['user' => __('lang.user'), 'safe' => __('lang.safe')], 'user', ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                        </div>
+                    </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             {!! Form::label('cash_given_to', __('lang.cash_given_to') . ':*') !!}
@@ -207,5 +213,19 @@
             $('#adjust-btn').addClass('hide');
         }
 
-    })
+    });
+    $('#source_type').change();
+    $(document).on('change', '#source_type', function() {
+        if ($(this).val() !== '') {
+            $.ajax({
+                method: 'get',
+                url: '/add-stock/get-source-by-type-dropdown/' + $(this).val(),
+                data: {},
+                success: function(result) {
+                    $("#cash_given_to").empty().append(result);
+                    $("#cash_given_to").selectpicker("refresh");
+                },
+            });
+        }
+    });
 </script>

@@ -14,6 +14,7 @@ use App\Models\Customer;
 use App\Models\CustomerType;
 use App\Models\Email;
 use App\Models\Grade;
+use App\Models\MoneySafe;
 use App\Models\Product;
 use App\Models\ProductClass;
 use App\Models\Size;
@@ -843,6 +844,9 @@ class AddStockController extends Controller
         }
         if ($type == 'store') {
             $array = Store::pluck('name', 'id');
+        }
+        if ($type == 'safe') {
+            $array = MoneySafe::pluck('name', 'id');
         }
 
         return $this->commonUtil->createDropdownHtml($array, __('lang.please_select'));

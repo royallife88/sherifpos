@@ -2005,7 +2005,7 @@ $(document).on("change", "#customer_id", function () {
             );
         },
     });
-    getCustomerPointDetails();
+    getCustomerBalance();
     getCustomerSizes(customer_id);
 });
 
@@ -2074,6 +2074,45 @@ $(document).on("click", ".add_to_deposit", function () {
     $(this).attr("disabled", true);
 });
 
+function getCustomerBalance() {
+    let customer_id = $("#customer_id").val();
+
+    $.ajax({
+        method: "get",
+        url: "/pos/get-customer-balance/" + customer_id,
+        data: {},
+        dataType: "json",
+        success: function (result) {
+            $(".customer_balance").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $(".customer_balance").removeClass("text-red");
+            if (result.balance < 0) {
+                $(".customer_balance").addClass("text-red");
+            }
+            $(".remaining_balance_text").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $(".balance_error_msg").addClass("hide");
+            $("#remaining_deposit_balance").val(result.balance);
+            $(".current_deposit_balance").text(
+                __currency_trans_from_en(result.balance, false)
+            );
+            $("#current_deposit_balance").val(result.balance);
+            let pay_due_url =
+                base_path +
+                "/transaction-payment/get-customer-due/" +
+                result.customer.id;
+            $("#pay_customer_due_btn").data("href", pay_due_url);
+            if (result.balance < 0) {
+                $("#pay_customer_due_btn").attr("disabled", false);
+            } else {
+                $("#pay_customer_due_btn").attr("disabled", true);
+            }
+            calculate_sub_totals();
+        },
+    });
+}
 function getCustomerPointDetails() {
     let customer_id = $("#customer_id").val();
     let default_customer_id = $("#default_customer_id").val();
@@ -2113,32 +2152,32 @@ function getCustomerPointDetails() {
             }
             $(".customer_type_name").text(result.customer_type_name);
             $("#emails").val(result.customer.email);
-            $(".customer_balance").text(
-                __currency_trans_from_en(result.balance, false)
-            );
-            $(".customer_balance").removeClass("text-red");
-            if (result.balance < 0) {
-                $(".customer_balance").addClass("text-red");
-            }
-            $(".remaining_balance_text").text(
-                __currency_trans_from_en(result.balance, false)
-            );
-            $(".balance_error_msg").addClass("hide");
-            $("#remaining_deposit_balance").val(result.balance);
-            $(".current_deposit_balance").text(
-                __currency_trans_from_en(result.balance, false)
-            );
-            $("#current_deposit_balance").val(result.balance);
-            let pay_due_url =
-                base_path +
-                "/transaction-payment/get-customer-due/" +
-                result.customer.id;
-            $("#pay_customer_due_btn").data("href", pay_due_url);
-            if (result.balance < 0) {
-                $("#pay_customer_due_btn").attr("disabled", false);
-            } else {
-                $("#pay_customer_due_btn").attr("disabled", true);
-            }
+            // $(".customer_balance").text(
+            //     __currency_trans_from_en(result.balance, false)
+            // );
+            // $(".customer_balance").removeClass("text-red");
+            // if (result.balance < 0) {
+            //     $(".customer_balance").addClass("text-red");
+            // }
+            // $(".remaining_balance_text").text(
+            //     __currency_trans_from_en(result.balance, false)
+            // );
+            // $(".balance_error_msg").addClass("hide");
+            // $("#remaining_deposit_balance").val(result.balance);
+            // $(".current_deposit_balance").text(
+            //     __currency_trans_from_en(result.balance, false)
+            // );
+            // $("#current_deposit_balance").val(result.balance);
+            // let pay_due_url =
+            //     base_path +
+            //     "/transaction-payment/get-customer-due/" +
+            //     result.customer.id;
+            // $("#pay_customer_due_btn").data("href", pay_due_url);
+            // if (result.balance < 0) {
+            //     $("#pay_customer_due_btn").attr("disabled", false);
+            // } else {
+            //     $("#pay_customer_due_btn").attr("disabled", true);
+            // }
             calculate_sub_totals();
         },
     });
