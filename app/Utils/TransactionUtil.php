@@ -288,27 +288,47 @@ class TransactionUtil extends Util
                 $supplier_service = Transaction::updateOrCreate(['supplier_id' => $product->supplier->id, 'parent_sale_id' => $transaction->id], $transaction_data);
                 $keep_supplier_service[] = $supplier_service->id;
 
-                $supplier_service_line = AddStockLine::updateOrCreate(
-                    [
-                        'transaction_id' => $supplier_service->id,
-                        'product_id' => $sell_line->product_id,
-                        'variation_id' => $sell_line->variation_id
-                    ],
-                    [
-                        'product_id' => $sell_line->product_id,
-                        'variation_id' => $sell_line->variation_id,
-                        'quantity' => $sell_line->quantity,
-                        'quantity_sold' => $sell_line->quantity,
-                        'purchase_price' => $sell_line->product->purchase_price,
-                        'sub_total' => $sell_line->quantity * $sell_line->product->purchase_price
-                    ]
-                );
+                $supplier_service_line = $this->createOrUpdateSupplierAddStockLine($supplier_service, $sell_line->product->purchase_price, $sell_line->product_id, $sell_line->variation_id, $sell_line->quantity, $sell_line->quantity * $sell_line->product->purchase_price);
+
+                $keep_supplier_service_lines[] = $supplier_service_line->id;
+
+                if ($sell_line->product->buy_from_supplier) {
+                    foreach ($sell_line->variation->raw_materials as $consumption_product) {
+                        $product = $consumption_product->raw_material;
+                        if (!empty($product->supplier->id)) {
+                            $transaction_data = [
+                                'store_id' => $transaction->store_id,
+                                'supplier_id' => $product->supplier->id,
+                                'type' => 'supplier_service',
+                                'status' => 'final',
+                                'paying_currency_id' => $default_currency,
+                                'exchange_rate' => 1,
+                                'order_date' => !empty($transaction) ? $transaction->transaction_date : Carbon::now(),
+                                'transaction_date' => !empty($transaction->transaction_date) ? $transaction->transaction_date : Carbon::now(),
+                                'payment_status' => 'pending',
+                                'parent_sale_id' => $transaction->id,
+                                'grand_total' => $sell_line->quantity * $consumption_product->amount_used * $sell_line->product->purchase_price,
+                                'final_total' => $sell_line->quantity * $consumption_product->amount_used * $sell_line->product->purchase_price,
+                                'discount_amount' => 0,
+                                'other_payments' => 0,
+                                'other_expenses' => 0,
+                                'created_by' => Auth::user()->id,
+                            ];
+                            $supplier_service = Transaction::updateOrCreate(['supplier_id' => $product->supplier->id, 'parent_sale_id' => $transaction->id], $transaction_data);
+                            $keep_supplier_service[] = $supplier_service->id;
+
+                            $sub_total = $sell_line->quantity * $consumption_product->amount_used * $consumption_product->raw_material->purchase_price;
+                            $quantity = $sell_line->quantity * $consumption_product->amount_used;
+                            $supplier_service_line = $this->createOrUpdateSupplierAddStockLine($supplier_service, $consumption_product->raw_material->purchase_price, $consumption_product->raw_material_id, $consumption_product->variation_id, $quantity, $sub_total);
+
+                            $keep_supplier_service_lines[] = $supplier_service_line->id;
+                        }
+                    }
+                }
                 $final_total = $supplier_service->add_stock_lines->sum('sub_total');
                 $supplier_service->final_total = $final_total;
                 $supplier_service->grand_total = $final_total;
                 $supplier_service->save();
-
-                $keep_supplier_service_lines[] = $supplier_service_line->id;
             }
         }
 
@@ -316,6 +336,40 @@ class TransactionUtil extends Util
             AddStockLine::whereIn('transaction_id', $keep_supplier_service)->whereNotIn('id', $keep_supplier_service_lines)->delete();
         }
     }
+
+    /**
+     * create or update transaction supplier service
+     *
+     * @param object $transaction
+     * @param double $purchase_price
+     * @param int $product_id
+     * @param int $variation_id
+     * @param double $quanity
+     * @param double $sub_total
+     * @return object
+     */
+    public function createOrUpdateSupplierAddStockLine($transaction, $purchase_price, $product_id, $variation_id, $quantity, $sub_total)
+    {
+        $supplier_service_line = AddStockLine::updateOrCreate(
+            [
+                'transaction_id' => $transaction->id,
+                'product_id' =>  $product_id,
+                'variation_id' => $variation_id
+            ],
+            [
+                'product_id' =>  $product_id,
+                'variation_id' => $variation_id,
+                'quantity' => $quantity,
+                'quantity_sold' => $quantity,
+                'purchase_price' => $purchase_price,
+                'sub_total' => $sub_total
+            ]
+        );
+
+        return $supplier_service_line;
+    }
+
+
     /**
      * create or update transaction supplier service
      *

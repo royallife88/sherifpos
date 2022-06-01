@@ -28,6 +28,21 @@ $recent_product = App\Models\Product::where('is_raw_material', 1)->orderBy('crea
         </div>
     </div>
     <div class="col-md-4">
+        <div class="form-group supplier_div">
+            {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+            <div class="input-group my-group">
+                {!! Form::select('supplier_id', $suppliers, !empty($recent_product->supplier) ? $recent_product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                <span class="input-group-btn">
+                    @can('supplier_module.supplier.create_and_edit')
+                        <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                            data-href="{{ action('SupplierController@create') }}?quick_add=1"
+                            data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                    @endcan
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
         <div class="form-group">
             {!! Form::label('sku', __('lang.sku') , []) !!}
             {!! Form::text('sku', null, ['class' => 'form-control', 'placeholder'

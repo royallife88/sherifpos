@@ -542,6 +542,7 @@ class ProductController extends Controller
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
+                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'created_by' => Auth::user()->id
@@ -745,6 +746,7 @@ class ProductController extends Controller
                 'this_product_have_variant' => !empty($request->this_product_have_variant) ? 1 : 0,
                 'price_based_on_raw_material' => !empty($request->price_based_on_raw_material) ? 1 : 0,
                 'automatic_consumption' => !empty($request->automatic_consumption) ? 1 : 0,
+                'buy_from_supplier' => !empty($request->buy_from_supplier) ? 1 : 0,
                 'type' => !empty($request->this_product_have_variant) ? 'variable' : 'single',
                 'active' => !empty($request->active) ? 1 : 0,
                 'edited_by' => Auth::user()->id,

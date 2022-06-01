@@ -315,7 +315,7 @@ class ProductUtil extends Util
     /**
      * create or update product consumption data
      *
-     * @param object $raw_material
+     * @param int $variation_id
      * @param array $consumption_details
      * @return boolean
      */

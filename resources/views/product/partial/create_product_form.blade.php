@@ -223,6 +223,13 @@ $recent_product = App\Models\Product::where('is_raw_material', 0)
                 <label for="price_based_on_raw_material"><strong>@lang('lang.price_based_on_raw_material')</strong></label>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="i-checks">
+                <input id="buy_from_supplier" name="buy_from_supplier" type="checkbox" value="1"
+                    class="form-control-custom">
+                <label for="buy_from_supplier"><strong>@lang('lang.buy_from_supplier')</strong></label>
+            </div>
+        </div>
         <div class="col-md-12">
             <table class="table table-bordered" id="consumption_table">
                 <thead>

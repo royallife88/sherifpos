@@ -13,6 +13,8 @@ use App\Models\ProductClass;
 use App\Models\ProductStore;
 use App\Models\Size;
 use App\Models\Store;
+use App\Models\Supplier;
+use App\Models\SupplierProduct;
 use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\Unit;
@@ -248,6 +250,7 @@ class RawMaterialController extends Controller
 
         $users = User::orderBy('name', 'asc')->pluck('name', 'id');
         $quick_add = request()->quick_add;
+        $suppliers = Supplier::pluck('name', 'id');
 
         if ($quick_add) {
             return view('raw_material.create_quick_add')->with(compact(
@@ -255,6 +258,7 @@ class RawMaterialController extends Controller
                 'products',
                 'brands',
                 'units',
+                'suppliers',
             ));
         }
 
@@ -263,6 +267,7 @@ class RawMaterialController extends Controller
             'brands',
             'units',
             'units_all',
+            'suppliers',
         ));
     }
 
@@ -318,6 +323,11 @@ class RawMaterialController extends Controller
                 foreach ($request->images as $image) {
                     $raw_material->addMedia($image)->toMediaCollection('product');
                 }
+            }
+            if (!empty($request->supplier_id)) {
+                SupplierProduct::updateOrCreate(
+                    ['product_id' => $raw_material->id, 'supplier_id' => $request->supplier_id]
+                );
             }
 
 
@@ -383,6 +393,7 @@ class RawMaterialController extends Controller
         $sizes = Size::orderBy('name', 'asc')->pluck('name', 'id');
         $grades = Grade::orderBy('name', 'asc')->pluck('name', 'id');
         $stores  = Store::all();
+        $suppliers = Supplier::pluck('name', 'id');
 
 
         return view('raw_material.edit')->with(compact(
@@ -395,6 +406,7 @@ class RawMaterialController extends Controller
             'sizes',
             'grades',
             'stores',
+            'suppliers',
         ));
     }
 
@@ -415,7 +427,7 @@ class RawMaterialController extends Controller
             ['name' => ['required', 'max:255']],
             ['purchase_price' => ['required', 'max:25', 'decimal']],
         );
-        // try {
+        try {
 
             $raw_material_data = [
                 'name' => $request->name,
@@ -454,19 +466,26 @@ class RawMaterialController extends Controller
                 }
             }
 
+            if (!empty($request->supplier_id)) {
+                SupplierProduct::updateOrCreate(
+                    ['product_id' => $raw_material->id],
+                    ['supplier_id' => $request->supplier_id]
+                );
+            }
+
 
             DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return $output;
     }

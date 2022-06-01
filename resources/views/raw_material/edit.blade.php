@@ -46,6 +46,21 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
+                                <div class="form-group supplier_div">
+                                    {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
+                                    <div class="input-group my-group">
+                                        {!! Form::select('supplier_id', $suppliers, !empty($raw_material->supplier) ? $raw_material->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        <span class="input-group-btn">
+                                            @can('supplier_module.supplier.create_and_edit')
+                                                <button type="button" class="btn-modal btn btn-default bg-white btn-flat"
+                                                    data-href="{{ action('SupplierController@create') }}?quick_add=1"
+                                                    data-container=".view_modal"><i class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                            @endcan
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     {!! Form::label('sku', __('lang.sku') , []) !!}
                                     {!! Form::text('sku', !empty($raw_material) ? $raw_material->sku : null, ['class' =>

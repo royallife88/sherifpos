@@ -1266,6 +1266,7 @@ return [
 
     'add_money' => 'Add Money',
     'withdraw_money' => 'Withdraw Money',
+    'buy_from_supplier' => 'Buy From Supplier',
 
 
 

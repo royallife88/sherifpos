@@ -54,6 +54,7 @@ class CreateProductsTable extends Migration
             $table->boolean('price_based_on_raw_material')->default(0);
             $table->boolean('is_raw_material')->default(0);
             $table->boolean('automatic_consumption')->default(0);
+            $table->boolean('buy_from_supplier')->default(0);
             $table->unsignedBigInteger('edited_by')->nullable();
             $table->unsignedBigInteger('created_by');
             $table->timestamps();
