@@ -87,7 +87,7 @@ $(document).on("click", "a.add-gift-card", function (e) {
     e.preventDefault();
     gift_card_referred_row = $(this).parents(".ref_details_row");
     $.ajax({
-        url: $(this).data("href"),
+        url: $(this).data("href") + '?quick_add=true',
         dataType: "html",
         success: function (result) {
             $(".gift_card_modal").html(result).modal("show");
@@ -95,7 +95,7 @@ $(document).on("click", "a.add-gift-card", function (e) {
     });
 });
 
-$(document).on("submit", "form#gift_card_add_form", function (e) {
+$(document).on("submit", "form#quick_add_gift_card_form", function (e) {
     e.preventDefault();
     $.ajax({
         method: "POST",

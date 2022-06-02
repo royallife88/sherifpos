@@ -1156,7 +1156,7 @@ class TransactionUtil extends Util
         ]);
 
         if ($format_data) {
-            $inputs['paid_on'] = $inputs['paid_on'];
+            $inputs['paid_on'] = $this->uf_date($inputs['paid_on']) . ' ' . date('H:i:s');
             $inputs['amount'] = $this->num_uf($inputs['amount']);
         }
 
