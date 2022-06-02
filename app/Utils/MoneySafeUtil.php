@@ -53,9 +53,9 @@ class MoneySafeUtil extends Util
                 $amount = $amount;
             } else {
                 $amount_to_base = $amount;
-                if (!empty($to_currency_exchange_rate)) {
+                if(!empty($to_currency_exchange_rate)){
                     $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
-                } else {
+                }else{
                     $amount = $amount;
                 }
             }
@@ -90,7 +90,7 @@ class MoneySafeUtil extends Util
      */
     public function addPayment($transaction, $payment_data, $type, $transaction_payment_id = null)
     {
-        $money_safe = MoneySafe::where('store_id', $transaction->store_id)->where('type', 'bank')->first();
+        $money_safe = MoneySafe::where('store_id', $transaction->store_id)->where('currency_id', $transaction->received_currency_id)->where('type', 'bank')->first();
         if (empty($money_safe)) {
             $money_safe = MoneySafe::where('is_default', 1)->first();
         }
@@ -130,7 +130,7 @@ class MoneySafeUtil extends Util
      */
     public function updatePayment($transaction, $payment_data, $type, $transaction_payment_id = null, $old_tp = null)
     {
-        $money_safe = MoneySafe::where('store_id', $transaction->store_id)->where('type', 'bank')->first();
+        $money_safe = MoneySafe::where('store_id', $transaction->store_id)->where('currency_id', $transaction->received_currency_id)->where('type', 'bank')->first();
         if (empty($money_safe)) {
             $money_safe = MoneySafe::where('is_default', 1)->first();
         }
