@@ -110,11 +110,16 @@ $(document).on("change", "#store_id", function () {
             url: "/store-pos/get-pos-details-by-store/" + $("#store_id").val(),
             data: {},
             success: function (result) {
-                $("#store_pos_id").html(
-                    `<option value="${result.id}">${result.name}</option>`
-                );
-                $("#store_pos_id").selectpicker("refresh");
-                $("#store_pos_id").selectpicker("val", result.id);
+                if (result) {
+                    $("#store_pos_id").html(
+                        `<option value="${result.id}">${result.name}</option>`
+                    );
+                    $("#store_pos_id").selectpicker("refresh");
+                    $("#store_pos_id").selectpicker("val", result.id);
+                } else {
+                    $("#store_pos_id").html("");
+                    $("#store_pos_id").selectpicker("refresh");
+                }
             },
         });
     }
@@ -2099,11 +2104,6 @@ function getCustomerBalance() {
                 __currency_trans_from_en(result.balance, false)
             );
             $("#current_deposit_balance").val(result.balance);
-            let pay_due_url =
-                base_path +
-                "/transaction-payment/get-customer-due/" +
-                result.customer.id;
-            $("#pay_customer_due_btn").data("href", pay_due_url);
             if (result.balance < 0) {
                 $("#pay_customer_due_btn").attr("disabled", false);
             } else {
@@ -2168,11 +2168,11 @@ function getCustomerPointDetails() {
             //     __currency_trans_from_en(result.balance, false)
             // );
             // $("#current_deposit_balance").val(result.balance);
-            // let pay_due_url =
-            //     base_path +
-            //     "/transaction-payment/get-customer-due/" +
-            //     result.customer.id;
-            // $("#pay_customer_due_btn").data("href", pay_due_url);
+            let pay_due_url =
+                base_path +
+                "/transaction-payment/get-customer-due/" +
+                result.customer.id;
+            $("#pay_customer_due_btn").data("href", pay_due_url);
             // if (result.balance < 0) {
             //     $("#pay_customer_due_btn").attr("disabled", false);
             // } else {

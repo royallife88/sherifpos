@@ -24,6 +24,10 @@ class MoneySafeTransaction extends Model
     {
         return $this->belongsTo(Store::class);
     }
+    public function currency()
+    {
+        return $this->belongsTo(Currency::class, 'currency_id');
+    }
     public function created_by_user()
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => '']);

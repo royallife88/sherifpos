@@ -23,7 +23,7 @@ class Store extends Model
 
     public static function getDropdown()
     {
-        if (session('user.is_superadmin')) {
+        if (session('user.is_superadmin') || session('user.is_admin')) {
             $stores = Store::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         } else {
             $employee = Employee::where('user_id', auth()->user()->id)->first();

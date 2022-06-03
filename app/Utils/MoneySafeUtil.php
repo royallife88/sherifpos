@@ -53,9 +53,9 @@ class MoneySafeUtil extends Util
                 $amount = $amount;
             } else {
                 $amount_to_base = $amount;
-                if(!empty($to_currency_exchange_rate)){
+                if (!empty($to_currency_exchange_rate)) {
                     $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
-                }else{
+                } else {
                     $amount = $amount;
                 }
             }
@@ -95,6 +95,7 @@ class MoneySafeUtil extends Util
             $money_safe = MoneySafe::where('is_default', 1)->first();
         }
         $payment_data['amount'] = $this->convertCurrencyAmount($payment_data['amount'], $transaction->received_currency_id, $money_safe->currency_id, $transaction->store_id);
+        // $payment_data['amount'] = $this->num_uf($payment_data['amount']);
         $employee = Employee::where('user_id', auth()->user()->id)->first();
 
         if (!empty($employee)) {
