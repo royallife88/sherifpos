@@ -22,6 +22,7 @@ class CreateCashRegistersTable extends Migration
             $table->dateTime('closed_at')->nullable();
             $table->decimal('closing_amount', '15', 4)->default(0);
             $table->decimal('discrepancy', '15', 4)->default(0);
+            $table->string('source_type', 25)->nullable();
             $table->unsignedBigInteger('cash_given_to')->nullable();
             $table->string('notes')->nullable();
             $table->timestamps();

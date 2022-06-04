@@ -6,13 +6,16 @@ use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\ExpenseBeneficiary;
 use App\Models\ExpenseCategory;
+use App\Models\MoneySafe;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\User;
 use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
@@ -32,6 +35,7 @@ class ExpenseController extends Controller
     protected $transactionUtil;
     protected $productUtil;
     protected $cashRegisterUtil;
+    protected $moneysafeUtil;
 
     /**
      * Constructor
@@ -39,12 +43,13 @@ class ExpenseController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil, CashRegisterUtil $cashRegisterUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, ProductUtil $productUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->transactionUtil = $transactionUtil;
         $this->productUtil = $productUtil;
         $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->moneysafeUtil = $moneysafeUtil;
     }
 
 
@@ -181,21 +186,27 @@ class ExpenseController extends Controller
                 'bank_name' => $request->bank_name,
             ];
 
-            $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
+            $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
 
             if ($payment_data['method'] == 'cash') {
                 $user_id = null;
                 if (!empty($request->source_id)) {
-                    if ($request->source_type == 'pos') {
-                        $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                    if ($request->source_type == 'user' || $request->source_type == 'pos') {
+                        if ($request->source_type == 'pos') {
+                            $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                        }
+                        if ($request->source_type == 'user') {
+                            $user_id = $request->source_id;
+                        }
+                        $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
                     }
-                    if ($request->source_type == 'user') {
-                        $user_id = $request->source_id;
+                    if ($request->source_type == 'safe') {
+                        $money_safe = MoneySafe::find($request->source_id);
+                        $payment_data['currency_id'] = System::getProperty('currency');
+                        $this->moneysafeUtil->addPayment($expense, $payment_data, 'debit', $transaction_payment->id, $money_safe);
                     }
                 }
-
-                $this->cashRegisterUtil->addPayments($expense, $payment_data, 'debit', $user_id);
             }
 
             DB::commit();
@@ -262,7 +273,7 @@ class ExpenseController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // try {
             $data = $request->except('_token', '_method', 'submit');
 
             $expense = Transaction::where('id', $id)->first();
@@ -305,7 +316,7 @@ class ExpenseController extends Controller
                 'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $data['bank_deposit_date'] : null,
                 'bank_name' => $request->bank_name,
             ];
-            $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
+            $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($expense, $payment_data);
             $this->transactionUtil->updateTransactionPaymentStatus($expense->id);
 
             if ($payment_data['method'] == 'cash') {
@@ -317,24 +328,32 @@ class ExpenseController extends Controller
                     if ($request->source_type == 'user') {
                         $user_id = $request->source_id;
                     }
-                }
-                $cr_transaction = CashRegisterTransaction::where('transaction_id', $expense->id)->first();
-                if (!empty($request->cash_register_id)) {
-                    $register = CashRegister::where('id', $request->cash_register_id)->first();
-                    if (!empty($register->closed_at)) {
-                        $register->closing_amount = $register->closing_amount - $this->commonUtil->num_uf($request->amount);
-                        $register->save();
-                    }
-                    $pre_register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                    if (!empty($pre_register->closed_at)) {
-                        $pre_register->closing_amount = $pre_register->closing_amount + $this->commonUtil->num_uf($request->amount);
-                        $pre_register->save();
-                    }
-                } else {
-                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                }
 
-                $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $expense->type, 'debit', $user_id, '', null);
+                    if ($request->source_type == 'safe') {
+                        $money_safe = MoneySafe::find($request->source_id);
+                        $payment_data['currency_id'] = System::getProperty('currency');
+                        $this->moneysafeUtil->updatePayment($expense, $payment_data, 'debit', $transaction_payment->id, null, $money_safe);
+                    }
+                }
+                if ($request->source_type == 'user' || $request->source_type == 'pos') {
+                    $cr_transaction = CashRegisterTransaction::where('transaction_id', $expense->id)->first();
+                    if (!empty($request->cash_register_id)) {
+                        $register = CashRegister::where('id', $request->cash_register_id)->first();
+                        if (!empty($register->closed_at)) {
+                            $register->closing_amount = $register->closing_amount - $this->commonUtil->num_uf($request->amount);
+                            $register->save();
+                        }
+                        $pre_register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                        if (!empty($pre_register->closed_at)) {
+                            $pre_register->closing_amount = $pre_register->closing_amount + $this->commonUtil->num_uf($request->amount);
+                            $pre_register->save();
+                        }
+                    } else {
+                        $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                    }
+
+                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $expense->type, 'debit', $user_id, '', null);
+                }
             }
 
             DB::commit();
@@ -343,13 +362,13 @@ class ExpenseController extends Controller
                 'success' => true,
                 'msg' => __('lang.expense_updated')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }

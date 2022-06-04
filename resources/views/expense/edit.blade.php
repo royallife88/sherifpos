@@ -36,7 +36,7 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                                            {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store')], $expense->source_type, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                            {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], $expense->source_type, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -107,6 +107,7 @@
     <script>
         $(document).ready(function() {
             $('#method').change();
+            $('#source_type').change();
         })
         $('#method').change(function() {
             var method = $(this).val();
@@ -157,6 +158,7 @@
                     data: {},
                     success: function(result) {
                         $("#source_id").empty().append(result);
+                        $('#source_id').val('{{ $expense->source_id }}');
                         $("#source_id").selectpicker("refresh");
                     },
                 });

@@ -126,6 +126,10 @@ class MoneySafeUtil extends Util
             $currency_id = $transaction->paying_currency_id;
             $data['comments'] = __('lang.add_stock');
         }
+        if ($transaction->type == 'expense') {
+            $currency_id = $payment_data['currency_id'];
+            $data['comments'] = __('lang.expense');
+        }
         if (!empty($money_safe)) {
             if ($type == 'credit') {
                 $data['money_safe_id'] = $money_safe->id;
@@ -248,17 +252,17 @@ class MoneySafeUtil extends Util
             }
         }
 
-        if ($transaction->type == 'add_stock') {
+        if ($transaction->type == 'add_stock' || $transaction->type == 'expense') {
             $old_ms_transaction = MoneySafeTransaction::where('transaction_id', $transaction->id)->first();
             if ($old_ms_transaction->money_safe_id != $money_safe->id) {
                 MoneySafeTransaction::where('transaction_id', $transaction->id)->delete();
             }
 
             $default_currency_id = (int) System::getProperty('currency');
-            $money_safe_transactions = MoneySafeTransaction::where('transaction_payment_id', $transaction_payment_id)->groupBy('currency_id')->get();
+            $money_safe_transactions = MoneySafeTransaction::where('transaction_payment_id', $transaction_payment_id)->get();
             $total_paid_amount_base = 0;
-            foreach ($money_safe_transactions as $money_safe_transaction) {
-                $coverted_amount_base = $this->convertCurrencyAmount($money_safe_transaction->amount, $money_safe_transaction->currency_id, $default_currency_id, $transaction->store_id);
+            foreach ($money_safe_transactions as $mst) {
+                $coverted_amount_base = $this->convertCurrencyAmount($mst->amount, $mst->currency_id, $default_currency_id, $transaction->store_id);
                 $total_paid_amount_base += $coverted_amount_base;
             }
             $total_amount_base = $this->convertCurrencyAmount($transaction->final_total, $transaction->paying_currency_id, $default_currency_id, $transaction->store_id);
@@ -269,9 +273,15 @@ class MoneySafeUtil extends Util
 
 
             if ($remaing_amount > 0) {
-                $currency_id = $transaction->paying_currency_id;
+                if ($transaction->type == 'add_stock') {
+                    $currency_id = $transaction->paying_currency_id;
+                    $data['comments'] = __('lang.add_stock');
+                }
+                if ($transaction->type == 'expense') {
+                    $currency_id = $payment_data['currency_id'];
+                    $data['comments'] = __('lang.expense');
+                }
                 $amount = $this->num_uf($remaing_amount);
-                $data['comments'] = __('lang.add_stock');
                 $data['money_safe_id'] = $money_safe->id;
                 $data['transaction_date'] = $transaction->transaction_date;
                 $data['transaction_id'] = $transaction->id;
@@ -324,8 +334,7 @@ class MoneySafeUtil extends Util
                         $amount_to_base = $this->convertCurrencyAmount($amount, $transaction->paying_currency_id, $default_currency_id, $transaction->store_id);
                         $mst_amount_base = $this->convertCurrencyAmount($money_safe_transaction->amount, $money_safe_transaction->currency_id, $default_currency_id, $transaction->store_id);
                         if ($mst_amount_base <= $amount_to_base) {
-                            $money_safe_transaction->amount = 0;
-                            $money_safe_transaction->save();
+                            $money_safe_transaction->delete();
 
                             $remaing_base = $amount_to_base - $mst_amount_base;
                             $remaing = $this->convertCurrencyAmount($remaing_base, $default_currency_id, $transaction->paying_currency_id, $transaction->store_id);

@@ -76,7 +76,7 @@ class MoneySafeController extends Controller
                     $html = '<div class="row">';
                     foreach ($exchange_rate_currencies as $currency) {
                         $html .= '<h6>';
-                        $balance = $this->commonUtil->num_f($this->moneySafeUtil->getSafeBalance($row->id, $currency['currency_id']));
+                        $balance = $this->moneySafeUtil->getSafeBalance($row->id, $currency['currency_id']);
                         $html .= '<span style="padding-right: 20px;" class="currency_total_ms currency_total currency_total_' . $currency['currency_id'] . '"
                             data-currency_id="' . $currency['currency_id'] . '"
                             data-is_default="' . $currency['is_default'] . '"
