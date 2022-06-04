@@ -106,7 +106,7 @@ class EmployeeController extends Controller
         $modulePermissionArray = User::modulePermissionArray();
         $subModulePermissionArray = User::subModulePermissionArray();
         $jobs = JobType::getDropdown();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id')->toArray();
         $customer_types = CustomerType::getDropdown();
         $cashiers = Employee::getDropdownByJobType('Cashier');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');
@@ -273,7 +273,7 @@ class EmployeeController extends Controller
         $employee = Employee::leftjoin('users', 'employees.user_id', 'users.id')->where('employees.id', $id)->select('users.email', 'users.name', 'employees.*')->first();
         $user = User::find($employee->user_id);
         $jobs = JobType::getDropdown();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id')->toArray();
         $customer_types = CustomerType::getDropdown();
         $cashiers = Employee::getDropdownByJobType('Cashier');
 
@@ -321,7 +321,7 @@ class EmployeeController extends Controller
         $employee = Employee::leftjoin('users', 'employees.user_id', 'users.id')->where('employees.id', $id)->select('users.email', 'users.name', 'employees.*')->first();
         $user = User::find($employee->user_id);
         $jobs = JobType::getDropdown();
-        $stores = Store::pluck('name', 'id');
+        $stores = Store::pluck('name', 'id')->toArray();
         $customer_types = CustomerType::getDropdown();
         $cashiers = Employee::getDropdownByJobType('Cashier');
         $products = Product::orderBy('name', 'asc')->pluck('name', 'id');

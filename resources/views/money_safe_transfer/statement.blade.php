@@ -36,6 +36,7 @@
                                     <th>@lang('lang.job')</th>
                                     <th>@lang('lang.store')</th>
                                     <th>@lang('lang.comments')</th>
+                                    <th class="currencies">@lang('lang.currency')</th>
                                     <th>@lang('lang.amount')</th>
                                     <th class="balance">@lang('lang.balance')</th>
                                     <th>@lang('lang.created_by')</th>
@@ -50,7 +51,8 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <th>@lang('lang.total')</th>
+                                    <th class="table_totals">@lang('lang.totals')</th>
+                                    <td></td>
                                     <td></td>
                                     <td class="footer_balance">{{ @num_format($balance) }}</td>
                                 </tr>
@@ -116,6 +118,10 @@
                         name: "comments"
                     },
                     {
+                        data: "currency",
+                        name: "currencies.symbol"
+                    },
+                    {
                         data: "amount",
                         name: "amount"
                     },
@@ -141,13 +147,42 @@
                             i :
                             0;
                     };
-                    var balance = 0;
-                    if (this.api().row(':last').data()) {
-                        let last_balance = this.api().row(':last').data().balance;
-                        balance = $(last_balance).text();
-                    }
+                    this.api()
+                        .columns(".currencies", {
+                            page: "current"
+                        }).every(function() {
+                            var column = this;
+                            let currencies_html = '';
+                            $.each(currency_obj, function(key, value) {
+                                currencies_html +=
+                                    `<h6 class="footer_currency" data-is_default="${value.is_default}"  data-currency_id="${value.currency_id}">${value.symbol}</h6>`
+                                $(column.footer()).html(currencies_html);
+                            });
+                        })
+                    var footer_html = '';
+                    var column = this.api()
+                        .columns(".balance", {
+                            page: "current"
+                        });
+                    $.each(currency_obj, function(key, value) {
+                        var balance = 0;
+                        var currency_id = value.currency_id;
+                        column.every(function() {
+                            this.data().each(function(cell, i) {
+                                console.log($(cell)
+                                    .attr('class'));
+                                if ('currency_id' + value.currency_id == $(cell)
+                                    .attr('class')) {
+                                    balance = intVal($(cell).text());
+                                }
+                            });
+
+                        })
+                        footer_html +=
+                            `<h6 class="currency_total currency_total_${value.currency_id}" data-currency_id="${value.currency_id}" data-is_default="${value.is_default}" data-conversion_rate="${value.conversion_rate}" data-base_conversion="${balance * value.conversion_rate}" data-orig_value="${balance}">${__currency_trans_from_en(balance, false)}</h6>`
+                    });
                     $('.footer_balance').html(
-                        __currency_trans_from_en(balance, false)
+                        footer_html
                     );
                 },
             });

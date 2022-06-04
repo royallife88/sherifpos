@@ -79,13 +79,14 @@ class HomeController extends Controller
         $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
 
         $store_pos_id = null;
-        if (strtolower(session('user.job_title')) == 'cashier') {
-            $store_pos_id = session('user.pos_id');
-        } else {
-            if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
-                $employee = Employee::where('user_id', Auth::user()->id)->first();
-                $store_id = $employee->store_id;
-                $store_pos_id = null;
+        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
+            $employee = Employee::where('user_id', Auth::user()->id)->first();
+            $store_id = $employee->store_id;
+            $store_pos_id = null;
+            if (strtolower(session('user.job_title')) == 'cashier') {
+                $store_pos_id = session('user.pos_id');
+            } else {
+                $store_pos_id =  -1;
             }
         }
 
@@ -531,6 +532,15 @@ class HomeController extends Controller
             $store_id = $store_id;
         } else {
             $store_id = request()->input('store_id') ? [request()->input('store_id')] : [];
+        }
+
+        if (!Auth::user()->is_superadmin && !auth()->user()->is_admin) {
+            $store_pos_id = null;
+            if (!empty(session('user.pos_id'))) {
+                $store_pos_id = session('user.pos_id');
+            } else {
+                $store_pos_id =  -1;
+            }
         }
 
         $total_sale_item_tax_inclusive = $this->getTotalSaleItemTaxAmount($start_date, $end_date, $store_id, $store_pos_id);

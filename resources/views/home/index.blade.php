@@ -13,39 +13,43 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                     <div class="brand-text float-left mt-4">
                         <h3>@lang('lang.welcome') <span>{{ Auth::user()->name }}</span> </h3>
                     </div>
-                    @if (strtolower(session('user.job_title')) != 'deliveryman')
-                        <div class="filter-toggle btn-group">
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <label for="store_id"><b>@lang('lang.store')</b></label>
-                                    {!! Form::select('store_id', $stores, session('user.is_superadmin') ? null : key($stores), ['class' => 'form-control ', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
+                    @if (auth()->user()->can('superadmin') ||
+                        auth()->user()->is_admin ||
+                        auth()->user()->can('dashboard.profit.view'))
+                        @if (strtolower(session('user.job_title')) != 'deliveryman')
+                            <div class="filter-toggle btn-group">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <label for="store_id"><b>@lang('lang.store')</b></label>
+                                        {!! Form::select('store_id', $stores, session('user.is_superadmin') ? null : key($stores), ['class' => 'form-control ', 'data-live-search' => 'true', 'id' => 'store_id', 'placeholder' => __('lang.please_select')]) !!}
 
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="from_date"><b>@lang('lang.from_date')</b></label>
-                                    <input type="date" class="form-control filter" name="from_date" id="from_date"
-                                        value="{{ date('Y-m-01') }}" placeholder="{{ __('lang.from_date') }}">
-
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="start_time"><b>@lang('lang.start_time')</b></label>
-                                        {!! Form::text('start_time', null, ['class' => 'form-control time_picker filter', 'id' => 'start_time']) !!}
                                     </div>
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="to_date"><b>@lang('lang.to_date')</b></label>
-                                    <input type="date" class="form-control filter" name="to_date" id="to_date"
-                                        value="{{ date('Y-m-t') }}" placeholder="{{ __('lang.to_date') }}">
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label for="end_time"><b>@lang('lang.end_time')</b></label>
-                                        {!! Form::text('end_time', null, ['class' => 'form-control time_picker filter', 'id' => 'end_time']) !!}
+                                    <div class="col-md-3">
+                                        <label for="from_date"><b>@lang('lang.from_date')</b></label>
+                                        <input type="date" class="form-control filter" name="from_date" id="from_date"
+                                            value="{{ date('Y-m-01') }}" placeholder="{{ __('lang.from_date') }}">
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="start_time"><b>@lang('lang.start_time')</b></label>
+                                            {!! Form::text('start_time', null, ['class' => 'form-control time_picker filter', 'id' => 'start_time']) !!}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="to_date"><b>@lang('lang.to_date')</b></label>
+                                        <input type="date" class="form-control filter" name="to_date" id="to_date"
+                                            value="{{ date('Y-m-t') }}" placeholder="{{ __('lang.to_date') }}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="end_time"><b>@lang('lang.end_time')</b></label>
+                                            {!! Form::text('end_time', null, ['class' => 'form-control time_picker filter', 'id' => 'end_time']) !!}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        @endif
                     @endif
                 </div>
             </div>
@@ -55,63 +59,79 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                 <div class="row">
                     <div class="col-md-12 form-group">
                         <div class="row">
-                            <!-- Count item widget-->
-                            <div class="col-sm-2">
-                                <div class="wrapper count-title text-center">
-                                    <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i></div>
-                                    <div class="name"><strong style="color: #498636">@lang('lang.current_stock_value')</strong>
-                                    </div>
-                                    <div class="count-number current_stock_value-data">
-                                        {{ @num_format(0) }}</div>
-                                </div>
-                            </div>
-                            <!-- Count item widget-->
-                            <div class="col-sm-2">
-                                <div class="wrapper count-title text-center">
-                                    <div class="icon"><i class="dripicons-graph-bar" style="color: #733686"></i>
-                                    </div>
-                                    <div class="name"><strong style="color: #733686">@lang('lang.revenue')</strong>
-                                    </div>
-                                    <div class="count-number revenue-data">{{ @num_format(0) }}
+                            @if (auth()->user()->can('superadmin') || auth()->user()->is_admin)
+                                <!-- Count item widget-->
+                                <div class="col-sm-2">
+                                    <div class="wrapper count-title text-center">
+                                        <div class="icon"><i class="fa fa-cubes" style="color: #498636"></i>
+                                        </div>
+                                        <div class="name"><strong
+                                                style="color: #498636">@lang('lang.current_stock_value')</strong>
+                                        </div>
+                                        <div class="count-number current_stock_value-data">
+                                            {{ @num_format(0) }}</div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Count item widget-->
-                            <div class="col-sm-2">
-                                <div class="wrapper count-title text-center">
-                                    <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i>
-                                    </div>
-                                    <div class="name"><strong style="color: #ff8952">@lang('lang.sale_return')</strong>
-                                    </div>
-                                    <div class="count-number sell_return-data">
-                                        {{ @num_format(0) }}
+                            @endif
+                            @if (auth()->user()->can('superadmin') ||
+                                auth()->user()->is_admin ||
+                                auth()->user()->can('dashboard.profit.view'))
+                                <!-- Count item widget-->
+                                <div class="col-sm-2">
+                                    <div class="wrapper count-title text-center">
+                                        <div class="icon"><i class="dripicons-graph-bar"
+                                                style="color: #733686"></i>
+                                        </div>
+                                        <div class="name"><strong
+                                                style="color: #733686">@lang('lang.revenue')</strong>
+                                        </div>
+                                        <div class="count-number revenue-data">{{ @num_format(0) }}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Count item widget-->
-                            <div class="col-sm-3">
-                                <div class="wrapper count-title text-center">
-                                    <div class="icon"><i class="dripicons-media-loop" style="color: #00c689"></i>
+                                <!-- Count item widget-->
+                                <div class="col-sm-2">
+                                    <div class="wrapper count-title text-center">
+                                        <div class="icon"><i class="dripicons-return" style="color: #ff8952"></i>
+                                        </div>
+                                        <div class="name"><strong
+                                                style="color: #ff8952">@lang('lang.sale_return')</strong>
+                                        </div>
+                                        <div class="count-number sell_return-data">
+                                            {{ @num_format(0) }}
+                                        </div>
                                     </div>
-                                    <div class="name"><strong style="color: #00c689">@lang('lang.purchase_return')</strong>
-                                    </div>
-                                    <div class="count-number purchase_return-data">
-                                        {{ @num_format(0) }}</div>
                                 </div>
-                            </div>
+                            @endif
                             <!-- Count item widget-->
-                            @can('dashboard.profit.view')
+                            @if (auth()->user()->can('superadmin') || auth()->user()->is_admin)
+                                <div class="col-sm-3">
+                                    <div class="wrapper count-title text-center">
+                                        <div class="icon"><i class="dripicons-media-loop"
+                                                style="color: #00c689"></i>
+                                        </div>
+                                        <div class="name"><strong
+                                                style="color: #00c689">@lang('lang.purchase_return')</strong>
+                                        </div>
+                                        <div class="count-number purchase_return-data">
+                                            {{ @num_format(0) }}</div>
+                                    </div>
+                                </div>
+                            @endif
+                            <!-- Count item widget-->
+                            @if (auth()->user()->can('superadmin') || auth()->user()->is_admin)
                                 <div class="col-sm-3">
                                     <div class="wrapper count-title text-center">
                                         <div class="icon"><i class="dripicons-trophy" style="color: #297ff9"></i>
                                         </div>
-                                        <div class="name"><strong style="color: #297ff9">@lang('lang.profit')</strong>
+                                        <div class="name"><strong
+                                                style="color: #297ff9">@lang('lang.profit')</strong>
                                         </div>
                                         <div class="count-number profit-data">{{ @num_format(0) }}
                                         </div>
                                     </div>
                                 </div>
-                            @endcan
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -269,28 +289,29 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
             });
             getChartAndTableSection(start_date, end_date, store_id);
         }
-
-        function getChartAndTableSection(start_date, end_date, store_id) {
-            $("#chart_and_table_section").css("text-align", "center");
-            $("#chart_and_table_section").html(
-                `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
-            );
-            $.ajax({
-                method: 'get',
-                url: '/get-chart-and-table-section',
-                data: {
-                    start_date,
-                    end_date,
-                    store_id
-                },
-                success: function(result) {
-                    if (result) {
-                        $('#chart_and_table_section').html(result);
-                        initializeChart()
-                    }
-                },
-            });
-        }
+        @if (auth()->user()->can('superadmin') || auth()->user()->is_admin)
+            function getChartAndTableSection(start_date, end_date, store_id) {
+                $("#chart_and_table_section").css("text-align", "center");
+                $("#chart_and_table_section").html(
+                    `<div><i class="fa fa-circle-o-notch fa-spin fa-fw"></i></div>`
+                );
+                $.ajax({
+                    method: 'get',
+                    url: '/get-chart-and-table-section',
+                    data: {
+                        start_date,
+                        end_date,
+                        store_id
+                    },
+                    success: function(result) {
+                        if (result) {
+                            $('#chart_and_table_section').html(result);
+                            initializeChart()
+                        }
+                    },
+                });
+            }
+        @endif
 
         function initializeChart() {
             var brandPrimary;

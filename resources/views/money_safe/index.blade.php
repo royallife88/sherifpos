@@ -22,13 +22,20 @@
                                     <th>@lang('lang.safe_name')</th>
                                     <th>@lang('lang.type')</th>
                                     <th>@lang('lang.IBAN')</th>
-                                    <th class="currencies">@lang('lang.currency')</th>
-                                    <th class="sum">@lang('lang.current_balance')</th>
+                                    <th class="">@lang('lang.current_balance')</th>
                                     <th>@lang('lang.creation_date')</th>
                                     <th>@lang('lang.created_by')</th>
                                     <th>@lang('lang.edited_by')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
+                                {{-- <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td colspan="3" class="bg-danger">@lang('lang.blaance')</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr> --}}
                             </thead>
                             <tbody>
                             </tbody>
@@ -102,10 +109,10 @@
                         data: "IBAN",
                         name: "IBAN"
                     },
-                    {
-                        data: "currency",
-                        name: "currencies.symbol"
-                    },
+                    // {
+                    //     data: "currency",
+                    //     name: "currencies.symbol"
+                    // },
                     {
                         data: "balance",
                         name: "balance"
@@ -184,6 +191,32 @@
             $(document).on('change', '.sale_filter', function() {
                 money_safe_table.ajax.reload();
             });
-        })
+        });
+
+        $(document).on("click", ".currency_total_ms", function() {
+            let currency_id = $(this).data("currency_id");
+            let h6 = $(this).parent("h6");
+
+            $.each(currency_obj, function(key, value) {
+                if (currency_id == value.currency_id) {
+                    converted_to_rate = value.conversion_rate;
+                }
+            });
+
+            let this_ele = $(h6).find(".currency_total_" + currency_id);
+            let conversion_rate = this_ele.data("conversion_rate");
+            let total_base_value = parseFloat(this_ele.data("base_conversion"));
+            $(h6)
+                .siblings()
+                .find(".currency_total")
+                .each(function() {
+                    total_base_value += parseFloat($(this).data("base_conversion"));
+                    $(this).find(".total").text(__currency_trans_from_en(0, false));
+                });
+            let converted_value = total_base_value / conversion_rate;
+            $(this_ele)
+                .find(".total")
+                .text(__currency_trans_from_en(converted_value, false));
+        });
     </script>
 @endsection

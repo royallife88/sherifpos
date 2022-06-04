@@ -23,7 +23,7 @@ $(document).on("click", ".footer_currency", function () {
 });
 $(document).on("click", ".dashboard_currency", function () {
     let currency_id = $(this).data("currency_id");
-console.log($(this), '$(this)');
+
     $.each(currency_obj, function (key, value) {
         if (currency_id == value.currency_id) {
             converted_to_rate = value.conversion_rate;

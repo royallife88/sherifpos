@@ -1268,6 +1268,7 @@ return [
     'withdraw_money' => 'Withdraw Money',
     'buy_from_supplier' => 'Buy From Supplier',
     'accounting_period' => 'Accounting Period',
+    'sales_and_returns' => 'Sales & Returns',
 
 
 

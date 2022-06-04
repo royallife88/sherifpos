@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CashInAdjustment;
 use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
+use App\Models\MoneySafe;
+use App\Models\MoneySafeTransaction;
 use App\Models\Store;
 use App\Models\StorePos;
 use App\Models\System;
@@ -389,6 +391,7 @@ class CashController extends Controller
 
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
+            $register->source_type = $request->source_type;
             $register->cash_given_to = $request->cash_given_to;
             $register->closing_amount = $amount;
             $register->closed_at = Carbon::now();
@@ -412,11 +415,30 @@ class CashController extends Controller
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'closing_cash', 'credit', $request->source_id, $request->notes);
 
             $user_id = $register->user_id;
+
             if (!empty($request->cash_given_to)) {
-                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->cash_given_to);
-                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
-                $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
-                $cash_register_transaction->save();
+                if ($request->source_type == 'user') {
+                    $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->cash_given_to);
+                    $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
+                    $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
+                    $cash_register_transaction->save();
+                }
+                if ($request->source_type == 'safe') {
+                    $default_currency_id = System::getProperty('currency');
+                    $money_safe = MoneySafe::find($request->cash_given_to);
+
+                    $money_safe_data['money_safe_id'] = $money_safe->id;
+                    $money_safe_data['transaction_date'] = Carbon::now();
+                    $money_safe_data['transaction_id'] = null;
+                    $money_safe_data['transaction_payment_id'] = null;
+                    $money_safe_data['currency_id'] = $default_currency_id;
+                    $money_safe_data['type'] = 'credit';
+                    $money_safe_data['store_id'] = $register->store_id ?? 0;
+                    $money_safe_data['amount'] = $amount;
+                    $money_safe_data['created_by'] = Auth::user()->id;
+                    $money_safe_data['comments'] = __('lang.closing_cash');
+                    MoneySafeTransaction::create($money_safe_data);
+                }
             }
 
 

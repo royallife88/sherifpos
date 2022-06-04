@@ -96,8 +96,8 @@ class User extends Authenticatable
     {
         return [
             'dashboard' => [
-                'profit' => __('lang.profit'),
-                'details' => __('lang.details'),
+                'profit' => __('lang.sales_and_returns'),
+                // 'details' => __('lang.details'),
             ],
             'product_module' => [
                 'product' => __('lang.product'),

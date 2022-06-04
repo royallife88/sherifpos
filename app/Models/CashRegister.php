@@ -31,8 +31,11 @@ class CashRegister extends Model implements HasMedia
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function cash_given_to_user()
+    public function cash_given()
     {
-        return $this->belongsTo(User::class, 'cash_given_to');
+        if ($this->source_type == 'safe') {
+            return $this->belongsTo(MoneySafe::class, 'cash_given_to')->withDefault(['name' => '']);
+        }
+        return $this->belongsTo(User::class, 'cash_given_to')->withDefault(['name' => '']);
     }
 }

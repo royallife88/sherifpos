@@ -316,6 +316,7 @@ class MoneySafeTransferController extends Controller
 
         if (request()->ajax()) {
             $query = MoneySafe::leftjoin('money_safe_transactions', 'money_safes.id', '=', 'money_safe_transactions.money_safe_id')
+                ->leftjoin('currencies', 'money_safe_transactions.currency_id', '=', 'currencies.id')
                 ->leftjoin('stores', 'money_safe_transactions.store_id', '=', 'stores.id')
                 ->leftjoin('job_types', 'money_safe_transactions.job_type_id', '=', 'job_types.id')
                 ->where('money_safes.id', $id);
@@ -335,7 +336,8 @@ class MoneySafeTransferController extends Controller
                 'money_safe_transactions.*',
                 'stores.name as store_name',
                 'job_types.job_title as job_type',
-                DB::raw('(SELECT SUM(IF(mst.type = "credit", mst.amount, -1 * mst.amount)) FROM money_safe_transactions as mst WHERE mst.money_safe_id = money_safes.id AND money_safe_transactions.id >= mst.id) as balance'),
+                'currencies.symbol as currency',
+                DB::raw('(SELECT SUM(IF(mst.type = "credit", mst.amount, -1 * mst.amount)) FROM money_safe_transactions as mst WHERE mst.money_safe_id = money_safes.id AND money_safe_transactions.id >= mst.id AND money_safe_transactions.currency_id = mst.currency_id) as balance'),
             )->orderBy('money_safe_transactions.id', 'asc')->groupBy('money_safe_transactions.id');
 
             return DataTables::of($money_safes)
@@ -361,7 +363,7 @@ class MoneySafeTransferController extends Controller
                 ->editColumn('balance', function ($row) {
                     $balance = $this->commonUtil->num_f($row->balance);
                     $currency_id = $row->currency_id;
-                    return '<span data-currency_id="' . $currency_id . '">' . $balance . '</span>';
+                    return '<span class="currency_id' . $currency_id . '" data-currency_id="' . $currency_id . '">' . $balance . '</span>';
                 })
                 ->editColumn('created_by_user', function ($row) {
                     return !empty($row->created_by_user) ? $row->created_by_user->name : '';

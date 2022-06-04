@@ -6,6 +6,7 @@ use App\Models\Currency;
 use App\Models\Employee;
 use App\Models\MoneySafe;
 use App\Models\Store;
+use App\Utils\MoneySafeUtil;
 use App\Utils\Util;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,6 +22,7 @@ class MoneySafeController extends Controller
      *
      */
     protected $commonUtil;
+    protected $moneySafeUtil;
 
     /**
      * Constructor
@@ -28,9 +30,10 @@ class MoneySafeController extends Controller
      * @param Util $commonUtil
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, MoneySafeUtil $moneySafeUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->moneySafeUtil = $moneySafeUtil;
     }
 
     /**
@@ -45,7 +48,9 @@ class MoneySafeController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
+        $exchange_rate_currencies = $this->commonUtil->getExchangeRateCurrencies(true);
         if (request()->ajax()) {
+
             $query = MoneySafe::leftjoin('stores', 'money_safes.store_id', '=', 'stores.id')
                 ->leftjoin('currencies', 'money_safes.currency_id', '=', 'currencies.id')
                 ->leftjoin('money_safe_transactions', 'money_safes.id', '=', 'money_safe_transactions.money_safe_id');
@@ -67,10 +72,25 @@ class MoneySafeController extends Controller
                 ->editColumn('created_at', '{{@format_date($created_at)}}')
                 ->editColumn('type', '{{ucfirst($type)}}')
 
-                ->addColumn('balance', function ($row) {
-                    $balance = $this->commonUtil->num_f($row->balance);
-                    $currency_id = $row->currency_id;
-                    return '<span data-currency_id="' . $currency_id . '">' . $balance . '</span>';
+                ->addColumn('balance', function ($row) use ($exchange_rate_currencies) {
+                    $html = '<div class="row">';
+                    foreach ($exchange_rate_currencies as $currency) {
+                        $html .= '<h6>';
+                        $balance = $this->commonUtil->num_f($this->moneySafeUtil->getSafeBalance($row->id, $currency['currency_id']));
+                        $html .= '<span style="padding-right: 20px;" class="currency_total_ms currency_total currency_total_' . $currency['currency_id'] . '"
+                            data-currency_id="' . $currency['currency_id'] . '"
+                            data-is_default="' . $currency['is_default'] . '"
+                            data-conversion_rate="' . $currency['conversion_rate'] . '"
+                            data-base_conversion="' . $currency['conversion_rate'] * $balance . '"
+                            data-orig_value="' . $balance . '">
+                            <span class="symbol">
+                                ' . $currency['symbol'] . '</span>
+                            <span class="total">' . $this->commonUtil->num_f($balance) . '</span>
+                        </span>';
+                        $html .= "</h6>";
+                    }
+                    $html .= "</div>";
+                    return $html;
                 })
                 ->editColumn('created_by_user', function ($row) {
                     return !empty($row->created_by_user) ? $row->created_by_user->name : '';
@@ -146,7 +166,9 @@ class MoneySafeController extends Controller
                 ->make(true);
         }
 
-        return view('money_safe.index');
+        return view('money_safe.index')->with(compact(
+            'exchange_rate_currencies'
+        ));
     }
 
     /**

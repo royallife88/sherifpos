@@ -234,7 +234,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         {!! Form::label('source_type', __('lang.source_type'), []) !!} <br>
-                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store')], $add_stock->source_type, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
+                                        {!! Form::select('source_type', ['user' => __('lang.user'), 'pos' => __('lang.pos'), 'store' => __('lang.store'), 'safe' => __('lang.safe')], $add_stock->source_type, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'required', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}
                                     </div>
                                 </div>
                                 <div class="col-md-3">
@@ -367,6 +367,7 @@
         })
         $(document).ready(function() {
             $('#payment_status').change();
+            $('#source_type').change();
         })
         $('#po_no').change(function() {
             let po_no = $(this).val();
@@ -481,6 +482,7 @@
                     data: {},
                     success: function(result) {
                         $("#source_id").empty().append(result);
+                        $('#source_id').val('{{$add_stock->source_id}}');
                         $("#source_id").selectpicker("refresh");
                     },
                 });
