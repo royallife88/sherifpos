@@ -208,10 +208,29 @@ class CashController extends Controller
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
             if (!empty($request->source_id)) {
-                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $user_id, $request->notes, $cash_register_transaction->id);
-                $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
-                $cash_register_transaction->save();
+                if ($request->source_type == 'user') {
+                    $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                    $cash_register_transaction_out = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $user_id, $request->notes, $cash_register_transaction->id);
+                    $cash_register_transaction->referenced_id = $cash_register_transaction_out->id;
+                    $cash_register_transaction->save();
+                }
+
+                if ($request->source_type == 'safe') {
+                    $default_currency_id = System::getProperty('currency');
+                    $money_safe = MoneySafe::find($request->source_id);
+
+                    $money_safe_data['money_safe_id'] = $money_safe->id;
+                    $money_safe_data['transaction_date'] = Carbon::now();
+                    $money_safe_data['transaction_id'] = null;
+                    $money_safe_data['transaction_payment_id'] = null;
+                    $money_safe_data['currency_id'] = $default_currency_id;
+                    $money_safe_data['type'] = 'credit';
+                    $money_safe_data['store_id'] = $register->store_id ?? 0;
+                    $money_safe_data['amount'] = $amount;
+                    $money_safe_data['created_by'] = Auth::user()->id;
+                    $money_safe_data['comments'] = __('lang.cash_in');
+                    MoneySafeTransaction::create($money_safe_data);
+                }
             }
             if ($request->has('image')) {
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');
@@ -272,10 +291,29 @@ class CashController extends Controller
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $request->source_id, $request->notes);
 
             if (!empty($request->source_id)) {
-                $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
-                $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
-                $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
-                $cash_register_transaction->save();
+                if ($request->source_type == 'user') {
+                    $register = $this->cashRegisterUtil->getCurrentCashRegisterOrCreate($request->source_id);
+                    $cash_register_transaction_in = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $user_id, $request->notes, $cash_register_transaction->id);
+                    $cash_register_transaction->referenced_id = $cash_register_transaction_in->id;
+                    $cash_register_transaction->save();
+                }
+
+                if ($request->source_type == 'safe') {
+                    $default_currency_id = System::getProperty('currency');
+                    $money_safe = MoneySafe::find($request->source_id);
+
+                    $money_safe_data['money_safe_id'] = $money_safe->id;
+                    $money_safe_data['transaction_date'] = Carbon::now();
+                    $money_safe_data['transaction_id'] = null;
+                    $money_safe_data['transaction_payment_id'] = null;
+                    $money_safe_data['currency_id'] = $default_currency_id;
+                    $money_safe_data['type'] = 'debit';
+                    $money_safe_data['store_id'] = $register->store_id ?? 0;
+                    $money_safe_data['amount'] = $amount;
+                    $money_safe_data['created_by'] = Auth::user()->id;
+                    $money_safe_data['comments'] = __('lang.cash_out');
+                    MoneySafeTransaction::create($money_safe_data);
+                }
             }
             if ($request->has('image')) {
                 $cash_register_transaction->addMedia($request->image)->toMediaCollection('cash_register');

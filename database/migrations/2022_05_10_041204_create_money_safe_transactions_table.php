@@ -19,7 +19,7 @@ class CreateMoneySafeTransactionsTable extends Migration
             $table->string('source_type')->nullable();
             $table->string('transaction_date');
             $table->unsignedBigInteger('source_id')->nullable();
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('store_id')->nullable();
             $table->unsignedBigInteger('job_type_id')->nullable();
             $table->decimal('amount', 15, 4);
             $table->string('type', 20);

@@ -19,7 +19,7 @@
                             role="tab" ">@lang('lang.add_dining_room')</a></li>
                     </ul>
                 <!-- Tab panes -->
-                <div class="         tab-content tabs">
+                <div class=" tab-content tabs">
                             @foreach ($dining_rooms as $dining_room)
                                 <div role="tabpane"
                                     class="tab-pane fade @if ($loop->index == 0 && empty($active_tab_id)) in active show @elseif($dining_room->id == $active_tab_id) in active show @endif"

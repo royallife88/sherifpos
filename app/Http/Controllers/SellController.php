@@ -684,6 +684,8 @@ class SellController extends Controller
             $transaction->delete();
             CashRegisterTransaction::where('transaction_id', $id)->delete();
 
+            DiningTable::where('current_transaction_id', $id)->update(['current_transaction_id' => null, 'status' => 'available']);
+
             DB::commit();
             $output = [
                 'success' => true,

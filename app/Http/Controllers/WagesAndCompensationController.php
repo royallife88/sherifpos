@@ -6,13 +6,16 @@ use App\Models\CashRegister;
 use App\Models\CashRegisterTransaction;
 use App\Models\Employee;
 use App\Models\JobType;
+use App\Models\MoneySafe;
 use App\Models\Store;
 use App\Models\StorePos;
+use App\Models\System;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
 use App\Models\User;
 use App\Models\WagesAndCompensation;
 use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
 use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -30,6 +33,7 @@ class WagesAndCompensationController extends Controller
     protected $commonUtil;
     protected $cashRegisterUtil;
     protected $transactionUtil;
+    protected $moneysafeUtil;
 
     /**
      * Constructor
@@ -37,11 +41,12 @@ class WagesAndCompensationController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, CashRegisterUtil $cashRegisterUtil, TransactionUtil $transactionUtil)
+    public function __construct(Util $commonUtil, CashRegisterUtil $cashRegisterUtil, TransactionUtil $transactionUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->cashRegisterUtil = $cashRegisterUtil;
         $this->transactionUtil = $transactionUtil;
+        $this->moneysafeUtil = $moneysafeUtil;
     }
 
     /**
@@ -89,7 +94,7 @@ class WagesAndCompensationController extends Controller
             $query->where('wages_and_compensation.status', request()->status);
         }
 
-        $wages_and_compensations =  $query->get();
+        $wages_and_compensations =  $query->orderBy('wages_and_compensation.date_of_creation', 'desc')->get();
 
         $payment_types = WagesAndCompensation::getPaymentTypes();
         $employees = Employee::getDropdown();
@@ -147,8 +152,10 @@ class WagesAndCompensationController extends Controller
 
             DB::beginTransaction();
             $wages_and_compensation = WagesAndCompensation::create($data);
+            $employee = Employee::find($wages_and_compensation->employee_id);
             $transaction_data = [
                 'type' => 'wages_and_compensation',
+                'store_id' => !empty($employee->store_id) ? $employee->store_id[0] : null,
                 'employee_id' => $wages_and_compensation->employee_id,
                 'transaction_date' => Carbon::now(),
                 'grand_total' => $this->commonUtil->num_uf($data['net_amount']),
@@ -183,9 +190,15 @@ class WagesAndCompensationController extends Controller
                     if ($request->source_type == 'user') {
                         $user_id = $request->source_id;
                     }
+                    if (!empty($user_id)) {
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                    }
+                    if ($request->source_type == 'safe') {
+                        $money_safe = MoneySafe::find($request->source_id);
+                        $payment_data['currency_id'] = System::getProperty('currency');
+                        $this->moneysafeUtil->addPayment($transaction, $payment_data, 'debit', $transaction_payment->id, $money_safe);
+                    }
                 }
-
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
             }
 
             if ($request->hasFile('upload_files')) {
@@ -261,7 +274,7 @@ class WagesAndCompensationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        try {
+        // try {
             $data = $request->except('_token', 'submit', '_method');
 
             $upload_files = null;
@@ -324,11 +337,19 @@ class WagesAndCompensationController extends Controller
                     if ($request->source_type == 'user') {
                         $user_id = $request->source_id;
                     }
+
+                    if ($request->source_type == 'safe') {
+                        $money_safe = MoneySafe::find($request->source_id);
+                        $payment_data['currency_id'] = System::getProperty('currency');
+                        $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'debit', $transaction_payment->id, null, $money_safe);
+                    }
                 }
 
-                $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
-                $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
-                $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                if (!empty($user_id)) {
+                    $cr_transaction = CashRegisterTransaction::where('transaction_id', $transaction->id)->first();
+                    $register = CashRegister::where('id', $cr_transaction->cash_register_id)->first();
+                    $this->cashRegisterUtil->updateCashRegisterTransaction($cr_transaction->id, $register, $payment_data['amount'], $transaction->type, 'debit', $user_id, '');
+                }
             }
 
 
@@ -341,13 +362,13 @@ class WagesAndCompensationController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }

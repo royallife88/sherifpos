@@ -130,6 +130,10 @@ class MoneySafeUtil extends Util
             $currency_id = $payment_data['currency_id'];
             $data['comments'] = __('lang.expense');
         }
+        if ($transaction->type == 'wages_and_compensation') {
+            $currency_id = $payment_data['currency_id'];
+            $data['comments'] = __('lang.wages_and_compensation');
+        }
         if (!empty($money_safe)) {
             if ($type == 'credit') {
                 $data['money_safe_id'] = $money_safe->id;
@@ -252,7 +256,7 @@ class MoneySafeUtil extends Util
             }
         }
 
-        if ($transaction->type == 'add_stock' || $transaction->type == 'expense') {
+        if ($transaction->type == 'add_stock' || $transaction->type == 'expense' || $transaction->type == 'wages_and_compensation') {
             $old_ms_transaction = MoneySafeTransaction::where('transaction_id', $transaction->id)->first();
             if ($old_ms_transaction->money_safe_id != $money_safe->id) {
                 MoneySafeTransaction::where('transaction_id', $transaction->id)->delete();
@@ -280,6 +284,10 @@ class MoneySafeUtil extends Util
                 if ($transaction->type == 'expense') {
                     $currency_id = $payment_data['currency_id'];
                     $data['comments'] = __('lang.expense');
+                }
+                if ($transaction->type == 'wages_and_compensation') {
+                    $currency_id = $payment_data['currency_id'];
+                    $data['comments'] = __('lang.wages_and_compensation');
                 }
                 $amount = $this->num_uf($remaing_amount);
                 $data['money_safe_id'] = $money_safe->id;

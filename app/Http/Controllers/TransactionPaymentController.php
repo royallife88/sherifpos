@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Customer;
+use App\Models\MoneySafe;
 use App\Models\StorePos;
 use App\Models\Transaction;
 use App\Models\TransactionPayment;
@@ -127,8 +128,16 @@ class TransactionPaymentController extends Controller
                     if ($request->source_type == 'user') {
                         $user_id = $request->source_id;
                     }
+                    if (!empty($user_id)) {
+                        $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                    }
+
+                    if ($request->source_type == 'safe') {
+                        $money_safe = MoneySafe::find($request->source_id);
+                        $payment_data['currency_id'] = $transaction->paying_currency_id;
+                        $this->moneysafeUtil->updatePayment($transaction, $payment_data, 'debit', $transaction_payment->id, null, $money_safe);
+                    }
                 }
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
             }
 
 
