@@ -2282,7 +2282,7 @@ $(document).on("click", ".remove_draft", function (e) {
             var data = $(this).serialize();
 
             swal({
-                title: "Please Enter Your Passwordasd asdff",
+                title: "Please Enter Your Password.",
                 content: {
                     element: "input",
                     attributes: {
@@ -2309,6 +2309,72 @@ $(document).on("click", ".remove_draft", function (e) {
 
                                 $.ajax({
                                     method: "DELETE",
+                                    url: href,
+                                    dataType: "json",
+                                    data: data,
+                                    success: function (result) {
+                                        if (result.success == true) {
+                                            swal(
+                                                "Success",
+                                                result.msg,
+                                                "success"
+                                            );
+                                            draft_table.ajax.reload();
+                                        } else {
+                                            swal("Error", result.msg, "error");
+                                        }
+                                    },
+                                });
+                            } else {
+                                swal("Failed!", "Wrong Password!", "error");
+                            }
+                        },
+                    });
+                }
+            });
+        }
+    });
+});
+
+$(document).on("click", "a.draft_cancel", function (e) {
+    e.preventDefault();
+    swal({
+        title: "Are you sure?",
+        text: "Are you sure You Wanna Cancel it?",
+        icon: "warning",
+    }).then((willDelete) => {
+        if (willDelete) {
+            var check_password = $(this).data("check_password");
+            var href = $(this).data("href");
+
+            swal({
+                title: "Please Enter Your Password.",
+                content: {
+                    element: "input",
+                    attributes: {
+                        placeholder: "Type your password",
+                        type: "password",
+                    },
+                },
+                inputAttributes: {
+                    autocapitalize: "off",
+                    autocorrect: "off",
+                },
+            }).then((result) => {
+                if (result) {
+                    $.ajax({
+                        url: check_password,
+                        method: "POST",
+                        data: {
+                            value: result,
+                        },
+                        dataType: "json",
+                        success: (data) => {
+                            if (data.success == true) {
+                                swal("Success", "Correct Password!", "success");
+
+                                $.ajax({
+                                    method: "GET",
                                     url: href,
                                     dataType: "json",
                                     data: data,
@@ -2735,22 +2801,4 @@ $(document).on("change", "#upload_documents", function (event) {
     } else {
         console.log("nada");
     }
-});
-
-$(document).on("click", "a.draft_cancel", function () {
-    let url = $(this).data("href");
-
-    $.ajax({
-        method: "get",
-        url: url,
-        data: {},
-        success: function (result) {
-            if (result.success) {
-                swal("Success", result.msg, "success");
-            } else {
-                swal("Error", result.msg, "error");
-            }
-            draft_table.ajax.reload();
-        },
-    });
 });

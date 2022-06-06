@@ -1480,7 +1480,7 @@ class SellPosController extends Controller
                         class="dripicons-document-edit"></i></a>';
                         if ($row->status != 'canceled') {
                             $html .=
-                                '<a data-href="' . action('SellPosController@updateStatusToCancel', $row->id) . '?status=final" class="btn btn-danger draft_cancel text-white"><i
+                                '<a data-href="' . action('SellPosController@updateStatusToCancel', $row->id) . '?status=final" data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '" class="btn btn-danger draft_cancel text-white"><i
                             title="' . __('lang.cancel') . '" data-toggle="tooltip"
                             class="fa fa-ban"></i></a>';
                         }

@@ -1122,7 +1122,7 @@ return [
     'daily_sales_summary' => 'ڈیلی سیلز کا خلاصہ',
     'online_order_transactions' => 'آن لائن آرڈر لین دین',
     'online_orders' => 'آن لائن آرڈرز',
-    'add_dining_room' => 'آن لائن آرڈرز',
+    'add_dining_room' => 'کھانے کا کمرہ شامل کریں۔',
     'dining_room_name_already_exist' => 'کھانے کے کمرے کا نام پہلے سے موجود ہے۔',
     'add_new_table' => 'نیا ٹیبل شامل کریں۔',
     'add_table' => 'ٹیبل شامل کریں۔',

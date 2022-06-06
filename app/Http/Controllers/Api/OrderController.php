@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Models\Customer;
 use App\Models\CustomerType;
+use App\Models\DiningTable;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -90,6 +91,8 @@ class OrderController extends BaseController
             $store_pos = StorePos::where('store_id', $store->id)->first();
 
             $staff_note = null;
+            $dining_table_id = null;
+            $dining_room_id = null;
             if ($input['order_type'] == 'order_later') {
                 $order_datetime = $this->commonUtil->format_date($input['year'] . '-' . $input['month'] . '-' . $input['day']) . ' ' . $input['time'];
                 $input['sales_note'] = $input['sales_note'] . ' ' . __('lang.order') . ' ' . __('lang.date_and_time') . ': ' . $order_datetime;
@@ -102,6 +105,13 @@ class OrderController extends BaseController
             if ($input['delivery_type'] == 'home_delivery') {
                 $input['sales_note'] .= ' ' . __('lang.delivery_type') . ': ' . __('lang.home_delivery');
                 $staff_note .= ' ' . __('lang.delivery_type') . ': ' . __('lang.home_delivery');
+            }
+            if (!empty($input['dining_table_id'])) {
+                $dining_table = DiningTable::find($input['dining_table_id']);
+                if (!empty($dining_table)) {
+                    $dining_table_id = $dining_table->id;
+                    $dining_room_id = $dining_table->dining_room_id;
+                }
             }
 
             $transaction_data = [
@@ -118,6 +128,8 @@ class OrderController extends BaseController
                 'status' => 'draft',
                 'sale_note' => $input['sales_note'],
                 'staff_note' => $staff_note,
+                'dining_table_id' => $dining_table_id,
+                'dining_room_id' => $dining_room_id,
                 'table_no' => $input['table_no'],
                 'discount_type' => 'fixed',
                 'discount_value' => 0,
@@ -132,6 +144,11 @@ class OrderController extends BaseController
             DB::beginTransaction();
             $transaction = Transaction::create($transaction_data);
 
+            if (!empty($dining_table)) {
+                $dining_table->current_transaction_id = $transaction->id;
+                $dining_table->status = 'order';
+                $dining_table->save();
+            }
 
             foreach ($input['order_details'] as $line) {
                 $variation = Variation::find($line['variation_pos_model_id']);

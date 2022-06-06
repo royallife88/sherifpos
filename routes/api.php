@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DiningRoomController;
+use App\Http\Controllers\Api\DiningTableController;
 use App\Http\Controllers\Api\SizeController;
 use App\Http\Controllers\Api\ProductClassController;
 use App\Http\Controllers\Api\ProductController;
@@ -62,6 +64,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('sales-promotion', [SalesPromotionController::class, 'store']);
     Route::put('sales-promotion/{id}', [SalesPromotionController::class, 'update']);
     Route::delete('sales-promotion/{id}', [SalesPromotionController::class, 'destroy']);
+
+    Route::get('dining-room', [DiningRoomController::class, 'index']);
+    Route::post('dining-room', [DiningRoomController::class, 'store']);
+    Route::put('dining-room/{id}', [DiningRoomController::class, 'update']);
+    Route::delete('dining-room/{id}', [DiningRoomController::class, 'destroy']);
+
+    Route::get('dining-table', [DiningTableController::class, 'index']);
+    Route::post('dining-table', [DiningTableController::class, 'store']);
+    Route::put('dining-table/{id}', [DiningTableController::class, 'update']);
+    Route::delete('dining-table/{id}', [DiningTableController::class, 'destroy']);
 
     Route::post('order', [OrderController::class, 'store']);
 
