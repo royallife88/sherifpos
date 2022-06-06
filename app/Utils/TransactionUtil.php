@@ -326,10 +326,12 @@ class TransactionUtil extends Util
                     }
                 }
             }
-            $final_total = $supplier_service->add_stock_lines->sum('sub_total');
-            $supplier_service->final_total = $final_total;
-            $supplier_service->grand_total = $final_total;
-            $supplier_service->save();
+            if (!empty($supplier_service)) {
+                $final_total = $supplier_service->add_stock_lines->sum('sub_total');
+                $supplier_service->final_total = $final_total;
+                $supplier_service->grand_total = $final_total;
+                $supplier_service->save();
+            }
         }
 
         if (!empty($keep_supplier_service_lines)) {

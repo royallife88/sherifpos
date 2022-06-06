@@ -65,16 +65,16 @@
                                     'categories.name')->groupBy('categories.id')->get();
                                     @endphp
                                     @foreach ($categories as $category)
-                                    <div class="accordion" id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
+                                    <div class="accordion" id="{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
                                         style="margin-left: 20px;">
                                         <div class="accordion-group">
                                             <div class="accordion-heading">
                                                 <a class="accordion-toggle" data-toggle="collapse"
-                                                    data-id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                    data-parent="#{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                    href="#collapse{{@replace_space('category_'.$category->name.'_'.$i)}}">
+                                                    data-id="{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
+                                                    data-parent="#{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
+                                                    href="#collapse{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}">
                                                     <i
-                                                        class="fa fa-angle-right angle-class-{{@replace_space('category_'.$category->name.'_'.$i)}}"></i>
+                                                        class="fa fa-angle-right angle-class-{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"></i>
                                                     {{$category->name}}
                                                     <div class="btn-group pull-right">
                                                         <button data-container=".view_modal"
@@ -89,7 +89,7 @@
                                                     </div>
                                                 </a>
                                             </div>
-                                            <div id="collapse{{@replace_space('category_'.$category->name.'_'.$i)}}"
+                                            <div id="collapse{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
                                                 class="accordion-body collapse in">
                                                 <div class="accordion-inner">
                                                     @php
@@ -101,10 +101,21 @@
                                                     $category->id)->whereNull('products.sub_category_id')->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
                                                     'brands.name')->groupBy('brands.id')->get();
                                                     @endphp
+                                                    @if($brands->count() == 0 && $sub_categories->count() == 0)
+                                                    @php
+                                                        $products = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('category_id', $category->id)->whereNotNull('products.name')->select('products.id', 'products.name', 'variations.name as variation_name','variations.sub_sku as sku', 'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
+                                                    @endphp
+                                                    @foreach ($products as $product)
+                                                    @include('product_classification_tree.partials.product_inner_part', [
+                                                        'product' => $product,
+                                                    ])
+                                                    @endforeach
+                                                    @endif
+
                                                     @if (!empty($brands) && $brands->count() > 0)
                                                     @include('product_classification_tree.partials.brand_inner_part',
                                                     ['brands' => $brands, 'product_class_id' => $class->id,
-                                                    'category_id' => $category->id, 'category_id' => $category->id])
+                                                    'category_id' => $category->id])
                                                     @endif
                                                     @foreach ($sub_categories as $sub_category)
                                                     <div class="accordion"
@@ -248,7 +259,7 @@
         </div>
         <div class="col-md-4" style="margin-top: 80px;">
             <div class="card">
-                <h4>{{number_format(App\Models\Product::count())}} @lang('lang.items')</h4>
+                <h4>{{number_format(App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->count())}} @lang('lang.items')</h4>
                 <h4>{{number_format(App\Models\ProductClass::count())}} @lang('lang.product_class')</h4>
                 <h4>{{number_format(App\Models\Category::whereNull('parent_id')->count())}} @lang('lang.category')</h4>
                 <h4>{{number_format(App\Models\Category::whereNotNull('parent_id')->count())}}
