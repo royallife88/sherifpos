@@ -68,7 +68,8 @@ class SendSaleDataMall extends Command
                 ->select('final_total')
                 ->get();
 
-            $data_string = '[{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : ' . $sales_total->sum('final_total') . '}]';
+            $amount = !empty($sales_total->sum('final_total')) ? $sales_total->sum('final_total') : 0;
+            $data_string = '[{"Date":"' . $today_date . '", "Outlet" :"' . $outlet_name . '", "Revenue" : ' . $amount . '}]';
             Log::info($data_string);
 
             $curl = curl_init();

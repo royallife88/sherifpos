@@ -2,17 +2,26 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MoneySafe;
 use App\Models\Product;
+use App\Models\StorePos;
 use App\Models\Supplier;
 use App\Models\SupplierCategory;
 use App\Models\SupplierProduct;
 use App\Models\Transaction;
+use App\Models\TransactionPayment;
+use App\Models\User;
+use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Input;
 
 class SupplierController extends Controller
 {
@@ -21,16 +30,24 @@ class SupplierController extends Controller
      *
      */
     protected $commonUtil;
+    protected $transactionUtil;
+    protected $cashRegisterUtil;
+    protected $moneysafeUtil;
 
     /**
      * Constructor
      *
-     * @param ProductUtils $product
+     * @param Util $commonUtil
+     * @param TransactionUtils $transactionUtil
+     * @param CashRegisterUtil $cashRegisterUtil
      * @return void
      */
-    public function __construct(Util $commonUtil)
+    public function __construct(Util $commonUtil, TransactionUtil $transactionUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneysafeUtil)
     {
         $this->commonUtil = $commonUtil;
+        $this->transactionUtil = $transactionUtil;
+        $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->moneysafeUtil = $moneysafeUtil;
     }
 
     /**
@@ -121,7 +138,7 @@ class SupplierController extends Controller
                 return $output;
             }
 
-            return redirect()->back()->with('status', $output);
+            return redirect()->back()->withInput()->with('status', $output);
         }
         try {
             $data = $request->except('_token', 'quick_add');
@@ -372,6 +389,179 @@ class SupplierController extends Controller
             'supplier',
             'is_purchase_order'
         ));
+    }
+
+    /**
+     * Shows contact's payment due modal
+     *
+     * @param  int  $customer_id
+     * @return \Illuminate\Http\Response
+     */
+    public function getPayContactDue($supplier_id)
+    {
+        if (request()->ajax()) {
+
+            $due_payment_type = request()->input('type');
+            $query = Supplier::where('suppliers.id', $supplier_id)
+                ->join('transactions AS t', 'suppliers.id', '=', 't.supplier_id')
+                ->select(
+                    DB::raw("SUM(IF(t.type = 'add_stock' AND t.status = 'received', final_total, 0)) as total_invoice"),
+                    DB::raw("SUM(IF(t.type = 'add_stock' AND t.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
+                    'suppliers.name',
+                    'suppliers.mobile_number',
+                    'suppliers.id as supplier_id'
+                );
+
+
+            $supplier_details = $query->first();
+            $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+            $users = User::pluck('name', 'id');
+
+            return view('supplier.partial.pay_supplier_due')->with(compact(
+                'supplier_details',
+                'payment_type_array',
+                'users'
+            ));
+        }
+    }
+
+    /**
+     * Adds Payments for Supplier due
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function postPayContactDue(Request  $request)
+    {
+        try {
+            DB::beginTransaction();
+
+
+            $supplier_id = $request->input('supplier_id');
+            $inputs = $request->only([
+                'amount', 'method', 'note', 'card_number', 'card_month', 'card_year',
+                'cheque_number', 'bank_name', 'bank_deposit_date', 'ref_number', 'paid_on'
+            ]);
+
+            $inputs['paid_on'] = $this->commonUtil->uf_date($inputs['paid_on']) . ' ' . date('H:i:s');
+            $inputs['amount'] = $this->commonUtil->num_uf($inputs['amount']);
+
+
+
+            $inputs['payment_for'] = $supplier_id;
+            $inputs['created_by'] = auth()->user()->id;
+
+            $parent_payment = TransactionPayment::create($inputs);
+
+            if ($request->upload_documents) {
+                foreach ($request->file('upload_documents', []) as $key => $doc) {
+                    $parent_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                }
+            }
+
+            $due_transactions = Transaction::where('supplier_id', $supplier_id)
+                ->whereIn('type', ['add_stock'])
+                ->whereIn('status', ['received'])
+                ->where('payment_status', '!=', 'paid')
+                ->orderBy('transaction_date', 'asc')
+                ->get();
+
+            $total_amount = $parent_payment->amount;
+            $tranaction_payments = [];
+            if ($due_transactions->count()) {
+                foreach ($due_transactions as $transaction) {
+                    //If add stock check status is received
+                    if ($transaction->type == 'add_stock' && $transaction->status != 'received') {
+                        continue;
+                    }
+
+                    if ($total_amount > 0) {
+                        $total_paid = $this->transactionUtil->getTotalPaid($transaction->id);
+                        $due = $transaction->final_total - $total_paid;
+
+                        $now = Carbon::now()->toDateTimeString();
+
+                        $array =  [
+                            'transaction_id' =>  $transaction->id,
+                            'amount' => $this->commonUtil->num_uf($parent_payment->amount),
+                            'payment_for' => $transaction->supplier_id,
+                            'method' => $parent_payment->method,
+                            'paid_on' => $parent_payment->paid_on,
+                            'ref_number' => $parent_payment->ref_number,
+                            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                            'bank_name' => $parent_payment->bank_name,
+                            'card_number' => $parent_payment->card_number,
+                            'card_month' => $parent_payment->card_month,
+                            'card_year' => $parent_payment->card_year,
+                            'parent_id' => $parent_payment->id,
+                            'created_by' => Auth::user()->id,
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ];
+
+                        if ($due <= $total_amount) {
+                            $array['amount'] = $due;
+                            $tranaction_payments[] = $array;
+
+                            //Update transaction status to paid
+                            $transaction->payment_status = 'paid';
+                            $transaction->save();
+
+                            $total_amount = $total_amount - $due;
+                        } else {
+                            $array['amount'] = $total_amount;
+                            $tranaction_payments[] = $array;
+
+                            //Update transaction status to partial
+                            $transaction->payment_status = 'partial';
+                            $transaction->save();
+                            $total_amount = 0;
+                        }
+                        $transaction_payment = TransactionPayment::create($array);
+
+                        $user_id = null;
+
+                        if (!empty($request->source_id)) {
+                            if ($request->source_type == 'pos') {
+                                $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                            }
+                            if ($request->source_type == 'user') {
+                                $user_id = $request->source_id;
+                            }
+                            if (!empty($user_id)) {
+                                $this->cashRegisterUtil->addPayments($transaction, $array, 'debit', $user_id);
+                            }
+                            if ($request->source_type == 'safe') {
+                                $money_safe = MoneySafe::find($request->source_id);
+                                $array['currency_id'] = $transaction->paying_currency_id;
+                                $this->moneysafeUtil->addPayment($transaction, $array, 'debit', $transaction_payment->id, $money_safe);
+                            }
+                        }
+
+                        if ($total_amount == 0) {
+                            break;
+                        }
+                    }
+                }
+            }
+
+
+            DB::commit();
+            $output = [
+                'success' => true,
+                'msg' => __('lang.success')
+            ];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::emergency("File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage());
+
+            $output = [
+                'success' => false,
+                'msg' => "File:" . $e->getFile() . "Line:" . $e->getLine() . "Message:" . $e->getMessage()
+            ];
+        }
+
+        return redirect()->back()->with(['status' => $output]);
     }
 
     /**

@@ -10,6 +10,8 @@ use App\Models\DiningRoom;
 use App\Models\DiningTable;
 use App\Models\Employee;
 use App\Models\GiftCard;
+use App\Models\MoneySafe;
+use App\Models\MoneySafeTransaction;
 use App\Models\Product;
 use App\Models\Store;
 use App\Models\StorePos;
@@ -18,6 +20,7 @@ use App\Models\Tax;
 use App\Models\Transaction;
 use App\Models\TransactionSellLine;
 use App\Utils\CashRegisterUtil;
+use App\Utils\MoneySafeUtil;
 use App\Utils\NotificationUtil;
 use App\Utils\ProductUtil;
 use App\Utils\TransactionUtil;
@@ -40,6 +43,7 @@ class SellReturnController extends Controller
     protected $productUtil;
     protected $notificationUtil;
     protected $cashRegisterUtil;
+    protected $moneySafeUtil;
 
     /**
      * Constructor
@@ -47,13 +51,14 @@ class SellReturnController extends Controller
      * @param ProductUtils $product
      * @return void
      */
-    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil)
+    public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil, NotificationUtil $notificationUtil, CashRegisterUtil $cashRegisterUtil, MoneySafeUtil $moneySafeUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->productUtil = $productUtil;
         $this->transactionUtil = $transactionUtil;
         $this->notificationUtil = $notificationUtil;
         $this->cashRegisterUtil = $cashRegisterUtil;
+        $this->moneySafeUtil = $moneySafeUtil;
     }
 
     /**
@@ -493,6 +498,30 @@ class SellReturnController extends Controller
                         foreach ($request->file('upload_documents', []) as $key => $doc) {
                             $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
                         }
+                    }
+
+                    if ($payment_data['method'] == 'card' || $payment_data['method'] == 'bank_trasfer') {
+                        $money_safe_transaction = MoneySafeTransaction::where('transaction_id', $sell_transaction->id)->first();
+                        $money_safe = MoneySafe::find($money_safe_transaction->money_safe_id);
+                        if (empty($money_safe)) {
+                            $money_safe = MoneySafe::where('store_id', $sell_transaction->store_id)->where('type', 'bank')->first();
+                            if (empty($money_safe)) {
+                                $money_safe = MoneySafe::where('is_default', 1)->first();
+                            }
+                        }
+
+                        $money_safe_data['money_safe_id'] = $money_safe->id;
+                        $money_safe_data['transaction_date'] = $sell_return->transaction_date;
+                        $money_safe_data['transaction_id'] = $sell_return->id;
+                        $money_safe_data['transaction_payment_id'] = $transaction_payment->id;
+                        $money_safe_data['currency_id'] = $sell_transaction->received_currency_id;
+                        $money_safe_data['type'] = 'debit';
+                        $money_safe_data['store_id'] = $sell_transaction->store_id ?? 0;
+                        $money_safe_data['amount'] = $sell_return->final_total;
+                        $money_safe_data['created_by'] = Auth::user()->id;
+                        $money_safe_data['comments'] = __('lang.sell_return');
+
+                        MoneySafeTransaction::updateOrCreate(['transaction_id' => $sell_return->id], $money_safe_data);
                     }
                 }
 

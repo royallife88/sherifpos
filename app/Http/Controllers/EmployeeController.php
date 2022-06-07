@@ -50,7 +50,10 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $query = Employee::leftjoin('users', 'employees.user_id', 'users.id')
-            ->leftjoin('transactions', 'employees.id', 'transactions.employee_id')
+            ->leftjoin('transactions', function ($join) {
+                $join->on('transactions.employee_id', '=', 'employees.id')
+                    ->where('transactions.type', '=', 'employee_commission');
+            })
             ->leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
             ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id');
 

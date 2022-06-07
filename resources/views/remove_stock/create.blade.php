@@ -86,27 +86,27 @@
                                             <thead>
                                                 <tr>
                                                     <th></th>
-                                                    <th>@lang( 'lang.image' )</th>
-                                                    <th>@lang( 'lang.products' )</th>
-                                                    <th>@lang( 'lang.sku' )</th>
-                                                    <th>@lang( 'lang.class' )</th>
-                                                    <th>@lang( 'lang.category' )</th>
-                                                    <th>@lang( 'lang.sub_category' )</th>
-                                                    <th>@lang( 'lang.color' )</th>
-                                                    <th>@lang( 'lang.size' )</th>
-                                                    <th>@lang( 'lang.grade' )</th>
-                                                    <th>@lang( 'lang.unit' )</th>
-                                                    <th>@lang( 'lang.current_stock' )</th>
-                                                    <th>@lang( 'lang.supplier' )</th>
-                                                    <th style="width: 100px !important">@lang( 'lang.email' )</th>
-                                                    <th>@lang( 'lang.invoice_no' )</th>
-                                                    <th>@lang( 'lang.invoice_date' )</th>
-                                                    <th>@lang( 'lang.payment_status' )</th>
-                                                    <th>@lang( 'lang.notes' )</th>
-                                                    <th>@lang( 'lang.quantity' )</th>
-                                                    <th>@lang( 'lang.remove_quantity' )</th>
-                                                    <th>@lang( 'lang.purchase_price' )</th>
-                                                    <th>@lang( 'lang.sell_price' )</th>
+                                                    <th>@lang('lang.image')</th>
+                                                    <th>@lang('lang.products')</th>
+                                                    <th>@lang('lang.sku')</th>
+                                                    <th>@lang('lang.class')</th>
+                                                    <th>@lang('lang.category')</th>
+                                                    <th>@lang('lang.sub_category')</th>
+                                                    <th>@lang('lang.color')</th>
+                                                    <th>@lang('lang.size')</th>
+                                                    <th>@lang('lang.grade')</th>
+                                                    <th>@lang('lang.unit')</th>
+                                                    <th>@lang('lang.current_stock')</th>
+                                                    <th>@lang('lang.supplier')</th>
+                                                    <th style="width: 100px !important">@lang('lang.email')</th>
+                                                    <th>@lang('lang.invoice_no')</th>
+                                                    <th>@lang('lang.invoice_date')</th>
+                                                    <th>@lang('lang.payment_status')</th>
+                                                    <th>@lang('lang.notes')</th>
+                                                    <th>@lang('lang.quantity')</th>
+                                                    <th>@lang('lang.remove_quantity')</th>
+                                                    <th>@lang('lang.purchase_price')</th>
+                                                    <th>@lang('lang.sell_price')</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -149,16 +149,17 @@
                             </div>
 
                         </div>
+                        <input type="hidden" id="is_raw_material" name="is_raw_material" value="{{ $is_raw_material }}">
                         <input type="hidden" id="product_data" name="product_data" value="[]">
                         <input type="hidden" id="transaction_array" name="transaction_array" value="[]">
                         <div class="col-sm-12">
                             <button type="submit" name="submit" id="print" style="margin: 10px" value="print"
-                                class="btn btn-danger pull-right btn-flat submit">@lang( 'lang.print' )</button>
+                                class="btn btn-danger pull-right btn-flat submit">@lang('lang.print')</button>
                             <button type="submit" name="submit" id="send_to_supplier" style="margin: 10px"
-                                value="send_to_supplier" class="btn btn-warning pull-right btn-flat submit">@lang(
-                                'lang.send_to_supplier' )</button>
+                                value="send_to_supplier"
+                                class="btn btn-warning pull-right btn-flat submit">@lang('lang.send_to_supplier')</button>
                             <button type="submit" name="submit" id="save" style="margin: 10px" value="save"
-                                class="btn btn-primary pull-right btn-flat submit">@lang( 'lang.delete' )</button>
+                                class="btn btn-primary pull-right btn-flat submit">@lang('lang.delete')</button>
 
                         </div>
                         {!! Form::close() !!}
@@ -201,6 +202,10 @@
                         d.supplier_id = $('#supplier_id').val();
                         d.invoice_id = $('#invoice_id').val();
                         d.store_id = $('#store_id').val();
+                        @if ($is_raw_material)
+                            d.is_raw_material = 1;
+                        @endif
+
                     }
                 },
                 columnDefs: [{

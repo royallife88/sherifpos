@@ -68,6 +68,7 @@
                                 </table>
                             </div>
                         </div>
+                        <input type="hidden" name="is_raw_material" id="is_raw_material" value="{{$remove_stock->is_raw_material}}">
                         <input type="hidden" name="final_total" id="final_total" value="{{$remove_stock->final_total}}">
                         <div class="row">
                             <div class="col-md-3">

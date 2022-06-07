@@ -43,13 +43,13 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="acount_period_start_date">@lang('lang.acount_period_start_date')</label>
-                                            {!! Form::text('acount_period_start_date', $wages_and_compensation->acount_period_start_date, ['class' => 'form-control datepicker', 'placeholder' => __('lang.acount_period_start_date')]) !!}
+                                            {!! Form::text('acount_period_start_date', !empty($wages_and_compensation->acount_period_start_date) ? @format_date($wages_and_compensation->acount_period_start_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.acount_period_start_date')]) !!}
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="acount_period_end_date">@lang('lang.acount_period_end_date')</label>
-                                            {!! Form::text('acount_period_end_date', $wages_and_compensation->acount_period_end_date, ['class' => 'form-control datepicker', 'placeholder' => __('lang.acount_period_end_date')]) !!}
+                                            {!! Form::text('acount_period_end_date', !empty($wages_and_compensation->acount_period_end_date) ? @format_date($wages_and_compensation->acount_period_end_date) : null, ['class' => 'form-control datepicker', 'placeholder' => __('lang.acount_period_end_date')]) !!}
                                         </div>
                                     </div>
                                 </div>

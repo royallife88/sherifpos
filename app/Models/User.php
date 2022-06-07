@@ -120,6 +120,7 @@ class User extends Authenticatable
                 'consumption' => __('lang.consumption'),
                 'add_consumption_for_others' => __('lang.add_consumption_for_others'),
                 'add_stock_for_raw_material' => __('lang.add_stock_for_raw_material'),
+                'remove_stock' => __('lang.remove_stock'),
                 'transfer' => __('lang.transfer'),
                 'internal_stock_request' => __('lang.internal_stock_request'),
                 'internal_stock_return' => __('lang.internal_stock_return'),

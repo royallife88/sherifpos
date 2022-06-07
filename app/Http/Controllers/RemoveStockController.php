@@ -122,6 +122,12 @@ class RemoveStockController extends Controller
         if (!empty(request()->end_date)) {
             $query->where('transaction_date', '<=', request()->end_date);
         }
+        $is_raw_material = request()->segment(1) == 'raw-materials' ? true : false;
+        if (!empty($is_raw_material)) {
+            $query->where('is_raw_material', 1);
+        } else {
+            $query->where('is_raw_material', 0);
+        }
 
         $remove_stocks = $query->get();
 
@@ -154,13 +160,16 @@ class RemoveStockController extends Controller
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
 
+        $is_raw_material = request()->segment(1) == 'raw-materials' ? true : false;
+
         return view('remove_stock.create')->with(compact(
             'suppliers',
             'status_array',
             'payment_status_array',
             'payment_type_array',
             'stores',
-            'invoice_nos'
+            'invoice_nos',
+            'is_raw_material'
         ));
     }
 
@@ -196,6 +205,7 @@ class RemoveStockController extends Controller
                     'notes' => !empty($product_array['notes']) ? $product_array['notes'] : null,
                     'details' => !empty($data['details']) ? $data['details'] : null,
                     'reason' => !empty($data['reason']) ? $data['reason'] : null,
+                    'is_raw_material' => !empty($data['is_raw_material']) ? $data['is_raw_material'] : 0,
                     'invoice_no' => $this->productUtil->getNumberByType('remove_stock'),
                     'created_by' => Auth::user()->id
                 ];
@@ -332,7 +342,7 @@ class RemoveStockController extends Controller
     public function update(Request $request, $id)
     {
 
-        try {
+        // try {
             $data = $request->except('_token');
 
 
@@ -348,6 +358,7 @@ class RemoveStockController extends Controller
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'reason' => !empty($data['reason']) ? $data['reason'] : null,
+                'is_raw_material' => !empty($data['is_raw_material']) ? $data['is_raw_material'] : 0,
                 'invoice_no' => $this->productUtil->getNumberByType('remove_stock'),
                 'created_by' => Auth::user()->id
             ];
@@ -371,13 +382,13 @@ class RemoveStockController extends Controller
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        } catch (\Exception $e) {
-            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-            $output = [
-                'success' => false,
-                'msg' => __('lang.something_went_wrong')
-            ];
-        }
+        // } catch (\Exception $e) {
+        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+        //     $output = [
+        //         'success' => false,
+        //         'msg' => __('lang.something_went_wrong')
+        //     ];
+        // }
 
         return redirect()->back()->with('status', $output);
     }
@@ -472,6 +483,11 @@ class RemoveStockController extends Controller
             }
             if (!empty($store_id)) {
                 $query->where('transactions.store_id', $store_id);
+            }
+            if (!empty(request()->is_raw_material)) {
+                $query->where('products.is_raw_material', 1);
+            } else {
+                $query->where('products.is_raw_material', 0);
             }
             $add_stocks = $query->select(
                 'transactions.*',

@@ -162,38 +162,38 @@
                                     <input type="hidden" name="tax_type" id="tax_type" value="">
                                 </div>
                             </div>
-                            <div class="col-md-3 @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
+                            <div class="col-md-3 @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('discount_type', __('lang.type') . ':*') !!}
                                     {!! Form::select('discount_type', ['fixed' => 'Fixed', 'percentage' => 'Percentage'], $sale->discount_type, ['class' => 'form-control', 'data-live-search' => 'true']) !!}
                                 </div>
                             </div>
-                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
+                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('discount_value', __('lang.discount_value') . ':*') !!}
                                     {!! Form::text('discount_value', @num_format($sale->discount_value), ['class' => 'form-control', 'placeholder' => __('lang.discount_value'), 'required']) !!}
                                 </div>
                             </div>
-                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
+                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <label for="deliveryman_id">@lang('lang.deliveryman'):</label>
                                 <div class="form-group">
                                     <select class="form-control selectpicker" name="deliveryman_id" id="deliveryman_id"
                                         data-live-search="true">
                                         <option value="" selected>@lang('lang.please_select')</option>
                                         @foreach ($deliverymen as $key => $name)
-                                            <option value="{{ $key }}">{{ $name }}</option>
+                                            <option @if($sale->deliveryman_id == $key) selected @endif value="{{ $key }}">{{ $name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="">
+                                <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="{{$sale->deliveryman_id}}">
                             </div>
-                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
+                            <div class="col-md-3  @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <div class="form-group">
                                     {!! Form::label('delivery_cost', __('lang.delivery_cost') . ':*') !!}
                                     {!! Form::text('delivery_cost', @num_format($sale->delivery_cost), ['class' => 'form-control', 'placeholder' => __('lang.delivery_cost'), 'required']) !!}
                                 </div>
                             </div>
-                            <div class="col-md-3 @if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) hide @endif">
+                            <div class="col-md-3 @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <label class="checkbox-inline">
                                     <input type="checkbox" class="delivery_cost_paid_by_customer"
                                         name="delivery_cost_paid_by_customer" value="1"

@@ -93,7 +93,7 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                             @endphp
                                             @foreach ($categories as $category)
                                             <div class="accordion"
-                                                id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
+                                                id="{{@replace_space($class->id. 'category_'.$category->name.'_'.$i)}}"
                                                 style="margin-left: 20px;">
                                                 <div class="accordion-group  category_level level">
                                                     <div class="row">
@@ -104,18 +104,18 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                         value="{{$category->id}}" class="my-new-checkbox">
                                                         <div class="accordion-heading" style="width: 80%">
                                                             <a class="accordion-toggle" data-toggle="collapse"
-                                                                data-id="{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                                data-parent="#{{@replace_space('category_'.$category->name.'_'.$i)}}"
-                                                                href="#collapse{{@replace_space('category_'.$category->name.'_'.$i)}}">
+                                                                data-id="{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
+                                                                data-parent="#{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
+                                                                href="#collapse{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}">
                                                                 <i
-                                                                    class="fa fa-angle-right angle-class-{{@replace_space('category_'.$category->name.'_'.$i)}}"></i>
+                                                                    class="fa fa-angle-right angle-class-{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"></i>
                                                                 {{$category->name}}
 
                                                             </a>
                                                         </div>
 
                                                     </div>
-                                                    <div id="collapse{{@replace_space('category_'.$category->name.'_'.$i)}}"
+                                                    <div id="collapse{{@replace_space($class->id . 'category_'.$category->name.'_'.$i)}}"
                                                         class="accordion-body collapse in">
                                                         <div class="accordion-inner">
                                                             @php
@@ -128,8 +128,19 @@ $product_selected = !empty($pct_data['product_selected']) ? $pct_data['product_s
                                                             'brands.id')->where('products.category_id',
                                                             $category->id)->whereNull('products.sub_category_id')->whereNotNull('brands.id')->whereNotNull('brands.name')->select('brands.id',
                                                             'brands.name')->groupBy('brands.id')->get();
-
                                                             @endphp
+
+                                                            @if($brands->count() == 0 && $sub_categories->count() == 0)
+                                                            @php
+                                                                $products = App\Models\Product::leftjoin('variations', 'products.id', 'variations.product_id')->where('category_id', $category->id)->whereNotNull('products.name')->select('products.id', 'products.name', 'variations.name as variation_name','variations.sub_sku as sku', 'variations.default_sell_price as sell_price')->groupBy('variations.id')->get();
+                                                            @endphp
+                                                            @foreach ($products as $product)
+                                                            @include('product_classification_tree.partials.product_inner_part_pst', [
+                                                                'product' => $product,
+                                                            ])
+                                                            @endforeach
+                                                            @endif
+
                                                             @if (!empty($brands) && $brands->count() > 0)
                                                             @include('product_classification_tree.partials.brand_inner_part_pst',
                                                             ['brands' => $brands, 'brand_selected' => $brand_selected,

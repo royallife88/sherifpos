@@ -181,6 +181,7 @@ class WagesAndCompensationController extends Controller
                     'source_id' => $request->source_id,
                 ];
                 $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                $this->transactionUtil->payAtOnceEmployeeCommission($transaction_payment, $employee->id);
 
                 $user_id = null;
                 if (!empty($request->source_id)) {
@@ -274,9 +275,9 @@ class WagesAndCompensationController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // try {
+        try {
             $data = $request->except('_token', 'submit', '_method');
-
+            DB::beginTransaction();
             $upload_files = null;
             if ($request->hasFile('upload_files')) {
                 $file = $request->file('upload_files');
@@ -290,6 +291,8 @@ class WagesAndCompensationController extends Controller
             $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
             $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
             $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
+            $data['acount_period_start_date'] = !empty($data['acount_period_start_date']) ? $this->commonUtil->uf_date($data['acount_period_start_date']) : null;
+            $data['acount_period_end_date'] = !empty($data['acount_period_end_date']) ? $this->commonUtil->uf_date($data['acount_period_end_date']) : null;
 
             $wages_and_compensation = WagesAndCompensation::where('id', $id)->first();
             $wages_and_compensation->update($data);
@@ -316,9 +319,9 @@ class WagesAndCompensationController extends Controller
             }
 
             if ($request->payment_status != 'pending') {
-                $transaction_payment = TransactionPayment::where('transaction_id', $transaction->id)->first();
+                $old_tp = TransactionPayment::where('transaction_id', $transaction->id)->first();
                 $payment_data = [
-                    'transaction_payment_id' => !empty($transaction_payment) ?  $transaction_payment->id : null,
+                    'transaction_payment_id' => !empty($old_tp) ?  $old_tp->id : null,
                     'transaction_id' => $transaction->id,
                     'amount' => $this->commonUtil->num_uf($request->net_amount),
                     'method' => 'cash',
@@ -327,8 +330,9 @@ class WagesAndCompensationController extends Controller
                     'source_type' => $request->source_type,
                     'source_id' => $request->source_id,
                 ];
-                $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
 
+                $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+                $this->transactionUtil->updatePayAtOnceEmployeeCommission($transaction_payment, $transaction->employee_id, $old_tp->amount);
                 $user_id = null;
                 if (!empty($request->source_id)) {
                     if ($request->source_type == 'pos') {
@@ -357,18 +361,18 @@ class WagesAndCompensationController extends Controller
             if ($request->hasFile('upload_files')) {
                 $wages_and_compensation->addMedia($request->upload_files)->toMediaCollection('wages_and_compensation');
             }
-
+            DB::commit();
             $output = [
                 'success' => true,
                 'msg' => __('lang.success')
             ];
-        // } catch (\Exception $e) {
-        //     Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
-        //     $output = [
-        //         'success' => false,
-        //         'msg' => __('lang.something_went_wrong')
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::emergency('File: ' . $e->getFile() . 'Line: ' . $e->getLine() . 'Message: ' . $e->getMessage());
+            $output = [
+                'success' => false,
+                'msg' => __('lang.something_went_wrong')
+            ];
+        }
 
         return redirect()->back()->with('status', $output);
     }
@@ -455,52 +459,21 @@ class WagesAndCompensationController extends Controller
         }
 
         if ($payment_type == 'commission') {
-            $wages_and_compensation = WagesAndCompensation::where('employee_id', $employee_id)
-                ->whereDate('acount_period_start_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date))
-                ->whereDate('acount_period_end_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date))
+            $sale_transactions = Transaction::leftjoin('transaction_payments', 'transactions.id', '=', 'transaction_payments.transaction_id')
+                ->whereDate('transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date))
+                ->whereDate('transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date))
+                ->where('payment_status', '!=', 'paid')
+                ->where('employee_id', $employee_id)
+                ->select(
+                    DB::raw('SUM(final_total) as total_amount'),
+                    DB::raw('SUM(amount) as total_paid')
+                )
                 ->first();
 
-            if ($employee->commission == 1 && empty($wages_and_compensation)) {
-
-                $sold_value = 0;
-                if ($employee->commission_type == 'sales') {
-
-                    $sold_query = Transaction::leftjoin('customers', 'transactions.customer_id', 'customers.id')
-                        ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
-                        ->where('transactions.type', 'sell')
-                        ->whereIn('customer_types.id', $employee->commission_customer_types)
-                        ->where('status', 'final')
-                        ->where('transactions.created_by', $user_id);
-
-                    if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
-                        $sold_query->whereDate('transactions.transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date));
-                        $sold_query->whereDate('transactions.transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date));
-                    }
-
-                    $sold_value = $sold_query->sum('final_total');
+            if ($employee->commission == 1) {
+                if (!empty($sale_transactions)) {
+                    $amount = $sale_transactions->total_amount - $sale_transactions->total_paid;
                 }
-
-                if ($employee->commission_type == 'profit') {
-                    $sold_query = Transaction::leftjoin('customers', 'transactions.customer_id', 'customers.id')
-                        ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
-                        ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
-                        ->where('transactions.type', 'sell')
-                        ->whereIn('customer_types.id', $employee->commission_customer_types)
-                        ->where('status', 'final')
-                        ->where('transactions.created_by', $user_id);
-
-                    if (!empty(request()->acount_period_start_date) && !empty(request()->acount_period_end_date)) {
-                        $sold_query->whereDate('transactions.transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date));
-                        $sold_query->whereDate('transactions.transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date));
-                    }
-
-                    $profit = $sold_query->select(DB::raw('SUM(transaction_sell_lines.sell_price * transaction_sell_lines.quantity - transaction_sell_lines.purchase_price * transaction_sell_lines.quantity) as sold_value'))->first();
-                    $sold_value = $profit->sold_value ?? 0;
-                }
-                // print_r(request()->acount_period_end_date); die();
-                //TODO:: calculate the commission for profit
-                $commission_value = $employee->commission_value;
-                $amount = $this->commonUtil->calc_percentage($sold_value, $commission_value);
             }
         }
 

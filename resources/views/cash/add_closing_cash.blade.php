@@ -139,7 +139,13 @@
                         </tr> --}}
                     </table>
                 </div>
+                <div class="col-md-12">
+                    <button type="button" id="print-closing-cash-btn" data-cash_register_id="{{$cash_register_id}}"
+                        class="btn btn-primary pull-right">@lang('lang.print')</button>
+                </div>
             </div>
+            <br>
+            <br>
             <div class="col-md-12">
                 <div class="row">
                     <div class="col-md-6">

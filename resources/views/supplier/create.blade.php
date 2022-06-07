@@ -18,7 +18,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="submit" value="{{ trans('lang.submit') }}" id="submit-btn"
+                                        <input type="button" value="{{ trans('lang.submit') }}" id="submit-btn"
                                             class="btn btn-primary">
                                     </div>
                                 </div>
@@ -41,6 +41,12 @@
             }
         });
 
+        $(document).on("click", "#submit-btn", function(e) {
+            e.preventDefault();
+            if ($('#supplier-form').valid()) {
+                $('#supplier-form').submit();
+            }
+        });
         $(document).on("submit", "form#quick_add_supplier_category_form", function(e) {
             $("form#quick_add_supplier_category_form").validate();
             e.preventDefault();

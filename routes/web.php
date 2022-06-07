@@ -39,6 +39,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::post('general/upload-image-temp', 'GeneralController@uploadImageTemp');
     Route::post('general/upload-file-temp', 'GeneralController@uploadFileTemp');
     Route::get('general/view-uploaded-files/{model_name}/{model_id}', 'GeneralController@viewUploadedFiles');
+
     Route::get('product/get-raw-material-details/{raw_material_id}', 'ProductController@getRawMaterialDetail');
     Route::get('product/get-raw-material-row', 'ProductController@getRawMaterialRow');
     Route::get('product/get-variation-row', 'ProductController@getVariationRow');
@@ -51,10 +52,12 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('product-stocks', 'ProductController@getProductStocks');
     Route::get('product/delete-product-image/{id}', 'ProductController@deleteProductImage');
     Route::resource('product', ProductController::class);
+
     Route::get('raw-material/add-stock/create', 'AddStockController@create');
     Route::get('raw-material/add-stock', 'AddStockController@index');
     Route::get('raw-material/add-product-row', 'RawMaterialController@addProductRow');
     Route::resource('raw-material', RawMaterialController::class);
+
     Route::get('consumption/get-sufficient-suggestions/{raw_material_id}', 'ConsumptionController@getSufficientSuggestions');
     Route::get('consumption/get-raw-material-details', 'ConsumptionController@getConsumptionDetailRow');
     Route::get('consumption/add-row', 'ConsumptionController@addRow');
@@ -109,6 +112,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
 
     Route::get('supplier/get-dropdown', 'SupplierController@getDropdown');
     Route::get('supplier/get-details/{id}', 'SupplierController@getDetails');
+    Route::post('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@postPayContactDue');
+    Route::get('supplier/pay-supplier-due/{supplier_id}', 'SupplierController@getPayContactDue');
     Route::resource('supplier', SupplierController::class);
     Route::get('supplier-service/update-status/{id}', 'SupplierServiceController@getUpdateStatus');
     Route::post('supplier-service/update-status/{id}', 'SupplierServiceController@postUpdateStatus');
@@ -145,6 +150,8 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('remove-stock/update-status-as-compensated/{id}', 'RemoveStockController@getUpdateStatusAsCompensated');
     Route::post('remove-stock/update-status-as-compensated/{id}', 'RemoveStockController@postUpdateStatusAsCompensated');
     Route::get('remove-stock/get-compensated', 'RemoveStockController@getCompensated');
+    Route::get('raw-materials/remove-stock/create', 'RemoveStockController@create');
+    Route::get('raw-materials/remove-stock/index', 'RemoveStockController@index');
     Route::resource('remove-stock', RemoveStockController::class);
     Route::get('internal-stock-request/get-product-table', 'InternalStockRequestController@getProductTable');
     Route::get('internal-stock-request/update-status/{id}', 'InternalStockRequestController@getUpdateStatus');
@@ -272,6 +279,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('sales-promotion/get-product-details-rows', 'SalesPromotionController@getProductDetailsRows');
     Route::resource('sales-promotion', SalesPromotionController::class);
 
+    Route::get('cash/print-closing-cash/{cash_register_id}', 'CashController@printClosingCash');
     Route::get('cash/add-closing-cash/{cash_register_id}', 'CashController@addClosingCash');
     Route::post('cash/save-add-closing-cash', 'CashController@saveAddClosingCash');
     Route::get('cash/add-cash-out/{cash_register_id}', 'CashController@addCashOut');

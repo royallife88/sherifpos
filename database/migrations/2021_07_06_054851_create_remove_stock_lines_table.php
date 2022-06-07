@@ -21,6 +21,7 @@ class CreateRemoveStockLinesTable extends Migration
             $table->decimal('quantity', 15, 4);
             $table->decimal('purchase_price', 15, 4);
             $table->decimal('sub_total', 15, 4);
+            $table->string('notes', 255)->nullable();
             $table->timestamps();
         });
     }

@@ -102,6 +102,19 @@ $module_settings = !empty($module_settings) ? json_decode($module_settings, true
                         </li>
                         @endcan
 
+                        @can('raw_material_module.remove_stock.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'remove-stock' && request()->segment(3) == 'create') active @endif">
+                            <a href="/raw-materials/remove-stock/create">{{__('lang.remove_stock')}}</a>
+                        </li>
+                        @endcan
+                        @can('raw_material_module.remove_stock.create_and_edit')
+                        <li
+                            class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'remove-stock' && empty(request()->segment(3))) active @endif">
+                            <a href="/raw-materials/remove-stock/index">{{__('lang.view_all_remove_stock')}}</a>
+                        </li>
+                        @endcan
+
                         @can('raw_material_module.transfer.create_and_edit')
                         <li
                             class="@if(request()->segment(1) == 'raw-materials' && request()->segment(2) == 'transfer' && request()->segment(3) == 'create') active @endif">

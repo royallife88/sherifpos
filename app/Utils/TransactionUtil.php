@@ -23,6 +23,7 @@ use App\Models\RedemptionOfPoint;
 use App\Models\Referred;
 use App\Models\RewardSystem;
 use App\Models\Store;
+use App\Models\Supplier;
 use App\Models\System;
 use App\Models\Tax;
 use App\Models\Transaction;
@@ -331,6 +332,7 @@ class TransactionUtil extends Util
                 $supplier_service->final_total = $final_total;
                 $supplier_service->grand_total = $final_total;
                 $supplier_service->save();
+                $this->updateTransactionPaymentStatus($supplier_service->id);
             }
         }
 
@@ -390,7 +392,8 @@ class TransactionUtil extends Util
             $employee = Employee::find($commissioned_employee);
             $commissioned_products = $employee->commissioned_products;
             $commission_total = 0;
-            if (!empty($employee->commission)) {
+            $commission_valid = $this->checkEmployeeComissionIsValid($transaction, $employee);
+            if (!empty($commission_valid)) {
                 foreach ($commissioned_products as $commissioned_product) {
                     if (in_array($commissioned_product, $sell_product_ids)) {
                         $sell_line = TransactionSellLine::where('transaction_id', $transaction->id)->where('product_id', $commissioned_product)->first();
@@ -435,6 +438,237 @@ class TransactionUtil extends Util
         }
 
         return true;
+    }
+
+    /**
+     * check if employee is valid for comission
+     *
+     * @param object $transaction
+     * @param object $employee_id
+     * @return boolean
+     */
+    public function checkEmployeeComissionIsValid($transaction, $employee)
+    {
+        $valid = true;
+        if (!empty($employee->commission_customer_types)) {
+            $customer = $transaction->customer;
+            if (!in_array($customer->customer_type_id, $employee->commission_customer_types)) {
+                $valid = false;
+            }
+        }
+        if (!empty($employee->commission_stores)) {
+            if (!in_array($transaction->store_id, $employee->commission_stores)) {
+                $valid = false;
+            }
+        }
+        if (empty($employee->commission) || empty($employee->commission_value)) {
+            $valid = false;
+        }
+
+        return $valid;
+    }
+
+
+    /**
+     * pay employee commission payments
+     *
+     * @param object $transaction
+     * @param object $employee_id
+     * @return boolean
+     */
+    public function payAtOnceEmployeeCommission($parent_payment, $employee_id)
+    {
+        $due_transactions = Transaction::where('employee_id', $employee_id)
+            ->whereIn('type', ['employee_commission'])
+            ->whereIn('status', ['final'])
+            ->where('payment_status', '!=', 'paid')
+            ->orderBy('transaction_date', 'asc')
+            ->get();
+
+        $total_amount = $parent_payment->amount;
+        $tranaction_payments = [];
+        if ($due_transactions->count()) {
+            foreach ($due_transactions as $transaction) {
+                //If transaction check status is final
+                if ($transaction->type == 'employee_commission' && $transaction->status != 'final') {
+                    continue;
+                }
+
+                if ($total_amount > 0) {
+                    $total_paid = $this->getTotalPaid($transaction->id);
+                    $due = $transaction->final_total - $total_paid;
+
+                    $now = Carbon::now()->toDateTimeString();
+
+                    $array =  [
+                        'transaction_id' =>  $transaction->id,
+                        'amount' => $this->num_uf($parent_payment->amount),
+                        'payment_for' => $transaction->customer_id,
+                        'method' => $parent_payment->method,
+                        'paid_on' => $parent_payment->paid_on,
+                        'ref_number' => $parent_payment->ref_number,
+                        'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->uf_date($data['bank_deposit_date']) : null,
+                        'bank_name' => $parent_payment->bank_name,
+                        'card_number' => $parent_payment->card_number,
+                        'card_month' => $parent_payment->card_month,
+                        'card_year' => $parent_payment->card_year,
+                        'parent_id' => $parent_payment->id,
+                        'created_by' => Auth::user()->id,
+                        'created_at' => $now,
+                        'updated_at' => $now
+                    ];
+
+                    if ($due <= $total_amount) {
+                        $array['amount'] = $due;
+                        $tranaction_payments[] = $array;
+
+                        //Update transaction status to paid
+                        $transaction->payment_status = 'paid';
+                        $transaction->save();
+
+                        $total_amount = $total_amount - $due;
+                    } else {
+                        $array['amount'] = $total_amount;
+                        $tranaction_payments[] = $array;
+
+                        //Update transaction status to partial
+                        $transaction->payment_status = 'partial';
+                        $transaction->save();
+                        $total_amount = 0;
+                        break;
+                    }
+                }
+            }
+
+            //Insert new transaction payments
+            if (!empty($tranaction_payments)) {
+                TransactionPayment::insert($tranaction_payments);
+            }
+        }
+
+        return $total_amount;
+    }
+    /**
+     * update the employee commission payments
+     *
+     * @param object $transaction
+     * @param object $employee_id
+     * @return boolean
+     */
+    public function updatePayAtOnceEmployeeCommission($parent_payment, $employee_id, $old_amount_paid)
+    {
+        $due_transactions = Transaction::where('employee_id', $employee_id)
+            ->whereIn('type', ['employee_commission'])
+            ->whereIn('status', ['final'])
+            ->where('payment_status', '!=', 'paid')
+            ->orderBy('transaction_date', 'asc')
+            ->get();
+
+        if (!empty($old_amount_paid)) {
+            $total_amount = $parent_payment->amount - $old_amount_paid;
+        } else {
+            $total_amount = $parent_payment->amount;
+        }
+
+        $tranaction_payments = [];
+        if ($total_amount > 0) {
+            if ($due_transactions->count()) {
+                foreach ($due_transactions as $transaction) {
+                    //If transaction check status is final
+                    if ($transaction->type == 'employee_commission' && $transaction->status != 'final') {
+                        continue;
+                    }
+
+                    if ($total_amount > 0) {
+                        $total_paid = $this->getTotalPaid($transaction->id);
+                        $due = $transaction->final_total - $total_paid;
+
+                        $now = Carbon::now()->toDateTimeString();
+
+                        $array =  [
+                            'transaction_id' =>  $transaction->id,
+                            'amount' => $this->num_uf($parent_payment->amount),
+                            'payment_for' => $transaction->customer_id,
+                            'method' => $parent_payment->method,
+                            'paid_on' => $parent_payment->paid_on,
+                            'ref_number' => $parent_payment->ref_number,
+                            'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->uf_date($data['bank_deposit_date']) : null,
+                            'bank_name' => $parent_payment->bank_name,
+                            'card_number' => $parent_payment->card_number,
+                            'card_month' => $parent_payment->card_month,
+                            'card_year' => $parent_payment->card_year,
+                            'parent_id' => $parent_payment->id,
+                            'created_by' => Auth::user()->id,
+                            'created_at' => $now,
+                            'updated_at' => $now
+                        ];
+
+                        if ($due <= $total_amount) {
+                            $array['amount'] = $due;
+                            $tranaction_payments[] = $array;
+
+                            //Update transaction status to paid
+                            $transaction->payment_status = 'paid';
+                            $transaction->save();
+
+                            $total_amount = $total_amount - $due;
+                        } else {
+                            $array['amount'] = $total_amount;
+                            $tranaction_payments[] = $array;
+
+                            //Update transaction status to partial
+                            $transaction->payment_status = 'partial';
+                            $transaction->save();
+                            $total_amount = 0;
+                            break;
+                        }
+                    }
+                }
+
+                //Insert new transaction payments
+                if (!empty($tranaction_payments)) {
+                    TransactionPayment::insert($tranaction_payments);
+                }
+            }
+        }
+        if ($total_amount < 0) {
+            $total_amount = abs($total_amount);
+            $paid_transactions = Transaction::where('employee_id', $employee_id)
+                ->whereIn('type', ['employee_commission'])
+                ->whereIn('status', ['final'])
+                ->where('payment_status', '!=', 'pending')
+                ->orderBy('transaction_date', 'asc')
+                ->get();
+
+            foreach ($paid_transactions as $transaction) {
+                if ($total_amount > 0) {
+                    $tp = TransactionPayment::where('transaction_id', $transaction->id)->first();
+                    $paid = $tp->amount;
+
+                    if ($paid <= $total_amount) {
+                        $tp->amount = 0;
+                        $tp->save();
+
+                        //Update transaction status to pending
+                        $transaction->payment_status = 'pending';
+                        $transaction->save();
+
+                        $total_amount = $total_amount - $paid;
+                    } else {
+                        $tp->amount =  $tp->amount - $total_amount;
+                        $tp->save();
+
+                        //Update transaction status to partial
+                        $transaction->payment_status = 'partial';
+                        $transaction->save();
+                        $total_amount = 0;
+                        break;
+                    }
+                }
+            }
+        }
+
+        return $total_amount;
     }
 
 
@@ -1149,6 +1383,13 @@ class TransactionUtil extends Util
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }
 
+    /**
+     * pay customer due
+     *
+     * @param object $request
+     * @param boolean $format_data
+     * @return void
+     */
     public function payCustomer($request, $format_data = true)
     {
         $customer_id = $request->input('customer_id');

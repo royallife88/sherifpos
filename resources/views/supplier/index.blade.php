@@ -109,6 +109,16 @@
                                                         </li>
                                                         <li class="divider"></li>
                                                     @endcan
+                                                    @if ($supplier->total_invoice - $supplier->total_paid > 0)
+                                                        @can('supplier_module.supplier.create_and_edit')
+                                                            <li>
+                                                                <a
+                                                                    data-href="{{ action('SupplierController@getPayContactDue', $supplier->id) }}" data-container=".view_modal" class="btn-modal"><i
+                                                                        class="fa fa-money btn"></i>@lang('lang.pay')</a>
+                                                            </li>
+                                                            <li class="divider"></li>
+                                                        @endcan
+                                                    @endif
                                                     @can('supplier_module.supplier.delete')
                                                         <li>
                                                             <a data-href="{{ action('SupplierController@destroy', $supplier->id) }}"
