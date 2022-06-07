@@ -16,6 +16,7 @@ class AddForeignKeyTransactionsTable extends Migration
         Schema::table('transactions', function (Blueprint $table) {
             $table->foreign('deliveryman_id')->references('id')->on('employees');
             $table->foreign('store_pos_id')->references('id')->on('store_pos')->onDelete('cascade');
+            $table->foreign('employee_id')->references('id')->on('employees');
         });
     }
 
