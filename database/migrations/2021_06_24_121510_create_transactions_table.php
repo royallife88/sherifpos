@@ -22,7 +22,6 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
             $table->unsignedBigInteger('employee_id')->nullable();
-            $table->foreign('employee_id')->references('id')->on('employees')->onDelete('cascade');
             $table->unsignedBigInteger('store_pos_id')->nullable();
             $table->string('type')->nullable();
             $table->string('sub_type')->nullable();
