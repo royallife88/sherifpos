@@ -72,6 +72,7 @@ class CreateTransactionsTable extends Migration
             $table->string('delivery_status')->nullable();
             $table->decimal('delivery_cost', 15, 4)->default(0);
             $table->boolean('delivery_cost_paid_by_customer')->default(1);
+            $table->boolean('delivery_cost_given_to_deliveryman')->default(0);
             $table->text('delivery_address')->nullable();
             $table->unsignedBigInteger('expense_category_id')->nullable();
             $table->unsignedBigInteger('expense_beneficiary_id')->nullable();

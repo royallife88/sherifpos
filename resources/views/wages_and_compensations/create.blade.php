@@ -174,7 +174,7 @@
 
         $('#net_amount').change(function() {
             if ($('#payment_type').val() !== 'salary' && $('#payment_type').val() !== 'commission') {
-                $('#amount').val($(this).val());
+                __write_number($('#amount'), $(this).val());
             }
         })
         $('#deductibles').change(function() {
@@ -182,10 +182,10 @@
                 let deductibles = parseFloat($('#deductibles').val());
                 let amount = 0;
                 if ($('#amount').val() != '' && $('#amount').val() != undefined) {
-                    amount = parseFloat($('#amount').val());
+                    amount = __read_number($('#amount'));
                 }
                 amount = amount - deductibles;
-                $('#net_amount').val(amount);
+                __write_number($('#net_amount'), amount);
             }
         })
 

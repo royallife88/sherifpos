@@ -2924,10 +2924,11 @@ class ReportController extends Controller
     {
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         if (request()->ajax()) {
-
+            $default_currency_id = System::getProperty('currency');
             $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
                 ->leftjoin('employees', 'transactions.employee_id', 'employees.id')
                 ->where('transactions.type', 'employee_commission')
+                ->leftjoin('currencies as paying_currency', 'transactions.paying_currency_id', 'paying_currency.id')
                 ->where('transactions.status', 'final');
 
             if (!empty(request()->employee_id)) {
@@ -2959,12 +2960,13 @@ class ReportController extends Controller
                 'transactions.*',
                 'transaction_payments.paid_on',
                 'employees.employee_name',
+                'paying_currency.symbol as paying_currency_symbol'
             )->orderBy('transaction_date', 'desc')
                 ->groupBy('transactions.id');
 
             return DataTables::of($sales)
                 ->editColumn('transaction_date', '{{@format_date($transaction_date)}}')
-                ->editColumn('final_total', '{{@num_format($final_total)}}')
+                // ->editColumn('final_total', '{{@num_format($final_total)}}')
                 ->editColumn('paid_on', '@if(!empty($paid_on)){{@format_datetime($paid_on)}}@endif')
                 ->addColumn('method', function ($row) use ($payment_types, $request) {
                     $methods = '';
@@ -2980,7 +2982,10 @@ class ReportController extends Controller
                     }
                     return $methods;
                 })
-
+                ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
+                    $default_currency = Currency::find($default_currency_id);
+                    return $row->paying_currency_symbol ?? $default_currency->symbol;
+                })
                 ->addColumn('ref_number', function ($row) use ($request) {
                     $ref_numbers = '';
                     if (!empty($request->method)) {
@@ -2995,22 +3000,20 @@ class ReportController extends Controller
                     }
                     return $ref_numbers;
                 })
-                ->addColumn('paid', function ($row) use ($request) {
-                    $amount_paid = 0;
-                    if (!empty($request->method)) {
-                        $payments = $row->transaction_payments->where('method', $request->method);
-                    } else {
-                        $payments = $row->transaction_payments;
-                    }
-                    foreach ($payments as $payment) {
-                        $amount_paid += $payment->amount;
-                    }
-                    return $this->commonUtil->num_f($amount_paid);
+                ->editColumn('final_total', function ($row) use ($default_currency_id) {
+                    $final_total =  $row->final_total;
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($final_total) . '</span>';
                 })
-                ->addColumn('due', function ($row) {
-                    $paid = $row->transaction_payments->sum('amount');
-                    $due = $row->final_total - $paid;
-                    return $this->commonUtil->num_f($due);
+                ->addColumn('paid', function ($row) use ($default_currency_id) {
+                    $amount_paid =  $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($amount_paid) . '</span>';
+                })
+                ->addColumn('due', function ($row) use ($default_currency_id) {
+                    $due =  $row->final_total - $row->transaction_payments->sum('amount');
+                    $paying_currency_id = $row->paying_currency_id ?? $default_currency_id;
+                    return '<span data-currency_id="' . $paying_currency_id . '">' . $this->commonUtil->num_f($due) . '</span>';
                 })
                 ->editColumn('payment_status', function ($row) {
                     if ($row->payment_status == 'pending') {
@@ -3086,6 +3089,8 @@ class ReportController extends Controller
                     'payment_status',
                     'transaction_date',
                     'final_total',
+                    'due',
+                    'paid',
                     'status',
                     'store_name',
                     'created_by',

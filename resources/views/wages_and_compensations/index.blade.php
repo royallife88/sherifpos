@@ -12,7 +12,7 @@
                     <div class="card-body">
                         <div class="row">
                             <a class="btn btn-primary ml-4" href="{{ action('WagesAndCompensationController@create') }}">
-                                <i class="fa fa-plus"></i> @lang( 'lang.add' )</a>
+                                <i class="fa fa-plus"></i> @lang('lang.add')</a>
                         </div>
                         <br>
                         <div class="col-md-12">
@@ -115,16 +115,20 @@
                                                     $employee = App\Models\Employee::find($wages_and_compensation->employee_id);
                                                 @endphp
                                                 <td>
-                                                    <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('uploads/'. session('logo')) }} @endif"
+                                                    <img src="@if (!empty($employee->getFirstMediaUrl('employee_photo'))) {{ $employee->getFirstMediaUrl('employee_photo') }}@else{{ asset('uploads/' . session('logo')) }} @endif"
                                                         style="width: 50px; border: 2px solid #fff;" />
                                                 </td>
                                                 <td>
                                                     @if ($wages_and_compensation->payment_type == 'salary')
                                                         {{ \Carbon\Carbon::parse($wages_and_compensation->account_period)->format('F') }}
                                                     @else
-                                                        {{ @format_date($wages_and_compensation->acount_period_start_date) }}
+                                                        @if (!empty($wages_and_compensation->acount_period_start_date))
+                                                            {{ @format_date($wages_and_compensation->acount_period_start_date) }}
+                                                        @endif
                                                         -
-                                                        {{ @format_date($wages_and_compensation->acount_period_end_date) }}
+                                                        @if (!empty($wages_and_compensation->acount_period_end_date))
+                                                            {{ @format_date($wages_and_compensation->acount_period_end_date) }}
+                                                        @endif
                                                     @endif
                                                 </td>
                                                 <td>{{ $wages_and_compensation->job_title }}</td>
@@ -146,7 +150,7 @@
                                                     @endif
                                                 </td>
                                                 <td>
-                                                    <a data-href="{{ action('GeneralController@viewUploadedFiles', ['model_name' => 'WagesAndCompensation','model_id' => $wages_and_compensation->id,'collection_name' => 'wages_and_compensation']) }}"
+                                                    <a data-href="{{ action('GeneralController@viewUploadedFiles', ['model_name' => 'WagesAndCompensation', 'model_id' => $wages_and_compensation->id, 'collection_name' => 'wages_and_compensation']) }}"
                                                         data-container=".view_modal"
                                                         class="btn btn-danger btn-modal text-white">@lang('lang.view')</a>
                                                 </td>
@@ -192,7 +196,5 @@
 @endsection
 
 @section('javascript')
-    <script>
-
-    </script>
+    <script></script>
 @endsection

@@ -585,6 +585,7 @@ class HomeController extends Controller
             DB::raw('SUM(IF(transactions.type="expense", final_total, 0)) as total_expense'),
             DB::raw('SUM(IF(transactions.type="add_stock", final_total, 0)) as total_purchases'),
             DB::raw('SUM(IF(transactions.type="sell", final_total, 0)) as total_sell'),
+            DB::raw('SUM(IF(transactions.type="sell" AND transactions.delivery_cost_given_to_deliveryman="1", delivery_cost, 0)) as total_delivery_cost_given_to_deliveryman'),
         );
         $transaction_query = $transaction_query->first();
 
@@ -592,6 +593,8 @@ class HomeController extends Controller
 
 
         $revenue = $transaction_query->total_sell ?? 0;
+        $total_delivery_cost_given_to_deliveryman = $transaction_query->total_delivery_cost_given_to_deliveryman ?? 0;
+        $revenue = $revenue - $total_delivery_cost_given_to_deliveryman;
 
         $sell_return  = $transaction_query->total_sell_return - $gift_card_returned; // for gift card return no change in sell return
 

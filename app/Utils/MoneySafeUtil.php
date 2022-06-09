@@ -52,20 +52,8 @@ class MoneySafeUtil extends Util
                 $amount = $amount;
             } else if (!empty($from_currency_exchange_rate) && empty($to_currency_exchange_rate)) {
                 $amount = $amount * $from_currency_exchange_rate->conversion_rate;
-                // print_r($amount_to_base); die();
-                // if (!empty($to_currency_exchange_rate)) {
-                //     $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
-                // } else {
-                //     $amount = $amount;
-                // }
             } else if (empty($from_currency_exchange_rate) && !empty($to_currency_exchange_rate)) {
                 $amount = $amount / $to_currency_exchange_rate->conversion_rate;
-                // print_r($amount_to_base); die();
-                // if (!empty($to_currency_exchange_rate)) {
-                //     $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
-                // } else {
-                //     $amount = $amount;
-                // }
             } else {
                 $amount = $amount;
             }

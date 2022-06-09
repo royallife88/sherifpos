@@ -1,11 +1,14 @@
 <style>
     @media print {
-        #print-closing-cash-div {
-            max-width: 7cm;
+        * {
+            font-size: 14px;
+            line-height: 20px;
+            font-family: 'Times New Roman';
+            font-weight: bold;
         }
     }
 </style>
-<div class="col-md-12" id="print-closing-cash-div">
+<div class="col-md-12" style="max-width: 350px;"  id="print-closing-cash-div">
     <div class="well">
         <table class="table">
             <tr>
@@ -132,7 +135,7 @@
                 @endforeach
             </tr>
         </table>
-        <div class="row text-center" style="width: 100%;text-align: center;">
+        <div class="" style="width: 100%;text-align: center;">
             <h6 style='text-align: center;'>Proudly Developed at Sherifshalaby.tech</h6>
         </div>
     </div>

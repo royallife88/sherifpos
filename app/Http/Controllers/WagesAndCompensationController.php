@@ -143,7 +143,7 @@ class WagesAndCompensationController extends Controller
             $data['created_by'] = Auth::user()->id;
             $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
             $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
-            $data['deductibles'] = !empty($data['deductibles']) ? $data['deductibles'] : 0;
+            $data['deductibles'] = !empty($data['deductibles']) ? $this->commonUtil->num_uf($data['deductibles']) : 0;
             $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
             $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
             $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
@@ -287,7 +287,7 @@ class WagesAndCompensationController extends Controller
             }
             $data['created_by'] = Auth::user()->id;
             $data['other_payment'] = !empty($data['other_payment']) ? $data['other_payment'] : 0;
-            $data['status'] = $request->submit == 'Paid' ? 'paid' : 'pending';
+            $data['deductibles'] = !empty($data['deductibles']) ? $this->commonUtil->num_uf($data['deductibles']) : 0;
             $data['payment_date'] = !empty($data['payment_date']) ? $this->commonUtil->uf_date($data['payment_date']) : null;
             $data['source_id'] = !empty($data['source_id']) ? $data['source_id'] : null;
             $data['source_type'] = !empty($data['source_type']) ? $data['source_type'] : null;
@@ -303,7 +303,7 @@ class WagesAndCompensationController extends Controller
                 'grand_total' => $this->commonUtil->num_uf($data['net_amount']),
                 'final_total' => $this->commonUtil->num_uf($data['net_amount']),
                 'status' => 'final',
-                'payment_status' => $data['status'],
+                'payment_status' => $wages_and_compensation->status,
                 'wages_and_compensation_id' => $wages_and_compensation->id,
                 'source_type' => $request->source_type,
                 'source_id' => $request->source_id,
@@ -386,8 +386,12 @@ class WagesAndCompensationController extends Controller
     public function destroy($id)
     {
         try {
+            DB::beginTransaction();
             $wages = WagesAndCompensation::find($id);
+            Transaction::where('wages_and_compensation_id', $id)->delete();
             $wages->delete();
+
+            DB::commit();
 
             $output = [
                 'success' => true,
@@ -459,26 +463,12 @@ class WagesAndCompensationController extends Controller
         }
 
         if ($payment_type == 'commission') {
-            $sale_transactions = Transaction::leftjoin('transaction_payments', 'transactions.id', '=', 'transaction_payments.transaction_id')
-                ->whereDate('transaction_date', '>=', $this->commonUtil->uf_date(request()->acount_period_start_date))
-                ->whereDate('transaction_date', '<=', $this->commonUtil->uf_date(request()->acount_period_end_date))
-                ->where('payment_status', '!=', 'paid')
-                ->where('employee_id', $employee_id)
-                ->select(
-                    DB::raw('SUM(final_total) as total_amount'),
-                    DB::raw('SUM(amount) as total_paid')
-                )
-                ->first();
+            $start_date = request()->acount_period_start_date;
+            $end_date = request()->acount_period_end_date;
 
-            if ($employee->commission == 1) {
-                if (!empty($sale_transactions)) {
-                    $amount = $sale_transactions->total_amount - $sale_transactions->total_paid;
-                }
-            }
+            $amount = $this->transactionUtil->calculateEmployeeCommission($employee_id, $start_date, $end_date);
         }
 
-
-
-        return ['amount' => $amount];
+        return ['amount' => $this->commonUtil->num_f($amount)];
     }
 }

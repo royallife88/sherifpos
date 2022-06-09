@@ -602,4 +602,46 @@ class Util
         }
         return $prefix . $str;
     }
+
+    /**
+     * converty currency base on exchange rate
+     *
+     * @param float $amount
+     * @param int $from_currency_id
+     * @param int $to_currency_id
+     * @param int $store_id
+     * @return double
+     */
+    public function convertCurrencyAmount($amount, $from_currency_id, $to_currency_id, $store_id = null)
+    {
+        $amount = $this->num_uf($amount);
+        $default_currency_id = System::getProperty('currency');
+        $default_currency = Currency::find($default_currency_id);
+        $from_currency_query = ExchangeRate::where('received_currency_id', $from_currency_id);
+        if (!empty($store_id)) {
+            $from_currency_query->where('store_id', $store_id);
+        }
+        $from_currency_exchange_rate = $from_currency_query->first();
+        $to_currency_query = ExchangeRate::where('received_currency_id', $to_currency_id);
+        if (!empty($store_id)) {
+            $to_currency_query->where('store_id', $store_id);
+        }
+        $to_currency_exchange_rate = $to_currency_query->first();
+        if (!empty($from_currency_exchange_rate) && !empty($to_currency_exchange_rate)) {
+            $amount_to_base = $amount * $from_currency_exchange_rate->conversion_rate;
+            $amount = $amount_to_base / $to_currency_exchange_rate->conversion_rate;
+        } else {
+            if ($to_currency_id == $default_currency_id && $from_currency_id == $default_currency_id) {
+                $amount = $amount;
+            } else if (!empty($from_currency_exchange_rate) && empty($to_currency_exchange_rate)) {
+                $amount = $amount * $from_currency_exchange_rate->conversion_rate;
+            } else if (empty($from_currency_exchange_rate) && !empty($to_currency_exchange_rate)) {
+                $amount = $amount / $to_currency_exchange_rate->conversion_rate;
+            } else {
+                $amount = $amount;
+            }
+        }
+
+        return $amount;
+    }
 }

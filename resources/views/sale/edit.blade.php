@@ -202,6 +202,15 @@
                                     @lang('lang.delivery_cost_paid_by_customer')
                                 </label>
                             </div>
+                            <div class="col-md-3 @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" class="delivery_cost_given_to_deliveryman"
+                                        name="delivery_cost_given_to_deliveryman" value="1"
+                                        @if ($sale->delivery_cost_given_to_deliveryman == 1) checked @endif
+                                        id="delivery_cost_given_to_deliveryman">
+                                    @lang('lang.delivery_cost_given_to_deliveryman')
+                                </label>
+                            </div>
                         </div>
                         <div class="payment-amount @if (!auth()->user()->can('superadmin')) hide @endif">
                             <h2>{{ __('lang.grand_total') }} <span class="final_total_span">0.00</span></h2>

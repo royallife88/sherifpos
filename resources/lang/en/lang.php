@@ -1269,6 +1269,7 @@ return [
     'buy_from_supplier' => 'Buy From Supplier',
     'accounting_period' => 'Accounting Period',
     'sales_and_returns' => 'Sales & Returns',
+    'delivery_cost_given_to_deliveryman' => 'Delivery Cost Given to deliveryman',
 
 
 

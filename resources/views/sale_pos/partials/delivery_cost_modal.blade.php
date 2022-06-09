@@ -79,6 +79,15 @@
                             @lang('lang.delivery_cost_paid_by_customer')
                         </label>
                     </div>
+                    <div class="col-md-6">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" class="delivery_cost_given_to_deliveryman"
+                                name="delivery_cost_given_to_deliveryman"
+                                @if (!empty($transaction) && $transaction->delivery_cost_given_to_deliveryman == 1) checked @endif value="1"
+                                id="delivery_cost_paid_by_customer">
+                            @lang('lang.delivery_cost_given_to_deliveryman')
+                        </label>
+                    </div>
                     <div class="col-md-12">
                         <label for="delivery_address">@lang('lang.delivery_address'):</label>
                         {!! Form::textarea('delivery_address', !empty($transaction->delivery_address) ? $transaction->delivery_address : null, ['class' => 'form-control delivery_address', 'rows' => 2]) !!}

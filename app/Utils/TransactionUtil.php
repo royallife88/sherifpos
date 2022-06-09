@@ -417,7 +417,7 @@ class TransactionUtil extends Util
                         'employee_id' => $employee->id,
                         'type' => 'employee_commission',
                         'status' => 'final',
-                        'paying_currency_id' => $default_currency,
+                        'paying_currency_id' => $transaction->received_currency_id,
                         'exchange_rate' => 1,
                         'transaction_date' => !empty($transaction->transaction_date) ? $transaction->transaction_date : Carbon::now(),
                         'payment_status' => 'pending',
@@ -485,6 +485,7 @@ class TransactionUtil extends Util
             ->orderBy('transaction_date', 'asc')
             ->get();
 
+        $default_currency_id = System::getProperty('currency');
         $total_amount = $parent_payment->amount;
         $tranaction_payments = [];
         if ($due_transactions->count()) {
@@ -518,7 +519,14 @@ class TransactionUtil extends Util
                         'updated_at' => $now
                     ];
 
-                    if ($due <= $total_amount) {
+                    $due_base = $due;
+
+                    if (!empty($transaction->paying_currency_id)) {
+                        if ($transaction->paying_currency_id != $default_currency_id) {
+                            $due_base = $this->convertCurrencyAmount($due, $transaction->paying_currency_id, $default_currency_id);
+                        }
+                    }
+                    if ($due_base <= $total_amount) {
                         $array['amount'] = $due;
                         $tranaction_payments[] = $array;
 
@@ -526,8 +534,13 @@ class TransactionUtil extends Util
                         $transaction->payment_status = 'paid';
                         $transaction->save();
 
-                        $total_amount = $total_amount - $due;
+                        $total_amount = $total_amount - $due_base;
                     } else {
+                        if (!empty($transaction->paying_currency_id)) {
+                            if ($transaction->paying_currency_id != $default_currency_id) {
+                                $total_amount = $this->convertCurrencyAmount($total_amount, $default_currency_id, $transaction->paying_currency_id);
+                            }
+                        }
                         $array['amount'] = $total_amount;
                         $tranaction_payments[] = $array;
 
@@ -547,6 +560,54 @@ class TransactionUtil extends Util
         }
 
         return $total_amount;
+    }
+
+    /**
+     * calculate employee commission
+     *
+     * @param int $employee_id
+     * @return double
+     */
+    public function calculateEmployeeCommission($employee_id, $start_date = null, $end_date = null)
+    {
+        $employee = Employee::find($employee_id);
+        $query = Transaction::leftjoin('transaction_payments', 'transactions.id', '=', 'transaction_payments.transaction_id');
+        if (!empty($start_date)) {
+            $query->whereDate('transaction_date', '>=', $this->commonUtil->uf_date($start_date));
+        }
+        if (!empty($end_date)) {
+            $query->whereDate('transaction_date', '<=', $this->commonUtil->uf_date($end_date));
+        }
+        $query->where('payment_status', '!=', 'paid')
+            ->where('type', 'employee_commission')
+            ->where('employee_id', $employee_id);
+        $sale_transactions = $query->select(
+            'transactions.final_total',
+            'transactions.id',
+            'transactions.paying_currency_id'
+        )
+            ->get();
+
+        $amount = 0;
+        $default_currency_id = System::getProperty('currency');
+        if ($employee->commission == 1) {
+            if (!empty($sale_transactions) && $sale_transactions->count() > 0) {
+                foreach ($sale_transactions as $transaction) {
+                    $final_total = $transaction->final_total - $this->getTotalPaid($transaction->id);
+                    if (!empty($transaction->paying_currency_id)) {
+                        if ($transaction->paying_currency_id != $default_currency_id) {
+                            $amount += $this->convertCurrencyAmount($final_total, $transaction->paying_currency_id, $default_currency_id);
+                        } else {
+                            $amount += $final_total;
+                        }
+                    } else {
+                        $amount += $final_total;
+                    }
+                }
+            }
+        }
+
+        return $amount;
     }
     /**
      * update the employee commission payments
@@ -569,7 +630,7 @@ class TransactionUtil extends Util
         } else {
             $total_amount = $parent_payment->amount;
         }
-
+        $default_currency_id = System::getProperty('currency');
         $tranaction_payments = [];
         if ($total_amount > 0) {
             if ($due_transactions->count()) {
@@ -603,7 +664,14 @@ class TransactionUtil extends Util
                             'updated_at' => $now
                         ];
 
-                        if ($due <= $total_amount) {
+                        $due_base = $due;
+                        if (!empty($transaction->paying_currency_id)) {
+                            if ($transaction->paying_currency_id != $default_currency_id) {
+                                $due_base = $this->convertCurrencyAmount($due, $transaction->paying_currency_id, $default_currency_id);
+                            }
+                        }
+
+                        if ($due_base <= $total_amount) {
                             $array['amount'] = $due;
                             $tranaction_payments[] = $array;
 
@@ -613,6 +681,11 @@ class TransactionUtil extends Util
 
                             $total_amount = $total_amount - $due;
                         } else {
+                            if (!empty($transaction->paying_currency_id)) {
+                                if ($transaction->paying_currency_id != $default_currency_id) {
+                                    $total_amount = $this->convertCurrencyAmount($due, $default_currency_id, $transaction->paying_currency_id);
+                                }
+                            }
                             $array['amount'] = $total_amount;
                             $tranaction_payments[] = $array;
 
@@ -645,7 +718,14 @@ class TransactionUtil extends Util
                     $tp = TransactionPayment::where('transaction_id', $transaction->id)->first();
                     $paid = $tp->amount;
 
-                    if ($paid <= $total_amount) {
+                    $paid_base = $paid;
+                    if (!empty($transaction->paying_currency_id)) {
+                        if ($transaction->paying_currency_id != $default_currency_id) {
+                            $paid_base = $this->convertCurrencyAmount($paid, $transaction->paying_currency_id, $default_currency_id);
+                        }
+                    }
+
+                    if ($paid_base <= $total_amount) {
                         $tp->amount = 0;
                         $tp->save();
 
@@ -653,8 +733,13 @@ class TransactionUtil extends Util
                         $transaction->payment_status = 'pending';
                         $transaction->save();
 
-                        $total_amount = $total_amount - $paid;
+                        $total_amount = $total_amount - $paid_base;
                     } else {
+                        if (!empty($transaction->paying_currency_id)) {
+                            if ($transaction->paying_currency_id != $default_currency_id) {
+                                $total_amount = $this->convertCurrencyAmount($total_amount, $default_currency_id, $transaction->paying_currency_id);
+                            }
+                        }
                         $tp->amount =  $tp->amount - $total_amount;
                         $tp->save();
 
@@ -1054,6 +1139,7 @@ class TransactionUtil extends Util
             'delivery_cost' => $this->num_uf($request->delivery_cost),
             'delivery_address' => $request->delivery_address,
             'delivery_cost_paid_by_customer' => !empty($request->delivery_cost_paid_by_customer) ? 1 : 0,
+            'delivery_cost_given_to_deliveryman' => !empty($request->delivery_cost_given_to_deliveryman) ? 1 : 0,
             'dining_table_id' => !empty($request->dining_table_id) ? $request->dining_table_id : null,
             'dining_room_id' => !empty($request->dining_room_id) ? $request->dining_room_id : null,
             'service_fee_id' => !empty($request->service_fee_id_hidden) ? $request->service_fee_id_hidden : null,
