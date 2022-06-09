@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\CustomerType;
 use App\Models\Employee;
 use App\Models\JobType;
+use App\Models\Leave;
 use App\Models\LeaveType;
 use App\Models\NumberOfLeave;
 use App\Models\Product;
@@ -12,6 +14,7 @@ use App\Models\Store;
 use App\Models\System;
 use App\Models\User;
 use App\Utils\NotificationUtil;
+use App\Utils\TransactionUtil;
 use App\Utils\Util;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -21,6 +24,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Yajra\DataTables\Facades\DataTables;
 
 class EmployeeController extends Controller
 {
@@ -30,17 +34,21 @@ class EmployeeController extends Controller
      */
     protected $commonUtil;
     protected $notificationUtil;
+    protected $transactionUtil;
 
     /**
      * Constructor
      *
      * @param ProductUtils $product
+     * @param NotificationUtil $notificationUtil
+     * @param TransactionUtil $transactionUtil
      * @return void
      */
-    public function __construct(Util $commonUtil, NotificationUtil $notificationUtil)
+    public function __construct(Util $commonUtil, NotificationUtil $notificationUtil, TransactionUtil $transactionUtil)
     {
         $this->commonUtil = $commonUtil;
         $this->notificationUtil = $notificationUtil;
+        $this->transactionUtil = $transactionUtil;
     }
     /**
      * Display a listing of the resource.
@@ -88,7 +96,206 @@ class EmployeeController extends Controller
             DB::raw('SUM(transactions.final_total) as total_commission'),
             DB::raw('SUM(transaction_payments.amount) as total_commission_paid'),
         )
-            ->groupBy('employees.id')->get();
+            ->groupBy('employees.id');
+
+        if (request()->ajax()) {
+            return DataTables::of($employees)
+                ->addColumn('profile_photo', function ($row) {
+                    if (!empty($row->getFirstMediaUrl('employee_photo'))) {
+                        return '<img src="' . $row->getFirstMediaUrl('employee_photo') . '"
+                        alt="photo" width="50" height="50">';
+                    } else {
+                        return '<img src="' . asset('/uploads/' . session('logo')) . '" alt="photo" width="50" height="50">';
+                    }
+                })
+                // ->editColumn('final_total', '{{@num_format($final_total)}}')
+
+                // ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
+                //     $default_currency = Currency::find($default_currency_id);
+                //     return $row->paying_currency_symbol ?? $default_currency->symbol;
+                // })
+                ->addColumn('annual_leave_balance', function ($row) {
+                    return $this->commonUtil->num_f(Employee::getBalanceLeave($row->id));
+                })
+                ->addColumn('age', function ($row) {
+                    if (!empty($row->date_of_birth)) {
+                        return Carbon::parse($row->date_of_birth)->diff(\Carbon\Carbon::now())->format('%y');
+                    }
+                })
+                ->editColumn('date_of_start_working', function ($row) {
+                    if (!empty($row->date_of_start_working)) {
+                        return $this->commonUtil->format_date($row->date_of_start_working);
+                    }
+                })
+                ->addColumn('current_status', function ($row) {
+                    $html = '';
+                    $today_on_leave = Leave::where('employee_id', $row->id)
+                        ->whereDate('end_date', '>=', date('Y-m-d'))
+                        ->whereDate('start_date', '<=', date('Y-m-d'))
+                        ->where('status', 'approved')
+                        ->first();
+
+                    if (!empty($today_on_leave)) {
+                        $html = '<label for="" style="font-weight: bold; color: red">' . __('lang.on_leave') . '</label>';
+                    } else {
+                        $status_today = Attendance::where('employee_id', $row->id)
+                            ->whereDate('date', date('Y-m-d'))
+                            ->first();
+
+                        if (!empty($status_today)) {
+                            if ($status_today->status == 'late' || $status_today->status == 'present') {
+                                $html = '<label for="" style="font-weight: bold; color: green">' . __('lang.on_duty') . '</label>';
+                            }
+                            if ($status_today->status == 'on_leave') {
+                                $html = '<label for="" style="font-weight: bold; color: red">' . __('lang.on_leave') . '</label>';
+                            }
+                        }
+                    }
+                    return $html;
+                })
+                ->addColumn('store', function ($row) {
+                    return implode(', ', $row->store->pluck('name')->toArray());
+                })
+                ->addColumn('store_pos', function ($row) {
+                    return $row->store_pos;
+                })
+                ->addColumn('commission', function ($row) {
+                    $commission = $this->transactionUtil->calculateEmployeeCommissionPayments($row->id)['commission'];
+
+                    return $this->commonUtil->num_f($commission);
+                })
+                ->addColumn('total_paid', function ($row) {
+                    $total_paid = $this->transactionUtil->calculateEmployeeCommissionPayments($row->id)['total_paid'];
+
+                    return $this->commonUtil->num_f($total_paid);
+                })
+                ->addColumn('due', function ($row) {
+                    $due = $this->transactionUtil->calculateEmployeeCommissionPayments($row->id)['total_due'];
+
+                    return $this->commonUtil->num_f($due);
+                })
+                ->addColumn(
+                    'action',
+                    function ($row) {
+                        $html = '<button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">' . __('lang.action') . '
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu edit-options dropdown-menu-right dropdown-default" user="menu">';
+                        if (auth()->user()->can('hr_management.employee.view')) {
+                            $html .= '<li>
+                            <a href="' . action('EmployeeController@show', $row->id) . '"
+                                class="btn"><i
+                                    class="fa fa-eye"></i>
+                                ' . __('lang.view') . '</a>
+                        </li>';
+                            $html .= '<li class="divider"></li>';
+                        }
+                        if (auth()->user()->can('hr_management.employee.create_and_edit')) {
+                            $html .= '<li>
+                                <a href="' . action('EmployeeController@edit', $row->id) . '"
+                                    class="btn edit_employee"><i
+                                        class="fa fa-pencil-square-o"></i>
+                                    ' . __('lang.edit') . '</a>
+                            </li>';
+                            $html .= '<li class="divider"></li>';
+                        }
+                        if (auth()->user()->can('hr_management.employee.delete')) {
+                            $html .= '<li>
+                                <a data-href="' . action('EmployeeController@destroy', $row->id) . '"
+                                    data-check_password="' . action('UserController@checkPassword', Auth::user()->id) . '"
+                                    class="btn delete_item text-red"><i
+                                        class="fa fa-trash"></i>
+                                    ' . __('lang.delete') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('hr_management.suspend.create_and_edit')) {
+                            $html .= '<li>
+                                <a data-href="' . action('EmployeeController@toggleActive', $row->id) . '"
+                                    class="btn toggle-active"><i
+                                        class="fa fa-ban"></i>';
+                            if ($row->is_active) {
+                                $html .= __('lang.suspend');
+                            } else {
+                                $html .=   __('lang.reactivate');
+                            }
+                            $html .= '</a>
+                                </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('hr_management.send_credentials.create_and_edit')) {
+                            $html .= '<li>
+                                <a href="' . action('EmployeeController@sendLoginDetails', $row->id) . '"
+                                    class="btn"><i
+                                        class="fa fa-paper-plane"></i>
+                                    ' . __('lang.send_credentials') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('sms_module.sms.create_and_edit')) {
+                            $html .= '<li>
+                                <a href="' . action('SmsController@create', ['employee_id' => $row->id]) . '"
+                                    class="btn"><i
+                                        class="fa fa-comments-o"></i>
+                                    ' . __('lang.send_sms') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('email_module.email.create_and_edit')) {
+                            $html .= '<li>
+                                <a href="' . action('EmailController@create', ['employee_id' => $row->id]) . '"
+                                    class="btn"><i
+                                        class="fa fa-envelope "></i>
+                                    ' . __('lang.send_email') . '</a>
+                            </li>';
+                        }
+
+                        $due = $this->transactionUtil->calculateEmployeeCommissionPayments($row->id)['total_due'];
+
+
+                        $html .= '<li class="divider"></li>';
+                        if ($due > 0) {
+                            $html .= '<li>
+                            <a href="' . action('WagesAndCompensationController@create', ['employee_id' => $row->id, 'payment_type' => 'commission']) . '"
+                            class="btn"><i
+                                class="fa fa-money "></i>
+                            ' . __('lang.pay') . '</a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('hr_management.leaves.create_and_edit')) {
+                            $html .= '<li>
+                                <a class="btn btn-modal"
+                                    data-href="' . action('LeaveController@create', ['employee_id' => $row->id]) . '"
+                                    data-container=".view_modal">
+                                    <i class="fa fa-sign-out"></i> ' . __('lang.leave') . '
+                                </a>
+                            </li>';
+                        }
+                        $html .= '<li class="divider"></li>';
+                        if (auth()->user()->can('hr_management.forfeit_leaves.create_and_edit')) {
+                            $html .= '<li>
+                                <a class="btn btn-modal"
+                                    data-href="' . action('ForfeitLeaveController@create', ['employee_id' => $row->id]) . '"
+                                    data-container=".view_modal">
+                                    <i class="fa fa-ban"></i> ' . __('lang.forfeit_leave') . '
+                                </a>
+                            </li>';
+                        }
+                        $html .= '</ul></div>';
+                        return $html;
+                    }
+                )
+                ->rawColumns([
+                    'action',
+                    'profile_photo',
+                    'current_status',
+                ])
+                ->make(true);
+        }
+
 
         return view('employee.index')->with(compact(
             'employees'

@@ -317,16 +317,10 @@ class SellController extends Controller
                     }
                 })
                 ->editColumn('status', function ($row) {
-                    if ($row->final_total == 0) {
-                        return '<span class="badge badge-success">Final</span>';
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
                     } else {
-                        if ($row->status == 'canceled') {
-                            return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
-                        } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
-                            return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
-                        } else {
-                            return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
-                        }
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
                     }
                 })
                 ->addColumn('products', function ($row) {

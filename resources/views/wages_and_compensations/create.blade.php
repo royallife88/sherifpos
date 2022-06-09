@@ -16,13 +16,13 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="employee_id">@lang('lang.employee')</label>
-                                    {!! Form::select('employee_id', $employees, false, ['class' => 'form-control selectpicker calculate_salary', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'id' => 'employee_id']) !!}
+                                    {!! Form::select('employee_id', $employees, request()->employee_id, ['class' => 'form-control selectpicker calculate_salary', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'id' => 'employee_id']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="payment_type">@lang('lang.payment_type')</label>
-                                    {!! Form::select('payment_type', $payment_types, false, ['class' => 'form-control selectpicker calculate_salary', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'id' => 'payment_type']) !!}
+                                    {!! Form::select('payment_type', $payment_types, request()->payment_type, ['class' => 'form-control selectpicker calculate_salary', 'data-live-search' => 'true', 'placeholder' => __('lang.please_select'), 'id' => 'payment_type']) !!}
                                 </div>
                             </div>
                             <div class="col-md-4">

@@ -610,6 +610,63 @@ class TransactionUtil extends Util
         return $amount;
     }
     /**
+     * calculate employee commission
+     *
+     * @param int $employee_id
+     * @return array
+     */
+    public function calculateEmployeeCommissionPayments($employee_id, $start_date = null, $end_date = null)
+    {
+        $employee = Employee::find($employee_id);
+        $query = Transaction::leftjoin('transaction_payments', 'transactions.id', '=', 'transaction_payments.transaction_id');
+        if (!empty($start_date)) {
+            $query->whereDate('transaction_date', '>=', $this->commonUtil->uf_date($start_date));
+        }
+        if (!empty($end_date)) {
+            $query->whereDate('transaction_date', '<=', $this->commonUtil->uf_date($end_date));
+        }
+        $query->where('payment_status', '!=', 'paid')
+            ->where('type', 'employee_commission')
+            ->where('employee_id', $employee_id);
+        $sale_transactions = $query->select(
+            'transactions.final_total',
+            'transactions.id',
+            'transactions.paying_currency_id'
+        )
+            ->get();
+
+        $total_amount = 0;
+        $total_due = 0;
+        $total_paid = 0;
+        $default_currency_id = System::getProperty('currency');
+        if ($employee->commission == 1) {
+            if (!empty($sale_transactions) && $sale_transactions->count() > 0) {
+                foreach ($sale_transactions as $transaction) {
+                    $final_total = $transaction->final_total;
+                    $due = $transaction->final_total - $this->getTotalPaid($transaction->id);
+                    $paid = $this->getTotalPaid($transaction->id);
+                    if (!empty($transaction->paying_currency_id)) {
+                        if ($transaction->paying_currency_id != $default_currency_id) {
+                            $total_amount += $this->convertCurrencyAmount($final_total, $transaction->paying_currency_id, $default_currency_id);
+                            $total_due += $this->convertCurrencyAmount($due, $transaction->paying_currency_id, $default_currency_id);
+                            $total_paid += $this->convertCurrencyAmount($paid, $transaction->paying_currency_id, $default_currency_id);
+                        } else {
+                            $total_amount += $final_total;
+                            $total_due += $due;
+                            $total_paid += $paid;
+                        }
+                    } else {
+                        $total_amount += $final_total;
+                        $total_due += $due;
+                        $total_paid += $paid;
+                    }
+                }
+            }
+        }
+
+        return ['commission' => $total_amount, 'total_due' => $total_due, 'total_paid' => $total_paid];
+    }
+    /**
      * update the employee commission payments
      *
      * @param object $transaction
