@@ -1258,10 +1258,13 @@ return [
     'no_session_found_for_this_date_and_time' => 'يا نجم النجوم اختار توقيت كان فيه كاشير شغال بالفعل...لا تجنني',
     'payment_date_and_time' => 'تاريخ ووقت الدفع',
 
-    'add_money' => 'Add Money',
-    'withdraw_money' => 'Withdraw Money',
-    'buy_from_supplier' => 'Buy From Supplier',
+    'add_money' => 'إضافة المال',
+    'withdraw_money' => 'سحب الأموال',
+    'buy_from_supplier' => 'شراء من المورد',
     'accounting_period' => 'فترة الحساب',
+    'sales_and_returns' => 'عوائد المبيعات',
+    'delivery_cost_given_to_deliveryman' => 'مبلغ التوصيل يأخذه السائق مباشرة',
+    'sale_payment_date' => 'تاريخ الدفع',
 
 
 ];

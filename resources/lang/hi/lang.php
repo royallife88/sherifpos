@@ -1259,4 +1259,14 @@ return [
     'all_transactions_related_to_this_product_will_be_deleted' => 'इस उत्पाद से संबंधित सभी लेन-देन हटा दिए जाएंगे; स्टॉक, बिक्री, खरीद, आदि।',
     'no_session_found_for_this_date_and_time' => 'इस तिथि और समय के लिए कोई सत्र नहीं मिला',
     'payment_date_and_time' => 'भुगतान दिनांक और समय',
+
+    'add_money' => 'पैसे जोड़ें',
+    'withdraw_money' => 'पैसे निकाले',
+    'buy_from_supplier' => 'आपूर्तिकर्ता से खरीदें',
+    'accounting_period' => 'लेखांकन अवधि',
+    'sales_and_returns' => 'बिक्री मुनाफ़ा',
+    'delivery_cost_given_to_deliveryman' => 'डिलिवरी कॉस्ट डिलीवरीमैन को दी गई',
+    'sale_payment_date' => 'भुगतान तिथि',
+
+
 ];

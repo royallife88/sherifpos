@@ -97,7 +97,6 @@
     small {
         font-size: 11px;
     }
-
 </style>
 
 <div style="max-width:350px;margin:0 auto;color: black !important;">
@@ -334,8 +333,14 @@
                             </tr>
                         @endif
                         <tr>
-                            <th colspan="2" style="text-align:left">{{ @num_format($transaction->final_total) }}
-                                {{ $transaction->received_currency->symbol }}</th>
+                            <th colspan="2" style="text-align:left">
+                                @if ($transaction->delivery_cost_given_to_deliveryman)
+                                    {{ @num_format($transaction->final_total + $transaction->delivery_cost) }}
+                                @else
+                                    {{ @num_format($transaction->final_total) }}
+                                @endif
+                                {{ $transaction->received_currency->symbol }}
+                            </th>
                             <th colspan="2" style="text-align:right">{{ __('lang.grand_total', [], 'ar') }} <br>
                                 @lang('lang.grand_total', [], 'en')</th>
                         </tr>

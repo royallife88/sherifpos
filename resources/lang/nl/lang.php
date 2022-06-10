@@ -1261,5 +1261,13 @@ return [
     'no_session_found_for_this_date_and_time' => 'Geen sessie gevonden voor deze datum en tijd',
     'payment_date_and_time' => 'Datum en tijd van betaling',
 
+    'add_money' => 'Voeg geld toe',
+    'withdraw_money' => 'Geld opnemen',
+    'buy_from_supplier' => 'Koop bij leverancier',
+    'accounting_period' => 'Financiele periode',
+    'sales_and_returns' => 'Retouren',
+    'delivery_cost_given_to_deliveryman' => 'Bezorgkosten Gegeven aan bezorger',
+    'sale_payment_date' => 'Betaaldatum',
+
 
 ];

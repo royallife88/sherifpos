@@ -1259,5 +1259,13 @@ return [
     'no_session_found_for_this_date_and_time' => 'اس تاریخ اور وقت کے لیے کوئی سیشن نہیں ملا',
     'payment_date_and_time' => 'ادائیگی کی تاریخ اور وقت',
 
+    'add_money' => 'رقم شامل کریں۔',
+    'withdraw_money' => 'پیسے نکالنے',
+    'buy_from_supplier' => 'سپلائر سے خریدیں۔',
+    'accounting_period' => 'اکاؤنٹنگ کی مدت',
+    'sales_and_returns' => 'سیلز اور ریٹرن',
+    'delivery_cost_given_to_deliveryman' => 'ڈیلیوری کی قیمت ڈیلیوری مین کو دی گئی۔',
+    'sale_payment_date' => 'ادائیگی کی تاریخ',
+
 
 ];

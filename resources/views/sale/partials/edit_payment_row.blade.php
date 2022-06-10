@@ -18,7 +18,7 @@
         {!! Form::select('payments[' . $index . '][method]', $payment_types, !empty($payment) ? $payment->method : null, ['class' => 'form-control method', 'required']) !!}
     </div>
     <div class="col-md-3">
-        {!! Form::label('paid_on', __('lang.payment_date') . ':', []) !!}
+        {!! Form::label('paid_on', __('lang.sale_payment_date') . ':', []) !!}
         <input type="datetime-local" name="payments[{{ $index }}][paid_on]"
             @if (!empty($payment->paid_on)) value="{{ Carbon\Carbon::parse($payment->paid_on)->format('Y-m-d\TH:i') }}" @endif
             class="form-control payment_date">

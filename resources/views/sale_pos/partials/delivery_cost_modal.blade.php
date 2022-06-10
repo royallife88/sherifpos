@@ -84,7 +84,7 @@
                             <input type="checkbox" class="delivery_cost_given_to_deliveryman"
                                 name="delivery_cost_given_to_deliveryman"
                                 @if (!empty($transaction) && $transaction->delivery_cost_given_to_deliveryman == 1) checked @endif value="1"
-                                id="delivery_cost_paid_by_customer">
+                                id="delivery_cost_given_to_deliveryman">
                             @lang('lang.delivery_cost_given_to_deliveryman')
                         </label>
                     </div>

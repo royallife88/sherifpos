@@ -112,7 +112,7 @@ class RawMaterialController extends Controller
                 'users.name as created_by_name',
                 'edited.name as edited_by_name',
                 DB::raw('(SELECT SUM(product_stores.qty_available) FROM product_stores JOIN variations as v ON product_stores.variation_id=v.id WHERE v.id=variations.id ' . $store_query . ') as current_stock'),
-            )
+            )->with(['supplier'])
                 ->groupBy('variations.id');
 
             return DataTables::of($products)
@@ -134,6 +134,9 @@ class RawMaterialController extends Controller
                     $html = '<a data-href="' . action('ProductController@getPurchaseHistory', $row->id) . '"
                     data-container=".view_modal" class="btn btn-modal">' . __('lang.view') . '</a>';
                     return $html;
+                })
+                ->editColumn('supplier_name', function ($row) {
+                    return $row->supplier->name ?? '';
                 })
                 ->editColumn('batch_number', '{{$batch_number}}')
                 ->editColumn('brand', '{{$brand}}')

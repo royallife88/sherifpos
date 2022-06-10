@@ -1270,6 +1270,7 @@ return [
     'accounting_period' => 'Accounting Period',
     'sales_and_returns' => 'Sales & Returns',
     'delivery_cost_given_to_deliveryman' => 'Delivery Cost Given to deliveryman',
+    'sale_payment_date' => 'Payment Date',
 
 
 

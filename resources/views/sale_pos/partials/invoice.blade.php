@@ -323,7 +323,11 @@ if (empty($invoice_lang)) {
                         <tr>
                             <th style="font-size: 16px;" colspan="3">@lang('lang.grand_total', [], $invoice_lang)</th>
                             <th style="font-size: 16px; text-align:right;">
+                                @if($transaction->delivery_cost_given_to_deliveryman)
+                                {{ @num_format($transaction->final_total + $transaction->delivery_cost) }}
+                                @else
                                 {{ @num_format($transaction->final_total) }}
+                                @endif
                                 {{ $transaction->received_currency->symbol }}
                             </th>
                         </tr>

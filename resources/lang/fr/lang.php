@@ -1257,4 +1257,14 @@ return [
     'all_transactions_related_to_this_product_will_be_deleted' => 'Toutes les transactions liées à ce produit seront supprimées ; stocks, ventes, achats, etc.',
     'no_session_found_for_this_date_and_time' => 'Aucune session trouvée pour cette date et cette heure',
     'payment_date_and_time' => 'Date et heure de paiement',
+
+    'add_money' => 'Ajouter de l\'argent',
+    'withdraw_money' => 'Retirer de l\'argent',
+    'buy_from_supplier' => 'Acheter auprès du fournisseur',
+    'accounting_period' => 'Période comptable',
+    'sales_and_returns' => 'Ventes et retours',
+    'delivery_cost_given_to_deliveryman' => 'Frais de livraison remis au livreur',
+    'sale_payment_date' => 'Date de paiement',
+
+
 ];

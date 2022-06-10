@@ -13,7 +13,7 @@
                     <div class="card-body">
                         <p class="italic"><small>@lang('lang.required_fields_info')</small></p>
                         {!! Form::open(['url' => action('RawMaterialController@update', $raw_material->id), 'id' =>
-                        'product-form', 'method'
+                        'product-edit-form', 'method'
                         =>
                         'PUT', 'class' => '', 'enctype' => 'multipart/form-data']) !!}
                         <div class="row">
@@ -267,7 +267,7 @@
 @endsection
 
 @section('javascript')
-<script src="{{asset('js/product.js')}}"></script>
+<script src="{{asset('js/product_edit.js')}}"></script>
 <script src="{{asset('js/raw_material.js')}}"></script>
 <script type="text/javascript">
 

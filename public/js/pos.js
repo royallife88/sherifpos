@@ -670,6 +670,9 @@ function calculate_sub_totals() {
         delivery_cost = __read_number($("#delivery_cost"));
     }
     delivery_cost = delivery_cost / exchange_rate;
+    if ($("#delivery_cost_given_to_deliveryman").prop("checked")) {
+        delivery_cost = 0;
+    }
     total += delivery_cost;
 
     //calculate service fee
@@ -2403,6 +2406,9 @@ $(document).on("click", "a.draft_cancel", function (e) {
 });
 
 $(document).on("change", "#delivery_cost_paid_by_customer", function () {
+    calculate_sub_totals();
+});
+$(document).on("change", "#delivery_cost_given_to_deliveryman", function () {
     calculate_sub_totals();
 });
 $(document).on("change", "#delivery_cost", function () {

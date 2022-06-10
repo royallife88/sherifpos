@@ -1257,4 +1257,13 @@ return [
     'all_transactions_related_to_this_product_will_be_deleted' => 'تمام معاملات مربوط به این محصول حذف خواهد شد. سهام، فروش، خرید و غیره',
     'no_session_found_for_this_date_and_time' => 'هیچ جلسه ای برای این تاریخ و زمان یافت نشد',
     'payment_date_and_time' => 'تاریخ و زمان پرداخت',
+
+    'add_money' => 'پول اضافه کنید',
+    'withdraw_money' => 'پول کشیدن',
+    'buy_from_supplier' => 'از تامین کننده خرید کنید',
+    'accounting_period' => 'دوره حسابرسی',
+    'sales_and_returns' => 'فروش و بازگشت',
+    'delivery_cost_given_to_deliveryman' => 'هزینه تحویل به تحویل دهنده داده می شود',
+    'sale_payment_date' => 'تاریخ پرداخت',
+
 ];

@@ -1260,4 +1260,12 @@ return [
     'no_session_found_for_this_date_and_time' => 'Bu tarih ve saat için oturum bulunamadı',
     'payment_date_and_time' => 'Ödeme Tarihi ve Saati',
 
+    'add_money' => 'Para Ekle',
+    'withdraw_money' => 'Para çekmek',
+    'buy_from_supplier' => 'Tedarikçiden Satın Alın',
+    'accounting_period' => 'Hesap Dönemi',
+    'sales_and_returns' => 'Satış iadeleri',
+    'delivery_cost_given_to_deliveryman' => 'Teslimatçıya Verilen Teslimat Maliyeti',
+    'sale_payment_date' => 'Ödeme tarihi',
+
 ];

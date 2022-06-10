@@ -83,7 +83,7 @@ class EmployeeController extends Controller
         if (!empty($request->payment_status)) {
             $query->where('payment_status', $request->payment_status);
         }
-        if (!auth()->user()->can('superadmin') || auth()->user()->is_admin != 1) {
+        if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) {
             $query->where('users.is_superadmin', 0);
         }
 
@@ -108,12 +108,6 @@ class EmployeeController extends Controller
                         return '<img src="' . asset('/uploads/' . session('logo')) . '" alt="photo" width="50" height="50">';
                     }
                 })
-                // ->editColumn('final_total', '{{@num_format($final_total)}}')
-
-                // ->editColumn('paying_currency_symbol', function ($row) use ($default_currency_id) {
-                //     $default_currency = Currency::find($default_currency_id);
-                //     return $row->paying_currency_symbol ?? $default_currency->symbol;
-                // })
                 ->addColumn('annual_leave_balance', function ($row) {
                     return $this->commonUtil->num_f(Employee::getBalanceLeave($row->id));
                 })

@@ -17,8 +17,17 @@
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         {!! Form::label('supplier_category_id', __('lang.category') . ':') !!}
-                                        {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
-
+                                        <div class="input-group my-group">
+                                            {!! Form::select('supplier_category_id', $supplier_categories, $supplier->supplier_category_id, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select'), 'id' => 'supplier_category_id']) !!}
+                                            <span class="input-group-btn">
+                                                @can('product_module.product_class.create_and_edit')
+                                                    <button class="btn-modal btn btn-default bg-white btn-flat"
+                                                        data-href="{{ action('SupplierCategoryController@create') }}?quick_add=1"
+                                                        data-container=".view_modal"><i
+                                                            class="fa fa-plus-circle text-primary fa-lg"></i></button>
+                                                @endcan
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
@@ -120,6 +129,40 @@
             if ($(this).valid()) {
                 $(this).submit();
             }
-        })
+        });
+        $(document).on("submit", "form#quick_add_supplier_category_form", function(e) {
+            $("form#quick_add_supplier_category_form").validate();
+            e.preventDefault();
+            var data = new FormData(this);
+            $.ajax({
+                method: "post",
+                url: $(this).attr("action"),
+                dataType: "json",
+                data: data,
+                processData: false,
+                contentType: false,
+                success: function(result) {
+                    if (result.success) {
+                        swal("Success", result.msg, "success");
+                        $(".view_modal").modal("hide");
+                        var supplier_category_id = result.supplier_category_id;
+                        $.ajax({
+                            method: "get",
+                            url: "/supplier-category/get-dropdown",
+                            data: {},
+                            contactType: "html",
+                            success: function(result) {
+                                $("select#supplier_category_id").html(result);
+                                $("select#supplier_category_id").val(supplier_category_id);
+                                $("#supplier_category_id").selectpicker("refresh");
+
+                            },
+                        });
+                    } else {
+                        swal("Error", result.msg, "error");
+                    }
+                },
+            });
+        });
     </script>
 @endsection

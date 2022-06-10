@@ -593,8 +593,8 @@ class HomeController extends Controller
 
 
         $revenue = $transaction_query->total_sell ?? 0;
-        $total_delivery_cost_given_to_deliveryman = $transaction_query->total_delivery_cost_given_to_deliveryman ?? 0;
-        $revenue = $revenue - $total_delivery_cost_given_to_deliveryman;
+        // $total_delivery_cost_given_to_deliveryman = $transaction_query->total_delivery_cost_given_to_deliveryman ?? 0;
+        // $revenue = $revenue - $total_delivery_cost_given_to_deliveryman;
 
         $sell_return  = $transaction_query->total_sell_return - $gift_card_returned; // for gift card return no change in sell return
 
