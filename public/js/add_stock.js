@@ -125,6 +125,7 @@ function get_label_product_row(product_id, variation_id) {
             method: "GET",
             url: "/add-stock/add-product-row",
             dataType: "html",
+            async: false,
             data: {
                 product_id: product_id,
                 row_count: row_count,
