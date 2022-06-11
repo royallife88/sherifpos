@@ -355,30 +355,32 @@
             <table>
                 <tbody>
                     @if (empty($print_gift_invoice))
-                        @foreach ($transaction->transaction_payments as $payment_data)
-                            @if ($payment_data->method != 'deposit')
-                                <tr style="background-color:#ddd;">
-                                    <td style="padding: 7px;width:30%">
-                                        @if (!empty($payment_data->method))
-                                            {{ __('lang.' . $payment_data->method, [], 'ar') }} <br>
-                                            {{ __('lang.' . $payment_data->method, [], 'en') }}
-                                        @endif
-                                    </td>
-                                    <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
-                                        {{ @num_format($payment_data->amount + $payment_data->change_amount) }}
-                                        {{ $transaction->received_currency->symbol }}</td>
-                                </tr>
-                            @endif
-                            @if (!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
-                                <tr>
-                                    <td style="padding: 7px;width:30%">{{ __('lang.change', [], 'ar') }} <br>
-                                        {{ __('lang.change', [], 'en') }}</td>
-                                    <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
-                                        {{ @num_format($payment_data->change_amount) }}
-                                        {{ $transaction->received_currency->symbol }}</td>
-                                </tr>
-                            @endif
-                        @endforeach
+                        @if (!$transaction->delivery_cost_given_to_deliveryman)
+                            @foreach ($transaction->transaction_payments as $payment_data)
+                                @if ($payment_data->method != 'deposit')
+                                    <tr style="background-color:#ddd;">
+                                        <td style="padding: 7px;width:30%">
+                                            @if (!empty($payment_data->method))
+                                                {{ __('lang.' . $payment_data->method, [], 'ar') }} <br>
+                                                {{ __('lang.' . $payment_data->method, [], 'en') }}
+                                            @endif
+                                        </td>
+                                        <td style="padding: 7px;width:40%; text-align: right;" colspan="2">
+                                            {{ @num_format($payment_data->amount + $payment_data->change_amount) }}
+                                            {{ $transaction->received_currency->symbol }}</td>
+                                    </tr>
+                                @endif
+                                @if (!empty($payment_data->change_amount) && $payment_data->change_amount > 0 && $payment_data->method != 'deposit')
+                                    <tr>
+                                        <td style="padding: 7px;width:30%">{{ __('lang.change', [], 'ar') }} <br>
+                                            {{ __('lang.change', [], 'en') }}</td>
+                                        <td colspan="2" style="padding: 7px;width:40%; text-align: right;">
+                                            {{ @num_format($payment_data->change_amount) }}
+                                            {{ $transaction->received_currency->symbol }}</td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        @endif
                         @if (!empty($payment_data->add_to_deposit) && $payment_data->add_to_deposit > 0 && $payment_data->method == 'deposit')
                             <tr>
                                 <td style="padding: 7px;width:30%">{{ __('lang.deposit', [], 'ar') }} <br>

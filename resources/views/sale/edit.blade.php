@@ -181,11 +181,13 @@
                                         data-live-search="true">
                                         <option value="" selected>@lang('lang.please_select')</option>
                                         @foreach ($deliverymen as $key => $name)
-                                            <option @if($sale->deliveryman_id == $key) selected @endif value="{{ $key }}">{{ $name }}</option>
+                                            <option @if ($sale->deliveryman_id == $key) selected @endif
+                                                value="{{ $key }}">{{ $name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden" value="{{$sale->deliveryman_id}}">
+                                <input type="hidden" name="deliveryman_id_hidden" id="deliveryman_id_hidden"
+                                    value="{{ $sale->deliveryman_id }}">
                             </div>
                             <div class="col-md-3  @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
                                 <div class="form-group">
@@ -335,14 +337,19 @@
                 method: 'GET',
                 url: '/cash-register/get-available-cash-register/{{ $sale->created_by }}',
                 data: {
-                    payment_date
+                    payment_date: payment_date,
+                    transaction_id: {{ $sale->id }}
                 },
                 success: function(result) {
                     if (!result.success) {
                         swal("Error", result.msg, 'error');
                         $(payment_row).find('.cash_register_id').val('')
                     } else {
-                        $(payment_row).find('.cash_register_id').val(result.cash_register.id)
+                        if(!jQuery.isEmptyObject(result.cash_register)){
+                            $(payment_row).find('.cash_register_id').val(result.cash_register.id)
+                        }else{
+                            $(payment_row).find('.cash_register_id').val('')
+                        }
                     }
                 },
             });

@@ -204,11 +204,23 @@ class CashRegisterController extends Controller
         if (!empty(request()->payment_date)) {
 
             $payment_date = Carbon::createFromTimestamp(strtotime(request()->payment_date));
+            $crt = CashRegisterTransaction::where('transaction_id', request()->transaction_id)->first();
 
             $cash_register = CashRegister::where('user_id', $user_id)
                 ->where('created_at', '<=', $payment_date)
-                ->where('closed_at', '>=', $payment_date)
+                ->orderBy('created_at', 'desc')
                 ->first();
+
+            if (!empty($cash_register) && !empty($crt)) {
+                if ($crt->cash_register_id == $cash_register->id) {
+                    $output = [
+                        'success' => true,
+                        'msg' => __('lang.success')
+                    ];
+
+                    return $output;
+                }
+            }
 
             if (!empty($cash_register)) {
                 $output = [
