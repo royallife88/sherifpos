@@ -55,7 +55,7 @@
                                         <td>{{ $supplier->address }}</td>
                                         <td>{{ @format_date($supplier->created_at) }}</td>
                                         <td><a href="{{ action('SupplierController@show', $supplier->id) }}?show=statement_of_account"
-                                                class="btn">{{ @num_format($supplier->total_purchase) }}</a>
+                                                class="btn">{{ @num_format($supplier->total_purchase + $supplier->total_supplier_service) }}</a>
                                         </td>
                                         <td>
                                             @if ($supplier->pending_orders > 0)
@@ -65,7 +65,7 @@
                                                 @lang('lang.no')
                                             @endif
                                         </td>
-                                        <td>{{ @num_format($supplier->total_invoice - $supplier->total_paid) }}</td>
+                                        <td>{{ @num_format($supplier->total_invoice - $supplier->total_paid + $supplier->total_supplier_service - $supplier->total_supplier_service_paid) }}</td>
                                         <td>{{ $supplier->created_by_user->name ?? '' }}</td>
                                         <td>
                                             <div class="btn-group">
@@ -109,7 +109,7 @@
                                                         </li>
                                                         <li class="divider"></li>
                                                     @endcan
-                                                    @if ($supplier->total_invoice - $supplier->total_paid > 0)
+                                                    @if ($supplier->total_invoice - $supplier->total_paid + $supplier->total_supplier_service - $supplier->total_supplier_service_paid > 0)
                                                         @can('supplier_module.supplier.create_and_edit')
                                                             <li>
                                                                 <a
@@ -132,7 +132,7 @@
                                         </td>
                                     </tr>
                                     @php
-                                        $total_due += $supplier->total_invoice - $supplier->total_paid;
+                                        $total_due += $supplier->total_invoice - $supplier->total_paid + $supplier->total_supplier_service - $supplier->total_supplier_service_paid;
                                     @endphp
                                 @endforeach
                             </tbody>

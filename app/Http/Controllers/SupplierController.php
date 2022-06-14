@@ -65,10 +65,12 @@ class SupplierController extends Controller
 
         $suppliers =   $query->select(
             'suppliers.*',
+            DB::raw("SUM(IF(transactions.type = 'supplier_service' AND transactions.status = 'final', final_total, 0)) as total_supplier_service"),
+            DB::raw("SUM(IF(transactions.type = 'supplier_service' AND transactions.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_supplier_service_paid"),
             DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', final_total, 0)) as total_invoice"),
             DB::raw("SUM(IF(transactions.type = 'add_stock' AND transactions.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=transactions.id), 0)) as total_paid"),
-            DB::raw('COUNT(CASE WHEN transactions.type="purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
-            DB::raw('SUM(IF(transactions.type="add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
+            DB::raw('COUNT(CASE WHEN transactions.type = "purchase_order" AND transactions.status="sent_supplier" THEN 1 END) as pending_orders'),
+            DB::raw('SUM(IF(transactions.type = "add_stock" AND transactions.status="received", final_total, 0)) as total_purchase')
         )->groupBy('suppliers.id')->get();
 
         $supplier_categories = SupplierCategory::pluck('name', 'id');
@@ -405,6 +407,8 @@ class SupplierController extends Controller
             $query = Supplier::where('suppliers.id', $supplier_id)
                 ->join('transactions AS t', 'suppliers.id', '=', 't.supplier_id')
                 ->select(
+                    DB::raw("SUM(IF(t.type = 'supplier_service' AND t.status = 'final', final_total, 0)) as total_supplier_service"),
+                    DB::raw("SUM(IF(t.type = 'supplier_service' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_supplier_service_paid"),
                     DB::raw("SUM(IF(t.type = 'add_stock' AND t.status = 'received', final_total, 0)) as total_invoice"),
                     DB::raw("SUM(IF(t.type = 'add_stock' AND t.status = 'received', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as total_paid"),
                     'suppliers.name',
@@ -460,8 +464,8 @@ class SupplierController extends Controller
             }
 
             $due_transactions = Transaction::where('supplier_id', $supplier_id)
-                ->whereIn('type', ['add_stock'])
-                ->whereIn('status', ['received'])
+                ->whereIn('type', ['add_stock', 'supplier_service'])
+                ->whereIn('status', ['received', 'final'])
                 ->where('payment_status', '!=', 'paid')
                 ->orderBy('transaction_date', 'asc')
                 ->get();

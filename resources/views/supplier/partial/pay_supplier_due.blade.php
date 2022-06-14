@@ -21,11 +21,11 @@
                 <div class="col-md-6">
                     <div class="well">
                         <strong>@lang('lang.total_purchase'): </strong><span class=""
-                            data-currency_symbol="true">{{ @num_format($supplier_details->total_invoice) }}</span><br>
+                            data-currency_symbol="true">{{ @num_format($supplier_details->total_invoice + $supplier_details->total_supplier_service) }}</span><br>
                         <strong>@lang('lang.total_paid'): </strong><span class=""
-                            data-currency_symbol="true">{{ @num_format($supplier_details->total_paid) }}</span><br>
+                            data-currency_symbol="true">{{ @num_format($supplier_details->total_paid + $supplier_details->total_supplier_service_paid) }}</span><br>
                         <strong>@lang('lang.due'): </strong><span class=""
-                            data-currency_symbol="true">{{ @num_format($supplier_details->total_invoice - $supplier_details->total_paid) }}</span><br>
+                            data-currency_symbol="true">{{ @num_format($supplier_details->total_invoice - $supplier_details->total_paid + $supplier_details->total_supplier_service - $supplier_details->total_supplier_service_paid) }}</span><br>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         {!! Form::label('amount', __('lang.amount') . ':*', []) !!} <br>
-                        {!! Form::text('amount', @num_format($supplier_details->total_invoice - $supplier_details->total_paid), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
+                        {!! Form::text('amount', @num_format($supplier_details->total_invoice - $supplier_details->total_paid + $supplier_details->total_supplier_service - $supplier_details->total_supplier_service_paid), ['class' => 'form-control', 'placeholder' => __('lang.amount')]) !!}
                     </div>
                 </div>
 
