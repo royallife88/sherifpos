@@ -1521,8 +1521,8 @@ class TransactionUtil extends Util
 
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
-        $balance = $customer_details->total_paid - $customer_details->total_invoice + $balance_adjustment + $customer_details->deposit_balance + $customer_details->total_return - $customer_details->total_return_paid;
-
+        $balance = $customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid;
+// print_r( $customer_details->total_return); die();
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }
 

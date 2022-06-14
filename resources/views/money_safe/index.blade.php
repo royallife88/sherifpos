@@ -28,14 +28,6 @@
                                     <th>@lang('lang.edited_by')</th>
                                     <th class="notexport">@lang('lang.action')</th>
                                 </tr>
-                                {{-- <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td colspan="3" class="bg-danger">@lang('lang.blaance')</td>
-                                    <td></td>
-                                    <td></td>
-                                </tr> --}}
                             </thead>
                             <tbody>
                             </tbody>

@@ -73,7 +73,7 @@ class MoneySafeController extends Controller
                 ->editColumn('type', '{{ucfirst($type)}}')
 
                 ->addColumn('balance', function ($row) use ($exchange_rate_currencies) {
-                    $html = '<div class="row">';
+                    $html = '<div class="">';
                     foreach ($exchange_rate_currencies as $currency) {
                         $html .= '<h6>';
                         $balance = $this->moneySafeUtil->getSafeBalance($row->id, $currency['currency_id']);
