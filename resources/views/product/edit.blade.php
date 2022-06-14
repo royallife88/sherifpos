@@ -39,7 +39,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <div class="form-group supplier_div">
+                                    <div class="form-group supplier_div @if (empty($product->is_service)) hide @endif">
                                         {!! Form::label('supplier_id', __('lang.supplier'), []) !!}
                                         <div class="input-group my-group">
                                             {!! Form::select('supplier_id', $suppliers, !empty($product->supplier) ? $product->supplier->id : false, ['class' => 'selectpicker form-control', 'data-live-search' => 'true', 'style' => 'width: 80%', 'placeholder' => __('lang.please_select')]) !!}

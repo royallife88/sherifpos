@@ -778,3 +778,19 @@ $(document).on("change", "#discount", function () {
         $("select#discount_customer_types").attr("required", false);
     }
 });
+$(document).on("change", "#is_service", function () {
+    if ($(this).prop("checked")) {
+        $(".supplier_div").removeClass("hide");
+    } else {
+        $(".supplier_div").addClass("hide");
+    }
+});
+$(document).on("change", "#sell_price", function () {
+    let sell_price = __read_number($(this));
+    let purchase_price = __read_number($("#purchase_price"));
+
+    if (sell_price < purchase_price) {
+        swal(LANG.warning, LANG.sell_price_less_than_purchase_price, "warning");
+        return;
+    }
+});
