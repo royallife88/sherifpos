@@ -327,13 +327,15 @@ class TransactionUtil extends Util
                     }
                 }
             }
-            if (!empty($supplier_service)) {
-                $final_total = $supplier_service->add_stock_lines->sum('sub_total');
-                $supplier_service->final_total = $final_total;
-                $supplier_service->grand_total = $final_total;
-                $supplier_service->save();
-                $this->updateTransactionPaymentStatus($supplier_service->id);
-            }
+        }
+
+        $supplier_services = Transaction::where('parent_sale_id', $transaction->id)->where('type', 'supplier_service')->get();
+        foreach ($supplier_services as $supplier_service) {
+            $final_total = $supplier_service->add_stock_lines->sum('sub_total');
+            $supplier_service->final_total = $final_total;
+            $supplier_service->grand_total = $final_total;
+            $supplier_service->save();
+            $this->updateTransactionPaymentStatus($supplier_service->id);
         }
 
         if (!empty($keep_supplier_service_lines)) {
@@ -1522,7 +1524,7 @@ class TransactionUtil extends Util
 
         $balance_adjustment = CustomerBalanceAdjustment::where('customer_id', $customer_id)->sum('add_new_balance');
         $balance = $customer_details->total_paid - $customer_details->total_invoice  + $customer_details->total_return - $customer_details->total_return_paid;
-// print_r( $customer_details->total_return); die();
+        // print_r( $customer_details->total_return); die();
         return ['balance' => $balance, 'points' => $customer_details->total_rp];
     }
 
