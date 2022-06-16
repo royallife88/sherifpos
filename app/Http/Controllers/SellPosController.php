@@ -1300,9 +1300,11 @@ class SellPosController extends Controller
                 })
                 ->editColumn('payment_status', function ($row) {
                     if ($row->payment_status == 'pending') {
-                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
+                        return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
+                    } else if ($row->payment_status == 'partial') {
+                        return '<span class="badge badge-danger">Partial</span>';
                     } else {
-                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                        return '<span class="badge badge-success">' . ucfirst($row->payment_status) . '</span>';
                     }
                 })
                 ->editColumn('status', function ($row) {

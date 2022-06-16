@@ -498,7 +498,7 @@ class CashController extends Controller
         return redirect()->back()->with('status', $output);
     }
 
-       /**
+    /**
      * add closing cash
      *
      * @param int $cash_register_id
@@ -531,8 +531,8 @@ class CashController extends Controller
             $cash_register = $cr_query->select(
                 'cash_registers.*',
                 DB::raw("SUM(IF(transaction_type = 'sell', amount, 0)) as total_sale"),
-                DB::raw("SUM(IF(transaction_type = 'refund', amount, 0)) as total_refund"),
-                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in"),
+                DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit' AND dining_table_id IS NOT NULL, amount, 0)) as total_dining_in_cash"),
                 DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'cash' AND cash_register_transactions.type = 'credit', amount, 0)) as total_cash_sales"),
                 DB::raw("SUM(IF(transaction_type = 'refund' AND pay_method = 'cash' AND cash_register_transactions.type = 'debit', amount, 0)) as total_refund_cash"),
                 DB::raw("SUM(IF(transaction_type = 'sell' AND pay_method = 'card' AND cash_register_transactions.type = 'credit', amount, 0)) as total_card_sales"),

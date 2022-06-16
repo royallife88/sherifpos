@@ -8,7 +8,7 @@
         }
     }
 </style>
-<div class="col-md-12" style="max-width: 350px;"  id="print-closing-cash-div">
+<div class="col-md-12" style="max-width: 350px;" id="print-closing-cash-div">
     <div class="well">
         <table class="table">
             <tr>
@@ -29,31 +29,6 @@
                         {{ @num_format($data['cash_register']->total_cash_out) }}</td>
                 @endforeach
             </tr>
-            <tr>
-                <td><b>@lang('lang.total_sales')</b></td>
-                @foreach ($cr_data as $data)
-                    <td>{{ $data['currency']['symbol'] }}
-                        {{ @num_format($data['cash_register']->total_sale - $data['cash_register']->total_refund) }}
-                    </td>
-                @endforeach
-            </tr>
-            <tr>
-                <td><b>@lang('lang.total_cash_sale')</b></td>
-                @foreach ($cr_data as $data)
-                    <td>{{ $data['currency']['symbol'] }}
-                        {{ @num_format($data['cash_register']->total_cash_sales) }}</td>
-                @endforeach
-            </tr>
-            @if (session('system_mode') == 'restaurant')
-                <tr>
-                    <td><b>@lang('lang.dining_in')</b></td>
-                    @foreach ($cr_data as $data)
-                        <td>{{ $data['currency']['symbol'] }}
-                            {{ @num_format($data['cash_register']->total_dining_in) }}
-                        </td>
-                    @endforeach
-                </tr>
-            @endif
             <tr>
                 <td><b>@lang('lang.total_card_sale')</b></td>
                 @foreach ($cr_data as $data)
@@ -82,6 +57,39 @@
                 @foreach ($cr_data as $data)
                     <td>{{ $data['currency']['symbol'] }}
                         {{ @num_format($data['cash_register']->total_gift_card_sales) }}
+                    </td>
+                @endforeach
+            </tr>
+            @if (session('system_mode') == 'restaurant')
+                <tr>
+                    <td><b>@lang('lang.dining_in')</b></td>
+                    @foreach ($cr_data as $data)
+                        <td>{{ $data['currency']['symbol'] }}
+                            {{ @num_format($data['cash_register']->total_dining_in) }}
+                        </td>
+                    @endforeach
+                </tr>
+            @endif
+            <tr>
+                <td><b>@lang('lang.other_cash_sales')</b></td>
+                @foreach ($cr_data as $data)
+                    <td>{{ $data['currency']['symbol'] }}
+                        {{ @num_format($data['cash_register']->total_cash_sales - $data['cash_register']->total_dining_in_cash) }}
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td><b>@lang('lang.total_cash_sale')</b></td>
+                @foreach ($cr_data as $data)
+                    <td>{{ $data['currency']['symbol'] }}
+                        {{ @num_format($data['cash_register']->total_cash_sales) }}</td>
+                @endforeach
+            </tr>
+            <tr>
+                <td><b>@lang('lang.total_sales')</b></td>
+                @foreach ($cr_data as $data)
+                    <td>{{ $data['currency']['symbol'] }}
+                        {{ @num_format($data['cash_register']->total_sale - $data['cash_register']->total_refund) }}
                     </td>
                 @endforeach
             </tr>

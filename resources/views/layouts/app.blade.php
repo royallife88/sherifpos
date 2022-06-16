@@ -143,6 +143,9 @@
                 $('#power_off_btn').removeClass('hide');
             }
 
+            $(document).on('hidden.bs.modal', '#closing_cash_modal', function() {
+                $('#print_closing_cash').html('');
+            });
             $(document).on('click', '#print-closing-cash-btn', function() {
                 let cash_register_id = parseInt($(this).data('cash_register_id'));
                 console.log('/cash/print-closing-cash/' + cash_register_id, 'cash_register_id');
