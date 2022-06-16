@@ -195,6 +195,8 @@
                                 @endif
                                 <th>@lang('lang.commissions')</th>
                                 <th>@lang('lang.products')</th>
+                                <th>@lang('lang.sku')</th>
+                                <th>@lang('lang.sub_sku')</th>
                                 <th>@lang('lang.files')</th>
                                 <th class="notexport">@lang('lang.action')</th>
                             </tr>
@@ -244,7 +246,7 @@
                     [10, 25, 50, 75, 100, 200, 500, "All"],
                 ],
                 dom: "lBfrtip",
-                stateSave: true,
+                // stateSave: true,
                 buttons: buttons,
                 processing: true,
                 serverSide: true,
@@ -385,6 +387,16 @@
                     {
                         data: "products",
                         name: "products.name"
+                    },
+                    {
+                        data: "sku",
+                        name: "products.sku",
+                        visible: false
+                    },
+                    {
+                        data: "sub_sku",
+                        name: "variations.sub_sku",
+                        visible: false
                     },
                     {
                         data: "files",

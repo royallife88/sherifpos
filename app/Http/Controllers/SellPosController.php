@@ -1298,17 +1298,18 @@ class SellPosController extends Controller
                         return '';
                     }
                 })
-                ->editColumn('status', function ($row) {
-                    if ($row->final_total == 0) {
-                        return '<span class="badge badge-success">Final</span>';
+                ->editColumn('payment_status', function ($row) {
+                    if ($row->payment_status == 'pending') {
+                        return '<span class="label label-success">' . __('lang.pay_later') . '</span>';
                     } else {
-                        if ($row->status == 'canceled') {
-                            return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
-                        } elseif ($row->status == 'final' && $row->payment_status == 'pending') {
-                            return '<span class="badge badge-warning">' . __('lang.pay_later') . '</span>';
-                        } else {
-                            return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
-                        }
+                        return '<span class="label label-danger">' . ucfirst($row->payment_status) . '</span>';
+                    }
+                })
+                ->editColumn('status', function ($row) {
+                    if ($row->status == 'canceled') {
+                        return '<span class="badge badge-danger">' . __('lang.cancel') . '</span>';
+                    } else {
+                        return '<span class="badge badge-success">' . ucfirst($row->status) . '</span>';
                     }
                 })
                 ->addColumn('paid', function ($row) use ($request) {
@@ -1383,6 +1384,7 @@ class SellPosController extends Controller
                     'invoice_no',
                     'final_total',
                     'status',
+                    'payment_status',
                     'created_by',
                 ])
                 ->make(true);

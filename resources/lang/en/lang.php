@@ -1272,6 +1272,7 @@ return [
     'delivery_cost_given_to_deliveryman' => 'Delivery Cost Given to deliveryman',
     'sale_payment_date' => 'Payment Date',
 
+    'other_cash_sales' => 'Other Cash Sales',
 
 
 ];

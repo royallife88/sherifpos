@@ -93,6 +93,7 @@ class SellController extends Controller
                 ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
                 ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
                 ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+                ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
                 ->leftjoin('users', 'transactions.created_by', 'users.id')
                 ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
                 ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
@@ -337,6 +338,30 @@ class SellController extends Controller
 
                     return $string;
                 })
+                ->addColumn('sku', function ($row) {
+                    $string = '';
+                    foreach ($row->sell_variations as $sell_variation) {
+                        if (!empty($sell_variation)) {
+                            if ($sell_variation->name == 'Default') {
+                                $string .= $sell_variation->product->sku . '<br>';
+                            }
+                        }
+                    }
+
+                    return $string;
+                })
+                ->addColumn('sub_sku', function ($row) {
+                    $string = '';
+                    foreach ($row->sell_variations as $sell_variation) {
+                        if (!empty($sell_variation)) {
+                            if ($sell_variation->name != 'Default') {
+                                $string .= $sell_variation->sub_sku . '<br>';
+                            }
+                        }
+                    }
+
+                    return $string;
+                })
                 ->editColumn('service_fee_value', '{{@num_format($service_fee_value)}}')
                 ->editColumn('created_by', '{{$created_by_name}}')
                 ->editColumn('canceled_by', function ($row) {
@@ -446,6 +471,8 @@ class SellController extends Controller
                     'status',
                     'store_name',
                     'products',
+                    'sku',
+                    'sub_sku',
                     'files',
                     'created_by',
                 ])

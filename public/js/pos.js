@@ -1704,6 +1704,7 @@ $(document).ready(function () {
             { data: "method", name: "transaction_payments.method" },
             { data: "ref_number", name: "transaction_payments.ref_number" },
             { data: "status", name: "transactions.status" },
+            { data: "payment_status", name: "transactions.payment_status" },
             { data: "deliveryman_name", name: "deliveryman.employee_name" },
             { data: "created_by", name: "users.name" },
             { data: "canceled_by", name: "canceled_by" },
