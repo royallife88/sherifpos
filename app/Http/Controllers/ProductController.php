@@ -781,6 +781,8 @@ class ProductController extends Controller
                     ['product_id' => $product->id],
                     ['supplier_id' => $request->supplier_id]
                 );
+            } else {
+                SupplierProduct::where('product_id', $product->id)->delete();
             }
 
 
