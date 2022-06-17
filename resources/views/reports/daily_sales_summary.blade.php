@@ -7,7 +7,7 @@
             <div class="card-header d-flex align-items-center">
                 <h4>@lang('lang.daily_sales_summary')</h4>
             </div>
-            @if (session('user.is_superadmin'))
+            @if (session('user.is_superadmin') || auth()->user()->can('reports.sales_per_employee.view'))
                 <form action="">
                     <div class="col-md-12">
                         <div class="row">

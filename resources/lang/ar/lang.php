@@ -1220,7 +1220,7 @@ return [
     'take_money_users' => 'يأخذ المستخدمون المال',
     'add_money_to_safe' => 'أضف الأموال إلى الخزنة',
     'take_money_from_safe' => 'خذ المال من الخزنة',
-    'safe' => 'آمن',
+    'safe' => 'خزينة',
     'comments' => 'تعليقات',
     'statement' => 'إفادة',
     'view_statement' => 'مشاهدة البيان',

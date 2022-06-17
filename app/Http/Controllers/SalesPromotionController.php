@@ -97,8 +97,8 @@ class SalesPromotionController extends Controller
         try {
             $data['name'] = $request->name;
             $data['type'] = $request->type;
-            $data['start_date'] = $request->start_date;
-            $data['end_date'] = $request->end_date;
+            $data['start_date'] = $request->start_date ?? null;
+            $data['end_date'] = $request->end_date ?? null;
             $data['store_ids'] = $request->store_ids;
             $data['customer_type_ids'] = $request->customer_type_ids;
             $data['code'] = $this->commonUtil->randString(5, 'SP');
@@ -204,8 +204,8 @@ class SalesPromotionController extends Controller
         try {
             $data['name'] = $request->name;
             $data['type'] = $request->type;
-            $data['start_date'] = $request->start_date;
-            $data['end_date'] = $request->end_date;
+            $data['start_date'] = $request->start_date ?? null;
+            $data['end_date'] = $request->end_date ?? null;
             $data['store_ids'] = $request->store_ids;
             $data['customer_type_ids'] = $request->customer_type_ids;
             $data['start_date'] = $request->start_date;
