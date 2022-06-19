@@ -371,9 +371,9 @@ class SellPosController extends Controller
         }
 
 
-        if (session('system_mode') == 'restaurant') {
-            $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
+        $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
 
+        if (session('system_mode') == 'restaurant') {
             if (!empty($transaction->dining_table_id)) {
                 $dining_table->current_transaction_id = $transaction->id;
                 $old_status = $dining_table->status;
@@ -677,8 +677,8 @@ class SellPosController extends Controller
             $transaction_data['dining_room_id'] = $dining_table->dining_room_id;
         }
 
+        $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
         if (session('system_mode') == 'restaurant') {
-            $this->transactionUtil->createOrUpdateRawMaterialConsumption($transaction);
             if (!empty($transaction->dining_table_id)) {
                 $dining_table->current_transaction_id = $transaction->id;
                 $old_status = $dining_table->status;
