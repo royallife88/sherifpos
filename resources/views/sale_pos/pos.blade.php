@@ -66,9 +66,9 @@
                                                 <select class="form-control" name="tax_id" id="tax_id">
                                                     <option value="">No Tax</option>
                                                     @foreach ($taxes as $tax)
-                                                        <option data-rate="{{ $tax->rate }}"
-                                                            @if (!empty($transaction) && $transaction->tax_id == $tax->id) selected @endif
-                                                            value="{{ $tax->id }}">{{ $tax->name }}</option>
+                                                        <option data-rate="{{ $tax['rate'] }}"
+                                                            @if (!empty($transaction) && $transaction->tax_id == $tax['id']) selected @endif
+                                                            value="{{ $tax['id'] }}">{{ $tax['name'] }}</option>
                                                     @endforeach
                                                 </select>
                                                 <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">

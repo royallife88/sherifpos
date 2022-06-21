@@ -151,15 +151,15 @@
                                     <select class="form-control" name="tax_id" id="tax_id">
                                         <option value="" selected>No Tax</option>
                                         @foreach ($taxes as $tax)
-                                            <option @if ($tax->id == $sale->tax_id) selected @endif
-                                                data-rate="{{ $tax->rate }}" value="{{ $tax->id }}">
-                                                {{ $tax->name }}</option>
+                                            <option @if ($tax['id'] == $sale->tax_id) selected @endif
+                                                data-rate="{{ $tax['rate'] }}" value="{{ $tax['id'] }}">
+                                                {{ $tax['name'] }}</option>
                                         @endforeach
                                     </select>
-                                    <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="">
-                                    <input type="hidden" name="tax_method" id="tax_method" value="">
-                                    <input type="hidden" name="tax_rate" id="tax_rate" value="0">
-                                    <input type="hidden" name="tax_type" id="tax_type" value="">
+                                    <input type="hidden" name="tax_id_hidden" id="tax_id_hidden" value="{{$sale->tax_id}}">
+                                    <input type="hidden" name="tax_method" id="tax_method" value="{{$sale->tax_method}}">
+                                    <input type="hidden" name="tax_rate" id="tax_rate" value="{{$sale->tax_rate}}">
+                                    <input type="hidden" name="tax_type" id="tax_type" value="{{$sale->tax->type??''}}">
                                 </div>
                             </div>
                             <div class="col-md-3 @if (!auth()->user()->can('superadmin') && auth()->user()->is_admin != 1) hide @endif">
@@ -280,8 +280,9 @@
                                 <div
                                     class="col-md-4  @if (!auth()->user()->can('hr_management.employee_commission.create_and_edit')) hide @endif @if ($sale->shared_commission != 1) hide @endif shared_commission_div">
                                     <div class="i-checks" style="margin-top: 37px;">
-                                        <input id="shared_commission" name="shared_commission" type="checkbox" value="1"
-                                            @if ($sale->shared_commission) checked @endif class="form-control-custom">
+                                        <input id="shared_commission" name="shared_commission" type="checkbox"
+                                            value="1" @if ($sale->shared_commission) checked @endif
+                                            class="form-control-custom">
                                         <label for="shared_commission"><strong>
                                                 @lang('lang.shared_commission')
                                             </strong></label>
@@ -292,7 +293,8 @@
                         <br>
                         <div class="row">
                             <div class="col-md-12">
-                                <button id="update-btn" type="button" class="btn btn-primary">@lang('lang.update')</button>
+                                <button id="update-btn" type="button"
+                                    class="btn btn-primary">@lang('lang.update')</button>
                                 <button id="submit-btn" type="button" class="btn btn-danger">@lang('lang.print')</button>
                             </div>
                         </div>
@@ -345,9 +347,9 @@
                         swal("Error", result.msg, 'error');
                         $(payment_row).find('.cash_register_id').val('')
                     } else {
-                        if(!jQuery.isEmptyObject(result.cash_register)){
+                        if (!jQuery.isEmptyObject(result.cash_register)) {
                             $(payment_row).find('.cash_register_id').val(result.cash_register.id)
-                        }else{
+                        } else {
                             $(payment_row).find('.cash_register_id').val('')
                         }
                     }

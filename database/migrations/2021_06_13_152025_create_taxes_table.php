@@ -19,6 +19,8 @@ class CreateTaxesTable extends Migration
             $table->decimal('rate');
             $table->string('type', 25)->default('product_tax')->nullable();
             $table->string('tax_method', 25)->default('inclusive')->nullable();
+            $table->boolean('status')->default(1);
+            $table->string('store_ids')->nullable();
             $table->timestamps();
         });
     }

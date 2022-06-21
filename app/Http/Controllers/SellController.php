@@ -617,7 +617,7 @@ class SellController extends Controller
         $sale = Transaction::findOrFail($id);
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
-        $taxes = Tax::get();
+        $taxes = Tax::getDropdown();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();

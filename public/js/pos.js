@@ -122,6 +122,17 @@ $(document).on("change", "#store_id", function () {
                 }
             },
         });
+
+        $.ajax({
+            method: "GET",
+            url: "/tax/get-dropdown-html-by-store",
+            data: { store_id: $("select#store_id").val() },
+            success: function (result) {
+                $('select#tax_id').html(result);
+                $('select#tax_id').val($('#tax_id_hidden').val());
+                $('select#tax_id').selectpicker('refresh');
+            },
+        });
     }
 });
 
@@ -564,7 +575,6 @@ function calculate_sub_totals() {
 
         product_discount_total += product_discount;
         sub_total -= product_discount;
-        console.log(product_discount, "sub_total");
         grand_total += sub_total;
         $(".grand_total_span").text(
             __currency_trans_from_en(grand_total, false)
@@ -2787,7 +2797,6 @@ $(document).on("change", "#upload_documents", function (event) {
         for (var i = 0; i < files.length; i++) {
             var form = new FormData();
             clone = files[i].slice(i, files[i].size, files[i].type);
-            console.log(clone, "clone");
             form.append("file", files[i]);
 
             $.ajax({

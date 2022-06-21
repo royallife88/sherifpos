@@ -766,13 +766,15 @@ class AddStockController extends Controller
      */
     public function getImport()
     {
-        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id');
+        $suppliers = Supplier::orderBy('name', 'asc')->pluck('name', 'id')->toArray();
         $stores = Store::getDropdown();
 
         $po_nos = Transaction::where('type', 'purchase_order')->where('status', '!=', 'received')->pluck('po_no', 'id');
         $status_array = $this->commonUtil->getPurchaseOrderStatusArray();
         $payment_status_array = $this->commonUtil->getPaymentStatusArray();
         $payment_type_array = $this->commonUtil->getPaymentTypeArray();
+        $exchange_rate_currencies = $this->commonUtil->getCurrenciesExchangeRateArray(true);
+        $users = User::pluck('name', 'id');
 
         return view('add_stock.import')->with(compact(
             'suppliers',
@@ -780,6 +782,8 @@ class AddStockController extends Controller
             'payment_status_array',
             'payment_type_array',
             'stores',
+            'exchange_rate_currencies',
+            'users',
             'po_nos'
         ));
     }
@@ -798,18 +802,26 @@ class AddStockController extends Controller
                 'supplier_id' => $data['supplier_id'],
                 'type' => 'add_stock',
                 'status' => $data['status'],
-                'order_date' => !empty($ref_transaction_po) ? $ref_transaction_po->transaction_date : Carbon::now(),
-                'transaction_date' => $this->commonUtil->uf_date($data['transaction_date']),
+                'paying_currency_id' => $data['paying_currency_id'],
+                'default_currency_id' => $data['default_currency_id'],
+                'exchange_rate' => $this->commonUtil->num_uf($data['exchange_rate']),
+                'transaction_date' => !empty($data['transaction_date']) ? Carbon::createFromTimestamp(strtotime($data['transaction_date']))->format('Y-m-d H:i:s') : Carbon::now(),
                 'payment_status' => 'pending',
                 'po_no' => !empty($ref_transaction_po) ? $ref_transaction_po->po_no : null,
                 'purchase_order_id' => !empty($data['po_no']) ? $data['po_no'] : null,
+                'grand_total' => $this->productUtil->num_uf($data['final_total']),
                 'final_total' => $this->productUtil->num_uf($data['final_total']),
+                'discount_amount' => $this->productUtil->num_uf($data['discount_amount']),
+                'other_payments' => $this->productUtil->num_uf($data['other_payments']),
+                'other_expenses' => $this->productUtil->num_uf($data['other_expenses']),
                 'notes' => !empty($data['notes']) ? $data['notes'] : null,
                 'details' => !empty($data['details']) ? $data['details'] : null,
                 'invoice_no' => !empty($data['invoice_no']) ? $data['invoice_no'] : null,
                 'due_date' => !empty($data['due_date']) ? $this->commonUtil->uf_date($data['due_date']) : null,
                 'notify_me' => !empty($data['notify_me']) ? $data['notify_me'] : 0,
-                'created_by' => Auth::user()->id
+                'created_by' => Auth::user()->id,
+                'source_id' => !empty($data['source_id']) ? $data['source_id'] : null,
+                'source_type' => !empty($data['source_type']) ? $data['source_type'] : null,
             ];
 
             DB::beginTransaction();
@@ -822,13 +834,53 @@ class AddStockController extends Controller
             }
 
             $final_total = AddStockLine::where('transaction_id', $transaction->id)->sum('sub_total');
-            $transaction->final_total = $final_total;
+            $transaction->final_total = $final_total + $transaction->other_expenses - $transaction->discount_amount + $transaction->other_payments;
+            $transaction->grand_total = $transaction->final_total;
             $transaction->save();
 
             if ($request->files) {
                 foreach ($request->file('files', []) as $key => $file) {
-
                     $transaction->addMedia($file)->toMediaCollection('add_stock');
+                }
+            }
+
+            if ($request->payment_status != 'pending') {
+                $payment_data = [
+                    'transaction_id' => $transaction->id,
+                    'amount' => $this->commonUtil->num_uf($request->amount),
+                    'method' => $request->method,
+                    'paid_on' => $this->commonUtil->uf_date($data['paid_on']),
+                    'ref_number' => $request->ref_number,
+                    'source_type' => $request->source_type,
+                    'source_id' => $request->source_id,
+                    'bank_deposit_date' => !empty($data['bank_deposit_date']) ? $this->commonUtil->uf_date($data['bank_deposit_date']) : null,
+                    'bank_name' => $request->bank_name,
+                ];
+                $transaction_payment = $this->transactionUtil->createOrUpdateTransactionPayment($transaction, $payment_data);
+
+                if ($payment_data['method'] == 'cash') {
+                    $user_id = null;
+                    if (!empty($request->source_id)) {
+                        if ($request->source_type == 'pos') {
+                            $user_id = StorePos::where('id', $request->source_id)->first()->user_id;
+                        }
+                        if ($request->source_type == 'user') {
+                            $user_id = $request->source_id;
+                        }
+                        if ($request->source_type == 'safe') {
+                            $money_safe = MoneySafe::find($request->source_id);
+                            $payment_data['currency_id'] = $transaction->paying_currency_id;
+                            $this->moneysafeUtil->addPayment($transaction, $payment_data, 'debit', $transaction_payment->id, $money_safe);
+                        }
+                    }
+
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                }
+
+                if ($request->upload_documents) {
+                    foreach ($request->file('upload_documents', []) as $key => $doc) {
+                        $transaction_payment->addMedia($doc)->toMediaCollection('transaction_payment');
+                    }
                 }
             }
 

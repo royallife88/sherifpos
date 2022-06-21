@@ -1273,6 +1273,10 @@ return [
     'sale_payment_date' => 'Payment Date',
 
     'other_cash_sales' => 'Other Cash Sales',
+    'status_for_stores' => 'Status for stores',
+    'disabled' => 'Disabled',
+    'all_stores' => 'All Stores',
+    'tax_status_info' => 'Status will work for selected stores. if no store selected, it will works for all stores',
 
 
 ];

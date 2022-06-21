@@ -106,7 +106,7 @@ class SellPosController extends Controller
         $brands = Brand::all();
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
-        $taxes = Tax::get();
+        $taxes = Tax::getDropdown();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $cashiers = Employee::getDropdownByJobType('Cashier', true, true);
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
@@ -503,7 +503,7 @@ class SellPosController extends Controller
         $brands = Brand::all();
         $store_pos = StorePos::where('user_id', Auth::user()->id)->first();
         $customers = Customer::getCustomerArrayWithMobile();
-        $taxes = Tax::get();
+        $taxes = Tax::getDropdown();
         $payment_types = $this->commonUtil->getPaymentTypeArrayForPos();
         $deliverymen = Employee::getDropdownByJobType('Deliveryman');
         $tac = TermsAndCondition::where('type', 'invoice')->orderBy('name', 'asc')->pluck('name', 'id');

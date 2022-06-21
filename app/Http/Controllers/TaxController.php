@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Store;
 use App\Models\Tax;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -56,10 +57,12 @@ class TaxController extends Controller
         $type = request()->type ?? 'product_tax';
 
         $taxes = Tax::orderBy('name', 'asc')->pluck('name', 'id');
+        $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('tax.create')->with(compact(
             'quick_add',
             'taxes',
+            'stores',
             'type'
         ));
     }
@@ -84,6 +87,13 @@ class TaxController extends Controller
             $data = $request->except('_token', 'quick_add');
 
             DB::beginTransaction();
+            if ($data['type'] == 'general_tax') {
+                $data['status'] = !empty($data['status']) ? 1 : 0;
+                $data['store_ids'] = !empty($data['store_ids']) ? $data['store_ids'] : [];
+            } else {
+                $data['status'] = 1;
+                $data['store_ids'] = [];
+            }
             $tax = Tax::create($data);
 
             $tax_id = $tax->id;
@@ -130,9 +140,11 @@ class TaxController extends Controller
     public function edit($id)
     {
         $tax = Tax::find($id);
+        $stores = Store::orderBy('name', 'asc')->pluck('name', 'id');
 
         return view('tax.edit')->with(compact(
-            'tax'
+            'tax',
+            'stores'
         ));
     }
 
@@ -156,6 +168,13 @@ class TaxController extends Controller
             $data = $request->except('_token', '_method');
 
             DB::beginTransaction();
+            if ($data['type'] == 'general_tax') {
+                $data['status'] = !empty($data['status']) ? 1 : 0;
+                $data['store_ids'] = !empty($data['store_ids']) ? $data['store_ids'] : [];
+            } else {
+                $data['status'] = 1;
+                $data['store_ids'] = [];
+            }
             $tax = Tax::where('id', $id)->update($data);
 
             DB::commit();
@@ -199,6 +218,28 @@ class TaxController extends Controller
         return $output;
     }
 
+    /**
+     * get dropdown html by store
+     *
+     * @return void
+     */
+    public function getDropdownHtmlByStore()
+    {
+        $store_id = request()->store_id;
+
+        $taxes = Tax::getDropdown($store_id);
+        $tax_dp = '<option value="">No Tax</option>';
+        foreach ($taxes as $tax) {
+            $tax_dp .= '<option data-rate="' . $tax['rate'] . '" value="' . $tax['id'] . '">' . $tax['name'] . '</option>';
+        }
+
+        return $tax_dp;
+    }
+    /**
+     * get dropdown html
+     *
+     * @return void
+     */
     public function getDropdown()
     {
         $type = request()->type ?? 'product_tax';

@@ -16,6 +16,8 @@
                     <th>@lang('lang.rate_percentage')</th>
                     @if ($type == 'general_tax')
                         <th>@lang('lang.tax_method')</th>
+                        <th>@lang('lang.status')</th>
+                        <th>@lang('lang.status_for_stores')</th>
                     @endif
                     <th class="notexport">@lang('lang.action')</th>
                 </tr>
@@ -27,6 +29,20 @@
                         <td>{{ $tax->rate }}</td>
                         @if ($type == 'general_tax')
                             <td>{{ ucfirst($tax->tax_method) }}</td>
+                            <td>
+                                @if ($tax->status == 1)
+                                    @lang('lang.enable')
+                                @else
+                                    @lang('lang.disabled')
+                                @endif
+                            </td>
+                            <td>
+                                @if (!empty($tax->store_ids))
+                                    {{ implode(',', $tax->stores->pluck('name')->toArray()) }}
+                                @else
+                                    @lang('lang.all_stores')
+                                @endif
+                            </td>
                         @endif
                         <td>
                             <div class="btn-group">
@@ -65,7 +81,5 @@
 @endsection
 
 @section('javascript')
-    <script>
-
-    </script>
+    <script></script>
 @endsection
