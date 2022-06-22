@@ -46,7 +46,7 @@ class ProductController extends Controller
      *
      * @param transactionUtil $transactionUtil
      * @param Util $commonUtil
-     * @param ProductUtils $productUtil
+     * @param ProductUtil $productUtil
      * @return void
      */
     public function __construct(Util $commonUtil, ProductUtil $productUtil, TransactionUtil $transactionUtil)
@@ -1005,8 +1005,9 @@ class ProductController extends Controller
             'file' => 'required|mimes:csv,txt'
         ]);
         try {
-
+            DB::beginTransaction();
             Excel::import(new ProductImport($this->productUtil, $request), $request->file);
+            DB::commit();
 
             $output = [
                 'success' => true,

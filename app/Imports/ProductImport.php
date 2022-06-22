@@ -27,7 +27,7 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
     /**
      * Constructor
      *
-     * @param int $productUtil
+     * @param ProductUtil $productUtil
      * @return void
      */
     public function __construct(ProductUtil $productUtil, $request)
@@ -43,20 +43,43 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
-            $unit_row = explode(',', $row['units']);
-            $unit_ids = Unit::whereIn('name', $unit_row)->pluck('id')->toArray();
-            $color_row = explode(',', $row['colors']);
-            $color_ids = Color::whereIn('name', $color_row)->pluck('id')->toArray();
-            $sizes_row = explode(',', $row['sizes']);
-            $sizes_ids = Size::whereIn('name', $sizes_row)->pluck('id')->toArray();
-            $grades_row = explode(',', $row['grades']);
-            $grades_ids = Grade::whereIn('name', $grades_row)->pluck('id')->toArray();
+            $unit = null;
+            $color = null;
+            $size = null;
+            $grade = null;
+            $class = null;
+            $category = null;
+            $sub_category = null;
+            $brand = null;
+            $tax = null;
+            if (!empty($row['units'])) {
+                $unit = Unit::firstOrCreate(['name' => $row['units']]);
+            }
+            if (!empty($row['colors'])) {
+                $color = Color::firstOrCreate(['name' => $row['colors']]);
+            }
+            if (!empty($row['sizes'])) {
+                $size = Size::firstOrCreate(['name' => $row['sizes']]);
+            }
+            if (!empty($row['grades'])) {
+                $grade = Grade::firstOrCreate(['name' => $row['grades']]);
+            }
 
-            $class = ProductClass::where('name', $row['class'])->first();
-            $category = Category::where('name', $row['category'])->first();
-            $sub_category = Category::where('name', $row['sub_category'])->first();
-            $brand = Brand::where('name', $row['brand'])->first();
-            $tax = Tax::where('name', $row['tax'])->first();
+            if (!empty($row['class'])) {
+                $class = ProductClass::where('name', $row['class'])->first();
+            }
+            if (!empty($row['category'])) {
+                $category = Category::firstOrCreate(['name' => $row['category']]);
+            }
+            if (!empty($row['sub_category'])) {
+                $sub_category = Category::firstOrCreate(['name' => $row['sub_category']])->first();
+            }
+            if (!empty($row['brand'])) {
+                $brand = Brand::firstOrCreate(['name' => $row['brand']])->first();
+            }
+            if (!empty($row['tax'])) {
+                $tax = Tax::firstOrCreate(['name' => $row['tax']])->first();
+            }
 
             $product_data = [
                 'name' => $row['product_name'],
@@ -65,10 +88,10 @@ class ProductImport implements ToCollection, WithHeadingRow, WithValidation
                 'sub_category_id' => !empty($sub_category) ? $sub_category->id : null,
                 'brand_id' => !empty($brand) ? $brand->id : null,
                 'sku' => $row['sku'] ?? $this->productUtil->generateSku($row['product_name']),
-                'multiple_units' => $unit_ids,
-                'multiple_colors' => $color_ids,
-                'multiple_sizes' => $sizes_ids,
-                'multiple_grades' => $grades_ids,
+                'multiple_units' => !empty($unit) ? [(string)$unit->id] : [],
+                'multiple_colors' => !empty($color) ? [(string)$color->id] : [],
+                'multiple_sizes' => !empty($size) ? [(string)$size->id] : [],
+                'multiple_grades' => !empty($grade) ? [(string)$grade->id] : [],
                 'is_service' => !empty($row['is_service']) ? 1 : 0,
                 'product_details' => $row['product_details'],
                 'batch_number' => $row['batch_number'],
