@@ -1607,7 +1607,7 @@ class SellPosController extends Controller
                             class="dripicons-document-edit"></i></a>';
 
                         $html .=
-                            '<button class="btn btn-danger remove_draft" data-href=' . action(
+                            '<button class="btn btn-danger remove_online_order" data-href=' . action(
                                 'SellController@destroy',
                                 $row->id
                             ) . '
