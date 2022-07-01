@@ -725,9 +725,10 @@ function calculate_product_discount(tr) {
     let exchange_rate = __read_number($("#exchange_rate"));
     let value = __read_number($(tr).find(".product_discount_value"));
     let type = $(tr).find(".product_discount_type").val();
+    let quantity = $(tr).find(".quantity").val();
     let sub_total = __read_number($(tr).find(".sub_total"));
     if (type == "fixed" || type == "surplus") {
-        discount = value;
+        discount = quantity * value;
     }
     if (type == "percentage") {
         discount = __get_percent_value(sub_total, value);
