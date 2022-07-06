@@ -209,10 +209,12 @@ myDropzone.on("thumbnail", function (file) {
     var $img = document.getElementById("product_sample_image");
 
     var reader = new FileReader();
+    var cropper;
     reader.onloadend = function () {
         $($img).attr("src", reader.result);
         $cropperModal.modal("show");
         modalTemplate.on("shown.bs.modal", function () {
+            cropper= null;
             cropper = new Cropper($img, {
                 initialAspectRatio: 1 / 1,
                 aspectRatio: 1 / 1,
@@ -236,15 +238,15 @@ myDropzone.on("thumbnail", function (file) {
         cropper = null;
     });
 });
-modalTemplate.on("hidden.bs.modal", function () {
-    console.log(cropper);
-    if (typeof cropper !== "undefined") {
-        if (copper !== null) {
-            // cropper.destroy();
-            cropper = null;
-        }
-    }
-});
+// modalTemplate.on("hidden.bs.modal", function () {
+//     console.log(cropper);
+//     if (typeof cropper !== "undefined") {
+//         if (copper !== null) {
+//             // cropper.destroy();
+//             cropper = null;
+//         }
+//     }
+// });
 
 // transform cropper dataURI output to a Blob which Dropzone accepts
 function dataURItoBlob(dataURI) {

@@ -221,6 +221,11 @@
                             </tr>
                         </tfoot>
                     </table>
+                    <div class="col-md-12 text-center">
+                        <h4>@lang('lang.number_of_orders'): <span class="number_of_orders_span" style="margin-right: 15px;">0</span>
+                            @lang('lang.number_of_customer'): <span class="number_of_customer_span" style="margin-right: 15px;">0</span>
+                        </h4>
+                    </div>
                 </div>
             </div>
         </div>
@@ -232,6 +237,7 @@
 @section('javascript')
     <script>
         $(document).ready(function() {
+            get_total_details();
             sales_table = $("#sales_table").DataTable({
                 lengthChange: true,
                 paging: true,
@@ -465,10 +471,12 @@
             });
             $(document).on('change', '.sale_filter', function() {
                 sales_table.ajax.reload();
+                get_total_details();
             });
         })
         $('.time_picker').focusout(function(event) {
             sales_table.ajax.reload();
+            get_total_details();
         });
 
         $(document).on('change', '#dining_room_id', function() {
@@ -516,6 +524,42 @@
             $("#receipt_section").html(receipt);
             __currency_convert_recursively($("#receipt_section"));
             __print_receipt("receipt_section");
+        }
+
+        function get_total_details() {
+            $.ajax({
+                method: 'GET',
+                url: '/sale/get-total-details',
+                data: {
+                    product_class_id : $("#product_class_id").val(),
+                    category_id : $("#category_id").val(),
+                    sub_category_id : $("#sub_category_id").val(),
+                    brand_id : $("#brand_id").val(),
+                    tax_id : $("#tax_id").val(),
+                    customer_id : $("#customer_id").val(),
+                    customer_type_id : $("#customer_type_id").val(),
+                    dining_room_id : $("#dining_room_id").val(),
+                    dining_table_id : $("#dining_table_id").val(),
+                    store_id : $("#store_id").val(),
+                    status : $("#status").val(),
+                    method : $("#method").val(),
+                    payment_status : $("#payment_status").val(),
+                    deliveryman_id : $("#deliveryman_id").val(),
+                    start_date : $("#start_date").val(),
+                    start_time : $("#start_time").val(),
+                    end_date : $("#end_date").val(),
+                    end_time : $("#end_time").val(),
+                    payment_start_date : $("#payment_start_date").val(),
+                    payment_start_time : $("#payment_start_time").val(),
+                    payment_end_date : $("#payment_end_date").val(),
+                    payment_end_time : $("#payment_end_time").val(),
+                    created_by : $("#created_by").val(),
+                },
+                success: function(result) {
+                    $('.number_of_customer_span').text(__currency_trans_from_en(result.customer_count, false))
+                    $('.number_of_orders_span').text(__currency_trans_from_en(result.sales_count, false))
+                },
+            });
         }
     </script>
 @endsection

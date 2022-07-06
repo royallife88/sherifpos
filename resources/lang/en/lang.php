@@ -1278,5 +1278,8 @@ return [
     'all_stores' => 'All Stores',
     'tax_status_info' => 'Status will work for selected stores. if no store selected, it will works for all stores',
 
+    'number_of_orders' => 'Number of orders',
+    'number_of_customer' => 'Number of customers',
+
 
 ];

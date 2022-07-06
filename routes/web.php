@@ -220,6 +220,7 @@ Route::group(['middleware' => ['auth', 'SetSessionData', 'language', 'timezone']
     Route::get('sale/get-import', 'SellController@getImport');
     Route::get('sale/get-delivery-list', 'SellController@getDeliveryList');
     Route::get('sale/print/{id}', 'SellController@print');
+    Route::get('sale/get-total-details', 'SellController@getTotalDetails');
     Route::resource('sale', SellController::class);
     Route::get('sale-return/add/{id}', 'SellReturnController@add');
     Route::get('sale-return/print/{id}', 'SellReturnController@print');

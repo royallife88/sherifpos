@@ -176,3 +176,7 @@ input[type="number"] {
 .text-green {
     color: #34cea7;
 }
+.dz-progress {
+    /* progress bar covers file name */
+    display: none !important;
+}

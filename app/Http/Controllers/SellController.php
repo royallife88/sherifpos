@@ -922,4 +922,120 @@ class SellController extends Controller
 
         return redirect()->back()->with('status', $output);
     }
+
+    /**
+     * get total sales details
+     *
+     * @return array
+     */
+    public function getTotalDetails(Request $request)
+    {
+        if (request()->ajax()) {
+            // $store_id = $this->transactionUtil->getFilterOptionValues($request)['store_id'];
+            $store_id = request()->store_id;
+            $pos_id = $this->transactionUtil->getFilterOptionValues($request)['pos_id'];
+
+            $query = Transaction::leftjoin('transaction_payments', 'transactions.id', 'transaction_payments.transaction_id')
+                ->leftjoin('stores', 'transactions.store_id', 'stores.id')
+                ->leftjoin('customers', 'transactions.customer_id', 'customers.id')
+                ->leftjoin('customer_types', 'customers.customer_type_id', 'customer_types.id')
+                ->leftjoin('transaction_sell_lines', 'transactions.id', 'transaction_sell_lines.transaction_id')
+                ->leftjoin('products', 'transaction_sell_lines.product_id', 'products.id')
+                ->leftjoin('variations', 'transaction_sell_lines.variation_id', 'variations.id')
+                ->leftjoin('users', 'transactions.created_by', 'users.id')
+                ->leftjoin('currencies as received_currency', 'transactions.received_currency_id', 'received_currency.id')
+                ->where('transactions.type', 'sell')->whereIn('status', ['final', 'canceled']);
+
+            if (!empty(request()->product_class_id) &&  !empty(array_filter(request()->product_class_id))) {
+                $query->whereIn('products.product_class_id', array_filter(request()->product_class_id));
+            }
+
+            if (!empty(request()->category_id) && !empty(array_filter(request()->category_id))) {
+                $query->whereIn('products.category_id', array_filter(request()->category_id));
+            }
+
+            if (!empty(request()->sub_category_id) && !empty(array_filter(request()->sub_category_id))) {
+                $query->whereIn('products.sub_category_id', array_filter(request()->sub_category_id));
+            }
+
+            if (!empty(request()->brand_id) && !empty(array_filter(request()->brand_id))) {
+                $query->whereIn('products.brand_id', array_filter(request()->brand_id));
+            }
+            if (!empty(request()->tax_id) && !empty(array_filter(request()->tax_id))) {
+                $query->whereIn('transactions.tax_id', array_filter(request()->tax_id));
+            }
+            if (!empty(request()->customer_id)) {
+                $query->where('customer_id', request()->customer_id);
+            }
+            if (!empty(request()->customer_type_id)) {
+                if (request()->customer_type_id == 'dining_in') {
+                    $query->whereNotNull('dining_table_id');
+                } else {
+                    $query->where('customer_type_id', request()->customer_type_id);
+                }
+            }
+            if (!empty(request()->dining_room_id)) {
+                $query->where('dining_room_id', request()->dining_room_id);
+            }
+            if (!empty(request()->dining_table_id)) {
+                $query->where('dining_table_id', request()->dining_table_id);
+            }
+            if (!empty(request()->status)) {
+                $query->where('status', request()->status);
+            }
+            if (!empty($store_id)) {
+                $query->where('store_id', $store_id);
+            }
+            if (!empty(request()->deliveryman_id)) {
+                $query->where('deliveryman_id', request()->deliveryman_id);
+            }
+            if (!empty(request()->payment_status)) {
+                $query->where('payment_status', request()->payment_status);
+            }
+            if (!empty(request()->created_by)) {
+                $query->where('transactions.created_by', request()->created_by);
+            }
+            if (!empty(request()->method)) {
+                $query->where('transaction_payments.method', request()->method);
+            }
+            if (!empty(request()->start_date)) {
+                $query->whereDate('transaction_date', '>=', request()->start_date);
+            }
+            if (!empty(request()->end_date)) {
+                $query->whereDate('transaction_date', '<=', request()->end_date);
+            }
+            if (!empty(request()->start_time)) {
+                $query->where('transaction_date', '>=', request()->start_date . ' ' . Carbon::parse(request()->start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->end_time)) {
+                $query->where('transaction_date', '<=', request()->end_date . ' ' . Carbon::parse(request()->end_time)->format('H:i:s'));
+            }
+            if (!empty(request()->payment_start_date)) {
+                $query->whereDate('paid_on', '>=', request()->payment_start_date);
+            }
+            if (!empty(request()->payment_end_date)) {
+                $query->whereDate('paid_on', '<=', request()->payment_end_date);
+            }
+            if (!empty(request()->payment_start_time)) {
+                $query->where('paid_on', '>=', request()->payment_start_date . ' ' . Carbon::parse(request()->payment_start_time)->format('H:i:s'));
+            }
+            if (!empty(request()->payment_end_time)) {
+                $query->where('paid_on', '<=', request()->payment_end_date . ' ' . Carbon::parse(request()->payment_end_time)->format('H:i:s'));
+            }
+            if (strtolower($request->session()->get('user.job_title')) == 'cashier') {
+                $query->where('transactions.created_by', $request->session()->get('user.id'));
+            }
+
+            $query->select(
+                DB::raw('COUNT(DISTINCT(transactions.customer_id)) as customer_count'),
+                DB::raw('COUNT(DISTINCT(transactions.id)) as sales_count'),
+            );
+            $sales = $query->first();
+
+            $sales_count = $sales->sales_count ?? 0;
+            $customer_count = $sales->customer_count ?? 0;
+
+            return ['customer_count' => $customer_count, 'sales_count' => $sales_count];
+        }
+    }
 }
