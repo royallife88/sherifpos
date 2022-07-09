@@ -29,7 +29,7 @@ class ProductSeeder extends Seeder
         ProductClass::factory()->count(10)->create();
         Category::factory()->count(10)->create();
         Brand::factory()->count(10)->create();
-        Product::factory()->count(10)->create()->each(function ($product) {
+        Product::factory()->count(1000)->create()->each(function ($product) {
             $variation = Variation::create(
                 [
                     'name' => 'Default',

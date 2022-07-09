@@ -980,7 +980,7 @@ return [
     'version' => 'sürüm',
     'last_update' => 'Son Güncelleme',
     'added_by' => 'Tarafından eklendi',
-    'enjoy_your_meal_please_come_again' => 'Afia olsun, tekrar gel',
+    'enjoy_your_meal_please_come_again' => 'Afiyet olsun, yine bekleriz',
 
     'or_add_new_product' => 'Bu Ürün Hizmettir veya Stoksuzdur',
     'last_session_closed_at' => 'Son Oturum Kapanış Tarihi',
