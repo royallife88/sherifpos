@@ -1280,6 +1280,7 @@ return [
 
     'number_of_orders' => 'Number of orders',
     'number_of_customer' => 'Number of customers',
+    'cash_register_is_closed' => 'Cash register is closed',
 
 
 ];

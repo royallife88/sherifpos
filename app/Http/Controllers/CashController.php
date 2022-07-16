@@ -177,7 +177,7 @@ class CashController extends Controller
     public function addCashIn($cash_register_id)
     {
         //Check if there is a open register, if yes then redirect to POS screen.
-        if ($this->cashRegisterUtil->countOpenedRegister() == 0) {
+        if ($this->cashRegisterUtil->countOpenedRegister() == 0 && !auth()->user()->is_superadmin == 1 && !auth()->user()->is_admin == 1) {
             return redirect()->action('CashRegisterController@create');
         }
 
@@ -204,6 +204,12 @@ class CashController extends Controller
             DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
+            if ($register->status == 'close') {
+                return redirect()->back()->with('status', [
+                    'success' => false,
+                    'msg' => __('lang.cash_register_is_closed')
+                ]);
+            }
             $user_id = $register->user_id;
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_in', 'debit', $request->source_id, $request->notes);
 
@@ -260,7 +266,7 @@ class CashController extends Controller
     public function addCashOut($cash_register_id)
     {
         //Check if there is a open register, if yes then redirect to POS screen.
-        if ($this->cashRegisterUtil->countOpenedRegister() == 0) {
+        if ($this->cashRegisterUtil->countOpenedRegister() == 0 && !auth()->user()->is_superadmin == 1 && !auth()->user()->is_admin == 1) {
             return redirect()->action('CashRegisterController@create');
         }
 
@@ -287,6 +293,12 @@ class CashController extends Controller
             DB::beginTransaction();
             $amount = $this->cashRegisterUtil->num_uf($request->input('amount'));
             $register = CashRegister::find($request->cash_register_id);
+            if ($register->status == 'close') {
+                return redirect()->back()->with('status', [
+                    'success' => false,
+                    'msg' => __('lang.cash_register_is_closed')
+                ]);
+            }
             $user_id = $register->user_id;
             $cash_register_transaction = $this->cashRegisterUtil->createCashRegisterTransaction($register, $amount, 'cash_out', 'credit', $request->source_id, $request->notes);
 
