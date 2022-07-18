@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body" style="padding: 0px 10px; !important">
                             <input type="hidden" name="transaction_id" id="transaction_id" value="{{ $transaction->id }}">
-                            <input type="hidden" name="store_id" id="store_id" value="{{ $store_pos->store_id }}">
+                            <input type="hidden" name="store_id" id="store_id" value="{{ $transaction->store_id }}">
                             <input type="hidden" name="customer_size_id_hidden" id="customer_size_id_hidden"
                                 value="{{ $transaction->customer_size_id }}">
                             <input type="hidden" name="default_customer_id" id="default_customer_id"
