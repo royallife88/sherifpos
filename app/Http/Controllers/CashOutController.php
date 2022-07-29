@@ -46,7 +46,7 @@ class CashOutController extends Controller
             ->leftjoin('employees', 'cash_registers.user_id', 'employees.user_id')
             ->leftjoin('job_types', 'employees.job_type_id', 'job_types.id');
 
-        if (!auth()->user()->can('superadmin') || !auth()->user()->can('cash.view_details.view') || auth()->user()->is_admin != 1) {
+        if (!auth()->user()->can('superadmin') && !auth()->user()->can('cash.add_cash_out.view') && auth()->user()->is_admin != 1) {
             $query->where('cash_registers.user_id', Auth::user()->id);
         }
 

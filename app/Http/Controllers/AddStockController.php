@@ -395,11 +395,13 @@ class AddStockController extends Controller
                     if ($request->source_type == 'safe') {
                         $money_safe = MoneySafe::find($request->source_id);
                         $payment_data['currency_id'] = $transaction->paying_currency_id;
+
                         $this->moneysafeUtil->addPayment($transaction, $payment_data, 'debit', $transaction_payment->id, $money_safe);
                     }
                 }
-
-                $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                if (!empty($user_id)) {
+                    $this->cashRegisterUtil->addPayments($transaction, $payment_data, 'debit', $user_id);
+                }
             }
 
             if ($request->upload_documents) {
